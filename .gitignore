@@ -1,0 +1,5 @@
+*.swp
+*.class
+*.jar
+.gradle/
+build
