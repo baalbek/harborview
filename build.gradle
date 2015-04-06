@@ -1,0 +1,57 @@
+apply plugin: 'clojure'
+
+group = 'rcstadheim'
+archivesBaseName = 'harborview'
+version = '1.0'
+
+//aotCompile = true
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'http://clojars.org/repo'
+    }
+}
+          
+
+dependencies {
+    compile 'compojure:compojure:1.3.1'
+    compile 'enlive:enlive:1.1.5'
+    compile 'ring:ring-core:1.3.2'
+    compile 'ring:ring-jetty-adapter:1.3.2'
+    compile 'ring:ring-servlet:1.3.2'
+    compile 'clj-json:clj-json:0.5.3'
+    compile 'org.clojure:clojure:1.6.0'
+    compile 'org.clojure:clojure-contrib:1.2.0'
+    compile 'org.clojure:math.numeric-tower:0.0.4'
+    runtime 'log4j:log4j:1.2.17'
+}
+
+task copydeps(type: Copy) {
+    into 'dist' from configurations.runtime
+}
+
+task setupDist << {
+    ant.symlink(resource: "../src/main/resources/log4j.xml", link: "dist/log4j.xml")
+    ant.symlink(resource: "/usr/local/java/jline-0.9.94.jar", link: "dist/jline-0.9.94.jar")
+    ant.symlink(resource: "../src/main/resources/koteriku-dbcp.properties", link: "dist/koteriku-dbcp.propertie")
+    ant.symlink(resource: "../src/main/resources/koteriku-mybatis.conf.xml", link: "dist/koteriku-mybatis.conf.xml")
+    ant.symlink(resource: "../src/main/resources/public", link: "dist/public")
+    ant.symlink(resource: "../src/main/resources/ranoraraku-dbcp.properties", link: "dist/ranoraraku-dbcp.properties")
+    ant.symlink(resource: "../src/main/resources/ranoraraku-mybatis.conf.xml", link: "dist/ranoraraku-mybatis.conf.xml")
+    ant.symlink(resource: "../src/main/resources/templates", link: "dist/templates")
+    ant.symlink(resource: "../src/main/clojure/tikal", link: "dist/tikal")
+}
+
+buildscript {
+    repositories {
+        maven {
+            url 'http://clojars.org/repo'
+        }
+    }
+
+    dependencies {
+        classpath 'clojuresque:clojuresque:1.5.8'
+    }
+}
+
