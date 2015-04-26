@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    compile project(':stearnswharf')
+    compile project(':stearnswharf-repos')
     compile "compojure:compojure:$compojureVersion"
     compile "enlive:enlive:$enliveVersion"
     compile "ring:ring-core:$ringVersion"

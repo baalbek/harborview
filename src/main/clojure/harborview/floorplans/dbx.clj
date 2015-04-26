@@ -1,13 +1,16 @@
 (ns harborview.floorplans.dbx
   (:import
+    [stearnswharf.systems ProjectBean]
     [stearnswharf.mybatis FloorPlansMapper])
   (:require
     [harborview.service.db :as DB]))
 
 
 (defn fetch-projects []
-   (DB/with-session FloorPlansMapper
-     (.fetchProjects it)))
+  (let [result
+          (DB/with-session FloorPlansMapper (.fetchProjects it))]
+    (.add result (ProjectBean. -1 "-" true))
+    result))
 
 (defn fetch-buildings [project-id]
   (DB/with-session FloorPlansMapper

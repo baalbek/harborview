@@ -1,19 +1,17 @@
 (ns harborview.webapp
   (:require
     [compojure.route :as R]
-    [harborview.templates.snippets :as SNIP]
-    [net.cgrand.enlive-html :as HTML])
+    [harborview.service.htmlutils :as U]
+    [harborview.systems.html :as SYS])
   (:use
    [compojure.handler :only (api)]
    [compojure.core :only (GET defroutes context)]
    [ring.adapter.jetty :only (run-jetty)]
    [ring.middleware.params :only (wrap-params)]))
 
-(HTML/deftemplate index "templates/index.html" []
-  [:head] (HTML/substitute (SNIP/head "Harbor View" "/js/dialogs.js")))
-
 (defroutes main-routes
-  (GET "/" request (index))
+  (GET "/" request (SYS/my-systems))
+  (context "/systems" [] SYS/my-routes)
   (R/files "/" {:root "public"})
   (R/resources "/" {:root "public"}))
 
