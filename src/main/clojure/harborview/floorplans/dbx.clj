@@ -16,7 +16,7 @@
   (DB/with-session FloorPlansMapper
     (.fetchBuildings it project-id)))
 
-(defn fetch-floor-plans [building-id]
+(defn fetch-floorplans [building-id]
   (DB/with-session FloorPlansMapper
     (.fetchFloorPlans it building-id)))
 

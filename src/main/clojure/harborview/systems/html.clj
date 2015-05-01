@@ -1,6 +1,6 @@
 (ns harborview.systems.html
   (:import
-    [stearnswharf.systems ProjectBean])
+    [stearnswharf.systems ProjectBean FloorPlanBean])
   (:use
     [compojure.core :only (GET PUT defroutes)])
   (:require
@@ -21,13 +21,31 @@
   [:#projects] (U/populate-select (map projects->select (DBF/fetch-projects))))
 
 
-(defn buildings-for [pid]
-  ;(let [buildings (DBF/fetch-buildings (U/rs pid))]
-  (U/json-response {"result" [{"oid" "2", "val" "2 - Gregers"} {"oid" "3", "val" "3 - Whatever"}]}))
+(defn building->json [b]
+  {"oid" (.getOid b), "text" (.toHtml b)})
 
+(defn buildings-for [pid]
+  (let [buildings (DBF/fetch-buildings (U/rs pid))]
+    (U/json-response {"buildings" (map building->json buildings)})))
+
+(HTML/defsnippet floorplans "templates/snippets.html" [:.floorplans] [rows]
+  [[:tr (HTML/attr= :class "rows")]]
+  (HTML/substitute
+    (map (fn [^FloorPlanBean x]
+           {:tag :tr, :content [
+                                 (U/num->td (.getSystemId x))
+                                 (U/num->td (.getBuildingId x))
+                                 (U/num->td (.getFloorPlan x))
+                                 (U/td (.getBuildingDsc x))
+                                 (U/td (.getSystemDsc x))
+                                 ]})
+      rows)))
 
 (defroutes my-routes
   (GET "/" request (my-systems))
-  (GET "/fetchbuildings" [pid] (buildings-for pid)))
+  (GET "/fetchbuildings" [pid] (buildings-for pid))
+  (GET "/fetchfloorplans" [bid] (HTML/emit* (floorplans (DBF/fetch-floorplans (U/rs bid))))))
 
+
+;(GET "/groupsums" [fnr] (H/emit* (groupsums fnr)))
 
