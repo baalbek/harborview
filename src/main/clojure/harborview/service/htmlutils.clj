@@ -27,18 +27,20 @@
       (read-string vs))
     v))
 
-(defn td [content]
-  {:tag :td, :content content :attrs {:class "jax"}})
+(defn th [v & [attrs]]
+  {:tag :th :attrs attrs :content [v]})
+
+(defn th2 [v & [attrs]]
+  {:tag :th :attrs attrs :content v})
+
+(defn td [v & [attrs]]
+  {:tag :td :attrs attrs :content [v]})
+
+(defn td2 [v & [attrs]]
+  {:tag :td :attrs attrs :content v})
+
+  ;{:tag :td, :content content :attrs {:class "jax"}})
 
 (defn num->td [content]
   (td (str content)))
 
-(comment
-  (defn td-a
-    [content & [attrs]]
-    {:tag :td :attrs attrs :content content})
-
-  (defn num->td-a
-    [content & [attrs]]
-    (td-a (str content) attrs))
-  )

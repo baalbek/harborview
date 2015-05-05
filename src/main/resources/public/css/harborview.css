@@ -98,12 +98,12 @@ table.std {
 table.std td,
 table.std th {
   border-width: 1px 1px 1px 1px;
-  padding: 10px;
+  padding: 5px;
   /*border-style: inset inset inset inset;*/
   border-style: solid solid solid solid;
   border-color: #bbbbbb;
   /*color : #fefef2;*/
-  font-size: 1.3em;
+  font-size: 1.1em;
   color: white;
   background-color: transparent;
   -moz-border-radius: 0px 0px 0px 0px;
