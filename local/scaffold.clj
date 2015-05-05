@@ -24,8 +24,8 @@
 
 (def emit HTML/emit*)
 
-(defn ex [] (s/floorplans (ffp 2)))
+(defn ex [n] (s/floorplan->table (nth (ffp 2) n)))
 
-(defn e [] (HTML/emit* ex))
+(def e HTML/emit*)
 
 

@@ -28,12 +28,29 @@
   (let [buildings (DBF/fetch-buildings (U/rs pid))]
     (U/json-response {"buildings" (map building->json buildings)})))
 
+
+
+(HTML/defsnippet floorplan->table "templates/snippets.html" [:.floorplans] [^FloorPlanBean f]
+  [[:tr (HTML/attr= :class "rows")]]
+  (HTML/substitute
+    (let [vinapu-elements (.getVinapuElements f)]
+      (map (fn [^VinapuElementBean x]
+             {:tag :tr :content [
+                                  (U/num->td (.getOid x))
+                                  (U/num->td (.getN1 x))
+                                  (U/num->td (.getN2 x))]})
+        vinapu-elements))))
+
 (defn floorplans [rows]
   (map (fn [^FloorPlanBean x]
          {:tag :details :attrs nil :content [
             {:tag :summary :attrs nil :content [
                 (str "[ " (.getSystemId x) " ] " (.getSystemDsc x))]}
-                                              ]})
+            {:tag :div :attrs {:class "vinapu"}
+              :content
+                         (floorplan->table x)
+                         }
+            ]})
     rows))
 
 (comment
@@ -124,6 +141,4 @@
   (GET "/fetchbuildings" [pid] (buildings-for pid))
   (GET "/fetchfloorplans" [bid] (HTML/emit* (floorplans (DBF/fetch-floorplans (U/rs bid))))))
 
-
-;(GET "/groupsums" [fnr] (H/emit* (groupsums fnr)))
 
