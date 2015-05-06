@@ -15,17 +15,36 @@
                             <option value="-1">Test Project</option>
                         </select>
                     </td>
+                    <td><input type="submit" id="insertproject" value="New Project" /></td>
                     <td>Buildings:</td>
                     <td>
                         <select name="buildings" id="buildings">
                             <option value="-1">Test Building</option>
                         </select>
                     </td>
+                    <td><input type="submit" id="shownewbuilding" value="New Building" /></td>
+                    <td><input type="submit" id="shownewsystem" value="New System" /></td>
                 </tr>
             </table>
         </form>
         <p id="floorplans">Floorplans:
         </p>
     </section>
+    <dialog id="dlg1">
+        <input type="hidden" id="dlg1-pid" value="-1"/>
+        <input type="hidden" id="dlg1-bid" value="-1"/>
+        <p id="dlg1-header"></p>
+        <p><select id="dlg1-etg">
+            <option value="0">Kjeller</option>
+            <option value="1">Etg 1</option>
+            <option value="2">Etg 2</option>
+            <option value="3">Etg 3</option>
+            <option value="4">Etg 4</option>
+            <option value="5">Etg 5</option>
+            <option value="6">Etg 6</option>
+        </select></p>
+        <button id="dlg1-ok">Ok</button>
+        <button id="dlg1-close">Close</button>
+    </dialog>
 </body>
 </html>

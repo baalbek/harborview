@@ -50,15 +50,25 @@ HARBORVIEW.utils = (function() {
         alert(textStatus)
         alert(errorThrown)
     };
+    var relativeTop = function(elem) {
+        var r = elem.getBoundingClientRect();
+        var body = document.body;
+        var docElem = document.documentElement;
+        var scrollTop = window.pageYOffset || docElem.scrollTop || body.scrollTop;
+        var clientTop = docElem.clientTop || body.clientTop || 0;
+        return r.top +  scrollTop - clientTop;
+    };
     return {
         fetchBuildings : fetchBuildings,
         fetchFloorPlans : fetchFloorPlans,
-        addOption : addOption
+        addOption : addOption,
+        relativeTop : relativeTop
     };
 })();
 
 
 jQuery(document).ready(function() {
+    var dlg1 = document.querySelector("#dlg1");
     $("body").on("click", ".jax", function() {
         alert('YES!!!');
     });
@@ -69,5 +79,26 @@ jQuery(document).ready(function() {
     $("#projects").change(function() {
         var pid = $("#projects").val();
         HARBORVIEW.utils.fetchBuildings(pid,$("#buildings"));
+    });
+    $("#dlg1-ok").click(function() {
+        alert($("#dlg1-purchasetype").val());
+        dlg1.close();
+        return false;
+    });
+    $("#dlg1-close").click(function() {
+        dlg1.close();
+        return false;
+    });
+    $("#shownewsystem").click(function() {
+        var elem = $(this)[0];
+        var relTop = HARBORVIEW.utils.relativeTop(elem) - 50;
+        dlg1.style.top = "" + relTop  + "px";
+        /*var oid = $(this).attr("data-oid");*/
+        var pid = $("#projects").val();
+        var bid = $("#buildings").val();
+        $("#dlg1-header").html("Prosjekt: " + pid + ", bygg: " + bid);
+        /*$("#dlg1-oid").val(oid);*/
+        dlg1.show();
+        return false;
     });
 })

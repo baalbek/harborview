@@ -1,0 +1,34 @@
+@mixin main-content {
+    position: absolute;
+    top: 107px;
+    z-index: 0;
+    background: $tile-background;
+    padding: 0px;
+    font-size: $fs;
+}
+
+.main {
+    @include main-content;
+    left: 5%;
+  	width: 90%;
+}
+
+.main2 {
+    @include main-content;
+    left: 5%;
+  	width: 90%;
+}
+
+.main, .main2 {
+    .left {
+        float: left;
+        width: 50%;
+    }
+}
+
+.main, .main2 {
+    .right {
+        float: right;
+        width: 50%;
+    }
+}

@@ -1,0 +1,38 @@
+table.std {
+    border-width: 1px 1px 1px 1px;
+    border-spacing: 1px;
+    border-style: solid solid solid solid;
+    border-color: $table-border-color;
+    border-collapse: collapse;
+    background-color: transparent;
+}
+
+table.std td,
+table.std th {
+    border-width: 1px 1px 1px 1px;
+    padding: 5px;
+    border-style: solid solid solid solid;
+    border-color: $table-border-color;
+    font-size: $fs;
+    color : $color;
+    background-color: transparent;
+    -moz-border-radius: 0px 0px 0px 0px;
+}
+
+table.std caption {
+    color : $color;
+    text-align: left;
+}
+
+table.inactive caption {
+    color : $color;
+}
+
+tr.inactive td {
+    color : $color;
+}
+
+td .ajax-dlg {
+    background-color: $td-ajax-color;
+    padding: 5px 10px 5px 10px;
+}

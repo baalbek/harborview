@@ -44,3 +44,5 @@
 (defn num->td [content]
   (td (str content)))
 
+(defn num2->td [content]
+  (td (format "%.2f" content)))

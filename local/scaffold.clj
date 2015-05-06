@@ -26,6 +26,9 @@
 
 (defn ex [n] (s/floorplan->table (nth (ffp 2) n)))
 
-(def e HTML/emit*)
+(def e (comp print clojure.string/join HTML/emit*))
 
+(defn px [bid] (sfp (take 10 (ffp bid))))
+
+(defn pxx [bid] (e (px bid)))
 

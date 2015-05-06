@@ -1,0 +1,52 @@
+$fs : 0.9em;
+$bg-color: #cca;
+//--------------- Foreground Colors ------------------>>>
+$nav-color: #000;
+$color: #000;
+$a-color: #000;
+//--------------- Table Colors ------------------>>>
+$table-border-color: #000;
+$td-ajax-color: #000;
+
+body {
+    color: $color;
+    background-color: #fff;
+    font-family: Verdana, Arial, serif;
+    font-size: $fs; margin: 0; padding: 0;
+}
+
+
+a, a:link, a:visited, a:active, a.current {
+    margin: 0px;
+    text-decoration: none;
+    color: $a-color;
+    font-weight: normal;
+}
+
+
+img {
+    border: 0px;
+}
+
+nav a {
+    &, &:link, &:visited, &:active, &.current {
+       padding: 10px;
+       font-size: $fs;
+       margin: 0px;
+       text-decoration: none;
+       color: $nav-color;
+    }
+}
+
+
+
+//@import "ribbon";
+
+//@import "main";
+
+@import "table-std";
+
+//@import "hrmenu";
+
+//@import "jquery-ui-1.10.3.custom";
+

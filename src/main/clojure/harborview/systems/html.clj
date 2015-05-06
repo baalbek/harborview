@@ -30,7 +30,7 @@
 
 
 
-(HTML/defsnippet floorplan->table "templates/snippets.html" [:.floorplans] [^FloorPlanBean f]
+(HTML/defsnippet floorplan->table "templates/snippets.html" [:.floorplans-form] [^FloorPlanBean f]
   [[:tr (HTML/attr= :class "rows")]]
   (HTML/substitute
     (let [vinapu-elements (.getVinapuElements f)]
@@ -38,14 +38,28 @@
              {:tag :tr :content [
                                   (U/num->td (.getOid x))
                                   (U/num->td (.getN1 x))
-                                  (U/num->td (.getN2 x))]})
+                                  (U/td (.getN1dsc x))
+                                  (U/num->td (.getN2 x))
+                                  (U/td (.getN2dsc x))
+                                  (U/num->td (.getPlw x))
+                                  (U/num->td (.getW1 x))
+                                  (U/num->td (.getW2 x))
+                                  (U/num->td (.getWnode x))
+                                  (U/num->td (.getLoadId x))
+                                  (U/td2 (.getLoadDsc x))
+                                  (U/num->td (.getLoadFactor x))
+                                  (U/num->td (.getFormFactor x))
+                                  (U/num->td (.getLoadCategory x))
+                                  (U/num2->td (.getServiceLimit x))
+                                  (U/num2->td (.getUltimateLimit x))
+                                  ]})
         vinapu-elements))))
 
 (defn floorplans [rows]
   (map (fn [^FloorPlanBean x]
          {:tag :details :attrs nil :content [
             {:tag :summary :attrs nil :content [
-                (str "[ " (.getSystemId x) " ] " (.getSystemDsc x))]}
+                (str "[ " (.getSystemId x) " ] [etg: " (.getFloorPlan x) "] " (.getSystemDsc x))]}
             {:tag :div :attrs {:class "vinapu"}
               :content
                          (floorplan->table x)
