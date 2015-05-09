@@ -12,6 +12,9 @@
 (defn ffp [bid]
   (d/fetch-floorplans bid))
 
+(defn ffps [bid fid]
+  (d/fetch-floorplan-systems bid fid))
+
 (defn fp [bid]
   (let [floorplans (ffp bid)
         print-fp (fn [x]
@@ -19,6 +22,9 @@
                    (.getFloorPlan x))]
     (map print-fp floorplans)))
 
+(def emp s/empty-floorplan)
+
+(def bf s/buildings-for)
 
 (def sfp s/floorplans)
 
