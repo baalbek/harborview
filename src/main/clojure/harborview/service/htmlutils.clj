@@ -9,6 +9,8 @@
    :headers {"Content-Type" "application/json"}
    :body (json/generate-string data)})
 
+(defn bean->json [b]
+  {"oid" (.getOid b), "text" (.toHtml b)})
 
 (defn populate-select [options]
   (fn [node]

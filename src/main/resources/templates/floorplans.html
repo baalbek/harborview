@@ -25,12 +25,13 @@
                     <td>
                         <select name="floorplan" id="floorplan">
                             <option value="na">-</option>
-                            <option value="-1">-1</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
+                            <option value="all">All Floors</option>
+                            <option value="-1">Basement</option>
+                            <option value="1">Etg 1</option>
+                            <option value="2">Etg 2</option>
+                            <option value="3">Etg 3</option>
+                            <option value="4">Etg 4</option>
+                            <option value="5">Etg 5</option>
                         </select>
                     </td>
                     <td>-</td>
@@ -47,18 +48,14 @@
     <dialog id="dlg1">
         <input type="hidden" id="dlg1-pid" value="-1"/>
         <input type="hidden" id="dlg1-bid" value="-1"/>
+        <input type="hidden" id="dlg1-fid" value="-1"/>
         <p id="dlg1-header"></p>
-        <p><select id="dlg1-etg">
-            <option value="0">Kjeller</option>
-            <option value="1">Etg 1</option>
-            <option value="2">Etg 2</option>
-            <option value="3">Etg 3</option>
-            <option value="4">Etg 4</option>
-            <option value="5">Etg 5</option>
-            <option value="6">Etg 6</option>
-        </select></p>
         <p>Description:<input type="text" id="dlg1-dsc"/></p>
         <p>Group Id:<input type="number" id="dlg1-group" value="1"/></p>
+        <p>Dead load:<select name="dlg1-deadloads" id="dlg1-deadloads"></select></p>
+        <p>Live load:<select name="dlg1-liveloads" id="dlg1-liveloads"></select></p>
+        <p>Load form factor:<input type="number" value="1.0" id="dlg1-ff"/></p>
+        <p>Load plate weight:<input type="number" value="0.5" id="dlg1-plw"/></p>
         <button id="dlg1-ok">Ok</button>
         <button id="dlg1-close">Close</button>
     </dialog>

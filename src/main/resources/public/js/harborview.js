@@ -18,8 +18,7 @@ HARBORVIEW.utils = (function() {
             error: onError
         });
     };
-    /*
-    var fetchFloorPlans = function(bid, floorplansElement) {
+    var fetchAllFloorPlanSystems = function(bid, floorplansElement) {
         if (bid === "-1") return;
         $.ajax({
             url: "/systems/fetchfloorplans",
@@ -34,7 +33,6 @@ HARBORVIEW.utils = (function() {
             error: onError
         });
     };
-    //*/
     var fetchBuildings = function(pid, buildingsDropDown) {
         if (pid === "-1") return;
         $.ajax({
@@ -56,6 +54,38 @@ HARBORVIEW.utils = (function() {
                 for (var i=0, oblen = objs.length; i<oblen; i++) {
                     var item = objs[i];
                     addOption(buildingsDropDown,item.text,item.oid);
+                }
+            },
+            error: onError
+        });
+    };
+    var fetchVinapuDeadLoads = function(loadsDropDown) {
+        $.ajax({
+            url: "/loads/vinapudeadloads",
+            type: "GET",
+            dataType: "json",
+            success: function(result) {
+                var objs = result.loads;
+                loadsDropDown.empty();
+                for (var i=0, oblen = objs.length; i<oblen; i++) {
+                    var item = objs[i];
+                    addOption(loadsDropDown,item.text,item.oid);
+                }
+            },
+            error: onError
+        });
+    };
+    var fetchVinapuLiveLoads = function(loadsDropDown) {
+        $.ajax({
+            url: "/loads/vinapuliveloads",
+            type: "GET",
+            dataType: "json",
+            success: function(result) {
+                var objs = result.loads;
+                loadsDropDown.empty();
+                for (var i=0, oblen = objs.length; i<oblen; i++) {
+                    var item = objs[i];
+                    addOption(loadsDropDown,item.text,item.oid);
                 }
             },
             error: onError
@@ -83,6 +113,9 @@ HARBORVIEW.utils = (function() {
     return {
         fetchBuildings : fetchBuildings,
         fetchFloorPlanSystems : fetchFloorPlanSystems,
+        fetchAllFloorPlanSystems : fetchAllFloorPlanSystems,
+        fetchVinapuDeadLoads : fetchVinapuDeadLoads,
+        fetchVinapuLiveLoads : fetchVinapuLiveLoads,
         addOption : addOption,
         relativeTop : relativeTop,
         getLeftPos : getLeftPos
@@ -97,26 +130,34 @@ jQuery(document).ready(function() {
         alert('YES!!!');
     });
     */
+
     $("#floorplan").change(function() {
-        var bid = $("#building").val();
         var fid = $("#floorplan").val();
-        HARBORVIEW.utils.fetchFloorPlanSystems(bid,fid,$("#floorplansystems"));
+        if (fid == "na") return false;
+        var bid = $("#building").val();
+        if (fid == "all") {
+            HARBORVIEW.utils.fetchAllFloorPlanSystems(bid,$("#floorplansystems"));
+        }
+        else {
+            HARBORVIEW.utils.fetchFloorPlanSystems(bid,fid,$("#floorplansystems"));
+        }
     });
     $("#building").change(function() {
         var fid = $("#floorplan").val();
-        if (fid != "na")
-        {
-            var bid = $("#building").val();
+        if (fid == "na") return false;
+        var bid = $("#building").val();
+        if (fid == "all") {
+            HARBORVIEW.utils.fetchAllFloorPlanSystems(bid,$("#floorplansystems"));
+        }
+        else {
             HARBORVIEW.utils.fetchFloorPlanSystems(bid,fid,$("#floorplansystems"));
         }
-        /*HARBORVIEW.utils.fetchFloorPlans(bid,$("#floorplansystems"));*/
     });
     $("#project").change(function() {
         var pid = $("#project").val();
         HARBORVIEW.utils.fetchBuildings(pid,$("#building"));
     });
     $("#dlg1-ok").click(function() {
-        alert($("#dlg1-purchasetype").val());
         dlg1.close();
         return false;
     });
@@ -128,13 +169,18 @@ jQuery(document).ready(function() {
         var elem = $(this)[0];
         var relTop = HARBORVIEW.utils.relativeTop(elem) - 50;
         dlg1.style.top = "" + relTop  + "px";
-        dlg1.style.left = "" + HARBORVIEW.utils.getLeftPos(elem) + "px";
-        /*var oid = $(this).attr("data-oid");*/
+        /* dlg1.style.left = "" + HARBORVIEW.utils.getLeftPos(elem) + "px"; */
         var pid = $("#project").val();
         var bid = $("#building").val();
-        $("#dlg1-header").html("Prosjekt: " + pid + ", bygg: " + bid);
-        /*$("#dlg1-oid").val(oid);*/
+        var fid = $("#floorplan").val();
+        $("#dlg1-header").html("Prosjekt: " + pid + ", bygg: " + bid + ", floor plan: " + fid);
+        HARBORVIEW.utils.fetchVinapuDeadLoads($("#dlg1-deadloads"));
+        HARBORVIEW.utils.fetchVinapuLiveLoads($("#dlg1-liveloads"));
         dlg1.show();
+        return false;
+    });
+    $("body").on("click", ".shownewvinapuelement", function() {
+        alert('YES!!!');
         return false;
     });
 })

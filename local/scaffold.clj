@@ -1,8 +1,11 @@
 (ns scaffold
+  (:import [stearnswharf.systems SystemBean])
   (:require
     [net.cgrand.enlive-html :as HTML]
+    [harborview.service.db :as db]
     [harborview.systems.html :as s]
-    [harborview.floorplans.dbx :as d]))
+    [harborview.floorplans.dbx :as d]
+    [harborview.loads.dbx :as ld]))
 
 (defn af
   [x]
@@ -38,3 +41,16 @@
 
 (defn pxx [bid] (e (px bid)))
 
+(defn crsys [pid bid fid sd]
+  (let [s (SystemBean.)]
+    (doto s
+      (.setProjectId pid)
+      (.setBuildingId bid)
+      (.setFloorPlan fid)
+      (.setSd sd)
+      (.setGroupId 1))
+    s))
+
+(def nsys d/new-system)
+
+(def loads ld/fetch-vinapu-loads)

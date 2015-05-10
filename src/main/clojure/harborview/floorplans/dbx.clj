@@ -1,6 +1,6 @@
 (ns harborview.floorplans.dbx
   (:import
-    [stearnswharf.systems ProjectBean FloorPlanBean]
+    [stearnswharf.systems ProjectBean FloorPlanBean SystemBean]
     [stearnswharf.mybatis FloorPlansMapper])
   (:require
     [harborview.service.db :as DB]))
@@ -24,9 +24,19 @@
   (DB/with-session FloorPlansMapper
     (.fetchFloorPlanSystems it building-id floorplan-id)))
 
-(defn new-floorplan [^FloorPlanBean f]
-  (DB/with-session FloorPlansMapper
-    (.newSystem it f)))
+(defn new-system [pid bid fid sd gid]
+  (let [s (SystemBean.)]
+    (doto s
+      (.setProjectId pid)
+      (.setBuildingId bid)
+      (.setFloorPlan fid)
+      (.setSd sd)
+      (.setGroupId gid))
+    (DB/with-session FloorPlansMapper
+      (do
+        (.newSystem it s)
+        (.addToFloorPlans it s)))
+    s))
 
 
 

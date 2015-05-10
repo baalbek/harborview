@@ -2,7 +2,8 @@
   (:require
     [compojure.route :as R]
     [harborview.service.htmlutils :as U]
-    [harborview.systems.html :as SYS])
+    [harborview.systems.html :as SYS]
+    [harborview.loads.html :as LD])
   (:use
    [compojure.handler :only (api)]
    [compojure.core :only (GET defroutes context)]
@@ -12,6 +13,7 @@
 (defroutes main-routes
   (GET "/" request (SYS/my-systems))
   (context "/systems" [] SYS/my-routes)
+  (context "/loads" [] LD/my-routes)
   (R/files "/" {:root "public"})
   (R/resources "/" {:root "public"}))
 

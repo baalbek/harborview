@@ -21,16 +21,24 @@
   [:#project] (U/populate-select (map projects->select (DBF/fetch-projects))))
 
 
-(defn building->json [b]
-  {"oid" (.getOid b), "text" (.toHtml b)})
-
 (defn buildings-for [pid]
   (let [buildings (DBF/fetch-buildings (U/rs pid))]
-    (U/json-response {"buildings" (map building->json buildings)})))
+    (U/json-response {"buildings" (map U/bean->json buildings)})))
 
 
+;You could always write your own append-attr in the same vein as set-attr. Here is my attempt
+
+;(defn append-attr
+;  [& kvs]
+;  (fn [node]
+;    (let [in-map (apply array-map kvs)
+;          old-attrs (:attrs node {})
+;          new-attrs (into {} (for [[k v] old-attrs]
+;                               [k (str v (get in-map k))]))]
+;      (assoc node :attrs new-attrs))))
 
 (HTML/defsnippet floorplan->table "templates/snippets.html" [:.floorplans-form] [^FloorPlanBean f]
+  [:.shownewvinapuelement] (HTML/set-attr :data-oid (.getSystemId f))
   [[:tr (HTML/attr= :class "rows")]]
   (HTML/substitute
     (let [vinapu-elements (.getVinapuElements f)]
@@ -77,6 +85,10 @@
   (GET "/fetchfloorplansystems" [bid fid]
     (let [rows (DBF/fetch-floorplan-systems (U/rs bid) (U/rs fid))]
       (if (empty? rows) (HTML/emit* (empty-floorplan))
-      (HTML/emit* (floorplans rows))))))
+      (HTML/emit* (floorplans rows)))))
+  (PUT "/newsystem" [pid bid fid sd gid]
+    (let [new-sys (DBF/new-system (U/rs pid) (U/rs bid) (U/rs fid) sd (U/rs gid))]
+      (U/json-response {"oid" (.getOid new-sys)}))))
+
 
 

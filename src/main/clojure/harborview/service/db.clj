@@ -23,3 +23,19 @@
      (doto session# .commit .close)
      result#))
 
+
+(comment with-session-multi [mapper & body]
+  `(let [session# ^SqlSession (.openSession (get-factory))
+         ~'it (.getMapper session# ~mapper)]
+     (loop [b# ~body]
+       (if (seq? b#)
+         (do (first b#) (recur (next b#)))))
+   (doto session# .commit .close)))
+
+
+(comment yax [v & body]
+  (loop [b body]
+    (if (seq? b)
+      (do
+        (println ((first b) v))
+        (recur (next b))))))
