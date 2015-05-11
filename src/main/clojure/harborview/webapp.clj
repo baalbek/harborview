@@ -3,6 +3,7 @@
     [compojure.route :as R]
     [harborview.service.htmlutils :as U]
     [harborview.systems.html :as SYS]
+    [harborview.nodes.html :as N]
     [harborview.loads.html :as LD])
   (:use
    [compojure.handler :only (api)]
@@ -14,6 +15,7 @@
   (GET "/" request (SYS/my-systems))
   (context "/systems" [] SYS/my-routes)
   (context "/loads" [] LD/my-routes)
+  (context "/nodes" [] N/my-routes)
   (R/files "/" {:root "public"})
   (R/resources "/" {:root "public"}))
 

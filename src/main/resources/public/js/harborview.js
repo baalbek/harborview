@@ -83,6 +83,7 @@ HARBORVIEW.utils = (function() {
             success: function(result) {
                 var objs = result.loads;
                 loadsDropDown.empty();
+                addOption(loadsDropDown, "-", "-1");
                 for (var i=0, oblen = objs.length; i<oblen; i++) {
                     var item = objs[i];
                     addOption(loadsDropDown,item.text,item.oid);
@@ -91,6 +92,49 @@ HARBORVIEW.utils = (function() {
             error: onError
         });
     };
+    var fetchNodes = function(pid, cosyid, n1, n2) {
+        $.ajax({
+            url: "/nodes/nodes",
+            type: "GET",
+            dataType: "json",
+            data: {
+                "pid" : pid,
+                "cosyid" : cosyid
+            },
+            success: function(result) {
+                var objs = result.nodes;
+                n1.empty();
+                n2.empty();
+                for (var i=0, oblen = objs.length; i<oblen; i++) {
+                    var item = objs[i];
+                    addOption(n1,item.text,item.oid);
+                    addOption(n2,item.text,item.oid);
+                }
+            },
+            error: onError
+        });
+    };
+    /*
+    var fetchCoordSys = function(pid, coordSysDropDown) {
+        $.ajax({
+            url: "/nodes/coordsys",
+            type: "GET",
+            dataType: "json",
+            data: {
+                "pid" : pid
+            },
+            success: function(result) {
+                var objs = result.coordsys;
+                coordSysDropDown.empty();
+                for (var i=0, oblen = objs.length; i<oblen; i++) {
+                    var item = objs[i];
+                    addOption(coordSysDropDown,item.text,item.oid);
+                }
+            },
+            error: onError
+        });
+    };
+    */
     var addOption = function(selectbox,text,value ) {
         selectbox.append($('<option></option>').val(value).html(text));
     };
@@ -116,6 +160,7 @@ HARBORVIEW.utils = (function() {
         fetchAllFloorPlanSystems : fetchAllFloorPlanSystems,
         fetchVinapuDeadLoads : fetchVinapuDeadLoads,
         fetchVinapuLiveLoads : fetchVinapuLiveLoads,
+        fetchNodes : fetchNodes,
         addOption : addOption,
         relativeTop : relativeTop,
         getLeftPos : getLeftPos
@@ -125,13 +170,7 @@ HARBORVIEW.utils = (function() {
 
 jQuery(document).ready(function() {
     var dlg1 = document.querySelector("#dlg1");
-    /*
-    $("body").on("click", ".jax", function() {
-        alert('YES!!!');
-    });
-    */
-
-    $("#floorplan").change(function() {
+    var fetchFloorPlans = function() {
         var fid = $("#floorplan").val();
         if (fid == "na") return false;
         var bid = $("#building").val();
@@ -141,29 +180,36 @@ jQuery(document).ready(function() {
         else {
             HARBORVIEW.utils.fetchFloorPlanSystems(bid,fid,$("#floorplansystems"));
         }
+    };
+    $("#floorplan").change(function() {
+        fetchFloorPlans();
     });
     $("#building").change(function() {
-        var fid = $("#floorplan").val();
-        if (fid == "na") return false;
-        var bid = $("#building").val();
-        if (fid == "all") {
-            HARBORVIEW.utils.fetchAllFloorPlanSystems(bid,$("#floorplansystems"));
-        }
-        else {
-            HARBORVIEW.utils.fetchFloorPlanSystems(bid,fid,$("#floorplansystems"));
-        }
+        fetchFloorPlans();
     });
     $("#project").change(function() {
         var pid = $("#project").val();
         HARBORVIEW.utils.fetchBuildings(pid,$("#building"));
     });
+    var resetDlg1 = function() {
+        $("#dlg1-n1").empty();
+        $("#dlg1-n2").empty();
+        $("#dlg1-coordsys").val("-1");
+    };
     $("#dlg1-ok").click(function() {
         dlg1.close();
+        resetDlg1();
         return false;
     });
     $("#dlg1-close").click(function() {
         dlg1.close();
+        resetDlg1();
         return false;
+    });
+    $("#dlg1-coordsys").change(function() {
+        var cosyid = $("#dlg1-coordsys").val();
+        var pid = $("#project").val();
+        HARBORVIEW.utils.fetchNodes(pid,cosyid,$("#dlg1-n1"),$("#dlg1-n2"));
     });
     $("#shownewsystem").click(function() {
         var elem = $(this)[0];
@@ -176,11 +222,13 @@ jQuery(document).ready(function() {
         $("#dlg1-header").html("Prosjekt: " + pid + ", bygg: " + bid + ", floor plan: " + fid);
         HARBORVIEW.utils.fetchVinapuDeadLoads($("#dlg1-deadloads"));
         HARBORVIEW.utils.fetchVinapuLiveLoads($("#dlg1-liveloads"));
+        // HARBORVIEW.utils.fetchCoordSys(pid, $("#dlg1-coordsys"));
         dlg1.show();
         return false;
     });
     $("body").on("click", ".shownewvinapuelement", function() {
-        alert('YES!!!');
+        var oid = $(this).attr("data-oid");
+        alert(oid);
         return false;
     });
 })
