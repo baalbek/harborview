@@ -1,6 +1,6 @@
 (ns harborview.floorplans.dbx
   (:import
-    [stearnswharf.systems ProjectBean FloorPlanBean SystemBean]
+    [stearnswharf.systems ProjectBean FloorPlanBean SystemBean VinapuElementBean ]
     [stearnswharf.mybatis FloorPlansMapper])
   (:require
     [harborview.service.db :as DB]))
@@ -38,5 +38,21 @@
         (.addToFloorPlans it s)))
     s))
 
+;oid | sys_id |    dsc     | n1 | n2 | plw | w1  | w2 | angle | element_type | wnode
+
+(defn new-vinapu-element [sys-id dsc n1 n2 plw w1]
+  (let [v (VinapuElementBean.)]
+    (doto v
+      (.setSystemId sys-id)
+      (.setDsc dsc)
+      (.setN1 n1)
+      (.setN2 n2)
+      (.setPlw plw)
+      (.setW1 w1))
+    (DB/with-session FloorPlansMapper
+      (do
+        (.newVinapuElement it v)))
+    v))
 
 
+(defn new-vinapu-element-load [element-id load-id form-factor])

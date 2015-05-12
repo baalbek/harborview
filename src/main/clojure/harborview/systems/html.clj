@@ -88,7 +88,15 @@
       (HTML/emit* (floorplans rows)))))
   (PUT "/newsystem" [pid bid fid sd gid]
     (let [new-sys (DBF/new-system (U/rs pid) (U/rs bid) (U/rs fid) sd (U/rs gid))]
-      (U/json-response {"oid" (.getOid new-sys)}))))
-
-
+      (U/json-response {"oid" (.getOid new-sys)})))
+  (PUT "/newvinapuelement" [sys dsc n1 n2 plw w1 dload dff lload lff]
+    (let [new-vinapu (DBF/new-vinapu-element
+                       (U/rs sys)
+                       dsc
+                       (U/rs n1)
+                       (U/rs n2)
+                       (U/rs plw)
+                       (U/rs w1))]
+      (prn sys dsc n1 n2 plw w1 dload dff lload lff)
+      (U/json-response {"oid" (.getOid new-vinapu)}))))
 

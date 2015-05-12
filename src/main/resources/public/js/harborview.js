@@ -2,139 +2,6 @@ var HARBORVIEW = HARBORVIEW || {};
 
 HARBORVIEW.utils = (function() {
     "use strict";
-    var fetchFloorPlanSystems = function(bid, fid, floorplanSystemElement) {
-        if (bid === "-1") return;
-        $.ajax({
-            url: "/systems/fetchfloorplansystems",
-            type: "GET",
-            dataType: "html",
-            data: {
-                "bid" : bid,
-                "fid" : fid
-            },
-            success: function(result) {
-                floorplanSystemElement.html(result);
-            },
-            error: onError
-        });
-    };
-    var fetchAllFloorPlanSystems = function(bid, floorplansElement) {
-        if (bid === "-1") return;
-        $.ajax({
-            url: "/systems/fetchfloorplans",
-            type: "GET",
-            dataType: "html",
-            data: {
-                "bid" : bid
-            },
-            success: function(result) {
-                floorplansElement.html(result);
-            },
-            error: onError
-        });
-    };
-    var fetchBuildings = function(pid, buildingsDropDown) {
-        if (pid === "-1") return;
-        $.ajax({
-            url: "/systems/fetchbuildings",
-            type: "GET",
-            dataType: "json",
-            data: {
-                "pid" : pid
-            },
-            success: function(result) {
-                var objs = result.buildings;
-                buildingsDropDown.empty();
-                if (objs.length === 0) {
-                    addOption(buildingsDropDown, "-1", "No buildings");
-                }
-                else {
-                    addOption(buildingsDropDown, "-1", "-");
-                }
-                for (var i=0, oblen = objs.length; i<oblen; i++) {
-                    var item = objs[i];
-                    addOption(buildingsDropDown,item.text,item.oid);
-                }
-            },
-            error: onError
-        });
-    };
-    var fetchVinapuDeadLoads = function(loadsDropDown) {
-        $.ajax({
-            url: "/loads/vinapudeadloads",
-            type: "GET",
-            dataType: "json",
-            success: function(result) {
-                var objs = result.loads;
-                loadsDropDown.empty();
-                for (var i=0, oblen = objs.length; i<oblen; i++) {
-                    var item = objs[i];
-                    addOption(loadsDropDown,item.text,item.oid);
-                }
-            },
-            error: onError
-        });
-    };
-    var fetchVinapuLiveLoads = function(loadsDropDown) {
-        $.ajax({
-            url: "/loads/vinapuliveloads",
-            type: "GET",
-            dataType: "json",
-            success: function(result) {
-                var objs = result.loads;
-                loadsDropDown.empty();
-                addOption(loadsDropDown, "-", "-1");
-                for (var i=0, oblen = objs.length; i<oblen; i++) {
-                    var item = objs[i];
-                    addOption(loadsDropDown,item.text,item.oid);
-                }
-            },
-            error: onError
-        });
-    };
-    var fetchNodes = function(pid, cosyid, n1, n2) {
-        $.ajax({
-            url: "/nodes/nodes",
-            type: "GET",
-            dataType: "json",
-            data: {
-                "pid" : pid,
-                "cosyid" : cosyid
-            },
-            success: function(result) {
-                var objs = result.nodes;
-                n1.empty();
-                n2.empty();
-                for (var i=0, oblen = objs.length; i<oblen; i++) {
-                    var item = objs[i];
-                    addOption(n1,item.text,item.oid);
-                    addOption(n2,item.text,item.oid);
-                }
-            },
-            error: onError
-        });
-    };
-    /*
-    var fetchCoordSys = function(pid, coordSysDropDown) {
-        $.ajax({
-            url: "/nodes/coordsys",
-            type: "GET",
-            dataType: "json",
-            data: {
-                "pid" : pid
-            },
-            success: function(result) {
-                var objs = result.coordsys;
-                coordSysDropDown.empty();
-                for (var i=0, oblen = objs.length; i<oblen; i++) {
-                    var item = objs[i];
-                    addOption(coordSysDropDown,item.text,item.oid);
-                }
-            },
-            error: onError
-        });
-    };
-    */
     var addOption = function(selectbox,text,value ) {
         selectbox.append($('<option></option>').val(value).html(text));
     };
@@ -155,30 +22,188 @@ HARBORVIEW.utils = (function() {
         return r.left;
     };
     return {
-        fetchBuildings : fetchBuildings,
-        fetchFloorPlanSystems : fetchFloorPlanSystems,
-        fetchAllFloorPlanSystems : fetchAllFloorPlanSystems,
-        fetchVinapuDeadLoads : fetchVinapuDeadLoads,
-        fetchVinapuLiveLoads : fetchVinapuLiveLoads,
-        fetchNodes : fetchNodes,
         addOption : addOption,
-        relativeTop : relativeTop,
-        getLeftPos : getLeftPos
+        onError : onError,
+        relativeTop : relativeTop
     };
 })();
 
+HARBORVIEW.floorplans = (function() {
+    "use strict";
+    var myFetch = function(myUrl, args, fps) {
+        $.ajax({
+            url: myUrl,
+            type: "GET",
+            dataType: "html",
+            data: args,
+            success: function(result) {
+                fps.html(result);
+            },
+            error: HARBORVIEW.utils.onError
+        });
+    };
+    var fetchFloorPlanSystems = function(bid, fid, floorplanSystemElement) {
+        if (bid === "-1") return;
+        myFetch("/systems/fetchfloorplansystems", { "bid" : bid, "fid" : fid }, floorplanSystemElement);
+    };
+    var fetchAllFloorPlanSystems = function(bid, floorplanSystemElement) {
+        if (bid === "-1") return;
+        myFetch("/systems/fetchfloorplans", { "bid" : bid }, floorplanSystemElement);
+    };
+    var newSystem = function(pid, bid, fid, sd, gid) {
+        // alert("Pid: " + pid + ", bid: " + bid + ", fid: " + fid + ", sd: " + sd + ", gid: " + gid);
+        $.ajax({
+            url: "/systems/newsystem",
+            type: "PUT",
+            dataType: "json",
+            data: {
+                "pid" : pid,
+                "bid" : pid,
+                "fid" : fid,
+                "sd"  : sd,
+                "gid" : gid
+            },
+            success: function(result) {
+                // alert("Updated with new system: " + result.oid);
+            },
+            error: HARBORVIEW.utils.onError
+        });
+    };
+    var newVinapuElement = function(args) {
+        //oid | sys_id |    dsc     | n1 | n2 | plw | w1  | w2 | angle | element_type | wnode
+        $.ajax({
+            url: "/systems/newvinapuelement",
+            type: "PUT",
+            dataType: "json",
+            data : args,
+            success: function(result) {
+                alert("Updated with new vinapu element: " + result.oid);
+            },
+            error: HARBORVIEW.utils.onError
+        });
+    };
+    return {
+        fetchFloorPlanSystems : fetchFloorPlanSystems,
+        fetchAllFloorPlanSystems : fetchAllFloorPlanSystems,
+        newSystem : newSystem,
+        newVinapuElement : newVinapuElement
+    };
+})();
+
+HARBORVIEW.buildings = (function() {
+
+    var fetchBuildings = function(pid, buildingsDropDown) {
+        if (pid === "-1") return;
+        $.ajax({
+            url: "/systems/fetchbuildings",
+            type: "GET",
+            dataType: "json",
+            data: {
+                "pid" : pid
+            },
+            success: function(result) {
+                var objs = result.buildings;
+                buildingsDropDown.empty();
+                if (objs.length === 0) {
+                    HARBORVIEW.utils.addOption(buildingsDropDown, "-1", "No buildings");
+                }
+                else {
+                    HARBORVIEW.utils.addOption(buildingsDropDown, "-1", "-");
+                }
+                for (var i=0, oblen = objs.length; i<oblen; i++) {
+                    var item = objs[i];
+                    HARBORVIEW.utils.addOption(buildingsDropDown,item.text,item.oid);
+                }
+            },
+            error: HARBORVIEW.utils.onError
+        });
+    };
+    return {
+        fetchBuildings : fetchBuildings
+    };
+})();
+
+HARBORVIEW.loads = (function() {
+    var fetchVinapuDeadLoads = function(loadsDropDown) {
+        $.ajax({
+            url: "/loads/vinapudeadloads",
+            type: "GET",
+            dataType: "json",
+            success: function(result) {
+                var objs = result.loads;
+                loadsDropDown.empty();
+                for (var i=0, oblen = objs.length; i<oblen; i++) {
+                    var item = objs[i];
+                    HARBORVIEW.utils.addOption(loadsDropDown,item.text,item.oid);
+                }
+            },
+            error: HARBORVIEW.utils.onError
+        });
+    };
+    var fetchVinapuLiveLoads = function(loadsDropDown) {
+        $.ajax({
+            url: "/loads/vinapuliveloads",
+            type: "GET",
+            dataType: "json",
+            success: function(result) {
+                var objs = result.loads;
+                loadsDropDown.empty();
+                HARBORVIEW.utils.addOption(loadsDropDown, "-", "-1");
+                for (var i=0, oblen = objs.length; i<oblen; i++) {
+                    var item = objs[i];
+                    HARBORVIEW.utils.addOption(loadsDropDown,item.text,item.oid);
+                }
+            },
+            error: HARBORVIEW.utils.onError
+        });
+    };
+    return {
+        fetchVinapuDeadLoads : fetchVinapuDeadLoads,
+        fetchVinapuLiveLoads : fetchVinapuLiveLoads
+    };
+})();
+
+HARBORVIEW.nodes = (function() {
+    var fetchNodes = function(pid, cosyid, n1, n2) {
+        $.ajax({
+            url: "/nodes/nodes",
+            type: "GET",
+            dataType: "json",
+            data: {
+                "pid" : pid,
+                "cosyid" : cosyid
+            },
+            success: function(result) {
+                var objs = result.nodes;
+                n1.empty();
+                n2.empty();
+                for (var i=0, oblen = objs.length; i<oblen; i++) {
+                    var item = objs[i];
+                    HARBORVIEW.utils.addOption(n1,item.text,item.oid);
+                    HARBORVIEW.utils.addOption(n2,item.text,item.oid);
+                }
+            },
+            error: HARBORVIEW.utils.onError
+        });
+    };
+
+    return {
+        fetchNodes : fetchNodes
+    };
+})();
 
 jQuery(document).ready(function() {
     var dlg1 = document.querySelector("#dlg1");
+    var dlg2 = document.querySelector("#dlg2");
     var fetchFloorPlans = function() {
         var fid = $("#floorplan").val();
         if (fid == "na") return false;
         var bid = $("#building").val();
         if (fid == "all") {
-            HARBORVIEW.utils.fetchAllFloorPlanSystems(bid,$("#floorplansystems"));
+            HARBORVIEW.floorplans.fetchAllFloorPlanSystems(bid,$("#floorplansystems"));
         }
         else {
-            HARBORVIEW.utils.fetchFloorPlanSystems(bid,fid,$("#floorplansystems"));
+            HARBORVIEW.floorplans.fetchFloorPlanSystems(bid,fid,$("#floorplansystems"));
         }
     };
     $("#floorplan").change(function() {
@@ -189,46 +214,80 @@ jQuery(document).ready(function() {
     });
     $("#project").change(function() {
         var pid = $("#project").val();
-        HARBORVIEW.utils.fetchBuildings(pid,$("#building"));
+        HARBORVIEW.buildings.fetchBuildings(pid,$("#building"));
     });
-    var resetDlg1 = function() {
-        $("#dlg1-n1").empty();
-        $("#dlg1-n2").empty();
-        $("#dlg1-coordsys").val("-1");
-    };
+    //-------------------------------------- dlg1 --------------------------------
     $("#dlg1-ok").click(function() {
         dlg1.close();
-        resetDlg1();
+        var pid = $("#project").val();
+        var bid = $("#building").val();
+        var fid = $("#floorplan").val();
+        var sd  = $("#dlg1-sd").val();
+        var gid = $("#dlg1-group").val();
+        HARBORVIEW.floorplans.newSystem(pid,bid,fid,sd,gid);
+        fetchFloorPlans();
         return false;
     });
     $("#dlg1-close").click(function() {
         dlg1.close();
-        resetDlg1();
         return false;
-    });
-    $("#dlg1-coordsys").change(function() {
-        var cosyid = $("#dlg1-coordsys").val();
-        var pid = $("#project").val();
-        HARBORVIEW.utils.fetchNodes(pid,cosyid,$("#dlg1-n1"),$("#dlg1-n2"));
     });
     $("#shownewsystem").click(function() {
         var elem = $(this)[0];
         var relTop = HARBORVIEW.utils.relativeTop(elem) - 50;
         dlg1.style.top = "" + relTop  + "px";
-        /* dlg1.style.left = "" + HARBORVIEW.utils.getLeftPos(elem) + "px"; */
         var pid = $("#project").val();
         var bid = $("#building").val();
         var fid = $("#floorplan").val();
         $("#dlg1-header").html("Prosjekt: " + pid + ", bygg: " + bid + ", floor plan: " + fid);
-        HARBORVIEW.utils.fetchVinapuDeadLoads($("#dlg1-deadloads"));
-        HARBORVIEW.utils.fetchVinapuLiveLoads($("#dlg1-liveloads"));
-        // HARBORVIEW.utils.fetchCoordSys(pid, $("#dlg1-coordsys"));
         dlg1.show();
         return false;
     });
+    //-------------------------------------- dlg2 --------------------------------
+    var resetAndCloseDlg2 = function() {
+        dlg2.close();
+        $("#dlg2-n1").empty();
+        $("#dlg2-n2").empty();
+        $("#dlg2-coordsys").val("-1");
+    };
+    $("#dlg2-close").click(function() {
+        resetAndCloseDlg2();
+        return false;
+    });
+    $("#dlg2-ok").click(function() {
+        //oid | sys_id |    dsc     | n1 | n2 | plw | w1  | w2 | angle | element_type | wnode
+        var args = {
+            "sys"   : $("#dlg2-sys").val(),
+            "dsc"   : $("#dlg2-dsc").val(),
+            "n1"    : $("#dlg2-n1").val(),
+            "n2"    : $("#dlg2-n2").val(),
+            "plw"   : $("#dlg2-plw").val(),
+            "w1"    : $("#dlg2-w1").val(),
+            "dload" : $("#dlg2-deadloads").val(),
+            "dff"   : $("#dlg2-dff").val(),
+            "lload" : $("#dlg2-liveloads").val(),
+            "lff"   : $("#dlg2-lff").val()
+            };
+        HARBORVIEW.floorplans.newVinapuElement(args);
+        resetAndCloseDlg2();
+        fetchFloorPlans();
+        return false;
+    });
+    $("#dlg2-coordsys").change(function() {
+        var cosyid = $("#dlg2-coordsys").val();
+        var pid = $("#project").val();
+        HARBORVIEW.nodes.fetchNodes(pid,cosyid,$("#dlg2-n1"),$("#dlg2-n2"));
+    });
     $("body").on("click", ".shownewvinapuelement", function() {
+        var elem = $(this)[0];
+        var relTop = HARBORVIEW.utils.relativeTop(elem) - 50;
+        dlg2.style.top = "" + relTop  + "px";
         var oid = $(this).attr("data-oid");
-        alert(oid);
+        $("#dlg2-sys").val(oid);
+        $("#dlg2-header").html("System id: " + oid);
+        HARBORVIEW.loads.fetchVinapuDeadLoads($("#dlg2-deadloads"));
+        HARBORVIEW.loads.fetchVinapuLiveLoads($("#dlg2-liveloads"));
+        dlg2.show();
         return false;
     });
 })
