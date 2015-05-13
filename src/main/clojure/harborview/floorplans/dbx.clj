@@ -1,6 +1,11 @@
 (ns harborview.floorplans.dbx
   (:import
-    [stearnswharf.systems ProjectBean FloorPlanBean SystemBean VinapuElementBean ]
+    [stearnswharf.systems 
+      ProjectBean 
+      FloorPlanBean 
+      SystemBean 
+      VinapuElementBean 
+      VinapuElementLoadBean ]
     [stearnswharf.mybatis FloorPlansMapper])
   (:require
     [harborview.service.db :as DB]))
@@ -50,9 +55,12 @@
       (.setPlw plw)
       (.setW1 w1))
     (DB/with-session FloorPlansMapper
-      (do
-        (.newVinapuElement it v)))
+      (.newVinapuElement it v))
     v))
 
 
-(defn new-vinapu-element-load [element-id load-id form-factor])
+(defn new-vinapu-element-load [element-id load-id form-factor]
+  (let [v (VinapuElementLoadBean. element-id load-id form-factor)]
+    (DB/with-session FloorPlansMapper
+      (.newVinapuElementLoad it v))))
+
