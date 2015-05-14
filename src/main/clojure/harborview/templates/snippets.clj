@@ -10,7 +10,8 @@
   )
 
 (HTML/defsnippet head "templates/head.html" [:head] [title & [myscript]]
-  [:title] (HTML/content title))
+  [:title] (HTML/content title)
+  [:#myscript] (when myscript (HTML/set-attr :src myscript)))
 
 (HTML/defsnippet ribbon "templates/ribbon.html" [:.ribbon-area] []
   identity)

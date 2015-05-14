@@ -1,6 +1,6 @@
 body {
-  color: #000;
-  background-color: #fff;
+  color: black;
+  background-color: cornsilk;
   font-family: Verdana, Arial, serif;
   font-size: 0.9em;
   margin: 0;
@@ -21,6 +21,61 @@ nav a, nav a:link, nav a:visited, nav a:active, nav a.current {
   margin: 0px;
   text-decoration: none;
   color: black; }
+
+/* Reset */
+*,
+*:after,
+*:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+.ribbon-area {
+  width: 100%;
+  height: 60px;
+  position: absolute;
+  top: 37px;
+  left: 0px;
+  z-index: 1;
+  background: #50607b;
+  text-align: center; }
+
+.ribbon-nav {
+  width: 50%;
+  height: 14px;
+  position: absolute;
+  top: 24px;
+  left: 25%;
+  z-index: 2;
+  text-align: center; }
+
+.main {
+  position: absolute;
+  top: 107px;
+  z-index: 0;
+  background: cornsilk;
+  padding: 0px;
+  font-size: 0.9em;
+  left: 5%;
+  width: 90%; }
+
+.main2 {
+  position: absolute;
+  top: 107px;
+  z-index: 0;
+  background: cornsilk;
+  padding: 0px;
+  font-size: 0.9em;
+  left: 5%;
+  width: 90%; }
+
+.main .left, .main2 .left {
+  float: left;
+  width: 50%; }
+
+.main .right, .main2 .right {
+  float: right;
+  width: 50%; }
 
 table.std {
   border-width: 1px 1px 1px 1px;
@@ -54,3 +109,84 @@ tr.inactive td {
 td .ajax-dlg {
   background-color: black;
   padding: 5px 10px 5px 10px; }
+
+/* Reset */
+*,
+*:after,
+*:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+.hrmenu {
+  width: 100%;
+  /*margin-top: 2em;*/
+  /*border-bottom: 4px solid #47a3da;*/ }
+
+/* general ul style */
+.hrmenu ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none; }
+
+/* first level ul style */
+.hrmenu > ul,
+.hrmenu .hrsub-inner {
+  width: 90%;
+  max-width: 70em;
+  margin: 0 auto;
+  padding: 0 1.875em; }
+
+.hrmenu > ul > li {
+  display: inline-block; }
+
+.hrmenu > ul > li > a {
+  /*font-weight: 700;*/
+  /*padding: 1em 2em;*/
+  color: cornsilk;
+  display: inline-block; }
+
+.hrmenu > ul > li > a:hover {
+  color: #47a3da; }
+
+.hrmenu > ul > li.hropen a,
+.hrmenu > ul > li.hropen > a:hover {
+  color: #fff;
+  /*background: #47a3da;*/
+  /*background: $hr-bg;*/ }
+
+/* sub-menu */
+.hrmenu .hrsub {
+  display: none;
+  position: absolute;
+  /*background: #47a3da;*/
+  background: rgba(95, 125, 125, 0.75);
+  width: 100%;
+  left: 0; }
+
+.hropen .hrsub {
+  display: block;
+  padding-bottom: 3em; }
+
+.hrmenu .hrsub-inner > div {
+  width: 33%;
+  float: left;
+  padding: 0 2em 0; }
+
+.hrmenu .hrsub-inner:before,
+.hrmenu .hrsub-inner:after {
+  content: " ";
+  display: table; }
+
+.hrmenu .hrsub-inner:after {
+  clear: both; }
+
+.hrmenu .hrsub-inner > div a {
+  line-height: 2em; }
+
+.hrsub h4 {
+  color: #afdefa;
+  padding: 2em 0 0.6em;
+  margin: 0;
+  font-size: 160%;
+  font-weight: 300; }

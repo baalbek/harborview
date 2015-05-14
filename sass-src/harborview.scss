@@ -1,5 +1,5 @@
 $fs : 0.9em;
-$bg-color: #cca;
+$bg-color: #FFF8DC;
 //--------------- Foreground Colors ------------------>>>
 $nav-color: #000;
 $color: #000;
@@ -7,10 +7,14 @@ $a-color: #000;
 //--------------- Table Colors ------------------>>>
 $table-border-color: #000;
 $td-ajax-color: #000;
+//--------------- Ribbon Colors ------------------>>>
+$bg-ribbon: #50607B;
+//--------------- Main Colors------------------>>>
+$bg-main: #FFF8DC;
 
 body {
     color: $color;
-    background-color: #fff;
+    background-color: $bg-color;
     font-family: Verdana, Arial, serif;
     font-size: $fs; margin: 0; padding: 0;
 }
@@ -40,13 +44,13 @@ nav a {
 
 
 
-//@import "ribbon";
+@import "ribbon";
 
-//@import "main";
+@import "main";
 
 @import "table-std";
 
-//@import "hrmenu";
+@import "hrmenu";
 
 //@import "jquery-ui-1.10.3.custom";
 

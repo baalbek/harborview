@@ -252,7 +252,7 @@ jQuery(document).ready(function() {
     });
     $("#shownewsystem").click(function() {
         var elem = $(this)[0];
-        var relTop = HARBORVIEW.utils.relativeTop(elem) - 50;
+        var relTop = HARBORVIEW.utils.relativeTop(elem);
         dlg1.style.top = "" + relTop  + "px";
         var pid = $("#project").val();
         var bid = $("#building").val();
@@ -319,7 +319,7 @@ jQuery(document).ready(function() {
     //-------------------------------------- body.on("click") --------------------------------
     $("body").on("click", ".shownewvinapuelload", function() {
         var elem = $(this)[0];
-        var relTop = HARBORVIEW.utils.relativeTop(elem) - 50;
+        var relTop = HARBORVIEW.utils.relativeTop(elem) - 100;
         dlg3.style.top = "" + relTop  + "px";
         var oid = $(this).attr("data-oid");
         $("#dlg3-oid").val(oid);

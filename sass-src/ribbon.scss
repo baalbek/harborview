@@ -1,0 +1,31 @@
+
+/* Reset */
+*,
+*:after,
+*:before {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.ribbon-area {
+  	width: 100%;
+  	height: 60px;
+  	position: absolute;
+  	top: 37px;
+  	left: 0px;
+  	z-index: 1;
+    background: $bg-ribbon;
+    text-align:center;
+}
+
+.ribbon-nav {
+  	width: 50%;
+  	height: 14px;
+   	position: absolute;
+   	top: 24px;
+   	left: 25%;
+    z-index: 2;
+    text-align:center;
+}
+
