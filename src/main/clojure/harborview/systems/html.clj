@@ -43,24 +43,28 @@
   (HTML/substitute
     (let [vinapu-elements (.getVinapuElements f)]
       (map (fn [^VinapuElementBean x]
-             {:tag :tr :content [
-                                  (U/num->td (.getOid x))
-                                  (U/num->td (.getN1 x))
-                                  (U/td (.getN1dsc x))
-                                  (U/num->td (.getN2 x))
-                                  (U/td (.getN2dsc x))
-                                  (U/num->td (.getPlw x))
-                                  (U/num->td (.getW1 x))
-                                  (U/num->td (.getW2 x))
-                                  (U/num->td (.getWnode x))
-                                  (U/num->td (.getLoadId x))
-                                  (U/td2 (.getLoadDsc x))
-                                  (U/num->td (.getLoadFactor x))
-                                  (U/num->td (.getFormFactor x))
-                                  (U/num->td (.getLoadCategory x))
-                                  (U/num2->td (.getServiceLimit x))
-                                  (U/num2->td (.getUltimateLimit x))
-                                  ]})
+             (let [oid (str (.getOid x))]
+             {:tag :tr
+                :content [
+                    (U/td2 [{:tag :a
+                             :attrs {:href "#" :class "shownewvinapuelload" :data-oid oid}
+                             :content [(str "[ " oid " ] " (.getDsc x))]}])
+                      (U/num->td (.getN1 x))
+                      (U/td (.getN1dsc x))
+                      (U/num->td (.getN2 x))
+                      (U/td (.getN2dsc x))
+                      (U/num->td (.getPlw x))
+                      (U/num->td (.getW1 x))
+                      (U/num->td (.getW2 x))
+                      (U/num->td (.getWnode x))
+                      (U/num->td (.getLoadId x))
+                      (U/td2 (.getLoadDsc x))
+                      (U/num->td (.getLoadFactor x))
+                      (U/num->td (.getFormFactor x))
+                      (U/num->td (.getLoadCategory x))
+                      (U/num2->td (.getServiceLimit x))
+                      (U/num2->td (.getUltimateLimit x))
+                      ]}))
         vinapu-elements))))
 
 (defn floorplans [rows]
@@ -108,7 +112,18 @@
                        w1*)]
       ;(prn sys dsc n1 n2 plw w1 dload dff lload lff)
       (let [oid (.getOid new-vinapu)]
-        (DBF/new-vinapu-element-load oid dload* dff*)
-        (DBF/new-vinapu-element-load oid lload* lff*)
-        (U/json-response {"oid" (.getOid new-vinapu)})))))
+        (if (> dload* 0) (DBF/new-vinapu-element-load oid dload* dff*))
+        (if (> lload* 0) (DBF/new-vinapu-element-load oid lload* lff*))
+        (U/json-response {"oid" (.getOid new-vinapu)}))))
+  (PUT "/newvinapuelementloads" [oid dload dff lload lff]
+    (let [oid* (U/rs oid)
+          dload* (U/rs dload)
+          dff* (U/rs dff)
+          lload* (U/rs lload)
+          lff* (U/rs lff)]
+      (if (> dload* 0) (DBF/new-vinapu-element-load oid* dload* dff*))
+      (if (> lload* 0) (DBF/new-vinapu-element-load oid* lload* lff*))
+      (U/json-response {"result" "ok"}))))
+
+
 

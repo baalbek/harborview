@@ -1,6 +1,7 @@
 (ns scaffold
   (:require
-    [harborview.floorplans.dbx :as FDB]
+    [harborview.floorplans.dbx :as DBF]
+    [harborview.systems.html :as SH]
     [harborview.nodes.html :as NH]
     [harborview.nodes.dbx :as NDB]))
 
@@ -9,4 +10,8 @@
   (filter #(and (sequential? %) (not-any? sequential? %))
     (rest (tree-seq #(and (sequential? %) (some sequential? %)) seq x))))
 
-(def vl FDB/new-vinapu-element-load)
+
+(defn buildings [pid] (SH/buildings-for pid))
+
+(defn new-sys [pid bid fid sd gid]
+  (DBF/new-system pid bid fid sd gid))

@@ -80,43 +80,41 @@ HARBORVIEW.floorplans = (function() {
         if (bid === "-1") return;
         myFetch("/systems/fetchfloorplans", { "bid" : bid }, floorplanSystemElement);
     };
-    var newSystem = function(pid, bid, fid, sd, gid) {
-        $.ajax({
-            url: "/systems/newsystem",
-            type: "PUT",
-            dataType: "json",
-            data: {
-                "pid" : pid,
-                "bid" : pid,
-                "fid" : fid,
-                "sd"  : sd,
-                "gid" : gid
-            },
-            success: function(result) {
-                // alert("Updated with new system: " + result.oid);
-            },
-            error: HARBORVIEW.utils.onError
-        });
+    var newSystem = function(pid, bid, fid, sd, gid, onSuccess) {
+        if (pid < 0) {
+            alert("Project id must be set!");
+            return;
+        }
+        if (bid < 0) {
+            alert("Building must be set!");
+            return;
+        }
+        if ((fid === "na") || (fid == "all")) {
+            alert("Floor must be set!");
+            return;
+        }
+        HARBORVIEW.utils.jsonPut("/systems/newsystem",
+                                    {
+                                        "pid" : pid,
+                                        "bid" : bid,
+                                        "fid" : fid,
+                                        "sd"  : sd,
+                                        "gid" : gid
+                                    },
+                                    onSuccess);
     };
     var newVinapuElement = function(args, onSuccess) {
-        //oid | sys_id |    dsc     | n1 | n2 | plw | w1  | w2 | angle | element_type | wnode
-        $.ajax({
-            url: "/systems/newvinapuelement",
-            type: "PUT",
-            dataType: "json",
-            data : args,
-            success: function(result) {
-                //alert("Updated with new vinapu element: " + result.oid);
-                onSuccess(result);
-            },
-            error: HARBORVIEW.utils.onError
-        });
+        HARBORVIEW.utils.jsonPut("/systems/newvinapuelement", args, onSuccess);
+    };
+    var newVinapuElementLoads = function(args, onSuccess) {
+        HARBORVIEW.utils.jsonPut("/systems/newvinapuelementloads", args, onSuccess);
     };
     return {
         fetchFloorPlanSystems : fetchFloorPlanSystems,
         fetchAllFloorPlanSystems : fetchAllFloorPlanSystems,
         newSystem : newSystem,
-        newVinapuElement : newVinapuElement
+        newVinapuElement : newVinapuElement,
+        newVinapuElementLoads : newVinapuElementLoads
     };
 })();
 
@@ -130,10 +128,10 @@ HARBORVIEW.buildings = (function() {
                                     var objs = result.buildings;
                                     buildingsDropDown.empty();
                                     if (objs.length === 0) {
-                                        HARBORVIEW.utils.addOption(buildingsDropDown, "-1", "No buildings");
+                                        HARBORVIEW.utils.addOption(buildingsDropDown, "No buildings", "-1");
                                     }
                                     else {
-                                        HARBORVIEW.utils.addOption(buildingsDropDown, "-1", "-");
+                                        HARBORVIEW.utils.addOption(buildingsDropDown, "-", "-1");
                                     }
                                     for (var i=0, oblen = objs.length; i<oblen; i++) {
                                         var item = objs[i];
@@ -153,6 +151,10 @@ HARBORVIEW.loads = (function() {
                                 function(result) {
                                     var objs = result.loads;
                                     loadsDropDown.empty();
+                                    /*if (canBeNull === true) {
+                                        HARBORVIEW.utils.addOption(loadsDropDown, "-", "-1");
+                                    };*/
+                                    HARBORVIEW.utils.addOption(loadsDropDown, "-", "-1");
                                     for (var i=0, oblen = objs.length; i<oblen; i++) {
                                         var item = objs[i];
                                         HARBORVIEW.utils.addOption(loadsDropDown,item.text,item.oid);
@@ -239,8 +241,9 @@ jQuery(document).ready(function() {
         var fid = $("#floorplan").val();
         var sd  = $("#dlg1-sd").val();
         var gid = $("#dlg1-group").val();
-        HARBORVIEW.floorplans.newSystem(pid,bid,fid,sd,gid);
-        fetchFloorPlans();
+        HARBORVIEW.floorplans.newSystem(pid,bid,fid,sd,gid, function(result) {
+            fetchFloorPlans();
+        });
         return false;
     });
     $("#dlg1-close").click(function() {
@@ -293,6 +296,37 @@ jQuery(document).ready(function() {
         var cosyid = $("#dlg2-coordsys").val();
         var pid = $("#project").val();
         HARBORVIEW.nodes.fetchNodes(pid,cosyid,$("#dlg2-n1"),$("#dlg2-n2"));
+    });
+    //-------------------------------------- dlg3 --------------------------------
+    $("#dlg3-close").click(function() {
+        dlg3.close();
+        return false;
+    });
+    $("#dlg3-ok").click(function() {
+        var args = {
+            "oid"   : $("#dlg3-oid").val(),
+            "dload" : $("#dlg3-deadloads").val(),
+            "dff"   : $("#dlg3-dff").val(),
+            "lload" : $("#dlg3-liveloads").val(),
+            "lff"   : $("#dlg3-lff").val()
+            };
+        dlg3.close();
+        HARBORVIEW.floorplans.newVinapuElementLoads(args, function(result) {
+            fetchFloorPlans();
+        });
+        return false;
+    });
+    //-------------------------------------- body.on("click") --------------------------------
+    $("body").on("click", ".shownewvinapuelload", function() {
+        var elem = $(this)[0];
+        var relTop = HARBORVIEW.utils.relativeTop(elem) - 50;
+        dlg3.style.top = "" + relTop  + "px";
+        var oid = $(this).attr("data-oid");
+        $("#dlg3-oid").val(oid);
+        $("#dlg3-header").html("Vinapu element id: " + oid);
+        HARBORVIEW.loads.fetchVinapuDeadLoads($("#dlg3-deadloads"));
+        HARBORVIEW.loads.fetchVinapuLiveLoads($("#dlg3-liveloads"));
+        dlg3.show();
     });
     $("body").on("click", ".shownewvinapuelement", function() {
         var elem = $(this)[0];
