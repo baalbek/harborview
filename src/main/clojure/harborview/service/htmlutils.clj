@@ -1,4 +1,6 @@
 (ns harborview.service.htmlutils
+  (:import
+    [stearnswharf.systems ProjectBean])
   (:require
     [clj-json.core :as json]
     [net.cgrand.enlive-html :as HTML]))
@@ -11,6 +13,11 @@
 
 (defn bean->json [b]
   {"oid" (.getOid b), "text" (.toHtml b)})
+
+;(defmacro bean->json [b & [oid-fn]]
+;  (if (nil? oid-fn)
+;    `{"oid" (.getOid  ~b), "text" (.toHtml  ~b)}
+;    `{"oid" (~oid-fn ~b), "text" (.toHtml  ~b)}
 
 (defn populate-select [options]
   (fn [node]
@@ -48,3 +55,7 @@
 
 (defn num2->td [content]
   (td (format "%.2f" content)))
+
+(defn projects->select [^ProjectBean v]
+  (let [oid (.getOid v)]
+    {:name (.toHtml v) :value (str oid) :selected (.isSelected v)}))

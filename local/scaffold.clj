@@ -2,6 +2,7 @@
   (:require
     [harborview.floorplans.dbx :as DBF]
     [harborview.systems.html :as SH]
+    [harborview.elements.html :as EH]
     [harborview.nodes.html :as NH]
     [harborview.nodes.dbx :as NDB]))
 
@@ -15,3 +16,7 @@
 
 (defn new-sys [pid bid fid sd gid]
   (DBF/new-system pid bid fid sd gid))
+
+(defn elsys [bid fid] (EH/element-systems bid fid))
+
+(defn sysnodes [sysid] (NDB/fetch-system-nodes2 sysid))

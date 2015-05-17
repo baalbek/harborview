@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Harbor View</title>
+    <title>Harbor View - Steel Elements</title>
 </head>
 <body>
     <header class="ribbon-area"></header>
@@ -34,24 +34,27 @@
                             <option value="5">Etg 5</option>
                         </select>
                     </td>
-                    <td><input type="submit" id="shownewproject" value="New Project" /></td>
-                    <td><input type="submit" id="shownewbuilding" value="New Building" /></td>
-                    <td><input type="submit" id="shownewsystem" value="New System" /></td>
+                    <td>Systems:</td>
+                    <td>
+                        <select name="system" id="system">
+                            <option value="-1">Test System</option>
+                        </select>
+                    </td>
+                    <td><input type="submit" id="shownewelement" value="New Element" /></td>
                 </tr>
             </table>
         </form>
-        <p id="floorplansystems">Floor Plan Systems</p>
+        <p id="steelelements">Steel Elements</p>
     </section>
     <dialog id="dlg1">
-        <input type="hidden" id="dlg1-pid" value="-1"/>
-        <input type="hidden" id="dlg1-bid" value="-1"/>
-        <input type="hidden" id="dlg1-fid" value="-1"/>
         <p id="dlg1-header"></p>
-        <p>Description:<input type="text" id="dlg1-sd"/></p>
-        <p>Group Id:<input type="number" id="dlg1-group" value="1"/></p>
+        <p>System:<select id="dlg1-system"></select></p>
+        <p>N1:<select id="dlg1-n1"></select></p>
+        <p>N2:<select id="dlg1-n2"></select></p>
         <button id="dlg1-ok">Ok</button>
         <button id="dlg1-close">Close</button>
     </dialog>
+    <!--
     <dialog id="dlg2">
         <input type="hidden" id="dlg2-sys" value="-1"/>
         <p id="dlg2-header"></p>
@@ -85,5 +88,6 @@
         <p><button id="dlg3-ok">Ok</button>
             <button id="dlg3-close">Close</button></p>
     </dialog>
+    -->
 </body>
 </html>

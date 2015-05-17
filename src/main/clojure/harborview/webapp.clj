@@ -2,6 +2,7 @@
   (:require
     [compojure.route :as R]
     [harborview.service.htmlutils :as U]
+    [harborview.elements.html :as E]
     [harborview.systems.html :as SYS]
     [harborview.nodes.html :as N]
     [harborview.loads.html :as LD])
@@ -16,6 +17,7 @@
   (context "/systems" [] SYS/my-routes)
   (context "/loads" [] LD/my-routes)
   (context "/nodes" [] N/my-routes)
+  (context "/elements" [] E/my-routes)
   (R/files "/" {:root "public"})
   (R/resources "/" {:root "public"}))
 

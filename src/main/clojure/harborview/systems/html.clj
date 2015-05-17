@@ -10,15 +10,12 @@
     [harborview.floorplans.dbx :as DBF]))
 
 
-(defn projects->select [^ProjectBean v]
-  (let [oid (.getOid v)]
-    {:name (.toHtml v) :value (str oid) :selected (.isSelected v)}))
 
 
 (HTML/deftemplate my-systems "templates/floorplans.html" []
-  [:head] (HTML/substitute (SNIP/head "Harbor View" "/js/dialogs.js"))
+  [:head] (HTML/substitute (SNIP/head "Harbor View - Floorplans" "/js/floorplans.js"))
   [:.ribbon-area] (HTML/substitute (SNIP/ribbon))
-  [:#project] (U/populate-select (map projects->select (DBF/fetch-projects))))
+  [:#project] (U/populate-select (map U/projects->select (DBF/fetch-projects))))
 
 
 (defn buildings-for [pid]

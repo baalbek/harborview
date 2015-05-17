@@ -20,5 +20,6 @@
         <mapper resource="FloorPlans.xml"/>
         <mapper resource="Loads.xml"/>
         <mapper resource="Nodes.xml"/>
+        <mapper resource="Elements.xml"/>
     </mappers>
 </configuration>
