@@ -21,7 +21,12 @@
   (let [rows (DBF/fetch-floorplan-systems bid fid)]
     (U/json-response {"systems" (map U/bean->json rows)})))
 
+(defn steelbeams []
+  (let [rows (DBX/fetch-steel-beams)]
+    (U/json-response {"steelbeams" (map U/bean->json rows)})))
+
 (defroutes my-routes
   (GET "/steel" request (steel))
   (GET "/wood" request (wood))
+  (GET "/steelbeams" request (steelbeams))
   (GET "/elementsystems" [bid fid] (element-systems (U/rs bid) (U/rs fid))))

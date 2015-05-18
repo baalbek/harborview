@@ -36,6 +36,7 @@ jQuery(document).ready(function() {
         ];
         $("#dlg1-header").html("System: " + sys);
         HARBORVIEW.nodes.fetchSystemNodes(sys,nodes);
+        HARBORVIEW.stearnswharf.fetchSteelBeams($("#dlg1-steel"));
         dlg1.show();
         return false;
     });

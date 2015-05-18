@@ -135,9 +135,25 @@ HARBORVIEW.stearnswharf = (function() {
             }
         });
     };
+    var fetchSteelBeams = function(dropdown) {
+        /*
+        if (dropdown.length > 0) {
+            return;
+        };
+        */
+        HARBORVIEW.utils.jsonGet("/elements/steelbeams", null, function(result) {
+            var items = result.steelbeams;
+            HARBORVIEW.utils.addOption(dropdown, "-", "-1");
+            for (var i=0,  itemlen = items.length; i<itemlen; i++) {
+                var item = items[i];
+                HARBORVIEW.utils.addOption(dropdown,item.text,item.oid);
+            }
+        });
+    };
     return {
-        fetchElementSystems : fetchElementSystems
-    }
+        fetchElementSystems : fetchElementSystems,
+        fetchSteelBeams : fetchSteelBeams
+    };
 })();
 
 HARBORVIEW.buildings = (function() {
@@ -206,14 +222,12 @@ HARBORVIEW.nodes = (function() {
     var fillNodeDropdowns = function(result,nodeDropdowns) {
         var objs = result.nodes;
         for (var j=0, nlen=nodeDropdowns.length; j<nlen; j++) {
-            nodeDropdowns[j].empty();
+            var cur = nodeDropdowns[j];
+            cur.empty();
+            HARBORVIEW.utils.addOption(cur, "-", "-1");
         }
         for (var i=0, oblen = objs.length; i<oblen; i++) {
             var item = objs[i];
-            /*
-            HARBORVIEW.utils.addOption(n1,item.text,item.oid);
-            HARBORVIEW.utils.addOption(n2,item.text,item.oid);
-            */
             for (var j=0, nlen=nodeDropdowns.length; j<nlen; j++) {
                 HARBORVIEW.utils.addOption(nodeDropdowns[j],item.text,item.oid);
             }
@@ -225,21 +239,6 @@ HARBORVIEW.nodes = (function() {
                                 function(result) {
             fillNodeDropdowns(result,nodes);
         });
-        /*
-        $.ajax({
-            url: "/nodes/nodes",
-            type: "GET",
-            dataType: "json",
-            data: {
-                "pid" : pid,
-                "cosyid" : cosyid
-            },
-            success: function(result) {
-                fillNodeDropdowns(result,n1,n2);
-            },
-            error: HARBORVIEW.utils.onError
-        });
-        */
     };
     var fetchSystemNodes = function(sysId, nodes) {
         HARBORVIEW.utils.jsonGet("/nodes/systemnodes",
