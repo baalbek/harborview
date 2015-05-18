@@ -84,7 +84,7 @@ jQuery(document).ready(function() {
     $("#dlg2-coordsys").change(function() {
         var cosyid = $("#dlg2-coordsys").val();
         var pid = $("#project").val();
-        HARBORVIEW.nodes.fetchNodes(pid,cosyid,$("#dlg2-n1"),$("#dlg2-n2"));
+        HARBORVIEW.nodes.fetchNodes(pid,cosyid,[$("#dlg2-n1"),$("#dlg2-n2")]);
     });
     //-------------------------------------- dlg3 --------------------------------
     $("#dlg3-close").click(function() {

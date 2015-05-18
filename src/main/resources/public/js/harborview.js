@@ -203,21 +203,27 @@ HARBORVIEW.loads = (function() {
 })();
 
 HARBORVIEW.nodes = (function() {
-    var fillNodeDropdowns = function(result,n1,n2) {
+    var fillNodeDropdowns = function(result,nodeDropdowns) {
         var objs = result.nodes;
-        n1.empty();
-        n2.empty();
+        for (var j=0, nlen=nodeDropdowns.length; j<nlen; j++) {
+            nodeDropdowns[j].empty();
+        }
         for (var i=0, oblen = objs.length; i<oblen; i++) {
             var item = objs[i];
+            /*
             HARBORVIEW.utils.addOption(n1,item.text,item.oid);
             HARBORVIEW.utils.addOption(n2,item.text,item.oid);
+            */
+            for (var j=0, nlen=nodeDropdowns.length; j<nlen; j++) {
+                HARBORVIEW.utils.addOption(nodeDropdowns[j],item.text,item.oid);
+            }
         }
     };
-    var fetchNodes = function(pid, cosyid, n1, n2) {
+    var fetchNodes = function(pid, cosyid, nodes) {
         HARBORVIEW.utils.jsonGet("/nodes/nodes",
                                 { "pid" : pid, "cosyid" : cosyid },
                                 function(result) {
-            fillNodeDropdowns(result,n1,n2);
+            fillNodeDropdowns(result,nodes);
         });
         /*
         $.ajax({
@@ -235,16 +241,16 @@ HARBORVIEW.nodes = (function() {
         });
         */
     };
-    var fetchNodesForSystemId = function(sysId, n1, n2) {
+    var fetchSystemNodes = function(sysId, nodes) {
         HARBORVIEW.utils.jsonGet("/nodes/systemnodes",
                                 { "sysid" : sysId },
                                 function(result) {
-            fillNodeDropdowns(result,n1,n2);
+            fillNodeDropdowns(result,nodes);
         });
-    });
+    };
 
     return {
         fetchNodes : fetchNodes,
-        fetchNodesForSystemId : fetchNodesForSystemId
+        fetchSystemNodes : fetchSystemNodes
     };
 })();

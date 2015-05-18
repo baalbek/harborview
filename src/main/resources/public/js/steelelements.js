@@ -25,7 +25,17 @@ jQuery(document).ready(function() {
         var relTop = HARBORVIEW.utils.relativeTop(elem);
         dlg1.style.top = "" + relTop  + "px";
         var sys = $("#system").val();
+        var n1 = $("#dlg1-n1");
+        var n2 = $("#dlg1-n2");
+        var nodes = [
+            $("#dlg1-n1"),
+            $("#dlg1-n2"),
+            $("#dlg1-n3"),
+            $("#dlg1-n4"),
+            $("#dlg1-n5")
+        ];
         $("#dlg1-header").html("System: " + sys);
+        HARBORVIEW.nodes.fetchSystemNodes(sys,nodes);
         dlg1.show();
         return false;
     });

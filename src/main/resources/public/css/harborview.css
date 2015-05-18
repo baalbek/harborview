@@ -22,6 +22,9 @@ nav a, nav a:link, nav a:visited, nav a:active, nav a.current {
   text-decoration: none;
   color: black; }
 
+dialog {
+  width: 400px; }
+
 /* Reset */
 *,
 *:after,

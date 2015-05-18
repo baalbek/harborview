@@ -12,7 +12,8 @@
 (defroutes my-routes
   (GET "/nodes" [pid cosyid]
     (U/json-response {"nodes" (map U/bean->json (DBF/fetch-nodes (U/rs pid) (U/rs cosyid)))}))
-  (GET "/systemnodes" [sysid]))
+  (GET "/systemnodes" [sysid]
+    (U/json-response {"nodes" (map U/bean->json (DBF/fetch-system-nodes (U/rs sysid)))})))
 
 (comment
   (GET "/coordsys" [pid]

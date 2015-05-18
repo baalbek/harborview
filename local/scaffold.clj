@@ -19,4 +19,7 @@
 
 (defn elsys [bid fid] (EH/element-systems bid fid))
 
-(defn sysnodes [sysid] (NDB/fetch-system-nodes2 sysid))
+(defn sysnodes [sysid] (NDB/fetch-system-nodes sysid))
+
+
+

@@ -1,7 +1,8 @@
 (ns harborview.webapp
   (:require
+    [net.cgrand.enlive-html :as HTML]
     [compojure.route :as R]
-    [harborview.service.htmlutils :as U]
+    [harborview.templates.snippets :as SNIP]
     [harborview.elements.html :as E]
     [harborview.systems.html :as SYS]
     [harborview.nodes.html :as N]
@@ -12,14 +13,20 @@
    [ring.adapter.jetty :only (run-jetty)]
    [ring.middleware.params :only (wrap-params)]))
 
+(HTML/deftemplate index "templates/index.html" []
+  [:head] (HTML/substitute (SNIP/head "Harbor View"))
+  [:.ribbon-area] (HTML/substitute (SNIP/ribbon)))
+
 (defroutes main-routes
-  (GET "/" request (SYS/my-systems))
+  ;(GET "/" request (SYS/my-systems))
+  (GET "/" request (index))
   (context "/systems" [] SYS/my-routes)
   (context "/loads" [] LD/my-routes)
   (context "/nodes" [] N/my-routes)
   (context "/elements" [] E/my-routes)
   (R/files "/" {:root "public"})
   (R/resources "/" {:root "public"}))
+
 
 (def webapp
   (-> main-routes
