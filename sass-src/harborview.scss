@@ -42,7 +42,33 @@ nav a {
     }
 }
 
+fieldset {
+    padding: 1em;
+    margin: 1em;
+    border:1px solid green;
+}
 
+legend {
+  padding: 0.2em 0.5em;
+  border:1px solid green;
+  color:green;
+  font-size:90%;
+  text-align:right;
+}
+
+fieldset label {
+  /*float:left;
+  width:25%;
+  font-weight:bold;*/
+  margin-right:0.5em;
+  padding-top:0.2em;
+  text-align:left;
+}
+
+
+fieldset p {
+    display: block;
+}
 
 @import "dialog";
 

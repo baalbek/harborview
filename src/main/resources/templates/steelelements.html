@@ -46,14 +46,57 @@
         </form>
         <p id="steelelements">Steel Elements</p>
     </section>
-    <dialog id="dlg1">
+    <dialog id="dlg1" class="wide">
         <p id="dlg1-header"></p>
-        <p>Steel beam:<select id="dlg1-steel"></select></p>
-        <p>N1:<select id="dlg1-n1"></select></p>
-        <p>N2:<select id="dlg1-n2"></select></p>
-        <p>N3:<select id="dlg1-n3"></select></p>
-        <p>N4:<select id="dlg1-n4"></select></p>
-        <p>N5:<select id="dlg1-n5"></select></p>
+        <fieldset>
+            <legend>Steel beam</legend>
+            <label for="dlg1-steel">Steel beam</label>
+            <select id="dlg1-steel"></select>
+        </fieldset>
+        <fieldset style="display: inline;">
+            <legend>Nodes and node loads</legend>
+            <p>
+                <label for="dlg1-n1">N1:</label><select id="dlg1-n1"></select>
+                <label for="dlg1-p1">P1:</label><input type="number" value="0.0" id="dlg1-p1"></input>
+            </p>
+            <p>
+                <label for="dlg1-n2">N2:</label><select id="dlg1-n2"></select>
+                <label for="dlg1-p2">P2:</label><input type="number" id="dlg1-p2" value="0.0"></input>
+            </p>
+            <p>
+                <label for="dlg1-n3">N3:</label><select id="dlg1-n3"></select>
+                <label for="dlg1-p3">P3:</label><input type="number" id="dlg1-p3" value="0.0"></input>
+            </p>
+            <p>
+                <label for="dlg1-n4">N4:</label><select id="dlg1-n4"></select>
+                <label for="dlg1-p4">P4:</label><input type="number" id="dlg1-p4" value="0.0"></input>
+            </p>
+            <p>
+                <label for="dlg1-n5">N5:</label><select id="dlg1-n5"></select>
+                <label for="dlg1-p5">P5:</label><input type="number" id="dlg1-p5" value="0.0"></input>
+            </p>
+        </fieldset>
+        <fieldset style="display: inline;">
+            <legend>Element loads</legend>
+            <p>
+                <label for="dlg1-qall">Q all:</label><input type="number" value="0.0" id="dlg1-qall"></input>
+            </p>
+            <p>
+                <label for="dlg1-q1">Q1:</label><input type="number" value="0.0" id="dlg1-q1"></input>
+            </p>
+            <p>
+                <label for="dlg1-q2">Q2:</label><input type="number" value="0.0" id="dlg1-q2"></input>
+            </p>
+            <p>
+                <label for="dlg1-q3">Q3:</label><input type="number" value="0.0" id="dlg1-q3"></input>
+            </p>
+            <p>
+                <label for="dlg1-q4">Q4:</label><input type="number" value="0.0" id="dlg1-q4"></input>
+            </p>
+            <p>
+                <label for="dlg1-q5">Q5:</label><input type="number" value="0.0" id="dlg1-q5"></input>
+            </p>
+        </fieldset>
         <button id="dlg1-ok">Ok</button>
         <button id="dlg1-close">Close</button>
     </dialog>
