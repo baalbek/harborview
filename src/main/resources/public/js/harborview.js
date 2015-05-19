@@ -21,7 +21,7 @@ HARBORVIEW.utils = (function() {
         var r = elem.getBoundingClientRect();
         return r.left;
     };
-    var jsonGet = function(myUrl,
+    var jsonGET = function(myUrl,
                             args,
                             onSuccess) {
         $.ajax({
@@ -35,7 +35,7 @@ HARBORVIEW.utils = (function() {
             error: onError
         });
     };
-    var jsonPut = function(myUrl,
+    var jsonPUT = function(myUrl,
                             args,
                             onSuccess) {
         $.ajax({
@@ -49,12 +49,27 @@ HARBORVIEW.utils = (function() {
             error: onError
         });
     };
+    var jsonPOST = function(myUrl,
+                            args,
+                            onSuccess) {
+        $.ajax({
+            url: myUrl,
+            type: "POST",
+            dataType: "json",
+            data: args,
+            success: function(result) {
+                onSuccess(result);
+            },
+            error: onError
+        });
+    };
     return {
         addOption : addOption,
         onError : onError,
         relativeTop : relativeTop,
-        jsonGet : jsonGet,
-        jsonPut : jsonPut
+        jsonGET : jsonGET,
+        jsonPUT : jsonPUT,
+        jsonPOST : jsonPOST
     };
 })();
 
@@ -93,7 +108,7 @@ HARBORVIEW.floorplans = (function() {
             alert("Floor must be set!");
             return;
         }
-        HARBORVIEW.utils.jsonPut("/systems/newsystem",
+        HARBORVIEW.utils.jsonPUT("/systems/newsystem",
                                     {
                                         "pid" : pid,
                                         "bid" : bid,
@@ -104,10 +119,10 @@ HARBORVIEW.floorplans = (function() {
                                     onSuccess);
     };
     var newVinapuElement = function(args, onSuccess) {
-        HARBORVIEW.utils.jsonPut("/systems/newvinapuelement", args, onSuccess);
+        HARBORVIEW.utils.jsonPUT("/systems/newvinapuelement", args, onSuccess);
     };
     var newVinapuElementLoads = function(args, onSuccess) {
-        HARBORVIEW.utils.jsonPut("/systems/newvinapuelementloads", args, onSuccess);
+        HARBORVIEW.utils.jsonPUT("/systems/newvinapuelementloads", args, onSuccess);
     };
     return {
         fetchFloorPlanSystems : fetchFloorPlanSystems,
@@ -120,7 +135,7 @@ HARBORVIEW.floorplans = (function() {
 
 HARBORVIEW.stearnswharf = (function() {
     var fetchElementSystems = function(bid, fid, dropdown) {
-        HARBORVIEW.utils.jsonGet("/elements/elementsystems", { "bid" : bid, "fid" : fid }, function(result) {
+        HARBORVIEW.utils.jsonGET("/elements/elementsystems", { "bid" : bid, "fid" : fid }, function(result) {
             var items = result.systems;
             dropdown.empty();
             if (items.length === 0) {
@@ -141,7 +156,7 @@ HARBORVIEW.stearnswharf = (function() {
             return;
         };
         */
-        HARBORVIEW.utils.jsonGet("/elements/steelbeams", null, function(result) {
+        HARBORVIEW.utils.jsonGET("/elements/steelbeams", null, function(result) {
             var items = result.steelbeams;
             HARBORVIEW.utils.addOption(dropdown, "-", "-1");
             for (var i=0,  itemlen = items.length; i<itemlen; i++) {
@@ -150,9 +165,26 @@ HARBORVIEW.stearnswharf = (function() {
             }
         });
     };
+    var newSteelElements = function(sysId,
+                                    steelBeam,
+                                    nodes,
+                                    distLoads,
+                                    nodeLoads,
+                                    nodeLf) {
+        HARBORVIEW.utils.jsonPOST("/elements/newsteel",
+                                  { "sysid" : sysId,
+                                    "steel" : steelBeam,
+                                    "nodes" : nodes,
+                                    "qloads" : distLoads,
+                                    "nloads" : nodeLoads,
+                                    "nlf" : nodeLf}, function(result) {
+            alert(result.result);
+        });
+    };
     return {
         fetchElementSystems : fetchElementSystems,
-        fetchSteelBeams : fetchSteelBeams
+        fetchSteelBeams : fetchSteelBeams,
+        newSteelElements : newSteelElements
     };
 })();
 
@@ -160,7 +192,7 @@ HARBORVIEW.buildings = (function() {
 
     var fetchBuildings = function(pid, buildingsDropDown) {
         if (pid === "-1") return;
-        HARBORVIEW.utils.jsonGet("/systems/fetchbuildings",
+        HARBORVIEW.utils.jsonGET("/systems/fetchbuildings",
                                   { "pid" : pid },
                                   function(result) {
                                     var objs = result.buildings;
@@ -184,7 +216,7 @@ HARBORVIEW.buildings = (function() {
 
 HARBORVIEW.loads = (function() {
     var fetchVinapuDeadLoads = function(loadsDropDown) {
-        HARBORVIEW.utils.jsonGet("/loads/vinapudeadloads",
+        HARBORVIEW.utils.jsonGET("/loads/vinapudeadloads",
                                  null,
                                 function(result) {
                                     var objs = result.loads;
@@ -200,7 +232,7 @@ HARBORVIEW.loads = (function() {
                                 });
     };
     var fetchVinapuLiveLoads = function(loadsDropDown) {
-        HARBORVIEW.utils.jsonGet("/loads/vinapuliveloads",
+        HARBORVIEW.utils.jsonGET("/loads/vinapuliveloads",
                                  null,
                                 function(result) {
                                     var objs = result.loads;
@@ -234,14 +266,14 @@ HARBORVIEW.nodes = (function() {
         }
     };
     var fetchNodes = function(pid, cosyid, nodes) {
-        HARBORVIEW.utils.jsonGet("/nodes/nodes",
+        HARBORVIEW.utils.jsonGET("/nodes/nodes",
                                 { "pid" : pid, "cosyid" : cosyid },
                                 function(result) {
             fillNodeDropdowns(result,nodes);
         });
     };
     var fetchSystemNodes = function(sysId, nodes) {
-        HARBORVIEW.utils.jsonGet("/nodes/systemnodes",
+        HARBORVIEW.utils.jsonGET("/nodes/systemnodes",
                                 { "sysid" : sysId },
                                 function(result) {
             fillNodeDropdowns(result,nodes);

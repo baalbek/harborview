@@ -1,0 +1,37 @@
+fieldset {
+    padding: 1em;
+    margin: 1em;
+    border:1px solid green;
+}
+
+@mixin label-common {
+  margin-right:0.5em;
+  padding-top:0.2em;
+  text-align:left;
+}
+
+legend {
+  padding: 0.2em 0.5em;
+  border:1px solid green;
+  color:green;
+  font-size:90%;
+  text-align:right;
+}
+
+fieldset label {
+  @include label-common;
+}
+
+fieldset label.aligned {
+  @include label-common;
+  float:left;
+  width:25%;
+  /*
+  font-weight:bold;
+  */
+}
+
+fieldset p {
+    display: block;
+}
+

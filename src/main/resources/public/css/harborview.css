@@ -35,12 +35,19 @@ legend {
   text-align: right; }
 
 fieldset label {
-  /*float:left;
-  width:25%;
-  font-weight:bold;*/
   margin-right: 0.5em;
   padding-top: 0.2em;
   text-align: left; }
+
+fieldset label.aligned {
+  margin-right: 0.5em;
+  padding-top: 0.2em;
+  text-align: left;
+  float: left;
+  width: 25%;
+  /*
+  font-weight:bold;
+  */ }
 
 fieldset p {
   display: block; }
