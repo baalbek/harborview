@@ -1,6 +1,6 @@
 (ns harborview.elements.html
   (:use
-    [compojure.core :only (GET PUT POST defroutes)])
+    [compojure.core :only (GET PUT defroutes)])
   (:require
     [net.cgrand.enlive-html :as HTML]
     [harborview.service.htmlutils :as U]
@@ -30,6 +30,17 @@
   (GET "/wood" request (wood))
   (GET "/steelbeams" request (steelbeams))
   (GET "/elementsystems" [bid fid] (element-systems (U/rs bid) (U/rs fid)))
-  (POST "/newsteel" [sysid steel nodes qloads nloads nlf]
+  (PUT "/newsteel" [sysid steel nodes qloads nloads nlf]
+    ;(println "sysid " sysid)
+    ;(println "steel" steel)
+    ;(println "nodes " (class nodes) nodes)
+    ;(println "qloads " (class qloads) qloads)
+    ;(println "nloads " (class nloads) nloads)
+    ;(println "nlf " (class nlf) nlf)
+    ;(U/json-response {"result" "result"})))
     (let [result (DBX/new-steel-elements sysid steel nodes qloads nloads nlf)]
-      (U/json-response {"result" result}))))
+      (U/json-response {"result" result})))
+  (PUT "/newdistload" [sysid qx1 qx2 qy1 qy2 qz1 qz2 lf]
+    (let [result (DBX/new-dist-load sysid qx1 qx2 qy1 qy2 qz1 qz2 lf)]
+      (U/json-response {"result" (str (.getOid result))}))))
+

@@ -83,6 +83,28 @@ jQuery(document).ready(function() {
         dlg2.close();
         return false;
     });
+    $("#dlg2-qx1").change(function() {
+        $("#dlg2-qx2").val($("#dlg2-qx1").val());
+    });
+    $("#dlg2-qy1").change(function() {
+        $("#dlg2-qy2").val($("#dlg2-qy1").val());
+    });
+    $("#dlg2-qz1").change(function() {
+        $("#dlg2-qz2").val($("#dlg2-qz1").val());
+    });
+    $("#dlg2-ok").click(function() {
+        var args = { "sysid" : $("#system").val(),
+                    "qx1" : $("#dlg2-qx1").val(),
+                    "qx2" : $("#dlg2-qx2").val(),
+                    "qy1" : $("#dlg2-qy1").val(),
+                    "qy2" : $("#dlg2-qy2").val(),
+                    "qz1" : $("#dlg2-qz1").val(),
+                    "qz2" : $("#dlg2-qz2").val(),
+                    "lf" : $("#dlg2-lf").val() };
+        HARBORVIEW.stearnswharf.newDistLoad(args);
+        dlg2.close();
+        return false;
+    });
     $("#shownewdistload").click(function() {
         var elem = $(this)[0];
         var relTop = HARBORVIEW.utils.relativeTop(elem);

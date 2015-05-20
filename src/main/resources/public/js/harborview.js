@@ -170,10 +170,9 @@ HARBORVIEW.stearnswharf = (function() {
                                     steelBeam,
                                     nodes,
                                     distLoads,
-                                    distLf,
                                     nodeLoads,
                                     nodeLf) {
-        HARBORVIEW.utils.jsonPOST("/elements/newsteel",
+        HARBORVIEW.utils.jsonPUT("/elements/newsteel",
                                   { "sysid" : sysId,
                                     "steel" : steelBeam,
                                     "nodes" : nodes,
@@ -183,10 +182,18 @@ HARBORVIEW.stearnswharf = (function() {
             alert(result.result);
         });
     };
+    var newDistLoad = function(args) {
+        HARBORVIEW.utils.jsonPUT("/elements/newdistload",
+                                 args,
+                                 function(result) {
+            alert(result.result);
+        });
+    };
     return {
         fetchElementSystems : fetchElementSystems,
         fetchSteelBeams : fetchSteelBeams,
-        newSteelElements : newSteelElements
+        newSteelElements : newSteelElements,
+        newDistLoad : newDistLoad
     };
 })();
 

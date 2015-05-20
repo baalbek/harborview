@@ -1,8 +1,9 @@
 (ns harborview.elements.dbx
   (:import
-    [stearnswharf.elements SteelBeam]
+    [stearnswharf.elements SteelBeam DistLoad]
     [stearnswharf.mybatis ElementsMapper])
   (:require
+    [harborview.service.htmlutils :as U]
     [harborview.service.db :as DB]))
 
 (def fetch-steel-beams 
@@ -21,4 +22,20 @@
 
 
 
+(def r U/rs)
+
+(defn new-dist-load [sysid qx1 qx2 qy1 qy2 qz1 qz2 lf]
+  (let [d (DistLoad.)]
+    (doto d
+      (.setSysId (r sysid))
+      (.setQx1 (r qx1))
+      (.setQx2 (r qx2))
+      (.setQy1 (r qy1))
+      (.setQy2 (r qy2))
+      (.setQz1 (r qz1))
+      (.setQz2 (r qz2))
+      (.setLoadFactor (r lf)))
+    (DB/with-session ElementsMapper
+      (.newDistLoad it d))
+    d))
 
