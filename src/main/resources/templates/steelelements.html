@@ -2,6 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Harbor View - Steel Elements</title>
+    <link rel="stylesheet" href="harborview.css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="dx.js"></script>
 </head>
 <body>
     <header class="ribbon-area"></header>
@@ -110,20 +113,35 @@
             <button id="dlg1-close">Close</button>
         </span>
     </dialog>
-    <dialog id="dlg2" class="small">
+    <dialog id="dlg2" class="normal">
         <!--
          oid | sys_id | qx1 | qx2 | qy1 | qy2 |  qz1  |  qz2  |  lf
         -->
         <p id="dlg2-header"></p>
+
         <fieldset>
             <legend>Distributed loads</legend>
             <p>
-                <label class="aligned" for="dlg2-q">Q:</label>
-                <input type="number" step="0.1" value="0.0" id="dlg2-q" />
+                <label for="dlg2-qx1">Qx:</label>
+                <input id="dlg2-qx1" type="number" value="0.0" step="0.1" />
+                <input id="dlg2-qx2" type="number" value="0.0" step="0.1" />
             </p>
             <p>
-                <label class="aligned" for="dlg2-lf">Load factor:</label>
-                <input type="number" step="0.01" value="1.3" id="dlg2-lf" />
+                <label for="dlg2-qy1">Qy:</label>
+                <input id="dlg2-qy1" type="number" value="0.0" step="0.1" />
+                <input id="dlg2-qy2" type="number" value="0.0" step="0.1" />
+            </p>
+            <p>
+                <label for="dlg2-qz1">Qz:</label>
+                <input id="dlg2-qz1" type="number" value="0.0" step="0.1" />
+                <input id="dlg2-qz2" type="number" value="0.0" step="0.1" />
+            </p>
+        </fieldset>
+        <fieldset>
+            <legend>Form factor</legend>
+            <p>
+                <label for="dlg2-ff">Form factor:</label>
+                <input id="dlg2-ff" type="number" value="0.0" step="0.01" />
             </p>
         </fieldset>
         <span style="display:block;">
