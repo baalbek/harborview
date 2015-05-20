@@ -134,6 +134,7 @@ HARBORVIEW.floorplans = (function() {
 })();
 
 HARBORVIEW.stearnswharf = (function() {
+    "use strict";
     var fetchElementSystems = function(bid, fid, dropdown) {
         HARBORVIEW.utils.jsonGET("/elements/elementsystems", { "bid" : bid, "fid" : fid }, function(result) {
             var items = result.systems;
@@ -169,6 +170,7 @@ HARBORVIEW.stearnswharf = (function() {
                                     steelBeam,
                                     nodes,
                                     distLoads,
+                                    distLf,
                                     nodeLoads,
                                     nodeLf) {
         HARBORVIEW.utils.jsonPOST("/elements/newsteel",
@@ -189,7 +191,7 @@ HARBORVIEW.stearnswharf = (function() {
 })();
 
 HARBORVIEW.buildings = (function() {
-
+    "use strict";
     var fetchBuildings = function(pid, buildingsDropDown) {
         if (pid === "-1") return;
         HARBORVIEW.utils.jsonGET("/systems/fetchbuildings",
@@ -215,6 +217,7 @@ HARBORVIEW.buildings = (function() {
 })();
 
 HARBORVIEW.loads = (function() {
+    "use strict";
     var fetchVinapuDeadLoads = function(loadsDropDown) {
         HARBORVIEW.utils.jsonGET("/loads/vinapudeadloads",
                                  null,
@@ -251,6 +254,7 @@ HARBORVIEW.loads = (function() {
 })();
 
 HARBORVIEW.nodes = (function() {
+    "use strict";
     var fillNodeDropdowns = function(result,nodeDropdowns) {
         var objs = result.nodes;
         for (var j=0, nlen=nodeDropdowns.length; j<nlen; j++) {

@@ -34,10 +34,6 @@ legend {
   font-size: 90%;
   text-align: right; }
 
-fieldset {
-    width: 500px;
-}
-
 fieldset label {
   margin-right: 0.5em;
   padding-top: 0.2em;
@@ -54,10 +50,12 @@ fieldset label.aligned {
   */ }
 
 fieldset p {
-  display: block; 
-  clear:both;
-  padding: 5px;
-}
+  display: block;
+  clear: both;
+  padding: 5px; }
+
+fieldset input {
+  width: 100px; }
 
 dialog.small {
   width: 400px; }

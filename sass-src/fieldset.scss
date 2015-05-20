@@ -33,5 +33,10 @@ fieldset label.aligned {
 
 fieldset p {
     display: block;
+    clear: both;
+    padding: 5px;
 }
 
+fieldset input {
+    width: 100px;
+}
