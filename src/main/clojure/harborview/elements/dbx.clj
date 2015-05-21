@@ -6,7 +6,9 @@
     [harborview.service.htmlutils :as U]
     [harborview.service.db :as DB]))
 
-(def fetch-steel-beams 
+(def r U/rs)
+
+(def fetch-steel-beams
   (memoize 
     (fn []
       (DB/with-session ElementsMapper
@@ -20,9 +22,6 @@
                           [p1lf p2lf p3lf p4lf p6lf]]
   (str n1 "-" qall "-" p1))
 
-
-
-(def r U/rs)
 
 (defn new-dist-load [sysid qx1 qx2 qy1 qy2 qz1 qz2 lf]
   (let [d (DistLoad.)]
@@ -39,3 +38,7 @@
       (.newDistLoad it d))
     d))
 
+
+(defn fetch-dist-loads [sysid]
+  (DB/with-session ElementsMapper
+    (.fetchDistLoads it sysid)))

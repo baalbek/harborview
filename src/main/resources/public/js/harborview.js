@@ -152,11 +152,9 @@ HARBORVIEW.stearnswharf = (function() {
         });
     };
     var fetchSteelBeams = function(dropdown) {
-        /*
-        if (dropdown.length > 0) {
+        if ((dropdown[0]).length > 2) {
             return;
         };
-        */
         HARBORVIEW.utils.jsonGET("/elements/steelbeams", null, function(result) {
             var items = result.steelbeams;
             HARBORVIEW.utils.addOption(dropdown, "-", "-1");
@@ -189,11 +187,26 @@ HARBORVIEW.stearnswharf = (function() {
             alert(result.result);
         });
     };
+    var fetchDistLoads = function(sysId,dropdowns) {
+        HARBORVIEW.utils.jsonGET("/elements/distloads", { "sysid" : sysId }, function(result) {
+            var items = result.distloads;
+            for (var j=0, jlen = dropdowns.length; j<jlen; j++) {
+                var dropdown = dropdowns[j];
+                dropdown.empty();
+                HARBORVIEW.utils.addOption(dropdown, "-", "-1");
+                for (var i=0,  itemlen = items.length; i<itemlen; i++) {
+                    var item = items[i];
+                    HARBORVIEW.utils.addOption(dropdown,item.text,item.oid);
+                };
+            };
+        });
+    };
     return {
         fetchElementSystems : fetchElementSystems,
         fetchSteelBeams : fetchSteelBeams,
         newSteelElements : newSteelElements,
-        newDistLoad : newDistLoad
+        newDistLoad : newDistLoad,
+        fetchDistLoads : fetchDistLoads
     };
 })();
 

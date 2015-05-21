@@ -25,11 +25,16 @@
   (let [rows (DBX/fetch-steel-beams)]
     (U/json-response {"steelbeams" (map U/bean->json rows)})))
 
+(defn distloads [sysid]
+  (let [rows (DBX/fetch-dist-loads (U/rs sysid))]
+    (U/json-response {"distloads" (map U/bean->json rows)})))
+
 (defroutes my-routes
   (GET "/steel" request (steel))
   (GET "/wood" request (wood))
   (GET "/steelbeams" request (steelbeams))
   (GET "/elementsystems" [bid fid] (element-systems (U/rs bid) (U/rs fid)))
+  (GET "/distloads" [sysid] (distloads sysid))
   (PUT "/newsteel" [sysid steel nodes qloads nloads nlf]
     ;(println "sysid " sysid)
     ;(println "steel" steel)

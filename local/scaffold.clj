@@ -3,6 +3,7 @@
     [harborview.floorplans.dbx :as DBF]
     [harborview.systems.html :as SH]
     [harborview.elements.html :as EH]
+    [harborview.elements.dbx :as DBE]
     [harborview.nodes.html :as NH]
     [harborview.nodes.dbx :as NDB]))
 
@@ -21,5 +22,6 @@
 
 (defn sysnodes [sysid] (NDB/fetch-system-nodes sysid))
 
+(defn fd [sysid] (DBE/fetch-dist-loads sysid))
 
 

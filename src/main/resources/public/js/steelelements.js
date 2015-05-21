@@ -72,8 +72,16 @@ jQuery(document).ready(function() {
             $("#dlg1-n4"),
             $("#dlg1-n5")
         ];
+        var distLoads = [
+            $("#dlg1-qall"),
+            $("#dlg1-q1"),
+            $("#dlg1-q2"),
+            $("#dlg1-q3"),
+            $("#dlg1-q4")
+        ];
         $("#dlg1-header").html("System: " + sys);
         HARBORVIEW.nodes.fetchSystemNodes(sys,nodes);
+        HARBORVIEW.stearnswharf.fetchDistLoads(sys,distLoads);
         HARBORVIEW.stearnswharf.fetchSteelBeams($("#dlg1-steel"));
         dlg1.show();
         return false;
