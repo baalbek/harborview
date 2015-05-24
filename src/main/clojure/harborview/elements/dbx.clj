@@ -14,6 +14,10 @@
       (DB/with-session ElementsMapper
         (.fetchSteelBeams it)))))
 
+(defn fetch-steel-elements [sysid]
+  (DB/with-session ElementsMapper
+    (.fetchSteelElements it (r sysid))))
+
 (defn new-steel-element [sysid steel [n1 n2] qload]
   (if (and (> n1 0) (> n2 0))
     (let [s (SteelElement.)]

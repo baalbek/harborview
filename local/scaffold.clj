@@ -44,3 +44,5 @@
 
 (defn steels [] (DBE/new-steel-elements 45 7 nodes qloads nloads nlf))
 
+
+(defn se [sysid] (DBE/fetch-steel-elements sysid))

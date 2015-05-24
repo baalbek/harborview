@@ -13,7 +13,7 @@ jQuery(document).ready(function() {
     });
     $("#system").change(function() {
         var sys = $("#system").val();
-        //HARBORVIEW.stearnswharf.fetchSteelElements(sys,$("#system"));
+        HARBORVIEW.stearnswharf.fetchSteelElements(sys,$("#steelelements"));
     });
     //-------------------------------------- dlg1 --------------------------------
     $("#dlg1-qall").change(function() {

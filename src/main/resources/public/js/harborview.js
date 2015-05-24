@@ -21,13 +21,16 @@ HARBORVIEW.utils = (function() {
         var r = elem.getBoundingClientRect();
         return r.left;
     };
-    var jsonGET = function(myUrl,
-                            args,
-                            onSuccess) {
+    var myAjax = function(
+                         myType,
+                         myDataType,
+                         myUrl,
+                         args,
+                         onSuccess) {
         $.ajax({
             url: myUrl,
-            type: "GET",
-            dataType: "json",
+            type: myType,
+            dataType: myDataType,
             data: args,
             success: function(result) {
                 onSuccess(result);
@@ -35,38 +38,32 @@ HARBORVIEW.utils = (function() {
             error: onError
         });
     };
+    var htmlGET = function(myUrl,
+                            args,
+                            onSuccess) {
+        myAjax("GET","html",myUrl,args,onSuccess);
+    };
+    var jsonGET = function(myUrl,
+                            args,
+                            onSuccess) {
+        myAjax("GET","json",myUrl,args,onSuccess);
+    };
+
     var jsonPUT = function(myUrl,
                             args,
                             onSuccess) {
-        $.ajax({
-            url: myUrl,
-            type: "PUT",
-            dataType: "json",
-            data: args,
-            success: function(result) {
-                onSuccess(result);
-            },
-            error: onError
-        });
+        myAjax("PUT","json",myUrl,args,onSuccess);
     };
     var jsonPOST = function(myUrl,
                             args,
                             onSuccess) {
-        $.ajax({
-            url: myUrl,
-            type: "POST",
-            dataType: "json",
-            data: args,
-            success: function(result) {
-                onSuccess(result);
-            },
-            error: onError
-        });
+        myAjax("POST","json",myUrl,args,onSuccess);
     };
     return {
         addOption : addOption,
         onError : onError,
         relativeTop : relativeTop,
+        htmlGET : htmlGET,
         jsonGET : jsonGET,
         jsonPUT : jsonPUT,
         jsonPOST : jsonPOST
@@ -135,6 +132,11 @@ HARBORVIEW.floorplans = (function() {
 
 HARBORVIEW.stearnswharf = (function() {
     "use strict";
+    var fetchSteelElements = function(sysId, steelElementsArea) {
+        HARBORVIEW.utils.htmlGET("/elements/steelelements", { "sysid" : sysId }, function(result) {
+            steelElementsArea.html(result);
+        });
+    };
     var fetchElementSystems = function(bid, fid, dropdown) {
         HARBORVIEW.utils.jsonGET("/elements/elementsystems", { "bid" : bid, "fid" : fid }, function(result) {
             var items = result.systems;
@@ -206,7 +208,8 @@ HARBORVIEW.stearnswharf = (function() {
         fetchSteelBeams : fetchSteelBeams,
         newSteelElements : newSteelElements,
         newDistLoad : newDistLoad,
-        fetchDistLoads : fetchDistLoads
+        fetchDistLoads : fetchDistLoads,
+        fetchSteelElements : fetchSteelElements
     };
 })();
 

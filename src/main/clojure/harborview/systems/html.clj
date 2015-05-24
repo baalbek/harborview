@@ -76,7 +76,7 @@
             ]})
     rows))
 
-(HTML/defsnippet empty-floorplan "templates/snippets.html" [:.no-floorplan-systems] []
+(HTML/defsnippet empty-floorplan "templates/snippets.html" [:.empty-db-result] []
   (HTML/content "No systems for this floor plan!"))
 
 (defroutes my-routes

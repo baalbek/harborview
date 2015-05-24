@@ -1,4 +1,5 @@
 (ns harborview.elements.html
+  (:import [stearnswharf.elements SteelElement])
   (:use
     [compojure.core :only (GET PUT defroutes)])
   (:require
@@ -29,10 +30,30 @@
   (let [rows (DBX/fetch-dist-loads (U/rs sysid))]
     (U/json-response {"distloads" (map U/bean->json rows)})))
 
+
+(HTML/defsnippet empty-steelelements "templates/snippets.html" [:.empty-db-result] []
+  (HTML/content "No steel elements for this system!"))
+
+(defn steelelements [rows]
+  (map (fn [^SteelElement x]
+         {:tag :details :attrs nil :content [
+          {:tag :summary :attrs nil :content [
+            (str "[ " (.getOid x) " ] ")]}
+          {:tag :div :attrs {:class "vinapu"}
+            :content ["TEST"]
+              ;(floorplan->table x)
+           }
+          ]})
+    rows))
+
 (defroutes my-routes
   (GET "/steel" request (steel))
   (GET "/wood" request (wood))
   (GET "/steelbeams" request (steelbeams))
+  (GET "/steelelements" [sysid]
+    (let [rows (DBX/fetch-steel-elements sysid)]
+      (if (empty? rows) (HTML/emit* (empty-steelelements))
+        (HTML/emit* (steelelements rows)))))
   (GET "/elementsystems" [bid fid] (element-systems (U/rs bid) (U/rs fid)))
   (GET "/distloads" [sysid] (distloads sysid))
   (PUT "/newsteel" [sysid steel nodes qloads nloads nlf]
