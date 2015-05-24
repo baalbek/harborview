@@ -36,13 +36,14 @@
   (GET "/elementsystems" [bid fid] (element-systems (U/rs bid) (U/rs fid)))
   (GET "/distloads" [sysid] (distloads sysid))
   (PUT "/newsteel" [sysid steel nodes qloads nloads nlf]
-    ;(println "sysid " sysid)
-    ;(println "steel" steel)
-    ;(println "nodes " (class nodes) nodes)
-    ;(println "qloads " (class qloads) qloads)
-    ;(println "nloads " (class nloads) nloads)
-    ;(println "nlf " (class nlf) nlf)
-    ;(U/json-response {"result" "result"})))
+    (comment
+      (println "sysid " sysid)
+      (println "steel" steel)
+      (println "nodes " (class nodes) nodes)
+      (println "qloads " (class qloads) qloads)
+      (println "nloads " (class nloads) nloads)
+      (println "nlf " (class nlf) nlf)
+      )
     (let [result (DBX/new-steel-elements sysid steel nodes qloads nloads nlf)]
       (U/json-response {"result" result})))
   (PUT "/newdistload" [sysid qx1 qx2 qy1 qy2 qz1 qz2 lf]

@@ -303,9 +303,18 @@ HARBORVIEW.nodes = (function() {
             fillNodeDropdowns(result,nodes);
         });
     };
+    var fetchSystemNodes2 = function(sysId, cosyid, nodes) {
+        HARBORVIEW.utils.jsonGET("/nodes/systemnodes2",
+                                { "sysid" : sysId,
+                                  "cosyid" : cosyid },
+                                function(result) {
+            fillNodeDropdowns(result,nodes);
+        });
+    };
 
     return {
         fetchNodes : fetchNodes,
-        fetchSystemNodes : fetchSystemNodes
+        fetchSystemNodes : fetchSystemNodes,
+        fetchSystemNodes2 : fetchSystemNodes2
     };
 })();

@@ -18,6 +18,10 @@
     (let [coord-sys (.systemCoordSys it sys-id)]
       (.systemNodes it sys-id coord-sys))))
 
+(defn fetch-system-nodes2 [sys-id coord-sys]
+  (DB/with-session NodesMapper
+    (.systemNodes it sys-id coord-sys)))
+
 (comment fetch-system-nodes2 [sys-id]
   (DB/with-session NodesMapper
     (.systemCoordSys it sys-id)))

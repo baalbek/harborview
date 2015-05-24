@@ -16,6 +16,13 @@ jQuery(document).ready(function() {
         //HARBORVIEW.stearnswharf.fetchSteelElements(sys,$("#system"));
     });
     //-------------------------------------- dlg1 --------------------------------
+    $("#dlg1-qall").change(function() {
+        var qa = $("#dlg1-qall").val();
+        $("#dlg1-q1").val(qa);
+        $("#dlg1-q2").val(qa);
+        $("#dlg1-q3").val(qa);
+        $("#dlg1-q4").val(qa);
+    });
     $("#dlg1-close").click(function() {
         dlg1.close();
         return false;
@@ -31,7 +38,6 @@ jQuery(document).ready(function() {
             $("#dlg1-n5").val()
         ];
         var distLoads = [
-            $("#dlg1-qall").val(),
             $("#dlg1-q1").val(),
             $("#dlg1-q2").val(),
             $("#dlg1-q3").val(),
@@ -80,7 +86,7 @@ jQuery(document).ready(function() {
             $("#dlg1-q4")
         ];
         $("#dlg1-header").html("System: " + sys);
-        HARBORVIEW.nodes.fetchSystemNodes(sys,nodes);
+        HARBORVIEW.nodes.fetchSystemNodes2(sys,1,nodes);
         HARBORVIEW.stearnswharf.fetchDistLoads(sys,distLoads);
         HARBORVIEW.stearnswharf.fetchSteelBeams($("#dlg1-steel"));
         dlg1.show();

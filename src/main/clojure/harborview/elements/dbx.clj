@@ -1,6 +1,6 @@
 (ns harborview.elements.dbx
   (:import
-    [stearnswharf.elements SteelBeam DistLoad]
+    [stearnswharf.elements SteelBeam DistLoad SteelElement SteelElementLoad NodeLoad]
     [stearnswharf.mybatis ElementsMapper])
   (:require
     [harborview.service.htmlutils :as U]
@@ -14,13 +14,55 @@
       (DB/with-session ElementsMapper
         (.fetchSteelBeams it)))))
 
+(defn new-steel-element [sysid steel [n1 n2] qload]
+  (if (and (> n1 0) (> n2 0))
+    (let [s (SteelElement.)]
+      (doto s
+        (.setSysId sysid)
+        (.setN1 n1)
+        (.setN2 n2)
+        (.setProfileId steel)
+        (.setLoadId qload)
+        (.setStatus 0))
+      s)
+    nil))
 
-(defn new-steel-elements  [sys-id steel
-                          [n1 n2 n3 n4 n5]
-                          [qall q1 q2 q3 q4]
-                          [p1 p2 p3 p4 p6]
-                          [p1lf p2lf p3lf p4lf p6lf]]
-  (str n1 "-" qall "-" p1))
+
+(defn new-node-load [sysid angle n1 p lf]
+  (if (> (Math/abs p) 0)
+    (let [node-load (NodeLoad.)]
+      (doto node-load
+        (.setSysId sysid)
+        (.setAngle angle)
+        (.setN1 n1)
+        (.setP p)
+        (.setLoadFactor lf))
+      node-load)
+    nil))
+
+(defn new-node-loads [mapper sysid nodes nloads nlf]
+  (let [nloads* (map r nloads)
+        nlf* (map r nlf)
+        new-node-load-fn (partial new-node-load sysid 90)
+        node-elements (filter #(not= nil %) (map new-node-load-fn nodes nloads* nlf*))]
+    (doseq [p node-elements]
+      (.newNodeLoad mapper p))))
+
+(defn new-steel-elements  [sysid steel nodes qloads nloads nlf]
+  (let [sysid* (r sysid)
+        steel* (r steel)
+        qloads* (map r qloads)
+        nodes* (map r nodes)
+        nodepairs* (partition 2 1 nodes*)
+        new-steel-fn (partial new-steel-element sysid* steel*)
+        elx (filter #(not= nil %) (map new-steel-fn nodepairs* qloads*))]
+    (DB/with-session ElementsMapper
+      (do
+        (new-node-loads it sysid* nodes* nloads nlf)
+        (doseq [e elx]
+          (.newSteelElement it e)
+          (if (= (.hasElementLoad e) true)
+            (.newSteelElementLoad it (.createElementLoad e))))))))
 
 
 (defn new-dist-load [sysid qx1 qx2 qy1 qy2 qz1 qz2 lf]

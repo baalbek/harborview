@@ -13,7 +13,9 @@
   (GET "/nodes" [pid cosyid]
     (U/json-response {"nodes" (map U/bean->json (DBF/fetch-nodes (U/rs pid) (U/rs cosyid)))}))
   (GET "/systemnodes" [sysid]
-    (U/json-response {"nodes" (map U/bean->json (DBF/fetch-system-nodes (U/rs sysid)))})))
+    (U/json-response {"nodes" (map U/bean->json (DBF/fetch-system-nodes (U/rs sysid)))}))
+  (GET "/systemnodes2" [sysid cosyid]
+    (U/json-response {"nodes" (map U/bean->json (DBF/fetch-system-nodes2 (U/rs sysid) (U/rs cosyid)))})))
 
 (comment
   (GET "/coordsys" [pid]
