@@ -166,6 +166,19 @@ HARBORVIEW.stearnswharf = (function() {
             }
         });
     };
+    var fetchWoodStClass = function(dropdown) {
+        if ((dropdown[0]).length > 1) {
+            return;
+        };
+        HARBORVIEW.utils.jsonGET("/elements/woodstclass", null, function(result) {
+            var items = result.stclass;
+            HARBORVIEW.utils.addOption(dropdown, "-", "-1");
+            for (var i=0,  itemlen = items.length; i<itemlen; i++) {
+                var item = items[i];
+                HARBORVIEW.utils.addOption(dropdown,item.text,item.oid);
+            }
+        });
+    };
     var newSteelElements = function(sysId,
                                     steelBeam,
                                     nodes,
@@ -179,6 +192,11 @@ HARBORVIEW.stearnswharf = (function() {
                                     "qloads" : distLoads,
                                     "nloads" : nodeLoads,
                                     "nlf" : nodeLf}, function(result) {
+            alert(result.result);
+        });
+    };
+    var newWoodElements = function(args) {
+        HARBORVIEW.utils.jsonPUT("/elements/newwood",args,function(result) {
             alert(result.result);
         });
     };
@@ -207,9 +225,11 @@ HARBORVIEW.stearnswharf = (function() {
         fetchElementSystems : fetchElementSystems,
         fetchSteelBeams : fetchSteelBeams,
         newSteelElements : newSteelElements,
+        newWoodElements : newWoodElements,
         newDistLoad : newDistLoad,
         fetchDistLoads : fetchDistLoads,
-        fetchSteelElements : fetchSteelElements
+        fetchSteelElements : fetchSteelElements,
+        fetchWoodStClass : fetchWoodStClass
     };
 })();
 

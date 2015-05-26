@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Harbor View - Steel Elements</title>
+    <title>Harbor View - Wood Elements</title>
     <link rel="stylesheet" href="harborview.css" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 </head>
@@ -42,18 +42,22 @@
                         </select>
                     </td>
                     <td><input type="submit" id="shownewdistload" value="New Dist Load" /></td>
-                    <td><input type="submit" id="shownewelement" value="New Steel Element" /></td>
+                    <td><input type="submit" id="shownewelement" value="New Wood Element" /></td>
                 </tr>
             </table>
         </form>
-        <p id="steelelements">Steel Elements</p>
+        <p id="woodelements">Wood Elements</p>
     </section>
     <dialog id="dlg1" style="width: 1100px">
         <p id="dlg1-header"></p>
         <fieldset>
-            <legend>Steel beam</legend>
-            <label for="dlg1-steel">Steel beam</label>
-            <select id="dlg1-steel"></select>
+            <legend>Wood beam</legend>
+            <label for="dlg1-st-class">Wood Strength Class</label>
+            <select id="dlg1-st-class"></select>
+            <label for="dlg1-beam-width">Beam Width</label>
+            <input type="number" id="dlg1-beam-width" step="5" value="90" />
+            <label for="dlg1-beam-height">Beam Height</label>
+            <input type="number" id="dlg1-beam-height" step="10" value="270" />
         </fieldset>
         <fieldset style="display: inline;">
             <legend>Nodes and node loads</legend>

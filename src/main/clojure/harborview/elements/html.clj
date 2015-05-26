@@ -14,9 +14,10 @@
   [:.ribbon-area] (HTML/substitute (SNIP/ribbon))
   [:#project] (U/populate-select (map U/projects->select (DBF/fetch-projects))))
 
-(HTML/deftemplate wood "templates/steelelements.html" []
-  [:head] (HTML/substitute (SNIP/head "Harbor View - Wood Elements" "/js/woodelement.js"))
-  [:.ribbon-area] (HTML/substitute (SNIP/ribbon)))
+(HTML/deftemplate wood "templates/woodelements.html" []
+  [:head] (HTML/substitute (SNIP/head "Harbor View - Wood Elements" "/js/woodelements.js"))
+  [:.ribbon-area] (HTML/substitute (SNIP/ribbon))
+  [:#project] (U/populate-select (map U/projects->select (DBF/fetch-projects))))
 
 (defn element-systems [bid fid]
   (let [rows (DBF/fetch-floorplan-systems bid fid)]
@@ -25,6 +26,10 @@
 (defn steelbeams []
   (let [rows (DBX/fetch-steel-beams)]
     (U/json-response {"steelbeams" (map U/bean->json rows)})))
+
+(defn woodstclass []
+  (let [rows (DBX/fetch-wood-stclass)]
+    (U/json-response {"stclass" (map U/bean->json rows)})))
 
 (defn distloads [sysid]
   (let [rows (DBX/fetch-dist-loads (U/rs sysid))]
@@ -93,6 +98,7 @@
 (defroutes my-routes
   (GET "/steel" request (steel))
   (GET "/wood" request (wood))
+  (GET "/woodstclass" request (woodstclass))
   (GET "/steelbeams" request (steelbeams))
   (GET "/steelelements" [sysid]
     (let [rows (DBX/fetch-steel-elements sysid)]
@@ -100,6 +106,9 @@
         (HTML/emit* (steelelements rows)))))
   (GET "/elementsystems" [bid fid] (element-systems (U/rs bid) (U/rs fid)))
   (GET "/distloads" [sysid] (distloads sysid))
+  (PUT "/newwood" [sysid stclass w h nodes qloads nloads nlf]
+    (let [result (DBX/new-wood-elements sysid stclass w h nodes qloads nloads nlf)]
+      (U/json-response {"result" result})))
   (PUT "/newsteel" [sysid steel nodes qloads nloads nlf]
     (comment
       (println "sysid " sysid)

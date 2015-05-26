@@ -46,3 +46,5 @@
 
 
 (defn se [sysid] (DBE/fetch-steel-elements sysid))
+
+(def st DBE/fetch-wood-stclass)
