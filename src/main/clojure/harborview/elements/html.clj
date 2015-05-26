@@ -34,16 +34,60 @@
 (HTML/defsnippet empty-steelelements "templates/snippets.html" [:.empty-db-result] []
   (HTML/content "No steel elements for this system!"))
 
+(comment floorplan->table "templates/snippets.html" [:.floorplans-form] [^FloorPlanBean f]
+  [:.shownewvinapuelement] (HTML/set-attr :data-oid (.getSystemId f))
+  [[:tr (HTML/attr= :class "rows")]]
+  (HTML/substitute
+    (let [vinapu-elements (.getVinapuElements f)]
+      (map (fn [^VinapuElementBean x]
+             (let [oid (str (.getOid x))]
+               {:tag :tr
+                :content [
+                           (U/td2 [{:tag :a
+                                    :attrs {:href "#" :class "shownewvinapuelload" :data-oid oid}
+                                    :content [(str "[ " oid " ] " (.getDsc x))]}])
+                           (U/num->td (.getN1 x))
+                           (U/td (.getN1dsc x))
+                           (U/num->td (.getN2 x))
+                           (U/td (.getN2dsc x))
+                           (U/num->td (.getPlw x))
+                           (U/num->td (.getW1 x))
+                           (U/num->td (.getW2 x))
+                           (U/num->td (.getWnode x))
+                           (U/num->td (.getLoadId x))
+                           (U/td2 (.getLoadDsc x))
+                           (U/num->td (.getLoadFactor x))
+                           (U/num->td (.getFormFactor x))
+                           (U/num->td (.getLoadCategory x))
+                           (U/num2->td (.getServiceLimit x))
+                           (U/num2->td (.getUltimateLimit x))
+                           ]}))
+        vinapu-elements))))
+
+(HTML/defsnippet steelelement->table "templates/snippets.html" [:.steelelements-form] [^SteelElement x]
+  [[:tr (HTML/attr= :class "rows")]]
+  (HTML/substitute
+    {:tag :tr
+     :content [
+                (U/num->td (.getN1 x))
+                (U/td (.getN1Dsc x))
+                (U/num->td (.getN2 x))
+                (U/td (.getN2Dsc x))
+                (U/td (.getProfileName x))
+                ;(U/num->td (.getLoadId x))
+                ]}))
+
 (defn steelelements [rows]
-  (map (fn [^SteelElement x]
-         {:tag :details :attrs nil :content [
-          {:tag :summary :attrs nil :content [
-            (str "[ " (.getOid x) " ] ")]}
-          {:tag :div :attrs {:class "vinapu"}
-            :content ["TEST"]
-              ;(floorplan->table x)
-           }
-          ]})
+  (map
+    (fn [^SteelElement x]
+     {:tag :details :attrs nil :content [
+      {:tag :summary :attrs nil :content [
+        (str "[ " (.getOid x) " ] ")]}
+      {:tag :div :attrs {:class "vinapu"}
+        :content
+          (steelelement->table x)
+       }
+      ]})
     rows))
 
 (defroutes my-routes
