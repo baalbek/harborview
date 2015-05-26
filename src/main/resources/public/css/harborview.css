@@ -93,6 +93,19 @@ dialog.wide {
   z-index: 2;
   text-align: center; }
 
+.logo {
+  background: url("/img/02.png") center no-repeat;
+  position: relative;
+  display: block;
+  float: right;
+  width: 163px;
+  height: 159px;
+  	/*
+      width: 325px;
+      height: 317px;
+      */
+  z-index: 3; }
+
 .main {
   position: absolute;
   top: 107px;
@@ -103,24 +116,27 @@ dialog.wide {
   left: 5%;
   width: 90%; }
 
+/*
 .main2 {
-  position: absolute;
-  top: 107px;
-  z-index: 0;
-  background: cornsilk;
-  padding: 0px;
-  font-size: 0.9em;
-  left: 5%;
-  width: 90%; }
+    @include main-content;
+    left: 5%;
+  	width: 90%;
+}
 
-.main .left, .main2 .left {
-  float: left;
-  width: 50%; }
+.main, .main2 {
+    .left {
+        float: left;
+        width: 50%;
+    }
+}
 
-.main .right, .main2 .right {
-  float: right;
-  width: 50%; }
-
+.main, .main2 {
+    .right {
+        float: right;
+        width: 50%;
+    }
+}
+*/
 table.std {
   border-width: 1px 1px 1px 1px;
   border-spacing: 1px;

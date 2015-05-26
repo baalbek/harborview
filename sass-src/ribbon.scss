@@ -29,3 +29,17 @@
     text-align:center;
 }
 
+
+.logo {
+    background:url('/img/02.png') center no-repeat;
+    position: relative;
+   	display:block;
+	float: right;
+    width: 163px;
+    height: 159px;
+	/*
+    width: 325px;
+    height: 317px;
+    */
+    z-index: 3;
+}
