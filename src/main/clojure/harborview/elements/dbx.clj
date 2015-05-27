@@ -11,17 +11,17 @@
 (def fetch-steel-beams
   (memoize
     (fn []
-      (DB/with-session ElementsMapper
+      (DB/with-session :stearnswharf ElementsMapper
         (.fetchSteelBeams it)))))
 
 (def fetch-wood-stclass
   (memoize
     (fn []
-      (DB/with-session ElementsMapper
+      (DB/with-session :stearnswharf ElementsMapper
         (.fetchWoodStClass it)))))
 
 (defn fetch-steel-elements [sysid]
-  (DB/with-session ElementsMapper
+  (DB/with-session :stearnswharf ElementsMapper
     (.fetchSteelElements it (r sysid))))
 
 (defn new-steel-element [sysid steel [n1 n2] qload]
@@ -66,7 +66,7 @@
         nodepairs* (partition 2 1 nodes*)
         new-steel-fn (partial new-steel-element sysid* steel*)
         elx (filter #(not= nil %) (map new-steel-fn nodepairs* qloads*))]
-    (DB/with-session ElementsMapper
+    (DB/with-session :stearnswharf ElementsMapper
       (do
         (new-node-loads it sysid* nodes* nloads nlf)
         (doseq [e elx]
@@ -101,7 +101,7 @@
         nodepairs* (partition 2 1 nodes*)
         new-wood-fn (partial new-wood-element sysid* stclass* w* h*)
         elx (filter #(not= nil %) (map new-wood-fn nodepairs* qloads*))]
-    (DB/with-session ElementsMapper
+    (DB/with-session :stearnswharf ElementsMapper
       (do
         (new-node-loads it sysid* nodes* nloads nlf)
         (doseq [e elx]
@@ -120,11 +120,11 @@
       (.setQz1 (r qz1))
       (.setQz2 (r qz2))
       (.setLoadFactor (r lf)))
-    (DB/with-session ElementsMapper
+    (DB/with-session :stearnswharf ElementsMapper
       (.newDistLoad it d))
     d))
 
 
 (defn fetch-dist-loads [sysid]
-  (DB/with-session ElementsMapper
+  (DB/with-session :stearnswharf ElementsMapper
     (.fetchDistLoads it sysid)))

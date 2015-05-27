@@ -8,12 +8,12 @@
 (def fetch-dead-loads
   (memoize
     (fn []
-      (DB/with-session LoadsMapper(.fetchVinapuDeadLoads it)))))
+      (DB/with-session :stearnswharf LoadsMapper(.fetchVinapuDeadLoads it)))))
 
 (def fetch-live-loads
   (memoize
     (fn []
-      (DB/with-session LoadsMapper(.fetchVinapuLiveLoads it)))))
+      (DB/with-session :stearnswharf LoadsMapper(.fetchVinapuLiveLoads it)))))
 
 
 

@@ -13,20 +13,20 @@
 
 (defn fetch-projects []
   (let [result
-          (DB/with-session FloorPlansMapper (.fetchProjects it))]
+          (DB/with-session :stearnswharf FloorPlansMapper (.fetchProjects it))]
     (.add result (ProjectBean. -1 "-" true))
     result))
 
 (defn fetch-buildings [project-id]
-  (DB/with-session FloorPlansMapper
+  (DB/with-session :stearnswharf FloorPlansMapper
     (.fetchBuildings it project-id)))
 
 (defn fetch-floorplans [building-id]
-  (DB/with-session FloorPlansMapper
+  (DB/with-session :stearnswharf FloorPlansMapper
     (.fetchFloorPlans it building-id)))
 
 (defn fetch-floorplan-systems [building-id floorplan-id]
-  (DB/with-session FloorPlansMapper
+  (DB/with-session :stearnswharf FloorPlansMapper
     (.fetchFloorPlanSystems it building-id floorplan-id)))
 
 (defn new-system [pid bid fid sd gid]
@@ -37,7 +37,7 @@
       (.setFloorPlan fid)
       (.setSd sd)
       (.setGroupId gid))
-    (DB/with-session FloorPlansMapper
+    (DB/with-session :stearnswharf FloorPlansMapper
       (do
         (.newSystem it s)
         (.addToFloorPlans it s)))
@@ -54,13 +54,13 @@
       (.setN2 n2)
       (.setPlw plw)
       (.setW1 w1))
-    (DB/with-session FloorPlansMapper
+    (DB/with-session :stearnswharf FloorPlansMapper
       (.newVinapuElement it v))
     v))
 
 
 (defn new-vinapu-element-load [element-id load-id form-factor]
   (let [v (VinapuElementLoadBean. element-id load-id form-factor)]
-    (DB/with-session FloorPlansMapper
+    (DB/with-session :stearnswharf FloorPlansMapper
       (.newVinapuElementLoad it v))))
 
