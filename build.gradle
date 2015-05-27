@@ -45,6 +45,7 @@ dependencies {
     runtime "org.mybatis:mybatis:$mybatisVersion"
     runtime "postgresql:postgresql:$postgresVersion"
     runtime "log4j:log4j:$log4jVersion"
+    runtime "jline:jline:0.9.94"
 }
 
 task copydeps(type: Copy) {
@@ -52,13 +53,11 @@ task copydeps(type: Copy) {
 }
 
 task setupDist << {
-    /*
+    //ant.symlink(resource: "/usr/local/java/jline-0.9.94.jar", link: "dist/jline-0.9.94.jar")
     ant.symlink(resource: "../src/main/resources/log4j.xml", link: "dist/log4j.xml")
-    ant.symlink(resource: "/usr/local/java/jline-0.9.94.jar", link: "dist/jline-0.9.94.jar")
     ant.symlink(resource: "../src/main/resources/public", link: "dist/public")
     ant.symlink(resource: "../src/main/resources/templates", link: "dist/templates")
     ant.symlink(resource: "../src/main/clojure/harborview", link: "dist/harborview")
-    */
     ant.symlink(resource: "../src/main/resources/dbcp.properties", link: "dist/dbcp.properties")
     ant.symlink(resource: "../src/main/resources/mybatis.conf.xml", link: "dist/mybatis.conf.xml")
 }
