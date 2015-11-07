@@ -11,7 +11,21 @@
   [x]
   (filter #(and (sequential? %) (not-any? sequential? %))
     (rest (tree-seq #(and (sequential? %) (some sequential?  seq x))))))
-
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Harbor View</title>
+</head>
+<body>
+<div class="logo"></div>
+<!--
+<div class="logo">
+<img src="/img/01.png" />
+</div>
+-->
+<header class="ribbon-area"></header>
+</body>
+</html>
 
 (defmacro j1 [f1] `(fn [v#] (~f1 v#)))
 

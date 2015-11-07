@@ -18,12 +18,7 @@
   [:.ribbon-area] (HTML/substitute (SNIP/ribbon)))
 
 (defroutes main-routes
-  ;(GET "/" request (SYS/my-systems))
   (GET "/" request (index))
-  (context "/systems" [] SYS/my-routes)
-  (context "/loads" [] LD/my-routes)
-  (context "/nodes" [] N/my-routes)
-  (context "/elements" [] E/my-routes)
   (R/files "/" {:root "public"})
   (R/resources "/" {:root "public"}))
 
