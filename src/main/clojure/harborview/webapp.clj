@@ -11,10 +11,8 @@
 
 (HTML/deftemplate index "templates/index.html" []
   [:head] (HTML/substitute (SNIP/head))
+  [:#sidebar-wrapper] (HTML/substitute (SNIP/menu))
   [:.scripts] (HTML/substitute (SNIP/scripts)))
-
-  ;[:head] (HTML/substitute (SNIP/head "Harbor View"))
-  ;[:.ribbon-area] (HTML/substitute (SNIP/ribbon)))
 
 (defroutes main-routes
   (GET "/" request (index))

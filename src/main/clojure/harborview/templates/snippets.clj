@@ -21,3 +21,6 @@
 
 (HTML/defsnippet scripts "templates/snippets.html" [:.scripts] []
   identity)
+
+(HTML/defsnippet menu "templates/snippets.html" [:#sidebar-wrapper] []
+  identity)

@@ -7,6 +7,13 @@
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-beta.1/angular.min.js"></script>
     <script src="js/controllers.js"></script>
+    <!-- Menu Toggle Script -->
+    <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+    </script>
 </div>
 
 <head>
@@ -14,17 +21,17 @@
 
     <title>Harbor View</title>
 
-    <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
           integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
           crossorigin="anonymous"/>
 
-    <!-- Optional theme -->
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"
           integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX"
           crossorigin="anonymous"/>
+    <link href="css/simple-sidebar.css" rel="stylesheet">
+    <!--
     <nav class="navbar navbar-static-top navbar-inverse">
         <div class="container container-fluid">
             <div class="navbar-header">
@@ -39,7 +46,7 @@
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapsed-1">
                 <ul class="nav navbar-nav">
-                    <li><a href="#">Link 1</a></li>
+                    <li><a href="#">Kassadagbok</a></li>
                     <li><a href="#">Link 2</a></li>
                     <li><a href="#">Link 3</a></li>
                     <li><a href="#">Link 4</a></li>
@@ -47,5 +54,39 @@
             </div>
         </div>
     </nav>
+    -->
 </head>
+
+<!-- Sidebar -->
+<div id="sidebar-wrapper">
+    <ul class="sidebar-nav">
+        <li class="sidebar-brand">
+            <a href="#">
+                Start Bootstrap
+            </a>
+        </li>
+        <li>
+            <a href="#">Dashboard</a>
+        </li>
+        <li>
+            <a href="#">Shortcuts</a>
+        </li>
+        <li>
+            <a href="#">Overview</a>
+        </li>
+        <li>
+            <a href="#">Events</a>
+        </li>
+        <li>
+            <a href="#">About</a>
+        </li>
+        <li>
+            <a href="#">Services</a>
+        </li>
+        <li>
+            <a href="#">Contact</a>
+        </li>
+    </ul>
+</div>
+
 
