@@ -1,106 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" ng-app="phoneApp">
 <head>
-    <meta charset="utf-8" />
-    <title>React Tutorial</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.3/react.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.3/react-dom.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Harbor View</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+          integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
+          crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"
+          integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX"
+          crossorigin="anonymous">
+
+    <nav class="navbar navbar-static-top navbar-inverse">
+        <div class="container container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#navbar-collapsed-1">
+                    <span class="cr-only">Toggle nav</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">My icon</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-collapsed-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="#">Link 1</a></li>
+                    <li><a href="#">Link 2</a></li>
+                    <li><a href="#">Link 3</a></li>
+                    <li><a href="#">Link 4</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 </head>
-<body>
-    <div id="content"></div>
-    <script type="text/babel">
-        // To get started with this tutorial running your own code, simply remove
-        // the script tag loading scripts/example.js and start writing code here.
+<body ng-controller="PhoneListCtrl">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+                <!--Sidebar content-->
 
-	var localdata = [
-	  {id: 1, author: "Pete Hunt", text: "This is one comment"},
-	  {id: 2, author: "Jordan Walke", text: "This is *another* comment"}
-	];
-    var Comment = React.createClass({
-      render: function() {
-          return (
-            <div className="comment">
-                <h2 className="commentAuthor">
-                    {this.props.author} 
-                </h2>
-                <h3 className="commentAuthor">
-                    Id: {this.props.idx}
-                </h3>
-                {this.props.children}
-            </div>
-        );
-    }});
-    var CommentList = React.createClass({
-    render: function() {
-        var commentNodes = this.props.data.map(function(comment) {
-                return (
-                    <Comment author={comment.author} key={comment.id} idx={comment.id}>
-                        {comment.text}
-                    </Comment>
-                );
-            });
-            return (
-                <div className="commentList">
-                    {commentNodes}
+                <div class="row">
+                    Search: <input ng-model="query">
                 </div>
-            );
-        }}
-    );
-	var CommentBox = React.createClass({
-        getInitialState: function() {
-            return {data: []};
-        },
-        componentDidMount: function() {
-            this.setState({data: localdata});
-        },
-        render: function() {
-            return (
-            <div className="commentBox">
-                <h1>Comments</h1>
-                <CommentList data={this.state.data}/>
-            </div>
-            );
-        }
-	});
-    var options = ['Ferrari', 'Lamborghini', 'Mazeratti', '1989 Mazda MPV'];
-    var options2 = [
-        {name: "Ferrari", value: "1"},
-        {name: "Ferrari2", value: "2"},
-        {name: "Ferrari3", value: "3"}
-    ]
-
-
-    var SelectComponent = React.createClass({  
-        getInitialState: function(){
-            return {
-            selectValue: this.props.options[0]
-            };
-        },
-        handleChange: function(e){
-            var selectedOption = e.target.value;
-            this.setState({
-                selectValue: selectedOption
-            });
-            alert(selectedOption);
-        },
-        render: function(){
-            var selectValue = this.state.selectValue;
-            var cOptions = this.props.options.map(function(item, index){
-                    return <option key={index} value={item.value}>{item.name}</option>
-                });
-            return (
-                <div>
-                    <select onChange={this.handleChange} value={selectValue}>{cOptions}</select>
+                <div class="row">
+                    Sort by:
+                    <select ng-model="orderProp">
+                        <option value="name">Alphabetical</option>
+                        <option value="age">Newest</option>
+                    </select>
                 </div>
-            )
-        }
-    });
+            </div>
+            <div class="col-md-10">
+                <!--Body content-->
 
-    ReactDOM.render(<SelectComponent options={options2}/>, document.getElementById('content'));  
-	//ReactDOM.render(<CommentBox />,document.getElementById('content'));
-    </script>
+                <ul class="phones">
+                    <li ng-repeat="phone in phones | filter:query | orderBy:orderProp" class="thumbnail">
+                        <a href="#/phones/{{phone.id}}" class="thumb"><img ng-src="{{phone.imageUrl}}"></a>
+                        <a href="#/phones/{{phone.id}}">{{phone.name}}</a>
+                        <p>{{phone.snippet}}</p>
+                    </li>
+                </ul>
+                <!--
+                <ul class="phones">
+                    <li ng-repeat="phone in phones | filter:query | orderBy:orderProp">
+                    {{phone.name}}
+                    {{phone.age}}
+                    <p>{{phone.snippet}}</p>
+                    </li>
+                </ul>
+                -->
+
+            </div>
+        </div>
+    </div>
+
+    <!--
+    <div class="container">
+        <ul>
+            <li ng-repeat="phone in phones">
+                <span>{{phone.name}}</span>
+                <p>{{phone.snippet}}</p>
+            </li>
+        </ul>
+    </div>
+    -->
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
+        integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ=="
+        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-beta.1/angular.min.js"></script>
+    <script src="js/controllers.js"></script>
+
 </body>
 </html>
