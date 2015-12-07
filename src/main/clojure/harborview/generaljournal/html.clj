@@ -19,6 +19,7 @@
 
 (HTML/deftemplate  general-journal "templates/generaljournal.html" []
   ;[:head] (HTML/substitute (SNIP/head "Kassadagbok" "/js/generaljournal.js"))
+  [:.scripts] (HTML/substitute (SNIP/scripts))
   [:#bilag] (HTML/set-attr :value (-> (DBX/fetch-by-bilag) first .getBilag inc str))
   [:#debit] (U/populate-select (map ns4102->select (DBX/fetch-ns4102)))
   [:#credit] (U/populate-select (map ns4102->select (DBX/fetch-ns4102))))
