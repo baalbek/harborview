@@ -1,55 +1,106 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="phoneApp">
-<head></head>
-<body ng-controller="PhoneListCtrl">
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>React Tutorial</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.3/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.3/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+</head>
+<body>
+    <div id="content"></div>
+    <script type="text/babel">
+        // To get started with this tutorial running your own code, simply remove
+        // the script tag loading scripts/example.js and start writing code here.
 
-    <div id="wrapper">
-
-        <div id="sidebar-wrapper"></div>
-        <div id="page-content-wrapper">
-            <!--
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h1>Simple Sidebar</h1>
-                        <p>This template has a responsive menu toggling system. The menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will appear/disappear. On small screens, the page content will be pushed off canvas.</p>
-                        <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>.</p>
-                        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
-                    </div>
-                </div>
+	var localdata = [
+	  {id: 1, author: "Pete Hunt", text: "This is one comment"},
+	  {id: 2, author: "Jordan Walke", text: "This is *another* comment"}
+	];
+    var Comment = React.createClass({
+      render: function() {
+          return (
+            <div className="comment">
+                <h2 className="commentAuthor">
+                    {this.props.author} 
+                </h2>
+                <h3 className="commentAuthor">
+                    Id: {this.props.idx}
+                </h3>
+                {this.props.children}
             </div>
-            -->
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="row">
-                            Search: <input ng-model="query">
-                        </div>
-                        <div class="row">
-                            Sort by:
-                            <select ng-model="orderProp">
-                                <option value="name">Alphabetical</option>
-                                <option value="age">Newest</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-10">
-                        <ul class="phones">
-                            <li ng-repeat="phone in phones | filter:query | orderBy:orderProp" class="thumbnail">
-                                <a href="#/phones/{{phone.id}}" class="thumb"><img ng-src="{{phone.imageUrl}}"></a>
-                                <a href="#/phones/{{phone.id}}">{{phone.name}}</a>
-                                <p>{{phone.snippet}}</p>
-                            </li>
-                        </ul>
-
-                    </div>
+        );
+    }});
+    var CommentList = React.createClass({
+    render: function() {
+        var commentNodes = this.props.data.map(function(comment) {
+                return (
+                    <Comment author={comment.author} key={comment.id} idx={comment.id}>
+                        {comment.text}
+                    </Comment>
+                );
+            });
+            return (
+                <div className="commentList">
+                    {commentNodes}
                 </div>
-                <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
+            );
+        }}
+    );
+	var CommentBox = React.createClass({
+        getInitialState: function() {
+            return {data: []};
+        },
+        componentDidMount: function() {
+            this.setState({data: localdata});
+        },
+        render: function() {
+            return (
+            <div className="commentBox">
+                <h1>Comments</h1>
+                <CommentList data={this.state.data}/>
             </div>
+            );
+        }
+	});
+    var options = ['Ferrari', 'Lamborghini', 'Mazeratti', '1989 Mazda MPV'];
+    var options2 = [
+        {name: "Ferrari", value: "1"},
+        {name: "Ferrari2", value: "2"},
+        {name: "Ferrari3", value: "3"}
+    ]
 
-        </div>
-    </div>
-    <div class="scripts" />
 
+    var SelectComponent = React.createClass({  
+        getInitialState: function(){
+            return {
+            selectValue: this.props.options[0]
+            };
+        },
+        handleChange: function(e){
+            var selectedOption = e.target.value;
+            this.setState({
+                selectValue: selectedOption
+            });
+            alert(selectedOption);
+        },
+        render: function(){
+            var selectValue = this.state.selectValue;
+            var cOptions = this.props.options.map(function(item, index){
+                    return <option key={index} value={item.value}>{item.name}</option>
+                });
+            return (
+                <div>
+                    <select onChange={this.handleChange} value={selectValue}>{cOptions}</select>
+                </div>
+            )
+        }
+    });
+
+    ReactDOM.render(<SelectComponent options={options2}/>, document.getElementById('content'));  
+	//ReactDOM.render(<CommentBox />,document.getElementById('content'));
+    </script>
 </body>
 </html>

@@ -24,6 +24,9 @@ ext.enliveVersion = '1.1.5'
 //ext.enlivenVersion = '0.1.0-SNAPSHOT'
 ext.compojureVersion = '1.3.1'
 
+ext.major = '5'
+ext.minor = '1'
+
 repositories {
     mavenCentral()
     maven {
@@ -33,8 +36,10 @@ repositories {
 
 dependencies {
     compile project(':stearnswharf-repos')
+    compile project(':koteriku')
     compile "compojure:compojure:$compojureVersion"
     compile "enlive:enlive:$enliveVersion"
+
     //compile "enliven:enliven:$enlivenVersion"
     compile "ring:ring-core:$ringVersion"
     compile "ring:ring-jetty-adapter:$ringVersion"
@@ -46,6 +51,7 @@ dependencies {
     runtime "org.mybatis:mybatis:$mybatisVersion"
     runtime "postgresql:postgresql:$postgresVersion"
     runtime "log4j:log4j:$log4jVersion"
+    compile "commons-logging:commons-logging:1.2"
     runtime "jline:jline:0.9.94"
 }
 

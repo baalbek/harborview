@@ -2,6 +2,7 @@
   (:require
     [net.cgrand.enlive-html :as HTML]
     [compojure.route :as R]
+    [harborview.generaljournal.html :as GJ]
     [harborview.templates.snippets :as SNIP])
   (:use
     [compojure.handler :only (api)]
@@ -15,7 +16,8 @@
   [:.scripts] (HTML/substitute (SNIP/scripts)))
 
 (defroutes main-routes
-  (GET "/" request (index))
+  (GET "/" request (GJ/general-journal))
+  (context "/generaljournal" [] GJ/my-routes)
   (R/files "/" {:root "public"})
   (R/resources "/" {:root "public"}))
 
