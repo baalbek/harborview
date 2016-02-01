@@ -4,7 +4,6 @@ group = 'rcstadheim'
 archivesBaseName = 'harborview'
 version = '2.0'
 
-//aotCompile = true
 
 ext.springVersion = '4.1.4.RELEASE'
 ext.junitVersion = '4.11'
@@ -61,23 +60,31 @@ task copydeps(type: Copy) {
 
 task setupDist << {
     //ant.symlink(resource: "/usr/local/java/jline-0.9.94.jar", link: "dist/jline-0.9.94.jar")
-    ant.symlink(resource: "../src/main/resources/log4j.xml", link: "dist/log4j.xml")
-    ant.symlink(resource: "../src/main/resources/public", link: "dist/public")
-    ant.symlink(resource: "../src/main/resources/templates", link: "dist/templates")
-    ant.symlink(resource: "../src/main/clojure/harborview", link: "dist/harborview")
-    ant.symlink(resource: "../src/main/resources/dbcp.properties", link: "dist/dbcp.properties")
-    ant.symlink(resource: "../src/main/resources/mybatis.conf.xml", link: "dist/mybatis.conf.xml")
+    ant.symlink(resource: "../src/resources/log4j.xml", link: "dist/log4j.xml")
+    ant.symlink(resource: "../src/resources/public", link: "dist/public")
+    ant.symlink(resource: "../src/resources/templates", link: "dist/templates")
+    ant.symlink(resource: "../src/clojure/harborview", link: "dist/harborview")
+    ant.symlink(resource: "../src/resources/dbcp.properties", link: "dist/dbcp.properties")
+    ant.symlink(resource: "../src/resources/mybatis.conf.xml", link: "dist/mybatis.conf.xml")
+    ant.symlink(resource: "/home/rcs/.gradle/caches/modules-2/files-2.1", link: "libs")
 }
 
 buildscript {
     repositories {
-        maven {
-            url 'http://clojars.org/repo'
-        }
+        mavenLocal()
     }
-
     dependencies {
-        classpath 'clojuresque:clojuresque:1.5.8'
+        classpath group: 'rcstadheim', name: 'palenque',
+                version: '1.0'
     }
 }
 
+apply plugin: 'rcstadheim.palenque'
+
+task winLeinDeps(type: rcstadheim.palenque.LeinDepsTask) {
+    useLibsSymlink = false
+}
+
+jar {
+    from ("target/classes") include "**/*.class"
+}
