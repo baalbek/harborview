@@ -5,23 +5,21 @@ archivesBaseName = 'harborview'
 version = '2.0'
 
 
-ext.springVersion = '4.1.4.RELEASE'
+ext.springVersion = '4.2.3.RELEASE'
 ext.junitVersion = '4.11'
 ext.log4jVersion = '1.2.17'
-ext.mybatisVersion = '3.2.8'
-ext.postgresVersion = '9.1-901.jdbc4'
+ext.mybatisVersion = '3.3.0'
+ext.postgresVersion = '9.4-1206-jdbc42'
 
 //-------------------- clojure ---------------------
-ext.clojureVersion = '1.6.0'
+ext.clojureVersion = '1.7.0'
 ext.clojureContribVersion = '1.2.0'
 ext.algoMonadsVersion = '0.1.5'
-ext.clojuresqueVersion = '1.5.8'
-ext.numericTowerVersion = '0.0.2'
+ext.numericTowerVersion = '0.0.4'
 ext.jsonVersion = '0.5.3'
-ext.ringVersion = '1.3.2'
+ext.ringVersion = '1.4.0'
 ext.enliveVersion = '1.1.5'
-//ext.enlivenVersion = '0.1.0-SNAPSHOT'
-ext.compojureVersion = '1.3.1'
+ext.compojureVersion = '1.4.0'
 
 ext.major = '5'
 ext.minor = '1'
@@ -36,19 +34,24 @@ repositories {
 dependencies {
     compile project(':stearnswharf-repos')
     compile project(':koteriku')
+
+    //---------------------------------------------------
+    //---------------- Clojure clj jars -----------------
+    //---------------------------------------------------
     compile "compojure:compojure:$compojureVersion"
     compile "enlive:enlive:$enliveVersion"
-
-    //compile "enliven:enliven:$enlivenVersion"
     compile "ring:ring-core:$ringVersion"
     compile "ring:ring-jetty-adapter:$ringVersion"
     compile "ring:ring-servlet:$ringVersion"
     compile "clj-json:clj-json:$jsonVersion"
+    //--------------- END Clojure clj jars --------------
+
+    compile "commons-codec:commons-codec:1.10"
     compile "org.clojure:clojure:$clojureVersion"
     compile "org.clojure:clojure-contrib:$clojureContribVersion"
     compile "org.clojure:math.numeric-tower:$numericTowerVersion"
     runtime "org.mybatis:mybatis:$mybatisVersion"
-    runtime "postgresql:postgresql:$postgresVersion"
+    runtime "org.postgresql:postgresql:$postgresVersion"
     runtime "log4j:log4j:$log4jVersion"
     compile "commons-logging:commons-logging:1.2"
     runtime "jline:jline:0.9.94"
@@ -67,6 +70,37 @@ task setupDist << {
     ant.symlink(resource: "../src/resources/dbcp.properties", link: "dist/dbcp.properties")
     ant.symlink(resource: "../src/resources/mybatis.conf.xml", link: "dist/mybatis.conf.xml")
     ant.symlink(resource: "/home/rcs/.gradle/caches/modules-2/files-2.1", link: "libs")
+}
+
+def javaJarDeps() {
+    def result = []
+    configurations.compile.each { f ->  
+        if (f =~ /enlive/) return
+        if (f =~ /compojure/) return
+        if (f =~ /ring/) return
+        //if (f =~ /clj-json/) return
+        if (f =~ /clout/) return
+        if (f =~ /numeric-tower/) return
+        if (f =~ /clj-time/) return
+        if (f =~ /medley/) return
+        if (f =~ /instaparse/) return
+        if (f =~ /crypto/) return
+        if (f =~ /tools.macro/) return
+        result.add(f)
+    }
+    result
+}
+
+task printJavaDeps << {
+    javaJarDeps().each { f ->
+        println f
+    }
+}
+
+task coypJavaDeps(type: Copy) {
+    javaJarDeps().each { f -> 
+        into 'dist' from f
+    }
 }
 
 buildscript {
