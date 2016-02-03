@@ -120,5 +120,7 @@ task winLeinDeps(type: rcstadheim.palenque.LeinDepsTask) {
 }
 
 jar {
-    from ("target/classes") include "**/*.class"
+    from ("target/classes") 
+    include "**/*.class"
+    exclude "harborview/**/*.class"
 }

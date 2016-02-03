@@ -17,7 +17,7 @@
   :aot :all
   :resource-paths [
 		;deps
-            "src/resources"
+      "src/resources"
 			"/home/rcs/opt/java/stearnswharf-repos/build/libs/stearnswharf-1.0.jar"
 			"/home/rcs/opt/java/koteriku/build/libs/koteriku-5.1.1.jar"
 			"libs/compojure/compojure/1.4.0/2b5ff46cc06d64eda9980735b5a51f19b2528e41/compojure-1.4.0.jar"
