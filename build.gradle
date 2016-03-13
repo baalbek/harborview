@@ -67,8 +67,8 @@ task setupDist << {
     ant.symlink(resource: "../src/resources/public", link: "dist/public")
     ant.symlink(resource: "../src/resources/templates", link: "dist/templates")
     ant.symlink(resource: "../src/clojure/harborview", link: "dist/harborview")
-    ant.symlink(resource: "../src/resources/dbcp.properties", link: "dist/dbcp.properties")
-    ant.symlink(resource: "../src/resources/mybatis.conf.xml", link: "dist/mybatis.conf.xml")
+    ant.symlink(resource: "../src/resources/koteriku-dbcp.properties", link: "dist/koteriku-dbcp.properties")
+    ant.symlink(resource: "../src/resources/koteriku-mybatis.conf.xml", link: "dist/koteriku-mybatis.conf.xml")
     ant.symlink(resource: "/home/rcs/.gradle/caches/modules-2/files-2.1", link: "libs")
 }
 

@@ -42,17 +42,15 @@ nav a {
     }
 }
 
+.row {
+    margin-top: 30px;
+    margin-bottom: 30px
+}
+
 @import "fieldset";
 
 @import "dialog";
 
-@import "ribbon";
-
-@import "main";
-
 @import "table-std";
 
-@import "hrmenu";
-
-//@import "jquery-ui-1.10.3.custom";
 

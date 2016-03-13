@@ -26,8 +26,6 @@
 
 (defroutes my-routes
   (GET "/" request (general-journal))
-  (PUT "/jax" [jax]
-       (U/json-response {"result" 12})) 
   (PUT "/insert" [credit debit curdate bilag desc amount mva mvaamt]
     (let [gj-bean (DBX/insert bilag curdate credit debit desc amount mva mvaamt)]
       (U/json-response {"beanId" (.getId gj-bean) "bilag" (-> bilag read-string inc str)})))

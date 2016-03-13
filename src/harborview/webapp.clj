@@ -12,11 +12,12 @@
 
 (HTML/deftemplate index "templates/index.html" []
   [:head] (HTML/substitute (SNIP/head))
-  [:#sidebar-wrapper] (HTML/substitute (SNIP/menu))
+  ;[:#sidebar-wrapper] (HTML/substitute (SNIP/menu))
   [:.scripts] (HTML/substitute (SNIP/scripts)))
 
 (defroutes main-routes
-  (GET "/" request (GJ/general-journal))
+  (GET "/" request (index))
+  ;(GET "/" request (GJ/general-journal))
   (context "/generaljournal" [] GJ/my-routes)
   (R/files "/" {:root "public"})
   (R/resources "/" {:root "public"}))
