@@ -2,7 +2,7 @@ body {
   color: black;
   background-color: cornsilk;
   font-family: Verdana, Arial, serif;
-  font-size: 0.9em;
+  font-size: 1.3em;
   margin: 0;
   padding: 0; }
 
@@ -17,7 +17,7 @@ img {
 
 nav a, nav a:link, nav a:visited, nav a:active, nav a.current {
   padding: 10px;
-  font-size: 0.9em;
+  font-size: 1.3em;
   margin: 0px;
   text-decoration: none;
   color: black; }
@@ -113,36 +113,3 @@ fieldset input {
 
 .close:hover {
   background: #00d9ff; }
-
-table.std {
-  border-width: 1px 1px 1px 1px;
-  border-spacing: 1px;
-  border-style: solid solid solid solid;
-  border-color: black;
-  border-collapse: collapse;
-  background-color: transparent; }
-
-table.std td,
-table.std th {
-  border-width: 1px 1px 1px 1px;
-  padding: 5px;
-  border-style: solid solid solid solid;
-  border-color: black;
-  font-size: 0.9em;
-  color: black;
-  background-color: transparent;
-  -moz-border-radius: 0px 0px 0px 0px; }
-
-table.std caption {
-  color: black;
-  text-align: left; }
-
-table.inactive caption {
-  color: black; }
-
-tr.inactive td {
-  color: black; }
-
-td .ajax-dlg {
-  background-color: black;
-  padding: 5px 10px 5px 10px; }

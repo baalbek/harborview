@@ -1,4 +1,4 @@
-$fs : 0.9em;
+$fs : 1.3em;
 $bg-color: #FFF8DC;
 //--------------- Foreground Colors ------------------>>>
 $nav-color: #000;
@@ -47,10 +47,10 @@ nav a {
     margin-bottom: 30px
 }
 
-@import "fieldset";
 
 @import "dialog";
 
-@import "table-std";
+// @import "fieldset";
+// @import "table-std";
 
 

@@ -82,7 +82,10 @@
 (defn str->date [dx]
   (LocalDate/parse dx (date-fmt dx)))
 
-(comment date->str [dx]
+(defn date->str [dx]
+  "2016-3-24")
+
+  (comment
   (let [dxx (if (= (class dx) java.util.Date)
               (DateMidnight. dx)
               dx)]

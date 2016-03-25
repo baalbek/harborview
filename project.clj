@@ -20,6 +20,7 @@
       "src/resources"
 			"/home/rcs/opt/java/stearnswharf-repos/build/libs/stearnswharf-1.0.jar"
 			"/home/rcs/opt/java/koteriku/build/libs/koteriku-5.1.1.jar"
+		  "/home/rcs/opt/java/kilauea/build/libs/kilauea-5.1.2.jar"
 			"libs/compojure/compojure/1.4.0/2b5ff46cc06d64eda9980735b5a51f19b2528e41/compojure-1.4.0.jar"
 			"libs/enlive/enlive/1.1.5/2a0104c467e2778ce5c1316da1f9a78b6bb5722c/enlive-1.1.5.jar"
 			"libs/ring/ring-core/1.4.0/6ac9a134048f031e7067bf834ab9085a0c840386/ring-core-1.4.0.jar"

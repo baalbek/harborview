@@ -34,22 +34,25 @@ repositories {
 dependencies {
     compile project(':stearnswharf-repos')
     compile project(':koteriku')
+    compile project(':oahu')
+    compile project(':ranoraraku')
+    compile project(':kilauea')
 
     //---------------------------------------------------
     //---------------- Clojure clj jars -----------------
     //---------------------------------------------------
     compile "compojure:compojure:$compojureVersion"
-    compile "enlive:enlive:$enliveVersion"
+    //compile "enlive:enlive:$enliveVersion"
     compile "ring:ring-core:$ringVersion"
     compile "ring:ring-jetty-adapter:$ringVersion"
     compile "ring:ring-servlet:$ringVersion"
     compile "clj-json:clj-json:$jsonVersion"
+    //compile "org.clojure:clojure:$clojureVersion"
+    compile "org.clojure:clojure-contrib:$clojureContribVersion"
+    compile "org.clojure:math.numeric-tower:$numericTowerVersion"
     //--------------- END Clojure clj jars --------------
 
     compile "commons-codec:commons-codec:1.10"
-    compile "org.clojure:clojure:$clojureVersion"
-    compile "org.clojure:clojure-contrib:$clojureContribVersion"
-    compile "org.clojure:math.numeric-tower:$numericTowerVersion"
     runtime "org.mybatis:mybatis:$mybatisVersion"
     runtime "org.postgresql:postgresql:$postgresVersion"
     runtime "log4j:log4j:$log4jVersion"
