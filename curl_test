@@ -1,0 +1,5 @@
+#!/bin/bash
+
+curl -X PUT -H "Content-Type: application/json" -d '{"jax":"34"}' http://localhost:8082/generaljournal/jax
+
+exit 0

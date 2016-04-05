@@ -4,6 +4,7 @@
     [harborview.hourlist.html :as HRL]
     [net.cgrand.enlive-html :as HTML]
     [compojure.route :as R]
+    [harborview.critters.html :as CRT]
     [harborview.generaljournal.html :as GJ]
     [harborview.service.htmlutils :as UTIL]
     [harborview.templates.snippets :as SNIP])
@@ -25,8 +26,6 @@
 (HTML/deftemplate hourlist "templates/hourlist.html" []
   [:head] (HTML/substitute (SNIP/head))
   [:.scripts] (HTML/substitute (SNIP/scripts))
-  ;[:head] (H/substitute (SNIP/head "Timeliste" "/js/hourlist.js"))
-  ;[:.ribbon-area] (H/substitute (SNIP/ribbon))
   [:#fnr]
   (UTIL/populate-select
     (map (fn [v]
@@ -47,6 +46,7 @@
   ;(GET "/" request (GJ/general-journal))
   (context "/generaljournal" [] GJ/my-routes)
   (context "/hourlist" [] HRL/my-routes)
+  (context "/critters" [] CRT/my-routes)
   (R/files "/" {:root "public"})
   (R/resources "/" {:root "public"}))
 

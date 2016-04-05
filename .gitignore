@@ -9,5 +9,6 @@ dist/
 .sass-cache
 *~
 harborview-master
+tikal
 libs
 target
