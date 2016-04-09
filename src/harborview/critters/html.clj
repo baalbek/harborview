@@ -13,7 +13,7 @@
     [net.cgrand.enlive-html :as H]))
 
 
-(def num-crit-items 5)
+(def num-crit-items 4)
 (def num-acc-items 6)
 
 (defn th [v] {:tag :th :attrs nil :content [(str v)]})
@@ -32,10 +32,9 @@
         purchase-id (.getPurchaseId c)]
     [
       (td-a [{:tag :a :attrs {:href "#" :class "critoid" :data-critid (str oid)} :content [(str oid)]}])
-      (td (.getName c))
       (td (.getSellVolume c))
       (td (.getStatus c))
-      (td-a [{:tag :a :attrs {:href "#" :class "newaccrule" :data-critid (str oid) :data-puid (str purchase-id)}
+      (td-a [{:tag :a :attrs {:href "#dlg-new-accrule" :class "newaccrule" :data-critid (str oid) :data-puid (str purchase-id)}
               :content ["New acc."]}])
       ]))
 
@@ -111,7 +110,7 @@
 
 (defn critter-area [^OptionPurchaseBean p]
   (let [crits (.getCritters p)
-        crit-headers ["Oid" "Critter Name" "Sell Volume" "Status" "-"
+        crit-headers ["Oid" "Sell Volume" "Status" "-"
                       "Acc.oid" "Rtyp" "Desc" "Value" "Active" "-"
                       "Deny oid" "Rtyp" "Desc" "Value" "Active" "Memory"]
         thead (map th crit-headers)
@@ -136,7 +135,7 @@
 
 (H/deftemplate overlook "templates/critters/overlook.html" [purchases]
   [:head] (H/substitute (SNIP/head)) ;(SNIP/head "Critters - overlook" "js/critters.js"))
-  [:.scripts] (HTML/substitute (SNIP/scripts))
+  [:.scripts] (H/substitute (SNIP/scripts))
   [:.purchases] (H/substitute (make-critters purchases)))
 
 
