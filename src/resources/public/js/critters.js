@@ -42,14 +42,38 @@ var Critters = new function () {
         alert(errorThrown)
     }
     */
+    var showNewAccRule = function(items) {
+        $("#acc-header").text("[ " + this.purchaseId + " ] Critter Oid: " + this.critId);
+        if (items) {
+            var cb = document.getElementById("acc-rtyp");
+
+            for (var i = 0; i < items.length; i++) {
+                HARBORVIEW.Utils.createOption(cb,items[i].value,items[i].name);
+            }
+        };
+    }
+    var onNewAccRule = function() {
+        alert("whatever: " + this.critId);
+    }
+    return {
+        showNewAccRule: showNewAccRule,
+        onNewAccRule: onNewAccRule,
+        critId: undefined,
+        purchaseId: undefined
+    }
 }()
 
 jQuery(document).ready(function() {
-    //$("body").on("click", "a.newaccrule", function() {
+    $("body").on("click", "#new-acc-ok", function() {
+        Critters.onNewAccRule();
+    })
     $("body").on("click", "a.newaccrule", function() {
         var critId = $(this).attr("data-critid");
         var purchaseId = $(this).attr("data-puid");
-        alert(critId);
+        Critters.critId = critId;
+        Critters.purchaseId = purchaseId;
+        Critters.showNewAccRule(null);
+        return true;
     })
     /*
     $("#newaccruledlg").dialog({ height: 350,

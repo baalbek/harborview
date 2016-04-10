@@ -29,10 +29,17 @@ HARBORVIEW.Utils = (function () {
         console.log("jsonPOST: " + args);
         myAjax("POST", "json", myUrl, args, onSuccess);
     }
+    var createHtmlOption = function(ddl, value, text) {
+            var opt = document.createElement('option');
+            opt.value = value;
+            opt.text = text;
+            ddl.options.add(opt);
+    }
     return {
         jsonGET: jsonGET,
         jsonPUT: jsonPUT,
-        jsonPOST: jsonPOST
+        jsonPOST: jsonPOST,
+        createHtmlOption : createHtmlOption
     }
 })();
 
