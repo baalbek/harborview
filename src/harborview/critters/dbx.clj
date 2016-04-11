@@ -1,5 +1,7 @@
 (ns harborview.critters.dbx
   (:import
+    [ranoraraku.beans.options OptionPurchaseBean]
+    [ranoraraku.beans.critters RuleTypeBean]
     [ranoraraku.beans.critters CritterBean GradientRuleBean AcceptRuleBean DenyRuleBean]
     [ranoraraku.models.mybatis CritterMapper])
   (:require
@@ -9,6 +11,24 @@
 (defn active-purchases [purchase-type]
   (DB/with-session :ranoraraku CritterMapper
     (.activePurchasesAll it purchase-type)))
+
+(comment active-purchases [purchase-type]
+  (let [a (OptionPurchaseBean.)
+        c1 (CritterBean.)
+        crittersA (java.util.ArrayList.)
+        result (java.util.ArrayList.)]
+    (doto c1
+      (.setOid 11)
+      (.setSellVolume 10)
+      (.setPurchaseId 46)
+      (.setName "YAR6E350"))
+    (.add crittersA c1)
+    (doto a
+      (.setOid 46)
+      (.setCritters crittersA)
+      (.setLocalDx (java.time.LocalDate/of 2016 9 1)))
+    (.add result a)
+    result))
 
 
 (comment find-purchase [purchase-id]
@@ -23,10 +43,25 @@
   (DB/with-session :ranoraraku CritterMapper
     (.findPurchaseForAccId it acc-id)))
 
-(def rule-types
-  (fn []
-    (DB/with-session :ranoraraku CritterMapper
-      (.ruleTypes it))))
+(defn rule-types []
+  (DB/with-session :ranoraraku CritterMapper
+    (.ruleTypes it)))
+
+(comment rule-types []
+  (let [
+         r1 (RuleTypeBean.)
+         r2 (RuleTypeBean.)
+         r3 (RuleTypeBean.)
+         result (java.util.ArrayList.)
+        ]
+    (doto r1 (.setDesc "Diff from bought") (.setOid 7))
+    (doto r2 (.setDesc "Diff from bought 2") (.setOid 8))
+    (doto r3 (.setDesc "Diff from bought 3") (.setOid 9))
+    (.add result r1)
+    (.add result r2)
+    (.add result r3)
+    result))
+
 
 (defn insert-critter [oid status opx sellvol]
   (let [result (CritterBean.)]

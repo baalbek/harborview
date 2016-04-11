@@ -46,7 +46,7 @@
       (td (.getRtypDesc a))
       (td (.getAccValue a))
       (td (.getActive a))
-      (td-a [{:tag :a :attrs {:href "#" :class "newdenyrule" :data-accid (str oid) :data-puid (str purchase-id)}
+      (td-a [{:tag :a :attrs {:href "#dlg-new-dnyrule" :class "newdenyrule" :data-accid (str oid) :data-puid (str purchase-id)}
               :content ["New deny"]}])
       ]))
 

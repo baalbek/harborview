@@ -11,37 +11,59 @@
             <div class="purchases"></div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <a href="#dlg-new-accrule" id="jax" class="href-hidden">Open Modal</a>
-        </div>
-    </div>
+
     <div class="scripts"></div>
     <script src="/js/critters.js"></script>
 
-    <!-- Dialog box -->
+    <!-- Accept Rule Dialog box -->
     <div id="dlg-new-accrule" class="modalDialog">
         <div>
-            <label id="acc-header" style="display: block;">New accrule</label>
+            <label id="acc-header" style="display: block;">New Accept Rule</label>
+            <!--
             <a href="#close" title="Close" class="close">X</a>
+            -->
             <form role="form">
-                <div class="">
-                <p>Rtyp:<select id="acc-rtyp"></select></p>
                 <div class="form-group">
-                    <label for="email"></label>
-                    <input type="email" class="form-control" id="email">
+                    <label for="acc-rtyp" style="display:block;">Rule type:</label>
+                    <select id="acc-rtyp"></select>
                 </div>
+                <div class="form-group">
+                    <label for="acc-value">Value:</label>
+                    <input type="number" class="form-control" id="acc-value" step="0.25" value="5.0">
+                </div>
+                <!--
                 <div class="form-group">
                     <label for="pwd">Password:</label>
                     <input type="password" class="form-control" id="pwd">
                 </div>
-                <!--
                 <div class="checkbox">
                     <label><input type="checkbox"> Remember me</label>
                 </div>
                 -->
                 <button type="button" class="btn btn-default" id="new-acc-ok">OK</button>
-                <a href="#close">Cancel</a>
+                <a href="#close" id="new-acc-cancel">Cancel</a>
+            </form>
+        </div>
+    </div>
+    <!-- Deny Rule Dialog box -->
+    <div id="dlg-new-dnyrule" class="modalDialog">
+        <div>
+            <label id="dny-header" style="display: block;">New Deny Rule</label>
+            <form role="form">
+                <div class="form-group">
+                    <label for="dny-rtyp" style="display:block;">Rule type:</label>
+                    <select id="dny-rtyp"></select>
+                </div>
+                <div class="form-group">
+                    <label for="dny-value">Value:</label>
+                    <input type="number" class="form-control" id="dny-value" step="0.25" value="5.0">
+                </div>
+                <div class="form-group">
+                    <label for="dny-mem">Memory:</label>
+                    <input type="text" class="form-control" id="dny-mem" value="n">
+                </div>
+                <button type="button" class="btn btn-default" id="new-dny-ok">OK</button>
+                <a href="#close" id="new-dny-cancel">Cancel</a>
             </form>
         </div>
     </div>

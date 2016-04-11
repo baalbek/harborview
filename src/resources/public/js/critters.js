@@ -42,24 +42,44 @@ var Critters = new function () {
         alert(errorThrown)
     }
     */
-    var showNewAccRule = function(items) {
-        $("#acc-header").text("[ " + this.purchaseId + " ] Critter Oid: " + this.critId);
-        if (items) {
-            var cb = document.getElementById("acc-rtyp");
-
-            for (var i = 0; i < items.length; i++) {
-                HARBORVIEW.Utils.createOption(cb,items[i].value,items[i].name);
-            }
-        };
+    var showNewAccRule = function(critId,purchaseId) {
+        Critters.purchaseId = purchaseId;
+        Critters.critId = critId;
+        $("#acc-header").text("[ " + Critters.purchaseId + " ] Critter Oid: " + Critters.critId);
+        Critters.setRuleTypes();
     }
     var onNewAccRule = function() {
-        alert("whatever: " + this.critId);
+        var rule = $("#acc-rtyp").val();
+        var rule_amount = $("#acc-value").val();
+
+        HARBORVIEW.Utils.jsonPUT(
+            "/critters/addaccrule",
+            {cid: Critters.critId, value: rule_amount, rtyp: rule},
+            function(result){
+                var critterArea = "#critter-area-".concat(Critters.purchaseId.toString());
+                $(critterArea).html(result.result);
+            })
+        var cancel = document.getElementById("new-acc-cancel");
+        cancel.click();
+    }
+    var setRuleTypes = function() {
+        if (Critters.hasRuleTypes === false) {
+            Critters.hasRuleTypes = true;
+            HARBORVIEW.Utils.jsonGET("/critters/rtyp",null,function(items) {
+                var cb = document.getElementById("acc-rtyp");
+                for (var i = 0; i < items.length; i++) {
+                    HARBORVIEW.Utils.createHtmlOption(cb,items[i].value,items[i].name);
+                }
+            })
+        }
     }
     return {
         showNewAccRule: showNewAccRule,
         onNewAccRule: onNewAccRule,
         critId: undefined,
-        purchaseId: undefined
+        purchaseId: undefined,
+        hasRuleTypes: false,
+        setRuleTypes: setRuleTypes
     }
 }()
 
@@ -70,10 +90,13 @@ jQuery(document).ready(function() {
     $("body").on("click", "a.newaccrule", function() {
         var critId = $(this).attr("data-critid");
         var purchaseId = $(this).attr("data-puid");
-        Critters.critId = critId;
-        Critters.purchaseId = purchaseId;
-        Critters.showNewAccRule(null);
+        Critters.showNewAccRule(critId,purchaseId);
         return true;
+    })
+    $("body").on("click", "a.newdenyrule", function() {
+        var accId = $(this).attr("data-accid");
+        var purchaseId = $(this).attr("data-puid");
+
     })
     /*
     $("#newaccruledlg").dialog({ height: 350,
