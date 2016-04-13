@@ -42,6 +42,7 @@ var Critters = new function () {
         alert(errorThrown)
     }
     */
+    /*------------------ Acc Rule ---------------------*/
     var showNewAccRule = function(critId,purchaseId) {
         Critters.purchaseId = purchaseId;
         Critters.critId = critId;
@@ -62,13 +63,25 @@ var Critters = new function () {
         var cancel = document.getElementById("new-acc-cancel");
         cancel.click();
     }
+    /*------------------ Deny Rule ---------------------*/
+    var showNewDenyRule = function(accId,purchaseId) {
+        Critters.purchaseId = purchaseId;
+        Critters.accId = accId;
+        $("#dny-header").text("[ " + Critters.purchaseId + " ] Acc. Rule Oid: " + Critters.accId);
+        Critters.setRuleTypes();
+    }
+    var onNewDenyRule = function() {
+
+    }
     var setRuleTypes = function() {
         if (Critters.hasRuleTypes === false) {
             Critters.hasRuleTypes = true;
             HARBORVIEW.Utils.jsonGET("/critters/rtyp",null,function(items) {
-                var cb = document.getElementById("acc-rtyp");
+                var cb_acc = document.getElementById("acc-rtyp");
+                var cb_dny = document.getElementById("dny-rtyp");
                 for (var i = 0; i < items.length; i++) {
-                    HARBORVIEW.Utils.createHtmlOption(cb,items[i].value,items[i].name);
+                    HARBORVIEW.Utils.createHtmlOption(cb_acc,items[i].value,items[i].name);
+                    HARBORVIEW.Utils.createHtmlOption(cb_dny,items[i].value,items[i].name);
                 }
             })
         }
@@ -76,8 +89,11 @@ var Critters = new function () {
     return {
         showNewAccRule: showNewAccRule,
         onNewAccRule: onNewAccRule,
+        showNewDenyRule: showNewDenyRule,
+        onNewDenyRule: onNewDenyRule,
         critId: undefined,
         purchaseId: undefined,
+        accId: undefined,
         hasRuleTypes: false,
         setRuleTypes: setRuleTypes
     }
@@ -87,16 +103,18 @@ jQuery(document).ready(function() {
     $("body").on("click", "#new-acc-ok", function() {
         Critters.onNewAccRule();
     })
+    /*------------------ Acc Rule ---------------------*/
     $("body").on("click", "a.newaccrule", function() {
         var critId = $(this).attr("data-critid");
         var purchaseId = $(this).attr("data-puid");
         Critters.showNewAccRule(critId,purchaseId);
         return true;
     })
+    /*------------------ Deny Rule ---------------------*/
     $("body").on("click", "a.newdenyrule", function() {
         var accId = $(this).attr("data-accid");
         var purchaseId = $(this).attr("data-puid");
-
+        Critters.showNewDenyRule(accId,purchaseId);
     })
     /*
     $("#newaccruledlg").dialog({ height: 350,
