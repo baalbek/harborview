@@ -1,47 +1,5 @@
 var Critters = new function () {
     "use strict";
-    /*
-    this.showNewAccRule = function (oid, purchaseId, items) {
-        $("#acc_header").html("[ " + purchaseId + " ] Critter Oid: " + oid);
-        $("#acc_pu_oid").val(purchaseId);
-        $("#acc_crit_oid").val(oid);
-        if (items) {
-            var cb = document.getElementById("acc_rtyp");
-
-            for (var i = 0; i < items.length; i++) {
-                Critters.createOption(cb,items[i].value,items[i].name);
-            }
-        };
-        $("#newaccruledlg").show();
-        $("#newaccruledlg").dialog("open");
-    }
-    this.showNewDenyRule = function (oid, purchaseId, items) {
-        $("#dny_header").html("[ " + purchaseId + " ] Accept Oid: " + oid);
-        $("#dny_pu_oid").val(purchaseId);
-        $("#dny_acc_oid").val(oid);
-        if (items) {
-            var cb = document.getElementById("dny_rtyp");
-
-            for (var i = 0; i < items.length; i++) {
-                Critters.createOption(cb,items[i].value,items[i].name);
-            }
-        };
-        $("#newdnyruledlg").show();
-        $("#newdnyruledlg").dialog("open");
-    }
-    this.createOption = function(ddl, value, text) {
-            var opt = document.createElement('option');
-            opt.value = value;
-            opt.text = text;
-            ddl.options.add(opt);
-    }
-    this.accValInit = false;
-    this.dnyValInit = false;
-    this.onError = function(XMLHttpRequest, textStatus, errorThrown) {
-        alert(textStatus)
-        alert(errorThrown)
-    }
-    */
     /*------------------ Acc Rule ---------------------*/
     var showNewAccRule = function(critId,purchaseId) {
         Critters.purchaseId = purchaseId;
@@ -71,7 +29,18 @@ var Critters = new function () {
         Critters.setRuleTypes();
     }
     var onNewDenyRule = function() {
-
+        var rule        = $("#dny-rtyp").val();
+        var rule_amount = $("#dny-value").val();
+        var mem         = $("#dny-mem").is(":checked") ? "y" : "n";
+        HARBORVIEW.Utils.jsonPUT(
+            "/critters/adddenyrule",
+            {accid: Critters.accId, value: rule_amount, rtyp: rule, hasmem: mem},
+            function(result){
+                var critterArea = "#critter-area-".concat(Critters.purchaseId.toString());
+                $(critterArea).html(result.result);
+            })
+        var cancel = document.getElementById("new-dny-cancel");
+        cancel.click();
     }
     var setRuleTypes = function() {
         if (Critters.hasRuleTypes === false) {
@@ -100,10 +69,30 @@ var Critters = new function () {
 }()
 
 jQuery(document).ready(function() {
+    /*------------------ Acc Rule ---------------------*/
+    var toggleValue2 = function(rtypId,val2id,lbl2id) {
+        var selectedRtyp = $(rtypId).val();
+        var lbl2 = document.getElementById(lbl2id);
+        var val2= document.getElementById(val2id);
+
+        if (selectedRtyp === "9") {
+            lbl2.style.display = "block";
+            val2.style.display = "block";
+        }
+        else {
+            lbl2.style.display = "none";
+            val2.style.display = "none";
+        }
+    }
+    $("body").on("click", "#acc-rtyp", function() {
+        toggleValue2("#acc-rtyp","acc-value-2","acc-lbl-2");
+    })
+    $("body").on("click", "#dny-rtyp", function() {
+        toggleValue2("#dny-rtyp","dny-value-2","dny-lbl-2");
+    })
     $("body").on("click", "#new-acc-ok", function() {
         Critters.onNewAccRule();
     })
-    /*------------------ Acc Rule ---------------------*/
     $("body").on("click", "a.newaccrule", function() {
         var critId = $(this).attr("data-critid");
         var purchaseId = $(this).attr("data-puid");
@@ -111,128 +100,15 @@ jQuery(document).ready(function() {
         return true;
     })
     /*------------------ Deny Rule ---------------------*/
+    $("body").on("click", "#new-dny-ok", function() {
+        Critters.onNewDenyRule();
+    })
     $("body").on("click", "a.newdenyrule", function() {
         var accId = $(this).attr("data-accid");
         var purchaseId = $(this).attr("data-puid");
         Critters.showNewDenyRule(accId,purchaseId);
+        return true;
     })
-    /*
-    $("#newaccruledlg").dialog({ height: 350,
-        width: 600,
-        modal: true,
-        position: "center",
-        autoOpen:false,
-        title:"New Acc Rule",
-        overlay: { opacity: 0.5, background: "black"},
-        buttons: {
-            "Ok": function() {
-                var oid   = $("#acc_crit_oid").val();
-                var purchaseId = $("#acc_pu_oid").val();
-                var rtyp  = $("#acc_rtyp").val();
-                var value = $("#acc_val").val();
-                $.ajax({
-                    url: "/critters/addaccrule",
-                    type: "PUT",
-                    dataType: "json",
-                    data: {
-                        "cid": oid,
-                        "value": value,
-                        "rtyp": rtyp
-                    },
-                    success: function(result) {
-                        var critterArea = "#critter-area-".concat(purchaseId.toString());
-                        $(critterArea).html(result.result);
-                    },
-                    error: Critters.onError
-                })
-                $(this).dialog("close");
-            },
-            "Cancel": function() {
-                $(this).dialog("close");
-            }
-        }
-    })
-    //$(".newaccrule").click(function() {
-    $("body").on("click", "a.newaccrule", function() {
-        var critId = $(this).attr("data-critid");
-        var purchaseId = $(this).attr("data-puid");
-        if (Critters.accValInit == false) {
-            $.ajax({
-                url: "/critters/rtyp",
-                type: "GET",
-                dataType: "json",
-                success: function(result) {
-                    Critters.accValInit = true;
-                    Critters.showNewAccRule(critId, purchaseId, result);
-                },
-                error: Critters.onError
-            })
-        }
-        else {
-            Critters.showNewAccRule(critId, purchaseId, null);
-        }
-        return false;
-    })
-    $("#newdnyruledlg").dialog({ height: 350,
-        width: 600,
-        modal: true,
-        position: "center",
-        autoOpen:false,
-        title:"New Deny Rule",
-        overlay: { opacity: 0.5, background: "black"},
-        buttons: {
-            "Ok": function() {
-                var oid        = $("#dny_acc_oid").val();
-                var purchaseId = $("#dny_pu_oid").val();
-                var value      = $("#dny_val").val();
-                var rtyp       = $("#dny_rtyp").val();
-                var mem        = $("#hasmemory").is(":checked") ? "y" : "n";
-                alert("Oid: " + oid + ", puid: " + purchaseId + ", value: " + value + ", rtyp: " + rtyp + ", mem: " + mem);
-
-                $.ajax({
-                    url: "/critters/adddenyrule",
-                    type: "PUT",
-                    dataType: "json",
-                    data: {
-                        "accid": oid,
-                        "value": value,
-                        "rtyp": rtyp,
-                        "hasmem": mem
-                    },
-                    success: function(result) {
-                        var critterArea = "#critter-area-".concat(purchaseId.toString());
-                        $(critterArea).html(result.result);
-                    },
-                    error: Critters.onError
-                })
-                $(this).dialog("close");
-            },
-            "Cancel": function() {
-                $(this).dialog("close");
-            }
-        }
-    })
-    $("body").on("click", "a.newdenyrule", function() {
-        var accId = $(this).attr("data-accid");
-        var purchaseId = $(this).attr("data-puid");
-        if (Critters.dnyValInit == false) {
-            $.ajax({
-                url: "/critters/rtyp",
-                type: "GET",
-                dataType: "json",
-                success: function(result) {
-                    Critters.dnyValInit = true;
-                    Critters.showNewDenyRule(accId, purchaseId, result);
-                },
-                error: Critters.onError
-            })
-        }
-        else {
-            Critters.showNewDenyRule(accId, purchaseId, null);
-        }
-        return false;
-    })
-    */
 })
 
 

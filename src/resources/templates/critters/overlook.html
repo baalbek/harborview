@@ -31,6 +31,10 @@
                     <label for="acc-value">Value:</label>
                     <input type="number" class="form-control" id="acc-value" step="0.25" value="5.0">
                 </div>
+                <div class="form-group">
+                    <label id="acc-lbl-2" for="acc-value-2" style="display: none;">Value 2:</label>
+                    <input type="number" style="display:none" class="form-control" id="acc-value-2" step="0.25" value="5.0">
+                </div>
                 <!--
                 <div class="form-group">
                     <label for="pwd">Password:</label>
@@ -55,8 +59,12 @@
                     <label for="dny-value">Value:</label>
                     <input type="number" class="form-control" id="dny-value" step="0.25" value="5.0">
                 </div>
-                <div class="checkbox" id="dny-mem">
-                    <label><input type="checkbox">Memory</label>
+                <div class="form-group">
+                    <label id="dny-lbl-2" for="dny-value-2" style="display: none;">Value 2:</label>
+                    <input type="number" style="display:none" class="form-control" id="dny-value-2" step="0.25" value="5.0">
+                </div>
+                <div class="checkbox">
+                    <label><input id="dny-mem" type="checkbox">Memory</label>
                 </div>
                 <button type="button" class="btn btn-default" id="new-dny-ok">OK</button>
                 <a href="#close" id="new-dny-cancel">Cancel</a>
