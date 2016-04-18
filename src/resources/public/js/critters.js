@@ -42,6 +42,11 @@ var Critters = new function () {
         var cancel = document.getElementById("new-dny-cancel");
         cancel.click();
     }
+    /*------------------ New Critter ---------------------*/
+    var showNewDenyRule = function() {
+
+    }
+
     var setRuleTypes = function() {
         if (Critters.hasRuleTypes === false) {
             Critters.hasRuleTypes = true;
@@ -109,6 +114,10 @@ jQuery(document).ready(function() {
         Critters.showNewDenyRule(accId,purchaseId);
         return true;
     })
+    /*------------------ Deny Critter ---------------------*/
+    $("body").on("click", "#new-critter", function() {
+    })
+
 })
 
 

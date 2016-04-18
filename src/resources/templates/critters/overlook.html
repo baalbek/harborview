@@ -7,6 +7,14 @@
 <body>
 <div class="container">
     <div class="row">
+        <div class="col-sm-2">
+            <!--
+            <button id="new-critter" type="button" class="btn btn-danger">New critter</button>
+            -->
+            <a class="href-button" href="#dlg-new-critter">New Critter</a>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-sm-12">
             <div class="purchases"></div>
         </div>
@@ -69,6 +77,19 @@
                 <button type="button" class="btn btn-default" id="new-dny-ok">OK</button>
                 <a href="#close" id="new-dny-cancel">Cancel</a>
             </form>
+        </div>
+    </div>
+    <!-- Critter Dialog box -->
+    <div id="dlg-new-critter" class="modalDialog">
+        <div class="container">
+            <h2>Tabs</h2>
+            <p>The .nav-tabs class is used to create navigation tabs:</p>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#">HTML</a></li>
+                <li><a href="#">CSS</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
         </div>
     </div>
 </body>
