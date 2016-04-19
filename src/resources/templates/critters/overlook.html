@@ -5,12 +5,57 @@
     <meta charset="UTF-8">
 </head>
 <body>
+<!--
+<nav class="navbar navbar-default navbar-inverse">
+    <div class="container container-fluid">
+        <div class="collapse navbar-collapse" id="navbar-collapsed-1">
+            <a class="navbar-brand" href="#">My icon</a>
+            <ul class="nav navbar-nav">
+                <li><a href="/generaljournal">Kassadagbok</a></li>
+                <li><a href="/derivatives">Derivatives</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Page 1
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">[3] Money Critters</a></li>
+                        <li><a href="#">[4] Test Critters</a></li>
+                        <li><a href="#">[11] Paper Critters</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Link 4</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+-->
+
 <div class="container">
     <div class="row">
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">WebSiteName</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="/generaljournal">Kassadagbok</a></li>
+                    <li><a href="/derivatives">Derivatives</a></li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Page 1
+                            <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">[3] Money Critters</a></li>
+                            <li><a href="#">[4] Test Critters</a></li>
+                            <li><a href="#">[11] Paper Critters</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Link 4</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <br/>
+    <div class="row">
         <div class="col-sm-2">
-            <!--
-            <button id="new-critter" type="button" class="btn btn-danger">New critter</button>
-            -->
             <a class="href-button" href="#dlg-new-critter">New Critter</a>
         </div>
     </div>
@@ -82,14 +127,29 @@
     <!-- Critter Dialog box -->
     <div id="dlg-new-critter" class="modalDialog">
         <div class="container">
-            <h2>Tabs</h2>
+            <h3>Tabs</h3>
             <p>The .nav-tabs class is used to create navigation tabs:</p>
-            <ul class="nav nav-tabs" role="tablist">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#">HTML</a></li>
-                <li><a href="#">CSS</a></li>
-                <li><a href="#">About</a></li>
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+                <li><a data-toggle="tab" href="#menu1">Menu 1</a></li>
+                <li><a data-toggle="tab" href="#menu2">Menu 2</a></li>
             </ul>
+            <div class="tab-content">
+                <div id="home" class="tab-pane fade in active">
+                    <h3>HOME</h3>
+                    <p>Some content.</p>
+                </div>
+                <div id="menu1" class="tab-pane fade">
+                    <h3>Menu 1</h3>
+                    <p>Some content in menu 1.</p>
+                </div>
+                <div id="menu2" class="tab-pane fade">
+                    <h3>Menu 2</h3>
+                    <p>Some content in menu 2.</p>
+                </div>
+            </div>
+            <button type="button" class="btn btn-default" id="new-critter-ok">OK</button>
+            <a href="#close" id="new-critter-cancel">Cancel</a>
         </div>
     </div>
 </body>

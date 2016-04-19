@@ -33,7 +33,7 @@ nav a, nav a:link, nav a:visited, nav a:active, nav a.current {
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(120, 100, 100, 0.3);
   z-index: 99999;
   opacity: 0;
   /*
