@@ -6,6 +6,7 @@
     [clojure.string :only (join)]
     [compojure.core :only (GET PUT defroutes)])
   (:require
+    [selmer.parser :as P]
     [harborview.service.logservice :as LOG]
     [harborview.service.htmlutils :as U]
     [harborview.critters.dbx :as DBX]
@@ -133,7 +134,7 @@
 (defn make-critters [purchases]
   (map critter-area purchases))
 
-(H/deftemplate overlook "templates/critters/overlook.html" [purchases]
+(H/deftemplate xoverlook "templates/critters/overlook.html" [purchases]
   [:head] (H/substitute (SNIP/head)) ;(SNIP/head "Critters - overlook" "js/critters.js"))
   [:.scripts] (H/substitute (SNIP/scripts))
   [:.purchases] (H/substitute (make-critters purchases)))
@@ -145,9 +146,14 @@
   [:#acc_rtyp] (U/populate-select (map ruletype->select (DBX/rule-types)))
   [:#opx] (U/populate-select (map opx->select (DBX/active-purchases (U/rs id)))))
 
+(defn overlook [purchases]
+  (let [gen-p
+        (fn [p]
+          {:oid (.getOid p) :acc-rules {}})]
+  (P/render-file "templates/critters/overlook.html"  {:purchases (map gen-p purchases)})))
 
 (defroutes my-routes
-  (GET "/overlook/:id" [id] (overlook (DBX/active-purchases (U/rs id))))
+  (GET "/overlook/:id" [id] (overlook(DBX/active-purchases (U/rs id))))
   (GET "/new/:id" [id] (new-critter id))
   (GET "/rtyp" [] (U/json-response (map ruletype->select (DBX/rule-types))))
   (PUT "/addaccrule" [cid value rtyp]

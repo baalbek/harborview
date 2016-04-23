@@ -1,5 +1,6 @@
 (ns harborview.webapp
   (:require
+    [selmer.parser :as P]
     [harborview.service.htmlutils :as U]
     [harborview.critters.dbx :as DBX]
     [harborview.hourlist.html :as HRL]
@@ -40,6 +41,8 @@
              {:name (str (.getId v) " - " (.getDescription v)) :value (str (.getId v))})
         (DBX/fetch-hourlist-groups))))
   )
+
+(P/set-resource-path! "/home/rcs/opt/java/harborview/src/resources/")
 
 (defroutes main-routes
   ;(GET "/" request (hourlist))

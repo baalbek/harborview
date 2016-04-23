@@ -19,6 +19,7 @@ ext.numericTowerVersion = '0.0.4'
 ext.jsonVersion = '0.5.3'
 ext.ringVersion = '1.4.0'
 ext.enliveVersion = '1.1.5'
+ext.selmerVersion = '1.0.4'
 ext.compojureVersion = '1.4.0'
 
 ext.major = '5'
@@ -41,13 +42,12 @@ dependencies {
     //---------------------------------------------------
     //---------------- Clojure clj jars -----------------
     //---------------------------------------------------
+    compile "selmer:selmer:$selmerVersion"
     compile "compojure:compojure:$compojureVersion"
-    //compile "enlive:enlive:$enliveVersion"
     compile "ring:ring-core:$ringVersion"
     compile "ring:ring-jetty-adapter:$ringVersion"
     compile "ring:ring-servlet:$ringVersion"
     compile "clj-json:clj-json:$jsonVersion"
-    //compile "org.clojure:clojure:$clojureVersion"
     compile "org.clojure:clojure-contrib:$clojureContribVersion"
     compile "org.clojure:math.numeric-tower:$numericTowerVersion"
     //--------------- END Clojure clj jars --------------
