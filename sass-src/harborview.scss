@@ -17,6 +17,7 @@ body {
     background-color: $bg-color;
     font-family: Verdana, Arial, serif;
     font-size: $fs; margin: 0; padding: 0;
+    padding-top: 50px; /* When using the navbar-top-fixed */
 }
 
 

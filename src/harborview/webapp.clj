@@ -6,6 +6,7 @@
     [net.cgrand.enlive-html :as HTML]
     [compojure.route :as R]
     [harborview.critters.html :as CRT]
+    [harborview.derivatives.html :as OPX]
     [harborview.generaljournal.html :as GJ]
     [harborview.service.htmlutils :as UTIL]
     [harborview.templates.snippets :as SNIP])
@@ -46,6 +47,7 @@
   (context "/generaljournal" [] GJ/my-routes)
   (context "/hourlist" [] HRL/my-routes)
   (context "/critters" [] CRT/my-routes)
+  (context "/opx" [] OPX/my-routes)
   (R/files "/" {:root "public"})
   (R/resources "/" {:root "public"}))
 

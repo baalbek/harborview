@@ -4,7 +4,9 @@ body {
   font-family: Verdana, Arial, serif;
   font-size: 1.3em;
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  padding-top: 50px;
+  /* When using the navbar-top-fixed */ }
 
 a, a:link, a:visited, a:active, a.current {
   margin: 0px;
