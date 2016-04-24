@@ -109,7 +109,7 @@
         desc (.getDesc v)]
     {:name (str oid " - " desc) :value (str oid)}))
 
-(defn critter-area [^OptionPurchaseBean p]
+(defn xcritter-area [^OptionPurchaseBean p]
   (let [crits (.getCritters p)
         crit-headers ["Oid" "Sell Volume" "Status" "-"
                       "Acc.oid" "Rtyp" "Desc" "Value" "Active" "-"
@@ -134,10 +134,12 @@
 (defn make-critters [purchases]
   (map critter-area purchases))
 
-(H/deftemplate xoverlook "templates/critters/overlook.html" [purchases]
-  [:head] (H/substitute (SNIP/head)) ;(SNIP/head "Critters - overlook" "js/critters.js"))
-  [:.scripts] (H/substitute (SNIP/scripts))
-  [:.purchases] (H/substitute (make-critters purchases)))
+(comment
+  (H/deftemplate xoverlook "templates/critters/overlook.html" [purchases]
+    [:head] (H/substitute (SNIP/head)) ;(SNIP/head "Critters - overlook" "js/critters.js"))
+    [:.scripts] (H/substitute (SNIP/scripts))
+    [:.purchases] (H/substitute (make-critters purchases)))
+  )
 
 
 (H/deftemplate new-critter "templates/critters/newcritter.html" [id]
@@ -146,11 +148,18 @@
   [:#acc_rtyp] (U/populate-select (map ruletype->select (DBX/rule-types)))
   [:#opx] (U/populate-select (map opx->select (DBX/active-purchases (U/rs id)))))
 
+
+(defn critter-area [^CritterBean c]
+  (let [acc-rules (.getAcceptRules c)]
+    (if (= 0 (.size acc-rules))
+      ()
+      ())))
+
 (defn overlook [purchases]
-  (let [gen-p
-        (fn [p]
-          {:oid (.getOid p) :acc-rules {}})]
-  (P/render-file "templates/critters/overlook.html"  {:purchases (map gen-p purchases)})))
+  (let [crits (.getCritters p)
+        critter-areas (map critter-area crits)]
+    (P/render-file "templates/critters/overlook.html"
+      {:purchases critter-areas}))) ; {:purchases (map gen-p purchases)})))
 
 (defroutes my-routes
   (GET "/overlook/:id" [id] (overlook(DBX/active-purchases (U/rs id))))
