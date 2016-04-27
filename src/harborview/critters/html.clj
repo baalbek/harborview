@@ -132,7 +132,7 @@
     result))
 
 (defn make-critters [purchases]
-  (map critter-area purchases))
+  (map xcritter-area purchases))
 
 (comment
   (H/deftemplate xoverlook "templates/critters/overlook.html" [purchases]
@@ -151,12 +151,27 @@
 
 (defn critter-area [^CritterBean c]
   (let [acc-rules (.getAcceptRules c)]
-    (if (= 0 (.size acc-rules))
-      ()
+    (if (> (.size acc-rules) 0)
+      {
+        :oid (.getOid c)
+        :sell_vol (.getSellVolume c)
+        :status (.getStatus c)
+        :aoid nil
+        :artyp nil
+        :adesc nil
+        :aval nil
+        :aact nil
+        :doid nil
+        :drtyp nil
+        :ddesc nil
+        :dval nil
+        :dact nil
+        :mem nil
+        }
       ())))
 
 (defn overlook [purchases]
-  (let [crits (.getCritters p)
+  (let [crits (.getCritters (first purchases))
         critter-areas (map critter-area crits)]
     (P/render-file "templates/critters/overlook.html"
       {:purchases critter-areas}))) ; {:purchases (map gen-p purchases)})))

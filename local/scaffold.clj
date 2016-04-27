@@ -1,64 +1,145 @@
 (ns scaffold
+  (:import
+    [ranoraraku.beans.critters CritterBean AcceptRuleBean DenyRuleBean RuleTypeBean])
   (:require
-    [harborview.floorplans.dbx :as DBF]
-    [harborview.systems.html :as SH]
-    [harborview.elements.html :as EH]
-    [harborview.elements.dbx :as DBE]
-    [harborview.nodes.html :as NH]
-    [harborview.nodes.dbx :as NDB]))
-
-(defn af
-  [x]
-  (filter #(and (sequential? %) (not-any? sequential? %))
-    (rest (tree-seq #(and (sequential? %) (some sequential?  seq x))))))
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>Harbor View</title>
-</head>
-<body>
-<div class="logo"></div>
-<!--
-<div class="logo">
-<img src="/img/01.png" />
-</div>
--->
-<header class="ribbon-area"></header>
-</body>
-</html>
-
-(defmacro j1 [f1] `(fn [v#] (~f1 v#)))
-
-(defmacro j2 [f1 f2] `(fn [v#] [(~f1 v#) (~f2 v#)]))
-
-(defmacro j3 [f1 f2 f3] `(fn [v#] [(~f1 v#) (~f2 v#) (~f3 v#)]))
-
-(defn buildings [pid] (SH/buildings-for pid))
-
-(defn new-sys [pid bid fid sd gid]
-  (DBF/new-system pid bid fid sd gid))
-
-(defn elsys [bid fid] (EH/element-systems bid fid))
-
-(defn sysnodes [sysid] (NDB/fetch-system-nodes sysid))
-
-(defn fd [sysid] (DBE/fetch-dist-loads sysid))
+    [harborview.critters.dbx :as DBX]))
 
 
-;(def steels DBE/new-steel-elements)
-
-(def nodes ["14" "15" "16" "-1" "-1"])
-
-(def qloads ["13" "-1" "-1" "-1"])
-
-(def nloads ["0.0" "-10" "0.0" "0.0" "0.0"])
-
-(def nlf ["1.3" "1.3" "1.3" "1.3" "1.3"])
+(defn jax []
+  (DBX/active-purchases 11))
 
 
-(defn steels [] (DBE/new-steel-elements 45 7 nodes qloads nloads nlf))
+(def cr 
+  (let [p1 (first (jax))]
+    (first (.getCritters p1))))
+
+(defn critter-only [^CritterBean c]
+  {
+    :oid (.getOid c)
+    :sell_vol (.getSellVolume c)
+    :status (.getStatus c)
+    :aoid nil
+    :artyp nil
+    :adesc nil
+    :aval nil
+    :aact nil
+    :doid nil
+    :drtyp nil
+    :ddesc nil
+    :dval nil
+    :dact nil
+    :mem nil
+    })
+
+(defn critter-with-denyrule [^CritterBean c, 
+                             ^AcceptRuleBean acc,
+                             ^DenyRuleBean dny]
+  (if (nil? c)
+    (if (nil? acc)
+      {:oid nil
+      :sell_vol nil
+      :status nil
+      :aoid nil
+      :artyp nil
+      :adesc nil
+      :aval nil
+      :aact nil
+      :doid (.getOid dny)
+      :drtyp (.getRtyp dny)
+      :ddesc (.getRtypDesc dny)
+      :dval (.getDenyValue dny)
+      :dact (.getActive dny)
+      :mem (.getMemory dny)}
+      {:oid nil
+       :sell_vol nil
+       :status nil
+       :aoid (.getOid acc)
+       :artyp (.getRtyp acc)
+       :adesc (.getRtypDesc acc)
+       :aval (.getAccValue acc)
+       :aact (.getActive acc)
+       :doid (.getOid dny)
+       :drtyp (.getRtyp dny)
+       :ddesc (.getRtypDesc dny)
+       :dval (.getDenyValue dny)
+       :dact (.getActive dny)
+       :mem (.getMemory dny)})
+    {:oid (.getOid c)
+     :sell_vol (.getSellVolume c)
+     :status (.getStatus c)
+     :aoid (.getOid acc)
+     :artyp (.getRtyp acc)
+     :adesc (.getRtypDesc acc)
+     :aval (.getAccValue acc)
+     :aact (.getActive acc)
+     :doid (.getOid dny)
+     :drtyp (.getRtyp dny)
+     :ddesc (.getRtypDesc dny)
+     :dval (.getDenyValue dny)
+     :dact (.getActive dny)
+     :mem (.getMemory dny)}))
 
 
-(defn se [sysid] (DBE/fetch-steel-elements sysid))
+(defn critter-acc-only [^CritterBean c, ^AcceptRuleBean  acc]
+  (if (nil? c)
+    {
+       :oid nil
+       :sell_vol nil
+       :status nil
+       :aoid (.getOid acc)
+       :artyp (.getRtyp acc)
+       :adesc (.getRtypDesc acc)
+       :aval (.getAccValue acc)
+       :aact (.getActive acc)
+       :doid nil
+       :drtyp nil
+       :ddesc nil
+       :dval nil
+       :dact nil
+       :mem nil
+       }
+    {
+       :oid (.getOid c)
+       :sell_vol (.getSellVolume c)
+       :status (.getStatus c)
+       :aoid (.getOid acc)
+       :artyp (.getRtyp acc)
+       :adesc (.getRtypDesc acc)
+       :aval (.getAccValue acc)
+       :aact (.getActive acc)
+       :doid nil
+       :drtyp nil
+       :ddesc nil
+       :dval nil
+       :dact nil
+       :mem nil
+       }))
 
-(def st DBE/fetch-wood-stclass)
+(defn critter-with-accrule [^CritterBean c, ^AcceptRuleBean  acc]
+  (let [dny-rules (.getDenyRules acc)]
+    (if (= (.size dny-rules) 0)
+      [(critter-acc-only c acc)]
+      (do
+        (let [dny-1 (first dny-rules)]
+          (conj
+            (map critter-with-denyrule (repeat nil) (repeat nil) (rest dny-rules))
+            (critter-with-denyrule c acc dny-1)
+            ))))))
+
+
+
+(defn critter-area [^CritterBean c]
+  (let [acc-rules (.getAcceptRules c)]
+    (if (= (.size acc-rules) 0)
+      [(critter-only c)]
+      (do
+        (let [acc-1 (first acc-rules)]
+          (conj
+            (map critter-with-accrule (repeat nil) (rest acc-rules))
+            (critter-with-accrule c acc-1)
+            ))))))
+
+
+(defn run []
+  (critter-area cr))
+

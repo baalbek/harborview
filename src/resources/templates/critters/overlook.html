@@ -41,6 +41,26 @@
                     <th>Memory</th>
                 </tr>
                 </thead>
+                {% for p in purchases %}
+                <tr>
+                    <td>{{p.oid}}</td>
+                    <td>{{p.sell_vol}}</td>
+                    <td>{{p.status}}</td>
+                    <td>{{p.oid}}</td>
+                    <td>{{p.aoid}}</td>
+                    <td>{{p.oid}}</td>
+                    <td>{{p.oid}}</td>
+                    <td>{{p.oid}}</td>
+                    <td>{{p.oid}}</td>
+                    <td>{{p.oid}}</td>
+                    <td>{{p.oid}}</td>
+                    <td>{{p.oid}}</td>
+                    <td>{{p.oid}}</td>
+                    <td>{{p.oid}}</td>
+                    <td>{{p.oid}}</td>
+                    <td>{{p.oid}}</td>
+                </tr>
+                {% endfor %}
             </table>
         </div>
     </div>
