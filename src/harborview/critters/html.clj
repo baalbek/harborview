@@ -129,7 +129,7 @@
 (defn critter-with-denyrules [^CritterBean c, ^AcceptRuleBean acc, ^ArrayList result]
   (let [denyx (.getDenyRules acc)]
     (.add result (critter-with-denyrule c acc (first denyx)))
-    (doseq [deny denyx]
+    (doseq [deny (rest denyx)]
       (.add result (critter-with-denyrule nil nil deny)))))
 
 
@@ -160,11 +160,8 @@
      :opx (.getOptionName p)
      :critters
      (if
-       (nil? critters) [])}))
-
-(comment run []
-  (let [px (jax)]
-    (map purchase-area px)))
+       (nil? critters) []
+                       (map critter-area critters))}))
 
 (defn overlook [purchases]
   (P/render-file "templates/critters/overlook.html"
