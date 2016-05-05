@@ -120,24 +120,49 @@
        :mem nil
        }))
 
+(defn critter-with-denyrules [^CritterBean c, ^AcceptRuleBean acc, ^ArrayList result]
+  (let [denyx (.getDenyRules acc)]
+    (.add result (critter-with-denyrule c acc (first denyx)))
+    (doseq [deny denyx]
+      (.add result (critter-with-denyrule nil nil deny)))))
+
+
+(defn critter-acc-denys [^CritterBean c, ^AcceptRuleBean acc, ^ArrayList result]
+  (let [denyx (.getDenyRules acc)]
+    (if (nil? denyx)
+      (.add result (critter-acc-only c))
+      (critter-with-denyrules c acc result))))
+
 (defn critter-with-accrules [^CritterBean c, ^ArrayList result]
   (let [accx (.getAcceptRules c)]
-    (doseq [acc accx]
-      (let [denys (.getDenyRules acc)]
-        (if (nil? denys)
-          (.add result (critter-acc-only c acc)))))))
+    (critter-acc-denys c (first accx) result)
+    (doseq [acc (rest accx)]
+      (critter-acc-denys nil acc result))))
 
 
+(defn critter-area [c]
+  (let [result (ArrayList.)
+        accs (.getAcceptRules c)]
+    (if (nil? accs) 
+      (.add result (critter-only c))
+      (critter-with-accrules c result))
+    {:lines result}))
 
-
-
-       ;acc-1 (first accx)
-       ;acc-n (rest accx)]
-   ;(.add result (critter-acc-only c acc-1))
-   ;(doseq [acc acc-n]
-   ;  (.add result (critter-acc-only nil acc)))))
+(defn purchase-area [p]
+  (let [critters (.getCritters p)]
+    {:oid (.getOid p)
+    :opx (.getOptionName p)  
+    :critters 
+     (if 
+       (nil? critters) []
+       (map critter-area critters))}))
 
 (defn run []
+  (let [px (jax)]
+    (map purchase-area px)))
+
+
+(comment run []
   (let [result (ArrayList.)
          px (jax)]
     (doseq [p px]
@@ -147,7 +172,7 @@
             accx-1 (.getAcceptRules cx-1)]
         (if (nil? accx-1)
           (.add result (critter-only cx-1))
-          (critter-with-accrules cx result))
+          (critter-with-accrules cx result))))))
 
           
 

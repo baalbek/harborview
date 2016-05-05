@@ -15,11 +15,7 @@
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <ul>
-                {% for p in purchases %}
-                <li>{{p.oid}}</li>
-                {% endfor %}
-            </ul>
+            {% for p in purchases %}
             <table class="table">
                 <thead>
                 <tr>
@@ -41,27 +37,17 @@
                     <th>Memory</th>
                 </tr>
                 </thead>
-                {% for p in purchases %}
+                {% for c in p.critters %}
                 <tr>
-                    <td>{{p.oid}}</td>
-                    <td>{{p.sell_vol}}</td>
-                    <td>{{p.status}}</td>
-                    <td>{{p.oid}}</td>
-                    <td>{{p.aoid}}</td>
-                    <td>{{p.oid}}</td>
-                    <td>{{p.oid}}</td>
-                    <td>{{p.oid}}</td>
-                    <td>{{p.oid}}</td>
-                    <td>{{p.oid}}</td>
-                    <td>{{p.oid}}</td>
-                    <td>{{p.oid}}</td>
-                    <td>{{p.oid}}</td>
-                    <td>{{p.oid}}</td>
-                    <td>{{p.oid}}</td>
-                    <td>{{p.oid}}</td>
+                    <td>{{c.oid}}</td>
+                    <td>{{c.sell_vol}}</td>
+                    <td>{{c.status}}</td>
+                    <td>{{c.oid}}</td>
+                    <td>{{c.aoid}}</td>
                 </tr>
                 {% endfor %}
             </table>
+            {% endfor %}
         </div>
     </div>
 
