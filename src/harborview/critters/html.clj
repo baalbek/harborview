@@ -24,107 +24,55 @@
         desc (.getDesc v)]
     {:name (str oid " - " desc) :value (str oid)}))
 
-(defn critter-only [^CritterBean c]
-  {
+(defn critter->map [^CritterBean c]
+  (if (nil? c)
+    {:oid nil
+     :sell_vol nil
+     :status nil}
+    {
     :oid (.getOid c)
     :sell_vol (.getSellVolume c)
-    :status (.getStatus c)
-    :aoid nil
+    :status (.getStatus c)}))
+
+(defn acc->map [^AcceptRuleBean acc]
+  (if (nil? acc)
+    {:aoid nil
     :artyp nil
     :adesc nil
     :aval nil
-    :aact nil
-    :doid nil
+    :aact nil}
+    {:aoid (.getOid acc)
+    :artyp (.getRtyp acc)
+    :adesc (.getRtypDesc acc)
+    :aval (.getAccValue acc)
+    :aact (.getActive acc)}))
+
+(defn deny->map [^DenyRuleBean dny]
+  (if (nil? dny)
+    {:doid nil
     :drtyp nil
     :ddesc nil
     :dval nil
     :dact nil
-    :mem nil
-    })
+    :mem nil}
+    {:doid (.getOid dny)
+    :drtyp (.getRtyp dny)
+    :ddesc (.getRtypDesc dny)
+    :dval (.getDenyValue dny)
+    :dact (.getActive dny)
+    :mem (.getMemory dny)}))
+
+
+(defn critter-only [^CritterBean c]
+  (conj (critter->map c) (acc->map nil) (deny->map nil)))
 
 (defn critter-with-denyrule [^CritterBean c,
                              ^AcceptRuleBean acc,
                              ^DenyRuleBean dny]
-  (if (nil? c)
-    (if (nil? acc)
-      {:oid nil
-       :sell_vol nil
-       :status nil
-       :aoid nil
-       :artyp nil
-       :adesc nil
-       :aval nil
-       :aact nil
-       :doid (.getOid dny)
-       :drtyp (.getRtyp dny)
-       :ddesc (.getRtypDesc dny)
-       :dval (.getDenyValue dny)
-       :dact (.getActive dny)
-       :mem (.getMemory dny)}
-      {:oid nil
-       :sell_vol nil
-       :status nil
-       :aoid (.getOid acc)
-       :artyp (.getRtyp acc)
-       :adesc (.getRtypDesc acc)
-       :aval (.getAccValue acc)
-       :aact (.getActive acc)
-       :doid (.getOid dny)
-       :drtyp (.getRtyp dny)
-       :ddesc (.getRtypDesc dny)
-       :dval (.getDenyValue dny)
-       :dact (.getActive dny)
-       :mem (.getMemory dny)})
-    {:oid (.getOid c)
-     :sell_vol (.getSellVolume c)
-     :status (.getStatus c)
-     :aoid (.getOid acc)
-     :artyp (.getRtyp acc)
-     :adesc (.getRtypDesc acc)
-     :aval (.getAccValue acc)
-     :aact (.getActive acc)
-     :doid (.getOid dny)
-     :drtyp (.getRtyp dny)
-     :ddesc (.getRtypDesc dny)
-     :dval (.getDenyValue dny)
-     :dact (.getActive dny)
-     :mem (.getMemory dny)}))
-
+  (conj (critter->map c) (acc->map acc) (deny->map dny)))
 
 (defn critter-acc-only [^CritterBean c, ^AcceptRuleBean  acc]
-  (if (nil? c)
-    {
-      :oid nil
-      :sell_vol nil
-      :status nil
-      :aoid (.getOid acc)
-      :artyp (.getRtyp acc)
-      :adesc (.getRtypDesc acc)
-      :aval (.getAccValue acc)
-      :aact (.getActive acc)
-      :doid nil
-      :drtyp nil
-      :ddesc nil
-      :dval nil
-      :dact nil
-      :mem nil
-      }
-    {
-      :oid (.getOid c)
-      :sell_vol (.getSellVolume c)
-      :status (.getStatus c)
-      :aoid (.getOid acc)
-      :artyp (.getRtyp acc)
-      :adesc (.getRtypDesc acc)
-      :aval (.getAccValue acc)
-      :aact (.getActive acc)
-      :doid nil
-      :drtyp nil
-      :ddesc nil
-      :dval nil
-      :dact nil
-      :mem nil
-      }))
+  (conj (critter->map c) (acc->map acc) (deny->map nil)))
 
 (defn critter-with-denyrules [^CritterBean c, ^AcceptRuleBean acc, ^ArrayList result]
   (let [denyx (.getDenyRules acc)]
