@@ -43,7 +43,7 @@ var Critters = new function () {
         cancel.click();
     }
     /*------------------ New Critter ---------------------*/
-    var showNewDenyRule = function() {
+    var showNewCritter = function() {
 
     }
 

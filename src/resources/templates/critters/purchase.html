@@ -1,0 +1,54 @@
+        <details><summary>[ {{purchase.oid}} ] {{purchase.opx}}</summary>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Oid</th>
+                    <th>Sell volume</th>
+                    <th>Status</th>
+                    <th>-</th>
+                    <th>Acc.oid</th>
+                    <th>Rtyp</th>
+                    <th>Desc</th>
+                    <th>Value</th>
+                    <th>Active</th>
+                    <th>-</th>
+                    <th>Deny oid</th>
+                    <th>Rtyp</th>
+                    <th>Desc</th>
+                    <th>Value</th>
+                    <th>Active</th>
+                    <th>Memory</th>
+                </tr>
+                </thead>
+                {% for critter in purchase.critters %}
+                {% for lx in critter.lines %}
+                <tr>
+                    <td>{{lx.oid}}</td>
+                    <td>{{lx.sell_vol}}</td>
+                    <td>{{lx.status}}</td>
+                    {% if lx.oid %}
+                    <td><a href="#dlg-new-accrule" class="newaccrule" data-critid="{{lx.oid}}" data-puid="{{purchase.oid}}">New acc.</a></td>
+                    {% else %}
+                    <td></td>
+                    {% endif %}
+                    <td>{{lx.aoid}}</td>
+                    <td>{{lx.artyp}}</td>
+                    <td>{{lx.adesc}}</td>
+                    <td>{{lx.aval}}</td>
+                    <td>{{lx.aact}}</td>
+                    {% if lx.aoid %}
+                    <td><a href="#dlg-new-dnyrule" class="newdenyrule" data-accid="{{lx.aoid}}" data-puid="{{purchase.oid}}">New deny</a></td>
+                    {% else %}
+                    <td></td>
+                    {% endif %}
+                    <td>{{lx.doid}}</td>
+                    <td>{{lx.drtyp}}</td>
+                    <td>{{lx.ddesc}}</td>
+                    <td>{{lx.dval}}</td>
+                    <td>{{lx.dact}}</td>
+                    <td>{{lx.mem}}</td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+            </table>
+        </details>

@@ -119,6 +119,12 @@
   (GET "/overlook/:id" [id] (overlook(DBX/active-purchases (U/rs id))))
   ;(GET "/new/:id" [id] (new-critter id))
   (GET "/rtyp" [] (U/json-response (map ruletype->select (DBX/rule-types))))
+  (PUT "/addaccrule" [cid value rtyp]
+    (let [opx (DBX/insert-accrule-2 (U/rs cid) (U/rs value) (U/rs rtyp))]
+      (LOG/info (str "(addaccrule) Cid: " cid ", rtyp: " rtyp ", value: " value))
+      (U/json-response
+        {"result" (P/render-file "templates/critters/purchase.html" {:purchases [opx]})})))
+  ;(H/emit* (critter-area opx)))})))
   (comment PUT "/addaccrule" [cid value rtyp]
     (let [opx (DBX/insert-accrule-2 (U/rs cid) (U/rs value) (U/rs rtyp))]
       (LOG/info (str "(addaccrule) Cid: " cid ", rtyp: " rtyp ", value: " value))
