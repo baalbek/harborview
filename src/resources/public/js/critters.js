@@ -43,7 +43,12 @@ var Critters = new function () {
         cancel.click();
     }
     /*------------------ New Critter ---------------------*/
+    /*
     var showNewCritter = function() {
+        Critters.setRuleTypes();
+    }
+    */
+    var onNewCritter = function() {
 
     }
 
@@ -53,9 +58,11 @@ var Critters = new function () {
             HARBORVIEW.Utils.jsonGET("/critters/rtyp",null,function(items) {
                 var cb_acc = document.getElementById("acc-rtyp");
                 var cb_dny = document.getElementById("dny-rtyp");
+                var critter_rtyp =  document.getElementById("critter-acc-rtyp");
                 for (var i = 0; i < items.length; i++) {
                     HARBORVIEW.Utils.createHtmlOption(cb_acc,items[i].value,items[i].name);
                     HARBORVIEW.Utils.createHtmlOption(cb_dny,items[i].value,items[i].name);
+                    HARBORVIEW.Utils.createHtmlOption(critter_rtyp,items[i].value,items[i].name);
                 }
             })
         }
@@ -69,7 +76,8 @@ var Critters = new function () {
         purchaseId: undefined,
         accId: undefined,
         hasRuleTypes: false,
-        setRuleTypes: setRuleTypes
+        setRuleTypes: setRuleTypes,
+        onNewCritter: onNewCritter
     }
 }()
 
@@ -115,7 +123,12 @@ jQuery(document).ready(function() {
         return true;
     })
     /*------------------ Deny Critter ---------------------*/
-    $("body").on("click", "#new-critter", function() {
+    $("body").on("click", "#new-critter-ok", function() {
+        Critters.onNewCritter();
+    })
+    $("body").on("click", "a.newcritter", function() {
+        Critters.setRuleTypes();
+        return true;
     })
 
 })

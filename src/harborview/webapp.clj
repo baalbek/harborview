@@ -43,6 +43,7 @@
   )
 
 (P/set-resource-path! "/home/rcs/opt/java/harborview/src/resources/")
+(P/cache-off!)
 
 (defroutes main-routes
   ;(GET "/" request (hourlist))

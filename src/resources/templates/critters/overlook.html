@@ -10,7 +10,7 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-2">
-            <a class="href-button" href="#dlg-new-critter">New Critter</a>
+            <a class="href-button newcritter" href="#dlg-new-critter">New Critter</a>
         </div>
     </div>
     <div class="row">
@@ -34,7 +34,7 @@
             <form role="form">
                 <div class="form-group">
                     <label for="acc-rtyp" style="display:block;">Rule type:</label>
-                    <select id="acc-rtyp"></select>
+                    <select class="form-control" id="acc-rtyp"></select>
                 </div>
                 <div class="form-group">
                     <label for="acc-value">Value:</label>
@@ -62,7 +62,7 @@
             <form role="form">
                 <div class="form-group">
                     <label for="dny-rtyp" style="display:block;">Rule type:</label>
-                    <select id="dny-rtyp"></select>
+                    <select class="form-control" id="dny-rtyp"></select>
                 </div>
                 <div class="form-group">
                     <label for="dny-value">Value:</label>
@@ -81,32 +81,7 @@
         </div>
     </div>
     <!-- Critter Dialog box -->
-    <div id="dlg-new-critter" class="modalDialog">
-        <div class="container">
-            <h3>Tabs</h3>
-            <p>The .nav-tabs class is used to create navigation tabs:</p>
-            <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
-                <li><a data-toggle="tab" href="#menu1">Menu 1</a></li>
-                <li><a data-toggle="tab" href="#menu2">Menu 2</a></li>
-            </ul>
-            <div class="tab-content">
-                <div id="home" class="tab-pane fade in active">
-                    <h3>HOME</h3>
-                    <p>Some content.</p>
-                </div>
-                <div id="menu1" class="tab-pane fade">
-                    <h3>Menu 1</h3>
-                    <p>Some content in menu 1.</p>
-                </div>
-                <div id="menu2" class="tab-pane fade">
-                    <h3>Menu 2</h3>
-                    <p>Some content in menu 2.</p>
-                </div>
-            </div>
-            <button type="button" class="btn btn-default" id="new-critter-ok">OK</button>
-            <a href="#close" id="new-critter-cancel">Cancel</a>
-        </div>
-    </div>
+    {% include "templates/critters/newcritter.html" %}
+
 </body>
 </html>
