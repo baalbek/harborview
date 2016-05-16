@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Timeliste</title>
+    <meta charset="UTF-8">
+    {% include "templates/head.html" %}
+    <script src="/js/hourlist.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <form role="form">
+                    <div class="form-group">
+                        <label for="fnr" style="display:block;">Fakturanr:</label>
+                        <select class="form-control" id="fnr">
+                            {% for ix in invoices %}
+                                <option value="{{ix.value}}">{{ix.content}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="group" style="display:block;">Gruppe:</label>
+                        <select class="form-control" id="group">
+                            {% for gr in hourlistgroups %}
+                                <option value="{{gr.value}}">{{gr.content}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="curdate">Dato:</label>
+                        <input class="form-control" type="date" id="curdate">
+                    </div>
+                    <div class="form-group">
+                        <label for="from-time">Fra klokken:</label>
+                        <input class="form-control" type="time" step="300" value="08:00" id="from-time">
+                    </div>
+                    <div class="form-group">
+                        <label for="to-time">Til klokken:</label>
+                        <input class="form-control" type="time" step="300" value="16:00" id="to-time">
+                    </div>
+                    <div class="form-group">
+                        <label for="hours">Timer:</label>
+                        <input class="form-control" type="number" step="0.25" name="hours" id="hours" value="7.5">
+                    </div>
+                    <button type="button" class="btn btn-default" id="newhourlist">Oppdater</button>
+                    <button type="button" class="btn btn-default" id="edithourlist">Editer</button>
+                    <button type="button" class="btn btn-default" id="fetchgroupsums">Gruppesummer</button>
+                    <button type="button" class="btn btn-default" id="overview">Overview</button>
+                </form>
+            </div>
+            <div class="col-sm-6">
+                <p id="message">A message could go here.</p>
+            </div>
+                        <!--
+                <form>
+                    <table class="table">
+                        <tr>
+                            <td>Fakturanr: </td>
+                            <td>
+                                <select name="fnr" id="fnr">
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Gruppe: </td>
+                            <td>
+                                <select name="group" id="group">
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr><td><label for="curdate">Dato:</label></td><td><input type="date" name="curdate" id="curdate" /></td></tr>
+                        <tr><td><label for="from_time">Fra klokken:</label></td><td><input type="time" name="from_time" id="from_time" value="08:00" /></td></tr>
+                        <tr><td><label for="to_time">Til klokken:</label></td><td><input type="time" name="to_time" id="to_time" value="16:00"/></td></tr>
+                        <tr><td><label for="hours">Timer:</label></td><td><input type="number" step="0.25" name="hours" id="hours" value="7.5"/></td></tr>
+                        <tr>
+                            <td><input type="submit" id="hourlist" value="Oppdater" /></td>
+                            <td><input type="submit" id="edithourlist" value="Editer" /></td>
+                        </tr>
+                        <tr>
+                            <td><input type="submit" id="fetchgroupsums" value="Gruppesummer" /></td>
+                            <td><input type="submit" id="overview" value="Overview" /></td>
+                        </tr>
+                    </table>
+                </form>
+                        -->
+
+        </div>
+    </div>
+</body>
+</html>

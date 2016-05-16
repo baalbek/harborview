@@ -1,23 +1,22 @@
 (ns harborview.webapp
   (:require
-    [selmer.parser :as P]
-    [harborview.service.htmlutils :as U]
-    [harborview.critters.dbx :as DBX]
-    [harborview.hourlist.html :as HRL]
-    [net.cgrand.enlive-html :as HTML]
-    [compojure.route :as R]
-    [harborview.critters.html :as CRT]
-    [harborview.derivatives.html :as OPX]
-    [harborview.generaljournal.html :as GJ]
-    [harborview.service.htmlutils :as UTIL]
-    [harborview.templates.snippets :as SNIP])
+   [selmer.parser :as P]
+   [compojure.route :as R]
+   [harborview.service.htmlutils :as U]
+   [harborview.critters.dbx :as DBX]
+   [harborview.hourlist.html :as HRL]
+   [harborview.critters.html :as CRT]
+   [harborview.derivatives.html :as OPX]
+   [harborview.generaljournal.html :as GJ]
+   [harborview.service.htmlutils :as UTIL]
+   [harborview.templates.snippets :as SNIP])
   (:use
-    [compojure.handler :only (api)]
-    [compojure.core :only (GET defroutes context)]
-    [ring.adapter.jetty :only (run-jetty)]
-    [ring.middleware.params :only (wrap-params)]))
+   [compojure.handler :only (api)]
+   [compojure.core :only (GET defroutes context)]
+   [ring.adapter.jetty :only (run-jetty)]
+   [ring.middleware.params :only (wrap-params)]))
 
-(HTML/deftemplate index "templates/index.html" []
+(comment HTML/deftemplate index "templates/index.html" []
   [:head] (HTML/substitute (SNIP/head))
   ;[:#sidebar-wrapper] (HTML/substitute (SNIP/menu))
   [:.scripts] (HTML/substitute (SNIP/scripts)))
@@ -46,8 +45,8 @@
 (P/cache-off!)
 
 (defroutes main-routes
-  ;(GET "/" request (hourlist))
-  (GET "/" request (CRT/overlook (DBX/active-purchases (U/rs 11))))
+  (GET "/" request (HRL/hourlist))
+  ;(GET "/" request (CRT/overlook (DBX/active-purchases (U/rs 11))))
   (context "/generaljournal" [] GJ/my-routes)
   (context "/hourlist" [] HRL/my-routes)
   (context "/critters" [] CRT/my-routes)

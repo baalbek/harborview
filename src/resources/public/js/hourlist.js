@@ -8,8 +8,8 @@ var HourList = new function() {
                     "fnr" : $("#fnr").val(),
                     "group" : $("#group").val(),
                     "curdate" : $("#curdate").val(),
-                    "from_time" : $("#from_time").val(),
-                    "to_time" : $("#to_time").val(),
+                    "from_time" : $("#from-time").val(),
+                    "to_time" : $("#to-time").val(),
                     "hours" : $("#hours").val(),
             },
             success: function(result) {
@@ -53,7 +53,7 @@ var HourList = new function() {
 }()
 
 jQuery(document).ready(function() {
-    $("#hourlist").click(function() {
+    $("#newhourlist").click(function() {
         HourList.insert();
         return false;
     })

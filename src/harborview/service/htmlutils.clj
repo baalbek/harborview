@@ -80,10 +80,10 @@
   (some #(= elm %) seq))
 
 (defn str->date [dx]
-  (LocalDate/parse dx (date-fmt dx)))
+  (LocalDate/parse dx date-fmt-1))
 
 (defn date->str [dx]
-  "2016-3-24")
+  (.format dx date-fmt-1))
 
   (comment
   (let [dxx (if (= (class dx) java.util.Date)
