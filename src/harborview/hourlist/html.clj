@@ -37,34 +37,6 @@
             :totime (.getToTime x)})
       (select-fn fnr))}))
 
-
-(defn hourlist[]
-  (P/render-file "templates/hourlist/hourlist.html"
-    {:invoices
-     (map (fn [v]
-            (let [fnr (.getInvoiceNum v)
-                  cust (.getCustomerName v)
-                  desc (.getDescription v)]
-              {:content (str fnr " - " cust " - " desc) :value (str fnr)}))
-       (DBX/fetch-invoices))
-     :hourlistgroups
-     (map (fn [v]
-            {:content (str (.getId v) " - " (.getDescription v)) :value (str (.getId v))})
-       (DBX/fetch-hourlist-groups))}))
-
-(defn overview [fnr select-fn]
-  (P/render-file "templates/hourlist/hourlistitems.html"
-    {:items
-     (map (fn [^HourlistBean x]
-            {:oid (str (.getOid x))
-             :desc (.getDescription x)
-             :fnr (str (.getInvoiceNr x))
-             :date (UTIL/date->str (.getLocalDate x))
-             :hours (str (.getHours x))
-             :fromtime (.getFromTime x)
-             :totime (.getToTime x)})
-       (select-fn fnr))}))
-
 (defn groupsums [fnr]
   (P/render-file "templates/hourlist/groupsums.html"
     {:hourlistsums
