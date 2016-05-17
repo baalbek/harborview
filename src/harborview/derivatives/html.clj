@@ -1,16 +1,16 @@
 (ns harborview.derivatives.html
   (:import
-    [oahu.financial Derivative])
+   [oahu.financial Derivative])
   (:use
-    [compojure.core :only (GET PUT defroutes)])
+   [compojure.core :only (GET PUT defroutes)])
   (:require
-    [harborview.derivatives.dbx :as DBX]
-    [harborview.service.htmlutils :as U]
-    [harborview.templates.snippets :as SNIP]
-    [net.cgrand.enlive-html :as H]))
+   [selmer.parser :as P]
+   [harborview.derivatives.dbx :as DBX]
+   [harborview.service.htmlutils :as U]
+   [harborview.templates.snippets :as SNIP]))
 
 
-(H/defsnippet data-row "templates/snippets.html" [:.opx-row] [oid ticker x exp series optype]
+(comment H/defsnippet data-row "templates/snippets.html" [:.opx-row] [oid ticker x exp series optype]
   [[:td (H/attr= :class "oid")]] (H/content (str oid))
   [:tr :td :a]
     (H/do->
@@ -22,7 +22,7 @@
   [[:td (H/attr= :class "optype")]] (H/content optype))
 
 
-(H/deftemplate overlook "templates/derivatives/overlook.html" [derivatives]
+(comment H/deftemplate overlook "templates/derivatives/overlook.html" [derivatives]
   [:head] (H/substitute (SNIP/head))
   [:.scripts] (H/substitute (SNIP/scripts))
   [[:tr (H/attr= :class "data-table")]]
@@ -38,7 +38,16 @@
 
 (defn route-derivatives [tix opx-fn]
   (let [derivatives (opx-fn (read-string tix))]
-    (overlook derivatives)))
+    (P/render-file "templates/derivatives/overlook.html"
+      {:derivatives
+       (map (fn [^Derivative d]
+              {:oid (.getOid d)
+               :ticker (.getTicker d)
+               :x (.getX d)
+               :exp (.getExpiry d)
+               :series (.getSeries d)
+               :optype (.getOpTypeStr d)})
+         derivatives)})))
 
 (defroutes my-routes
   (GET "/calls/:tix" [tix] (route-derivatives tix DBX/calls))
