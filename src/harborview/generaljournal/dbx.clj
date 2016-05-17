@@ -10,9 +10,7 @@
     [harborview.service.htmlutils :as U]
     [harborview.service.db :as DB]
     [harborview.service.logservice :as LOG]
-    [harborview.templates.snippets :as SNIP]
-    [clj-json.core :as json]
-    [net.cgrand.enlive-html :as HTML]))
+    [clj-json.core :as json]))
 
 (def mva_25 0.2)
 

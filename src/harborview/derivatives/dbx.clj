@@ -9,9 +9,7 @@
     [org.apache.ibatis.session SqlSession])
   (:require
     [harborview.service.db :as D]
-    [harborview.service.htmlutils :as U]
-    [harborview.templates.snippets :as SNIP]
-    [net.cgrand.enlive-html :as H]))
+    [harborview.service.htmlutils :as U]))
 
 (defmacro new-purchase [{:keys [dx price buy volume ptype spot derivative opid]
                          :or {ptype 3
