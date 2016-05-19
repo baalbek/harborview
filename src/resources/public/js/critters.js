@@ -67,7 +67,7 @@ var Critters = new function () {
             });
         }
     }
-    var setRuleTypes = function(purchaseType) {
+    var setPurchases = function(purchaseType) {
         HARBORVIEW.Utils.jsonGET("/critters/purchases",{ptyp: purchaseType},function(items) {
             alert(items);
         });
