@@ -23,7 +23,13 @@
         desc (.getDesc v)]
     {:name (str oid " - " desc) :value (str oid)}))
 
-(defn purchase->select [^OptionPurchaseBean p])
+(defn purchase->select [^OptionPurchaseBean p]
+  (let [oid (.getOid p)
+        opid (.getOptionId p)
+        ticker (.getTicker p)
+        opname (.getOptionName p)
+        optype (.getOptionType p)]
+    {:name (str "[" ticker "-" oid "] - opid: " opid " - " opname ", " optype) :value (str oid)}))
 
 (defn critter->map [^CritterBean c]
   (if (nil? c)

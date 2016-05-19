@@ -69,7 +69,10 @@ var Critters = new function () {
     }
     var setPurchases = function(purchaseType) {
         HARBORVIEW.Utils.jsonGET("/critters/purchases",{ptyp: purchaseType},function(items) {
-            alert(items);
+            var cb = document.getElementById("critter-opx");
+            for (var i = 0; i < items.length; i++) {
+                HARBORVIEW.Utils.createHtmlOption(cb,items[i].value,items[i].name);
+            }
         });
     }
     return {
