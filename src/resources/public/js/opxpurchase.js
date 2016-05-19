@@ -23,15 +23,16 @@ var Opxpurchase = new function() {
         */
         /*$(this).dialog("close");*/
     };
-    this.showNewOpxPurchase = function(oid) {
-        $("#dlg1-header").html("Oid: " + oid);
+    this.showNewOpxPurchase = function(oid,ticker) {
+        $("#dlg1-header").html("Oid: " + oid + ", ticker: " + ticker);
     };
 }()
 
 jQuery(document).ready(function() {
     $("body").on("click", "a.shownewopxpurchase", function() {
         var oid = $(this).attr("data-oid");
-        Opxpurchase.showNewOpxPurchase(oid);
+        var ticker = $(this).attr("data-ticker");
+        Opxpurchase.showNewOpxPurchase(oid,ticker);
         return true;
     });
     /*

@@ -19,17 +19,19 @@
                             <th>Exp. date</th>
                             <th>Series</th>
                             <th>Type</th>
+                            <th>Days</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for x in derivatives %}
                         <tr class="rows">
                             <td>{{x.oid}}</td>
-                            <td><a href="#dlg1" class="shownewopxpurchase" data-oid="{{x.oid}}">{{x.ticker}}</a></td>
+                            <td><a href="#dlg1" class="shownewopxpurchase" data-ticker="{{x.ticker}}" data-oid="{{x.oid}}">{{x.ticker}}</a></td>
                             <td>{{x.x}}</td>
                             <td>{{x.exp}}</td>
                             <td>{{x.series}}</td>
                             <td>{{x.optype}}</td>
+                            <td>{{x.days}}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -40,11 +42,8 @@
     <!-- New Option Purchase Dialog box -->
     <div id="dlg1" class="modalDialog">
         <div>
-            <label id="dny-header" style="display: block;">New Option</label>
+            <label id="dlg1-header" style="display: block;">New Option</label>
             <form role="form">
-                <div class="form-group">
-                    <p id="dlg1-header"></p>
-                </div>
                 <div class="form-group">
                     <label for="dlg1-purchasetype" style="display:block;">Purchase Type:</label>
                     <select class="form-control" id="dlg1-purchasetype">

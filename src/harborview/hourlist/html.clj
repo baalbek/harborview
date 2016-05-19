@@ -6,11 +6,10 @@
   (:require
    [selmer.parser :as P]
    [harborview.hourlist.dbx :as DBX]
-   [harborview.service.htmlutils :as UTIL]
-   [harborview.templates.snippets :as SNIP]))
+   [harborview.service.htmlutils :as UTIL]))
 
 
-(defn hourlist[]
+(defn hourlist []
   (P/render-file "templates/hourlist/hourlist.html"
     {:invoices
       (map (fn [v]

@@ -64,8 +64,13 @@ var Critters = new function () {
                     HARBORVIEW.Utils.createHtmlOption(cb_dny,items[i].value,items[i].name);
                     HARBORVIEW.Utils.createHtmlOption(critter_rtyp,items[i].value,items[i].name);
                 }
-            })
+            });
         }
+    }
+    var setRuleTypes = function(purchaseType) {
+        HARBORVIEW.Utils.jsonGET("/critters/purchases",{ptyp: purchaseType},function(items) {
+            alert(items);
+        });
     }
     return {
         showNewAccRule: showNewAccRule,
@@ -77,6 +82,7 @@ var Critters = new function () {
         accId: undefined,
         hasRuleTypes: false,
         setRuleTypes: setRuleTypes,
+        setPurchases: setPurchases,
         onNewCritter: onNewCritter
     }
 }()
@@ -128,6 +134,7 @@ jQuery(document).ready(function() {
     })
     $("body").on("click", "a.newcritter", function() {
         Critters.setRuleTypes();
+        Critters.setPurchases(11);
         return true;
     })
 

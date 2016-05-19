@@ -8,45 +8,19 @@
    [harborview.critters.html :as CRT]
    [harborview.derivatives.html :as OPX]
    [harborview.generaljournal.html :as GJ]
-   [harborview.service.htmlutils :as UTIL]
-   [harborview.templates.snippets :as SNIP])
+   [harborview.service.htmlutils :as UTIL])
   (:use
    [compojure.handler :only (api)]
    [compojure.core :only (GET defroutes context)]
    [ring.adapter.jetty :only (run-jetty)]
    [ring.middleware.params :only (wrap-params)]))
 
-(comment HTML/deftemplate index "templates/index.html" []
-  [:head] (HTML/substitute (SNIP/head))
-  ;[:#sidebar-wrapper] (HTML/substitute (SNIP/menu))
-  [:.scripts] (HTML/substitute (SNIP/scripts)))
-
-
-(comment
-  (HTML/deftemplate hourlist "templates/hourlist.html" []
-    [:head] (HTML/substitute (SNIP/head))
-    [:.scripts] (HTML/substitute (SNIP/scripts))
-    [:#fnr]
-    (UTIL/populate-select
-      (map (fn [v]
-             (let [fnr (.getInvoiceNum v)
-                   cust (.getCustomerName v)
-                   desc (.getDescription v)]
-               {:name (str fnr " - " cust " - " desc) :value (str fnr)}))
-        (DBX/fetch-invoices)))
-    [:#group]
-    (UTIL/populate-select
-      (map (fn [v]
-             {:name (str (.getId v) " - " (.getDescription v)) :value (str (.getId v))})
-        (DBX/fetch-hourlist-groups))))
-  )
-
 (P/set-resource-path! "/home/rcs/opt/java/harborview/src/resources/")
 (P/cache-off!)
 
 (defroutes main-routes
-  (GET "/" request (HRL/hourlist))
-  ;(GET "/" request (CRT/overlook (DBX/active-purchases (U/rs 11))))
+  ;(GET "/" request (HRL/hourlist))
+  (GET "/" request (CRT/overlook (DBX/active-purchases (U/rs 11))))
   (context "/generaljournal" [] GJ/my-routes)
   (context "/hourlist" [] HRL/my-routes)
   (context "/critters" [] CRT/my-routes)
@@ -60,3 +34,5 @@
     wrap-params))
 
 (def server (run-jetty #'webapp {:port 8082 :join? false}))
+
+;(def server (run-jetty #'webapp {:port 8443 :join? false :ssl? true :keystore "keystore" :key-password "q2uebec9"}))

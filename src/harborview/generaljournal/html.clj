@@ -7,7 +7,6 @@
     [selmer.parser :as P]
     [harborview.service.htmlutils :as U]
     [harborview.service.db :as DB]
-    [harborview.templates.snippets :as SNIP]
     [harborview.generaljournal.dbx :as DBX]
     [clj-json.core :as json]))
 

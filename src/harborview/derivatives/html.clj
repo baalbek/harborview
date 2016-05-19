@@ -6,8 +6,7 @@
   (:require
    [selmer.parser :as P]
    [harborview.derivatives.dbx :as DBX]
-   [harborview.service.htmlutils :as U]
-   [harborview.templates.snippets :as SNIP]))
+   [harborview.service.htmlutils :as U]))
 
 
 (defn route-derivatives [tix opx-fn]
@@ -20,7 +19,8 @@
                :x (.getX d)
                :exp (.getExpiry d)
                :series (.getSeries d)
-               :optype (.getOpTypeStr d)})
+               :optype (.getOpTypeStr d)
+               :days 12})
          derivatives)})))
 
 (defroutes my-routes

@@ -10,8 +10,7 @@
     [selmer.parser :as P]
     [harborview.service.logservice :as LOG]
     [harborview.service.htmlutils :as U]
-    [harborview.critters.dbx :as DBX]
-    [harborview.templates.snippets :as SNIP]))
+    [harborview.critters.dbx :as DBX]))
 
 
 (comment almost-flatten
@@ -23,6 +22,8 @@
   (let [oid (.getOid v)
         desc (.getDesc v)]
     {:name (str oid " - " desc) :value (str oid)}))
+
+(defn purchase->select [^OptionPurchaseBean p])
 
 (defn critter->map [^CritterBean c]
   (if (nil? c)
@@ -118,6 +119,7 @@
 (defroutes my-routes
   (GET "/overlook/:id" [id] (overlook(DBX/active-purchases (U/rs id))))
   ;(GET "/new/:id" [id] (new-critter id))
+  (GET "/purchases" [ptyp] (U/json-response (map purchase->select->select (DBX/active-purchases ptyp))))
   (GET "/rtyp" [] (U/json-response (map ruletype->select (DBX/rule-types))))
   (PUT "/addaccrule" [cid value rtyp]
     (let [opx (DBX/insert-accrule-2 (U/rs cid) (U/rs value) (U/rs rtyp))]
