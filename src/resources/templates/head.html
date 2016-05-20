@@ -13,9 +13,11 @@
     <!-- Latest compiled and minified JavaScript -->
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
+            <!--
             <div class="navbar-header">
                 <a class="navbar-brand" href="#">WebSiteName</a>
             </div>
+            -->
             <ul class="nav navbar-nav">
                 <li><a href="/hourlist">Timeliste</a></li>
                 <li><a href="/generaljournal">Kassadagbok</a></li>
@@ -35,7 +37,13 @@
                         <li><a href="#">[11] Paper Critters</a></li>
                     </ul>
                 </li>
-                <li><a href="#">Link 4</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Vinapu<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Loads</a></li>
+                        <li><a href="#">Elements</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </nav>
