@@ -19,8 +19,8 @@
 (P/cache-off!)
 
 (defroutes main-routes
-  ;(GET "/" request (HRL/hourlist))
-  (GET "/" request (CRT/overlook (DBX/active-purchases (U/rs 11))))
+  (GET "/" request (HRL/hourlist))
+  ;(GET "/" request (CRT/overlook (DBX/active-purchases (U/rs 11))))
   (context "/generaljournal" [] GJ/my-routes)
   (context "/hourlist" [] HRL/my-routes)
   (context "/critters" [] CRT/my-routes)

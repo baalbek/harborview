@@ -6,7 +6,7 @@
   (:require
    [selmer.parser :as P]
    [harborview.hourlist.dbx :as DBX]
-   [harborview.service.htmlutils :as UTIL]))
+   [harborview.service.htmlutils :as U]))
 
 
 (defn hourlist []
@@ -30,7 +30,7 @@
             {:oid (str (.getOid x))
             :desc (.getDescription x)
             :fnr (str (.getInvoiceNr x))
-            :date (UTIL/date->str (.getLocalDate x))
+            :date (U/date->str (.getLocalDate x))
             :hours (str (.getHours x))
             :fromtime (.getFromTime x)
             :totime (.getToTime x)})
@@ -48,6 +48,9 @@
   (GET "/" request (hourlist))
   (GET "/groupsums" [fnr] (groupsums fnr))
   (GET "/overview" [fnr] (overview fnr DBX/fetch-all))
+  (PUT "/newhourlistgroup" [groupname]
+   (let [bean (DBX/insert-hourlist-group groupname)]
+     (U/json-response {"oid" (.getId bean)})))
   (PUT "/insert" [fnr group curdate from_time to_time hours]
     (do
       (DBX/insert-hourlist fnr group curdate from_time to_time hours)

@@ -17,16 +17,19 @@ HARBORVIEW.Utils = (function () {
             error: onError
         });
     }
+    var htmlPUT = function (myUrl, args, onSuccess) {
+        myAjax("PUT", "html", myUrl, args, onSuccess);
+    }
+    var htmlGET = function (myUrl, args, onSuccess) {
+        myAjax("GET", "html", myUrl, args, onSuccess);
+    }
     var jsonGET = function (myUrl, args, onSuccess) {
-        console.log("jsonGET: " + args);
         myAjax("GET", "json", myUrl, args, onSuccess);
     }
     var jsonPUT = function (myUrl, args, onSuccess) {
-        console.log("jsonPUT: " + args);
         myAjax("PUT", "json", myUrl, args, onSuccess);
     }
     var jsonPOST = function (myUrl, args, onSuccess) {
-        console.log("jsonPOST: " + args);
         myAjax("POST", "json", myUrl, args, onSuccess);
     }
     var createHtmlOption = function(ddl, value, text) {
@@ -36,6 +39,8 @@ HARBORVIEW.Utils = (function () {
             ddl.options.add(opt);
     }
     return {
+        htmlGET: htmlGET,
+        htmlPUT: htmlPUT,
         jsonGET: jsonGET,
         jsonPUT: jsonPUT,
         jsonPOST: jsonPOST,

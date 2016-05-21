@@ -51,6 +51,13 @@
     (DB/with-session :koteriku HourlistMapper
       (.insertHourlist it hb))))
 
+(defn insert-hourlist-group [name]
+  (let [hb (HourlistGroupBean.)]
+    (.setDescription hb name)
+    (DB/with-session :koteriku HourlistGroupMapper
+                               (.insertHourlistGroup it hb))
+    hb))
+
 (comment
   (let [hb (HourlistBean.)
         f (KoterikuFacade.)]

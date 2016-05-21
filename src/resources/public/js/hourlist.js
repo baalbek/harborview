@@ -1,10 +1,7 @@
 var HourList = new function() {
     this.insert = function() {
-        $.ajax({
-            url: "/hourlist/insert",
-            type: "PUT",
-            dataType: "html",
-            data: {
+        HARBORVIEW.Utils.htmlPUT("/hourlist/insert",
+            {
                     "fnr" : $("#fnr").val(),
                     "group" : $("#group").val(),
                     "curdate" : $("#curdate").val(),
@@ -12,39 +9,24 @@ var HourList = new function() {
                     "to_time" : $("#to-time").val(),
                     "hours" : $("#hours").val(),
             },
-            success: function(result) {
-                $("#message").html(result);
-            },
-            error: this.onError
-        })
+            function(items) {
+                $("#message").html(items);
+            });
+    }
+    this.newGroup = function() {
+        HARBORVIEW.Utils.jsonPUT("/hourlist/newhourlistgroup", {"groupname": $("#hourlistgroup").val()}, function(result) {
+            alert("New gourp id: " + result.oid);
+        });
     }
     this.groupSums = function() {
-        $.ajax({
-            url: "/hourlist/groupsums",
-            type: "GET",
-            dataType: "html",
-            data: {
-                "fnr" : $("#fnr").val(),
-            },
-            success: function(result) {
-                $("#message").html(result);
-            },
-            error: this.onError
-        })
+        HARBORVIEW.Utils.htmlGET("/hourlist/groupsums",{"fnr" : $("#fnr").val()}, function(result) {
+            $("#message").html(result);
+        });
     }
     this.overview = function() {
-        $.ajax({
-            url: "/hourlist/overview",
-            type: "GET",
-            dataType: "html",
-            data: {
-                "fnr" : $("#fnr").val(),
-            },
-            success: function(result) {
-                $("#message").html(result);
-            },
-            error: this.onError
-        })
+        HARBORVIEW.Utils.htmlGET("/hourlist/overview",{"fnr" : $("#fnr").val(),}, function(result) {
+            $("#message").html(result);
+        });
     }
     this.onError = function(XMLHttpRequest, textStatus, errorThrown) {
         alert(textStatus);
@@ -57,8 +39,8 @@ jQuery(document).ready(function() {
         HourList.insert();
         return false;
     })
-    $("#edithourlist").click(function() {
-        HourList.edit();
+    $("#newhourlistgroup").click(function() {
+        HourList.newGroup();
         return false;
     })
     $("#fetchgroupsums").click(function() {
