@@ -23,14 +23,21 @@ var HourList = new function() {
             $("#message").html(result);
         });
     }
+    this.hourlistGroups = function() {
+        HARBORVIEW.Utils.htmlGET("/hourlist/hourlistgroups",
+        {"showinactive" : $("#showinactivegroups").is(":checked")},
+        function(result) {
+            $("#message").html(result);
+        });
+    }
     this.overview = function() {
         HARBORVIEW.Utils.htmlGET("/hourlist/overview",{"fnr" : $("#fnr").val(),}, function(result) {
             $("#message").html(result);
         });
     }
-    this.onError = function(XMLHttpRequest, textStatus, errorThrown) {
-        alert(textStatus);
-        alert(errorThrown);
+    this.toggleActiveGroup = function(oid,isActive) {
+        HARBORVIEW.Utils.jsonPUT("/hourlist/togglegroup", {"oid": oid, "isactive": isActive}, function(result) {
+        });
     }
 }()
 
@@ -38,17 +45,26 @@ jQuery(document).ready(function() {
     $("#newhourlist").click(function() {
         HourList.insert();
         return false;
-    })
+    });
     $("#newhourlistgroup").click(function() {
         HourList.newGroup();
         return false;
-    })
+    });
     $("#fetchgroupsums").click(function() {
         HourList.groupSums();
         return false;
-    })
+    });
+    $("#fetchhourlistgroups").click(function() {
+        HourList.hourlistGroups();
+        return false;
+    });
     $("#overview").click(function() {
         HourList.overview();
         return false;
-    })
+    });
+    $("body").on("change", ".group-active", function() {
+        var oid = $(this).attr("data-oid");
+        var isActive = $(this).is(":checked") === true ? "y" : "n";
+        HourList.toggleActiveGroup(oid,isActive);
+    });
 })

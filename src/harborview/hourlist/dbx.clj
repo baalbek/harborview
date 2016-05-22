@@ -23,9 +23,13 @@
       (.add result sumTotalBean)
       result)))
 
-(defn fetch-hourlist-groups []
+(defn toggle-group-isactive [oid is-active]
   (DB/with-session :koteriku HourlistGroupMapper
-    (.selectHourlistGroups it)))
+                             (.toggleGroup it oid is-active)))
+
+(defn fetch-hourlist-groups [show-inactive]
+  (DB/with-session :koteriku HourlistGroupMapper
+    (.selectHourlistGroups it show-inactive)))
 
 (defn fetch-invoices []
   (DB/with-session :koteriku InvoiceMapper

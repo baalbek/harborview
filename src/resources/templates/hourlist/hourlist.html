@@ -10,7 +10,6 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-6">
-                <div class="row">
                     <form role="form">
                         <div class="form-group">
                             <label for="fnr" style="display:block;">Fakturanr:</label>
@@ -47,9 +46,11 @@
                         <button type="button" class="btn btn-default" id="newhourlist">Oppdater</button>
                         <button type="button" class="btn btn-default" id="fetchgroupsums">Gruppesummer</button>
                         <button type="button" class="btn btn-default" id="overview">Overview</button>
+                        <button type="button" class="btn btn-default" id="fetchhourlistgroups">Timelistegrupper</button>
+                        <div class="checkbox">
+                            <label><input type="checkbox" id="showinactivegroups">Vis inaktive grupper</label>
+                        </div>
                     </form>
-                </div>
-                <div class="row">
                     <form role="form">
                         <div class="form-group">
                             <label for="hourlistgroup">Spesifikasjon:</label>
@@ -57,7 +58,6 @@
                         </div>
                         <button type="button" class="btn btn-default" id="newhourlistgroup">Oppdater</button>
                     </form>
-                </div>
             </div>
             <div class="col-sm-6">
                 <p id="message">A message could go here.</p>
