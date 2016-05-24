@@ -35,7 +35,15 @@
                     <td>{{lx.artyp}}</td>
                     <td>{{lx.adesc}}</td>
                     <td>{{lx.aval}}</td>
-                    <td>{{lx.aact}}</td>
+                    {% if lx.aact %}
+                        {% if lx.aact = 1 %}
+                        <td><input data-oid="{{lx.oid}}" class="acc-active" type="checkbox" checked></td>
+                        {% else %}
+                        <td><input data-oid="{{lx.oid}}" class="acc-active" type="checkbox"></td>
+                        {% endif %}
+                    {% else %}
+                        <td></td>
+                    {% endif %}
                     {% if lx.aoid %}
                     <td><a href="#dlg-new-dnyrule" class="newdenyrule" data-accid="{{lx.aoid}}" data-puid="{{purchase.oid}}">New deny</a></td>
                     {% else %}
@@ -45,7 +53,15 @@
                     <td>{{lx.drtyp}}</td>
                     <td>{{lx.ddesc}}</td>
                     <td>{{lx.dval}}</td>
-                    <td>{{lx.dact}}</td>
+                    {% if lx.dact %}
+                        {% if lx.dact = 1 %}
+                        <td><input data-oid="{{lx.oid}}" class="dny-active" type="checkbox" checked></td>
+                        {% else %}
+                        <td><input data-oid="{{lx.oid}}" class="dny-active" type="checkbox"></td>
+                        {% endif %}
+                    {% else %}
+                        <td></td>
+                    {% endif %}
                     <td>{{lx.mem}}</td>
                 </tr>
                 {% endfor %}

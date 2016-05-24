@@ -75,6 +75,14 @@ var Critters = new function () {
             }
         });
     }
+    var toggleRule = function(oid,isActive,isAccRule) {
+        var url = isAccRule === true ? "/critters/toggleacc" : "/critters/toggledny";
+        HARBORVIEW.Utils.jsonPUT("/critters/togglerule",
+            {"oid": oid, "isactive": isActive, "isaccrule": isAccRule},
+            function(result) {
+                alert(result.result);
+        });
+    }
     return {
         showNewAccRule: showNewAccRule,
         onNewAccRule: onNewAccRule,
@@ -86,7 +94,8 @@ var Critters = new function () {
         hasRuleTypes: false,
         setRuleTypes: setRuleTypes,
         setPurchases: setPurchases,
-        onNewCritter: onNewCritter
+        onNewCritter: onNewCritter,
+        toggleRule: toggleRule
     }
 }()
 
@@ -121,6 +130,11 @@ jQuery(document).ready(function() {
         Critters.showNewAccRule(critId,purchaseId);
         return true;
     })
+    $("body").on("change", ".acc-active", function() {
+        var oid = $(this).attr("data-oid");
+        var isActive = $(this).is(":checked") === true ? "y" : "n";
+        Critters.toggleRule(oid,isActive,true);
+    });
     /*------------------ Deny Rule ---------------------*/
     $("body").on("click", "#new-dny-ok", function() {
         Critters.onNewDenyRule();
@@ -131,6 +145,12 @@ jQuery(document).ready(function() {
         Critters.showNewDenyRule(accId,purchaseId);
         return true;
     })
+
+    $("body").on("change", ".dny-active", function() {
+        var oid = $(this).attr("data-oid");
+        var isActive = $(this).is(":checked") === true ? "y" : "n";
+        Critters.toggleRule(oid,isActive,false);
+    });
     /*------------------ Deny Critter ---------------------*/
     $("body").on("click", "#new-critter-ok", function() {
         Critters.onNewCritter();

@@ -19,8 +19,8 @@
 (P/cache-off!)
 
 (defroutes main-routes
-  (GET "/" request (HRL/hourlist))
-  ;(GET "/" request (CRT/overlook (DBX/active-purchases (U/rs 11))))
+  ;(GET "/" request (HRL/hourlist))
+  (GET "/" request (CRT/overlook (DBX/active-purchases (U/rs 11))))
   (context "/generaljournal" [] GJ/my-routes)
   (context "/hourlist" [] HRL/my-routes)
   (context "/critters" [] CRT/my-routes)
@@ -33,6 +33,6 @@
     api
     wrap-params))
 
-;(def server (run-jetty #'webapp {:port 8082 :join? false}))
+(def server (run-jetty #'webapp {:port 8082 :join? false}))
 
-(def server (run-jetty #'webapp {:port 8443 :join? false :ssl? true :keystore "keystore" :key-password "q2uebec9"}))
+;(def server (run-jetty #'webapp {:port 8443 :join? false :ssl? true :keystore "keystore" :key-password "q2uebec9"}))

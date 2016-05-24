@@ -52,7 +52,7 @@
     :artyp (.getRtyp acc)
     :adesc (.getRtypDesc acc)
     :aval (.getAccValue acc)
-    :aact (.getActive acc)}))
+    :aact (if (.equals (.getActive acc) "y") 1 0)}))
 
 (defn deny->map [^DenyRuleBean dny]
   (if (nil? dny)
@@ -66,7 +66,7 @@
     :drtyp (.getRtyp dny)
     :ddesc (.getRtypDesc dny)
     :dval (.getDenyValue dny)
-    :dact (.getActive dny)
+    :dact (if (.equals (.getActive dny) "y") 1 0)
     :mem (.getMemory dny)}))
 
 
@@ -127,6 +127,10 @@
   ;(GET "/new/:id" [id] (new-critter id))
   (GET "/purchases" [ptyp] (U/json-response (map purchase->select (DBX/active-purchases (U/rs ptyp)))))
   (GET "/rtyp" [] (U/json-response (map ruletype->select (DBX/rule-types))))
+  (PUT "/togglerule" [oid value isaccrule]
+                     (do
+                       (DBX/toggle-rule (U/rs oid) value (U/str->bool isaccrule))
+                       (U/json-response {:result 1})))
   (PUT "/addaccrule" [cid value rtyp]
     (let [opx (DBX/insert-accrule-2 (U/rs cid) (U/rs value) (U/rs rtyp))]
       (LOG/info (str "(addaccrule) Cid: " cid ", rtyp: " rtyp ", value: " value))
