@@ -38,13 +38,20 @@ HARBORVIEW.Utils = (function () {
             opt.text = text;
             ddl.options.add(opt);
     }
+    var emptyHtmlOptions = function(cb) {
+        while (cb.options.length) {
+          // remove the first and repeat
+          cb.remove(0);
+        }
+    }
     return {
         htmlGET: htmlGET,
         htmlPUT: htmlPUT,
         jsonGET: jsonGET,
         jsonPUT: jsonPUT,
         jsonPOST: jsonPOST,
-        createHtmlOption : createHtmlOption
+        createHtmlOption: createHtmlOption,
+        emptyHtmlOptions: emptyHtmlOptions
     }
 })();
 

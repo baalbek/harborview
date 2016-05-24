@@ -9,6 +9,14 @@
    [harborview.service.htmlutils :as U]))
 
 
+(defn hourlistgroup->map [^HourlistGroupBean x]
+  {:active (if (.equals (.getActive x) "y") 1 0)
+   :desc (.getDescription x)
+   :oid (str (.getId x))})
+
+(defn hourlistgroup->select [^HourlistGroupBean x]
+  {:name (str (.getId x) " - " (.getDescription x)) :value (str (.getId x))})
+
 (defn hourlist []
   (P/render-file "templates/hourlist/hourlist.html"
     {:invoices
@@ -19,8 +27,7 @@
                {:content (str fnr " - " cust " - " desc) :value (str fnr)}))
         (DBX/fetch-invoices))
      :hourlistgroups
-       (map (fn [v]
-              {:content (str (.getId v) " - " (.getDescription v)) :value (str (.getId v))})
+       (map hourlistgroup->select
          (DBX/fetch-hourlist-groups false))}))
 
 (defn overview [fnr select-fn]
@@ -36,14 +43,11 @@
             :totime (.getToTime x)})
       (select-fn fnr))}))
 
+
 (defn overview-groups [show-inactive]
   (P/render-file "templates/hourlist/groupitems.html"
     {:hourlistgroups
-     (map (fn [^HourlistGroupBean x]
-            ;{:active (.getActive x)
-            {:active (if (.equals (.getActive x) "y") 1 0)
-             :desc (.getDescription x)
-             :oid (str (.getId x))})
+     (map hourlistgroup->map
        (DBX/fetch-hourlist-groups show-inactive))}))
 
 (defn groupsums [fnr]
@@ -62,7 +66,7 @@
   (PUT "/togglegroup" [oid isactive]
                       (do
                         (DBX/toggle-group-isactive (U/rs oid) isactive)
-                        (U/json-response {:result 1})))
+                        (U/json-response (map hourlistgroup->select (DBX/fetch-hourlist-groups false)))))
   (PUT "/newhourlistgroup" [groupname]
    (let [bean (DBX/insert-hourlist-group groupname)]
      (U/json-response {"oid" (.getId bean)})))

@@ -36,7 +36,12 @@ var HourList = new function() {
         });
     }
     this.toggleActiveGroup = function(oid,isActive) {
-        HARBORVIEW.Utils.jsonPUT("/hourlist/togglegroup", {"oid": oid, "isactive": isActive}, function(result) {
+        HARBORVIEW.Utils.jsonPUT("/hourlist/togglegroup", {"oid": oid, "isactive": isActive}, function(items) {
+            var cb = document.getElementById("group");
+            HARBORVIEW.Utils.emptyHtmlOptions(cb);
+            for (var i = 0; i < items.length; i++) {
+                HARBORVIEW.Utils.createHtmlOption(cb,items[i].value,items[i].name);
+            }
         });
     }
 }()

@@ -23,7 +23,7 @@
                             <label for="group" style="display:block;">Gruppe:</label>
                             <select class="form-control" id="group">
                                 {% for gr in hourlistgroups %}
-                                    <option value="{{gr.value}}">{{gr.content}}</option>
+                                    <option value="{{gr.value}}">{{gr.name}}</option>
                                 {% endfor %}
                             </select>
                         </div>
