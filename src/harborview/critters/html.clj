@@ -96,9 +96,12 @@
 
 (defn critter-with-accrules [^CritterBean c, ^ArrayList result]
   (let [accx (.getAcceptRules c)]
-    (critter-acc-denys c (first accx) result)
-    (doseq [acc (rest accx)]
-      (critter-acc-denys nil acc result))))
+    (if (or (nil? accx) (= (.size accx) 0))
+      (.add result (critter-only c))
+      (do
+        (critter-acc-denys c (first accx) result)
+        (doseq [acc (rest accx)]
+          (critter-acc-denys nil acc result))))))
 
 
 (defn critter-area [c]
@@ -137,12 +140,12 @@
     (let [opx (DBX/insert-accrule-2 (U/rs cid) (U/rs value) (U/rs rtyp))]
       (LOG/info (str "(addaccrule) Cid: " cid ", rtyp: " rtyp ", value: " value))
       (U/json-response
-        (P/render-file "templates/critters/purchase.html" {:purchases [opx]}))))
+        (P/render-file "templates/critters/purchase.html" {:purchase (purchase-area opx)}))))
   (PUT "/adddenyrule" [accid value rtyp hasmem]
     (let [opx (DBX/insert-denyrule-2 (U/rs accid) (U/rs value) (U/rs rtyp) hasmem)]
       (LOG/info (str "(adddenyrule) Acc.Id: " accid ", rtyp: " rtyp ", value: " value ", mem: " hasmem))
       (U/json-response 
-        (P/render-file "templates/critters/purchase.html" {:purchases [opx]}))))
+        (P/render-file "templates/critters/purchase.html" {:purchase (purchase-area opx)}))))
       ;(U/json-response {"result" (join (H/emit* (critter-area opx)))})))
   (PUT "/upddenyrule" [groupid value rtyp hasmem]
     (let [denyrule (DBX/insert-denyrule (U/rs groupid) (U/rs value) (U/rs rtyp) hasmem)]

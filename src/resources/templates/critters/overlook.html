@@ -19,7 +19,7 @@
     <div class="row">
         <div class="col-sm-12">
             {% for purchase in purchases %}
-            <div class="critter-area" id="critter-area-21">
+            <div class="critter-area" id="critter-area-{{purchase.oid}}">
                 {% include "templates/critters/purchase.html" %}
             </div>
             {% endfor %}

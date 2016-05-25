@@ -11,12 +11,14 @@ var Critters = new function () {
         var rule = $("#acc-rtyp").val();
         var rule_amount = $("#acc-value").val();
 
+        console.log("critId: " + Critters.critId);
         HARBORVIEW.Utils.jsonPUT(
             "/critters/addaccrule",
             {cid: Critters.critId, value: rule_amount, rtyp: rule},
             function(result){
                 var critterArea = "#critter-area-".concat(Critters.purchaseId.toString());
                 $(critterArea).html(result);
+                console.log(result);
             })
         var cancel = document.getElementById("new-acc-cancel");
         cancel.click();
@@ -37,7 +39,6 @@ var Critters = new function () {
             {accid: Critters.accId, value: rule_amount, rtyp: rule, hasmem: mem},
             function(result){
                 var critterArea = "#critter-area-".concat(Critters.purchaseId.toString());
-                alert(critterArea);
                 $(critterArea).html(result);
             })
         var cancel = document.getElementById("new-dny-cancel");
