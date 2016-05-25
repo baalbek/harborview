@@ -137,16 +137,13 @@
     (let [opx (DBX/insert-accrule-2 (U/rs cid) (U/rs value) (U/rs rtyp))]
       (LOG/info (str "(addaccrule) Cid: " cid ", rtyp: " rtyp ", value: " value))
       (U/json-response
-        {"result" (P/render-file "templates/critters/purchase.html" {:purchases [opx]})})))
-  ;(H/emit* (critter-area opx)))})))
-  (comment PUT "/addaccrule" [cid value rtyp]
-    (let [opx (DBX/insert-accrule-2 (U/rs cid) (U/rs value) (U/rs rtyp))]
-      (LOG/info (str "(addaccrule) Cid: " cid ", rtyp: " rtyp ", value: " value))
-      (U/json-response {"result" (join (H/emit* (critter-area opx)))})))
-  (comment PUT "/adddenyrule" [accid value rtyp hasmem]
+        (P/render-file "templates/critters/purchase.html" {:purchases [opx]}))))
+  (PUT "/adddenyrule" [accid value rtyp hasmem]
     (let [opx (DBX/insert-denyrule-2 (U/rs accid) (U/rs value) (U/rs rtyp) hasmem)]
       (LOG/info (str "(adddenyrule) Acc.Id: " accid ", rtyp: " rtyp ", value: " value ", mem: " hasmem))
-      (U/json-response {"result" (join (H/emit* (critter-area opx)))})))
+      (U/json-response 
+        (P/render-file "templates/critters/purchase.html" {:purchases [opx]}))))
+      ;(U/json-response {"result" (join (H/emit* (critter-area opx)))})))
   (PUT "/upddenyrule" [groupid value rtyp hasmem]
     (let [denyrule (DBX/insert-denyrule (U/rs groupid) (U/rs value) (U/rs rtyp) hasmem)]
       (U/json-response {"oid" (.getOid denyrule)})))

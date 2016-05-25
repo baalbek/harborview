@@ -16,7 +16,7 @@ var Critters = new function () {
             {cid: Critters.critId, value: rule_amount, rtyp: rule},
             function(result){
                 var critterArea = "#critter-area-".concat(Critters.purchaseId.toString());
-                $(critterArea).html(result.result);
+                $(critterArea).html(result);
             })
         var cancel = document.getElementById("new-acc-cancel");
         cancel.click();
@@ -32,12 +32,13 @@ var Critters = new function () {
         var rule        = $("#dny-rtyp").val();
         var rule_amount = $("#dny-value").val();
         var mem         = $("#dny-mem").is(":checked") ? "y" : "n";
-        HARBORVIEW.Utils.jsonPUT(
+        HARBORVIEW.Utils.htmlPUT(
             "/critters/adddenyrule",
             {accid: Critters.accId, value: rule_amount, rtyp: rule, hasmem: mem},
             function(result){
                 var critterArea = "#critter-area-".concat(Critters.purchaseId.toString());
-                $(critterArea).html(result.result);
+                alert(critterArea);
+                $(critterArea).html(result);
             })
         var cancel = document.getElementById("new-dny-cancel");
         cancel.click();
