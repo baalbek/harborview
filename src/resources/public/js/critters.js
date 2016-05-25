@@ -80,7 +80,7 @@ var Critters = new function () {
         HARBORVIEW.Utils.jsonPUT("/critters/togglerule",
             {"oid": oid, "isactive": isActive, "isaccrule": isAccRule},
             function(result) {
-                alert(result.result);
+                /*alert(result.result);*/
         });
     }
     return {
@@ -133,6 +133,7 @@ jQuery(document).ready(function() {
     $("body").on("change", ".acc-active", function() {
         var oid = $(this).attr("data-oid");
         var isActive = $(this).is(":checked") === true ? "y" : "n";
+        /*alert("oid: " + oid + ", isActive: " + isActive);*/
         Critters.toggleRule(oid,isActive,true);
     });
     /*------------------ Deny Rule ---------------------*/

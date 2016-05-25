@@ -37,9 +37,9 @@
                     <td>{{lx.aval}}</td>
                     {% if lx.aact %}
                         {% if lx.aact = 1 %}
-                        <td><input data-oid="{{lx.oid}}" class="acc-active" type="checkbox" checked></td>
+                        <td><input data-oid="{{lx.aoid}}" class="acc-active" type="checkbox" checked></td>
                         {% else %}
-                        <td><input data-oid="{{lx.oid}}" class="acc-active" type="checkbox"></td>
+                        <td><input data-oid="{{lx.aoid}}" class="acc-active" type="checkbox"></td>
                         {% endif %}
                     {% else %}
                         <td></td>
@@ -55,9 +55,9 @@
                     <td>{{lx.dval}}</td>
                     {% if lx.dact %}
                         {% if lx.dact = 1 %}
-                        <td><input data-oid="{{lx.oid}}" class="dny-active" type="checkbox" checked></td>
+                        <td><input data-oid="{{lx.doid}}" class="dny-active" type="checkbox" checked></td>
                         {% else %}
-                        <td><input data-oid="{{lx.oid}}" class="dny-active" type="checkbox"></td>
+                        <td><input data-oid="{{lx.doid}}" class="dny-active" type="checkbox"></td>
                         {% endif %}
                     {% else %}
                         <td></td>

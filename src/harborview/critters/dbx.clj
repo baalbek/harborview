@@ -113,3 +113,11 @@
 (defn insert-denyrule-2 [accid value rtyp hasmem]
   (insert-denyrule accid value rtyp hasmem)
   (find-purchase-accid accid))
+
+(defn toggle-rule [oid value is-acc]
+  (DB/with-session :ranoraraku CritterMapper
+    (if (= is-acc true)
+      (.toggleAcceptRule it oid value)
+      (.toggleDenyRule it oid value))))
+
+

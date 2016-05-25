@@ -65,7 +65,7 @@
   [seq elm]
   (some #(= elm %) seq))
 
-(defn str->bool [b as-int]
+(defn str->bool [b]
   (if (.equals b "true") true false))
 
 (defn str->date [dx]
