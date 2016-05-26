@@ -139,14 +139,13 @@
   (PUT "/addaccrule" [cid value rtyp]
     (let [opx (DBX/insert-accrule-2 (U/rs cid) (U/rs value) (U/rs rtyp))]
       (LOG/info (str "(addaccrule) Cid: " cid ", rtyp: " rtyp ", value: " value))
-      (U/json-response
-        (P/render-file "templates/critters/purchase.html" {:purchase (purchase-area opx)}))))
+      (P/render-file "templates/critters/purchase.html" {:purchase (purchase-area opx)})))
   (PUT "/adddenyrule" [accid value rtyp hasmem]
     (let [opx (DBX/insert-denyrule-2 (U/rs accid) (U/rs value) (U/rs rtyp) hasmem)]
-      (LOG/info (str "(adddenyrule) Acc.Id: " accid ", rtyp: " rtyp ", value: " value ", mem: " hasmem))
-      (U/json-response 
-        (P/render-file "templates/critters/purchase.html" {:purchase (purchase-area opx)}))))
-      ;(U/json-response {"result" (join (H/emit* (critter-area opx)))})))
+    ;(let [xaccid (U/rs accid)
+    ;      opx (DBX/find-purchase-accid xaccid)]
+      (LOG/info (str "(adddenyrule) Opx.Id: " (.getOid opx) ", Acc.Id: " accid ", rtyp: " rtyp ", value: " value ", mem: " hasmem))
+      (P/render-file "templates/critters/purchase.html" {:purchase (purchase-area opx)})))
   (PUT "/upddenyrule" [groupid value rtyp hasmem]
     (let [denyrule (DBX/insert-denyrule (U/rs groupid) (U/rs value) (U/rs rtyp) hasmem)]
       (U/json-response {"oid" (.getOid denyrule)})))

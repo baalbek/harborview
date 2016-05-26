@@ -12,7 +12,7 @@ var Critters = new function () {
         var rule_amount = $("#acc-value").val();
 
         console.log("critId: " + Critters.critId);
-        HARBORVIEW.Utils.jsonPUT(
+        HARBORVIEW.Utils.htmlPUT(
             "/critters/addaccrule",
             {cid: Critters.critId, value: rule_amount, rtyp: rule},
             function(result){
