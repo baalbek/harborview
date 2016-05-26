@@ -29,7 +29,9 @@
         ticker (.getTicker p)
         opname (.getOptionName p)
         optype (.getOptionType p)]
-    {:name (str "[" ticker "-" oid "] - opid: " opid " - " opname ", " optype) :value (str oid)}))
+    {:name (str "[" ticker "-" oid "] - opid: " opid " - " opname ", " optype)
+     :value (str oid)
+     :rem_sell_vol (.remainingVolume p)}))
 
 (defn critter->map [^CritterBean c]
   (if (nil? c)

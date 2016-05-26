@@ -72,6 +72,7 @@ var Critters = new function () {
     var setPurchases = function(purchaseType) {
         HARBORVIEW.Utils.jsonGET("/critters/purchases",{ptyp: purchaseType},function(items) {
             var cb = document.getElementById("critter-opx");
+            HARBORVIEW.Utils.createHtmlOption(cb,"-1","-");
             for (var i = 0; i < items.length; i++) {
                 HARBORVIEW.Utils.createHtmlOption(cb,items[i].value,items[i].name);
             }
@@ -164,6 +165,10 @@ jQuery(document).ready(function() {
         return true;
     })
 
+    $("body").on("click", "#critter-opx", function() {
+        alert($(this).val());
+        return true;
+    });
 })
 
 

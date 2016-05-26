@@ -1,5 +1,6 @@
 (ns scaffold
   (:import
+   [ranoraraku.models.mybatis CritterMapper]
    [koteriku.models.mybatis HourlistGroupMapper])
   (:require
    [selmer.parser :as P]
@@ -18,7 +19,7 @@
                              (.selectGroupBySpec it fnr)))
 
 (defn pa [accid]
-  (let [p (DBX/find-purchase-accid 49)]
+  (let [p (DBX/find-purchase-accid accid)]
     (HTML/purchase-area p)))
 
 (defn pax [accid]
@@ -27,5 +28,9 @@
 
 
 (defn paxx [accid]
-  (let [p (DBX/find-purchase-accid 49)]
+  (let [p (DBX/find-purchase-accid accid)]
     (HTML/overlook [p])))
+
+(defn fp [purchase-id]
+   (DB/with-session :ranoraraku CritterMapper
+     (.findPurchase it purchase-id)))
