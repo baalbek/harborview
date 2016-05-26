@@ -62,7 +62,7 @@
   (GET "/" request (hourlist))
   (GET "/groupsums" [fnr] (groupsums fnr))
   (GET "/overview" [fnr] (overview fnr DBX/fetch-all))
-  (GET "/hourlistgroups" [showinactive] (overview-groups (U/str->bool showinactive false)))
+  (GET "/hourlistgroups" [showinactive] (overview-groups (U/str->bool showinactive)))
   (PUT "/togglegroup" [oid isactive]
                       (do
                         (DBX/toggle-group-isactive (U/rs oid) isactive)
