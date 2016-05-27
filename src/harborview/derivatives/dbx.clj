@@ -15,14 +15,14 @@
                          :or {ptype 3
                               volume 0
                               spot 0.0
-                              dx (java.util.Date.)}}]
+                              dx (java.time.LocalDate/now)}}]
   (let [op-form (if (nil? derivative) `(.setOptionId ~opid) `(.setDerivative ~derivative))
         clazz (if (nil? derivative) `(OptionPurchaseBean.) `(OptionPurchaseWithDerivativeBean.))]
     `(let [opx# ~clazz]
        (doto opx#
          ~op-form
          (.setStatus 1)
-         (.setDx ~dx)
+         (.setLocalDx ~dx)
          (.setPrice ~price)
          (.setBuyAtPurchase ~buy)
          (.setVolume ~volume)

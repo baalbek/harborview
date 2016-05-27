@@ -3,10 +3,10 @@
    [selmer.parser :as P]
    [compojure.route :as R]
    [harborview.service.htmlutils :as U]
-   [harborview.critters.dbx :as DBX]
    [harborview.hourlist.html :as HRL]
    [harborview.critters.html :as CRT]
    [harborview.derivatives.html :as OPX]
+   [harborview.derivatives.dbx :as OPXD]
    [harborview.generaljournal.html :as GJ]
    [harborview.service.htmlutils :as UTIL])
   (:use
@@ -20,7 +20,8 @@
 
 (defroutes main-routes
   ;(GET "/" request (HRL/hourlist))
-  (GET "/" request (CRT/overlook (DBX/active-purchases (U/rs 11))))
+  ;(GET "/" request (CRT/overlook (DBX/active-purchases (U/rs 11))))
+  (GET "/" request (OPX/route-derivatives "3" OPXD/calls))
   (context "/generaljournal" [] GJ/my-routes)
   (context "/hourlist" [] HRL/my-routes)
   (context "/critters" [] CRT/my-routes)

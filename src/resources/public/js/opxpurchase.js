@@ -1,6 +1,5 @@
 var Opxpurchase = new function() {
-    this.current_oid = "-99"
-    this.newOpxPurchaseOk = function() {
+    this.newOpxPurchaseOk = function(price,buy,volume,spot,purchaseType) {
         /*
         $.ajax({
                 url: "/opx/purchase",
@@ -21,11 +20,22 @@ var Opxpurchase = new function() {
                 }
             });
         */
-        /*$(this).dialog("close");*/
+        HARBORVIEW.Utils.jsonPUT("/opx/purchase",
+                {opid: Opxpurchase.oid, 
+                    price: price, 
+                    buy: buy, 
+                    volume: volume, 
+                    spot: spot, 
+                    ptype: purchaseType},
+                function(result) {
+            alert("New option Purchase: " + result.oid);
+        });
     };
     this.showNewOpxPurchase = function(oid,ticker) {
         $("#dlg1-header").html("Oid: " + oid + ", ticker: " + ticker);
+        Opxpurchase.oid = oid
     };
+    this.oid = undefined
 }()
 
 jQuery(document).ready(function() {
@@ -33,6 +43,16 @@ jQuery(document).ready(function() {
         var oid = $(this).attr("data-oid");
         var ticker = $(this).attr("data-ticker");
         Opxpurchase.showNewOpxPurchase(oid,ticker);
+        return true;
+    });
+    $("body").on("click", "#dlg1-ok", function() {
+        alert("New purchase");
+        var pt = $("#dlg1-purchasetype").val();
+        var price = $("#dlg1-price").val();
+        var buy = $("#dlg1-buy").val();
+        var vol = $("#dlg1-volume").val();
+        var spot = $("#dlg1-spot").val();
+        Opxpurchase.newOpxPurchaseOk(price,buy,vol,spot,pt);
         return true;
     });
     /*
@@ -45,5 +65,5 @@ jQuery(document).ready(function() {
         dlg1.close();
         return false;
     });
-    //*/
+    */
 })

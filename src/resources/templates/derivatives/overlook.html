@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Derivatives - overlook</title>
+    <title>-</title>
     <meta charset="UTF-8">
     {% include "templates/head.html" %}
     <script src="/js/opxpurchase.js"></script>
@@ -57,6 +57,10 @@
                     <input type="number" class="form-control" id="dlg1-price" value="0.0">
                 </div>
                 <div class="form-group">
+                    <label for="dlg1-buy">Buy:</label>
+                    <input type="number" class="form-control" id="dlg1-buy" value="0.0">
+                </div>
+                <div class="form-group">
                     <label for="dlg1-volume">Volume:</label>
                     <input type="number" class="form-control" id="dlg1-volume" step="5" value="10">
                 </div>
@@ -69,26 +73,5 @@
             </form>
         </div>
     </div>
-    <!--
-    <input type="hidden" id="dlg1-oid" value="-1"/>
-    <p id="dlg1-header"></p>
-    <p>Price:<input type="text" value="0.0" id="dlg1-price" /></p>
-    <p>Buy:<input type="text" value="0" id="dlg1-buy" /></p>
-    <p>Volume:<input type="number" value="10" id="dlg1-volume" /></p>
-    <p>Spot:<input type="text" value="0" id="dlg1-spot" /></p>
-    <p><select id="dlg1-purchasetype">
-        <option value="3">Real Money</option>
-        <option value="4">Test Trade</option>
-        <option value="11" selected="true">Paper Trade</option>
-    </select></p>
-    <button id="dlg1-ok">Ok</button>
-    <button id="dlg1-close">Close</button>
-    -->
-
-    <!--
-    <div class="scripts"></div>
-    <script src="/js/critters.js"></script>
-    -->
-
 </body>
 </html>
