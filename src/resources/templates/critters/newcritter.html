@@ -1,16 +1,9 @@
 
 <div id="dlg-new-critter" class="modalDialog">
     <div class="container">
-        <!--
-        <h3>Tabs</h3>
-        <p>The .nav-tabs class is used to create navigation tabs:</p>
-        -->
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#critter">Critter</a></li>
             <li><a data-toggle="tab" href="#accept-rule">Accept Rule</a></li>
-            <!--
-            <li><a data-toggle="tab" href="#deny-rules">Menu 2</a></li>
-            -->
         </ul>
         <div class="tab-content">
             <div id="critter" class="tab-pane fade in active">
@@ -20,12 +13,6 @@
                         <label for="critter-opx" style="display:block;">Option:</label>
                         <select class="form-control" id="critter-opx"></select>
                     </div>
-                    <!--
-                    <div class="form-group">
-                        <label for="c_oid">Critter oid:</label>
-                        <input type="number" class="form-control" id="c_oid">
-                    </div>
-                    -->
                     <div class="form-group">
                         <label for="sell-vol">Sell Volume:</label>
                         <input type="number" class="form-control" id="sell-vol">
@@ -54,93 +41,3 @@
         <a href="#close" id="new-critter-cancel">Cancel</a>
     </div>
 </div>
-
-<!--
-    <div class="main">
-        <div id="tabs">
-            <ul>
-                <li><a href="#tabs-1">CRITTER</a></li>
-                <li><a href="#tabs-2">GRADIENT RULE</a></li>
-                <li><a href="#tabs-3">STANDARD ACCEPT RULE</a></li>
-                <li><a href="#tabs-4">TREND LINE RULE</a></li>
-            </ul>
-            <div id="tabs-1">
-                <form>
-                    <fieldset>
-                        <legend>Critter</legend>
-                        <label for="opx">Option</label>
-                        <select id="opx">
-                            <option value="0">0</option>
-                        </select>
-                        <p><label for="c_oid">Critter Oid</label>
-                            <input type="text" value="-1" id="c_oid"/></p>
-                        <p><label for="status">Status</label>
-                            <input type="text" value="7" id="status"/></p>
-                        <p><label for="sell_vol">Sell Volume</label>
-                            <input type="text" value="10" id="sell_vol"/></p>
-                        <p><label for="rem_sell_vol">Remaining Sell Volume</label>
-                            <input type="text" id="rem_sell_vol"/></p>
-                        <p><input type="submit" value="Update" id="upd_critter"/></p>
-                    </fieldset>
-                </form>
-            </div>
-            <div id="tabs-2">
-                <form>
-                    <fieldset>
-                        <legend>Gradient Rule</legend>
-                        <p><label for="gradient_cid">Critter Oid</label>
-                            <input type="text" value="-1" id="gradient_cid"/></p>
-                        <p><label for="gradient_oid">Rule Oid</label>
-                            <input type="text" value="-1" id="gradient_oid"/></p>
-                        <p><label for="v1">Value 1</label>
-                            <input type="text" id="v1" value="0.0"/></p>
-                        <p><label for="v2">Value 2</label>
-                            <input type="text" id="v2" value="0.0"/></p>
-                        <p><label for="l1">Level 1</label>
-                            <input type="text" id="l1" value="0.0"/></p>
-                        <p><label for="l2">Level 2</label>
-                            <input type="text" id="l2" value="0.0"/></p>
-                        <p><input type="submit" value="Insert" id="upd_gradrule"/></p>
-                    </fieldset>
-                </form>
-            </div>
-            <div id="tabs-3">
-                    <form>
-                        <fieldset>
-                            <legend>Accept Rule</legend>
-                            <p><label for="acc_cid">Critter Oid</label>
-                                <input type="text" value="-1" id="acc_cid"/></p>
-                            <p><label for="acc_oid">Rule Oid</label>
-                                <input type="text" value="-1" id="acc_oid"/></p>
-                            <p><label for="acc_val">Value</label>
-                                <input type="text" value="0.0" id="acc_val"/></p>
-                            <p><label for="acc_rtyp">Rtyp</label>
-                                <select id="acc_rtyp">
-                                    <option value="0">0</option>
-                                </select></p>
-                            <p><input type="submit" value="Update" id="upd_accrule"/></p>
-                        </fieldset>
-                    </form>
-                    <form>
-                        <fieldset>
-                            <legend>Deny Rule</legend>
-                            <p><label for="deny_acc_oid">Accept Rule Oid</label>
-                                <input type="text" value="-1" id="deny_acc_oid"/></p>
-                            <p><label for="deny_oid">Rule Oid</label>
-                                <input type="text" value="-1" id="deny_oid"/></p>
-                            <p><label for="deny_val">Value</label>
-                                <input type="text" value="0.0" id="deny_val"/></p>
-                            <p><label for="deny_rtyp">Rtyp</label>
-                                <select id="deny_rtyp">
-                                    <option value="0">0</option>
-                                </select></p>
-                            <p><label for="memory">Has Memory</label>
-                                <select id="memory">
-                                    <option value="y">True</option>
-                                    <option value="n">False</option>
-                                </select></p>
-                            <p><input type="submit" value="Update" id="upd_denyrule"/></p>
-                        </fieldset>
-                    </form>
-            </div>
-     -->

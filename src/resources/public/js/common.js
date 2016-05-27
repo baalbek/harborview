@@ -32,11 +32,19 @@ HARBORVIEW.Utils = (function () {
     var jsonPOST = function (myUrl, args, onSuccess) {
         myAjax("POST", "json", myUrl, args, onSuccess);
     }
-    var createHtmlOption = function(ddl, value, text) {
-            var opt = document.createElement('option');
-            opt.value = value;
-            opt.text = text;
-            ddl.options.add(opt);
+    var createHtmlOption = function(value, text) {
+        var opt = document.createElement('option');
+        opt.value = value;
+        opt.text = text;
+        return opt;
+    }
+    var addHtmlOption = function(ddl, value, text) {
+        ddl.options.add(createHtmlOption(value,text));
+    }
+    var addHtmlOptionWithAttr = function(ddl, value, text, attr, attrVal) {
+        var opt = createHtmlOption(value,text);
+        opt.setAttribute(attr, attrVal);
+        ddl.options.add(opt);
     }
     var emptyHtmlOptions = function(cb) {
         while (cb.options.length) {
@@ -50,8 +58,8 @@ HARBORVIEW.Utils = (function () {
         jsonGET: jsonGET,
         jsonPUT: jsonPUT,
         jsonPOST: jsonPOST,
-        createHtmlOption: createHtmlOption,
-        emptyHtmlOptions: emptyHtmlOptions
+        addHtmlOption: addHtmlOption,
+        addHtmlOptionWithAttr: addHtmlOptionWithAttr
     }
 })();
 

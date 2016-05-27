@@ -62,9 +62,9 @@ var Critters = new function () {
                 var cb_dny = document.getElementById("dny-rtyp");
                 var critter_rtyp =  document.getElementById("critter-acc-rtyp");
                 for (var i = 0; i < items.length; i++) {
-                    HARBORVIEW.Utils.createHtmlOption(cb_acc,items[i].value,items[i].name);
-                    HARBORVIEW.Utils.createHtmlOption(cb_dny,items[i].value,items[i].name);
-                    HARBORVIEW.Utils.createHtmlOption(critter_rtyp,items[i].value,items[i].name);
+                    HARBORVIEW.Utils.addHtmlOption(cb_acc,items[i].value,items[i].name);
+                    HARBORVIEW.Utils.addHtmlOption(cb_dny,items[i].value,items[i].name);
+                    HARBORVIEW.Utils.addHtmlOption(critter_rtyp,items[i].value,items[i].name);
                 }
             });
         }
@@ -72,9 +72,10 @@ var Critters = new function () {
     var setPurchases = function(purchaseType) {
         HARBORVIEW.Utils.jsonGET("/critters/purchases",{ptyp: purchaseType},function(items) {
             var cb = document.getElementById("critter-opx");
-            HARBORVIEW.Utils.createHtmlOption(cb,"-1","-");
+            HARBORVIEW.Utils.addHtmlOption(cb,"-1","-");
             for (var i = 0; i < items.length; i++) {
-                HARBORVIEW.Utils.createHtmlOption(cb,items[i].value,items[i].name);
+                var curItem = items[i];
+                HARBORVIEW.Utils.addHtmlOptionWithAttr(cb,curItem.value,curItem.name,"data-remsellvol",curItem.rem_sell_vol);
             }
         });
     }
@@ -165,8 +166,12 @@ jQuery(document).ready(function() {
         return true;
     })
 
-    $("body").on("click", "#critter-opx", function() {
-        alert($(this).val());
+    $("body").on("change", "#critter-opx", function() {
+        var opx = $(this)[0];
+        var i = opx.selectedIndex;
+        var remSellVol = opx.options[i].getAttribute("data-remsellvol");
+        var remSellVolInput = document.getElementById("rem-sell-vol");
+        remSellVolInput.setAttribute("value",remSellVol);
         return true;
     });
 })
