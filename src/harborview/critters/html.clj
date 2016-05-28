@@ -29,9 +29,14 @@
         ticker (.getTicker p)
         opname (.getOptionName p)
         optype (.getOptionType p)]
-    {:name (str "[" ticker "-" oid "] - opid: " opid " - " opname ", " optype)
-     :value (str oid)
-     :rem_sell_vol (.remainingVolume p)}))
+    { :name (str "[" ticker "-" oid "] - opid: " opid " - " opname ", " optype)
+      :value (str oid)
+      :rem_sell_vol (.remainingVolume p)
+      :opid opid
+      :price (.getPrice p)
+      :buy (.getBuyAtPurchase p)
+      :spot (.getSpotAtPurchase p)
+     }))
 
 (defn critter->map [^CritterBean c]
   (if (nil? c)
@@ -123,12 +128,18 @@
        (nil? critters) []
                        (map critter-area critters))}))
 
-(defn overlook [purchases]
+(defn overlook [ptype-str]
+  (let [ptype (U/rs ptype-str)
+        purchases (DBX/active-purchases ptype)
+        ptname (cond
+                 (= ptype 3) "Money Critters"
+                 (= ptype 4) "Test Critters"
+                 (= ptype 11) "Paper Critters")]
   (P/render-file "templates/critters/overlook.html"
-    {:purchases (map purchase-area purchases)}))
+    {:ptname ptname :purchases (map purchase-area purchases)})))
 
 (defroutes my-routes
-  (GET "/overlook/:id" [id] (overlook(DBX/active-purchases (U/rs id))))
+  (GET "/overlook/:id" [id] (overlook id))
   ;(GET "/new/:id" [id] (new-critter id))
   (GET "/purchases" [ptyp] (U/json-response (map purchase->select (DBX/active-purchases (U/rs ptyp)))))
   (GET "/rtyp" [] (U/json-response (map ruletype->select (DBX/rule-types))))

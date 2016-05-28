@@ -30,6 +30,8 @@ var Opxpurchase = new function() {
                 function(result) {
             alert("New option Purchase: " + result.oid);
         });
+        var cancel = document.getElementById("dlg1-cancel");
+        cancel.click();
     };
     this.showNewOpxPurchase = function(oid,ticker) {
         $("#dlg1-header").html("Oid: " + oid + ", ticker: " + ticker);
@@ -46,7 +48,6 @@ jQuery(document).ready(function() {
         return true;
     });
     $("body").on("click", "#dlg1-ok", function() {
-        alert("New purchase");
         var pt = $("#dlg1-purchasetype").val();
         var price = $("#dlg1-price").val();
         var buy = $("#dlg1-buy").val();

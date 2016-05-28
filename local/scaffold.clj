@@ -1,11 +1,8 @@
 (ns scaffold
-  (:import
-   [ranoraraku.models.mybatis CritterMapper]
-   [koteriku.models.mybatis HourlistGroupMapper])
   (:require
-   [selmer.parser :as P]
-   [harborview.service.db :as DB]
-   [harborview.critters.html :as HTML]
+   ;[selmer.parser :as P]
+   ;[harborview.service.db :as DB]
+   ;[harborview.critters.html :as HTML]
    [harborview.critters.dbx :as DBX]))
 
 
@@ -18,19 +15,25 @@
   (DB/with-session :koteriku HourlistGroupMapper
                              (.selectGroupBySpec it fnr)))
 
-(defn pa [accid]
+
+
+(defn pa [oid]
+  (let [p (DBX/find-purchase-accid oid)]
+    p))
+
+(comment pa [accid]
   (let [p (DBX/find-purchase-accid accid)]
     (HTML/purchase-area p)))
 
-(defn pax [accid]
+(comment pax [accid]
   (P/render-file "templates/critters/purchase.html"
     {:purchase (pa accid)}))
 
 
-(defn paxx [accid]
+(comment paxx [accid]
   (let [p (DBX/find-purchase-accid accid)]
     (HTML/overlook [p])))
 
-(defn fp [purchase-id]
+(comment fp [purchase-id]
    (DB/with-session :ranoraraku CritterMapper
      (.findPurchase it purchase-id)))

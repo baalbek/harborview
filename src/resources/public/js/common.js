@@ -59,7 +59,9 @@ HARBORVIEW.Utils = (function () {
         jsonPUT: jsonPUT,
         jsonPOST: jsonPOST,
         addHtmlOption: addHtmlOption,
-        addHtmlOptionWithAttr: addHtmlOptionWithAttr
+        addHtmlOptionWithAttr: addHtmlOptionWithAttr,
+        emptyHtmlOptions: emptyHtmlOptions,
+        createHtmlOption: createHtmlOption
     }
 })();
 

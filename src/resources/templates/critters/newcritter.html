@@ -3,14 +3,18 @@
     <div class="container">
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#critter">Critter</a></li>
+            <li><a data-toggle="tab" href="#critter-2">Critter 2</a></li>
             <li><a data-toggle="tab" href="#accept-rule">Accept Rule</a></li>
         </ul>
         <div class="tab-content">
-            <div id="critter" class="tab-pane fade in active">
+            <div id="critter" class="tab-pane active">
                 <h3>Critter</h3>
+                <!--
+                <form role="form" class="form-inline">
+                -->
                 <form role="form">
                     <div class="form-group">
-                        <label for="critter-opx" style="display:block;">Option:</label>
+                        <label for="critter-opx">Option:</label>
                         <select class="form-control" id="critter-opx"></select>
                     </div>
                     <div class="form-group">
@@ -23,7 +27,24 @@
                     </div>
                 </form>
             </div>
-            <div id="accept-rule" class="tab-pane fade">
+            <div id="critter-2" class="tab-pane">
+                <h3>Critter 2</h3>
+                <form role="form">
+                    <div class="form-group">
+                        <label for="price">Option Price:</label>
+                        <input type="number" class="form-control" id="price">
+                    </div>
+                    <div class="form-group">
+                        <label for="buy">Buy at Purchase:</label>
+                        <input type="number" class="form-control" id="buy">
+                    </div>
+                    <div class="form-group">
+                        <label for="spot">Spot at Purchase:</label>
+                        <input type="number" class="form-control" id="spot">
+                    </div>
+                </form>
+            </div>
+            <div id="accept-rule" class="tab-pane">
                 <h3>Accept Rule</h3>
                 <form role="form">
                     <div class="form-group">

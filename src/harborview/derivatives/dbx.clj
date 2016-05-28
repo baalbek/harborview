@@ -14,15 +14,15 @@
 (defmacro new-purchase [{:keys [dx price buy volume ptype spot derivative opid]
                          :or {ptype 3
                               volume 0
-                              spot 0.0
-                              dx (java.time.LocalDate/now)}}]
+                              spot 0.0}}]
+                              ;dx (java.time.LocalDate/now)}}]
   (let [op-form (if (nil? derivative) `(.setOptionId ~opid) `(.setDerivative ~derivative))
         clazz (if (nil? derivative) `(OptionPurchaseBean.) `(OptionPurchaseWithDerivativeBean.))]
     `(let [opx# ~clazz]
        (doto opx#
          ~op-form
          (.setStatus 1)
-         (.setLocalDx ~dx)
+         ;(.setLocalDx ~dx)
          (.setPrice ~price)
          (.setBuyAtPurchase ~buy)
          (.setVolume ~volume)

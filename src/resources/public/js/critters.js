@@ -51,7 +51,8 @@ var Critters = new function () {
     }
     */
     var onNewCritter = function() {
-
+        var cancel = document.getElementById("new-critter-cancel");
+        cancel.click();
     }
 
     var setRuleTypes = function() {
@@ -72,11 +73,23 @@ var Critters = new function () {
     var setPurchases = function(purchaseType) {
         HARBORVIEW.Utils.jsonGET("/critters/purchases",{ptyp: purchaseType},function(items) {
             var cb = document.getElementById("critter-opx");
+            HARBORVIEW.Utils.emptyHtmlOptions(cb);
             HARBORVIEW.Utils.addHtmlOption(cb,"-1","-");
+            for (var i = 0; i < items.length; i++) {
+                var ci = items[i];
+                var o = HARBORVIEW.Utils.createHtmlOption(ci.value,ci.name);
+                o.setAttribute("data-remsellvol",ci.rem_sell_vol);
+                o.setAttribute("data-price",ci.price);
+                o.setAttribute("data-buy",ci.buy);
+                o.setAttribute("data-spot",ci.spot);
+                cb.options.add(o);
+            }
+            /*
             for (var i = 0; i < items.length; i++) {
                 var curItem = items[i];
                 HARBORVIEW.Utils.addHtmlOptionWithAttr(cb,curItem.value,curItem.name,"data-remsellvol",curItem.rem_sell_vol);
             }
+            */
         });
     }
     var toggleRule = function(oid,isActive,isAccRule) {
@@ -87,6 +100,13 @@ var Critters = new function () {
                 /*alert(result.result);*/
         });
     }
+
+    var transferAttribute = function(fromEl,fromAttr,toElementId,toAttr) {
+        var sourceVal = fromEl.getAttribute(fromAttr);
+        var target = document.getElementById(toElementId);
+        target.setAttribute(toAttr,sourceVal);
+    }
+
     return {
         showNewAccRule: showNewAccRule,
         onNewAccRule: onNewAccRule,
@@ -99,7 +119,8 @@ var Critters = new function () {
         setRuleTypes: setRuleTypes,
         setPurchases: setPurchases,
         onNewCritter: onNewCritter,
-        toggleRule: toggleRule
+        toggleRule: toggleRule,
+        transferAttribute: transferAttribute
     }
 }()
 
@@ -166,12 +187,21 @@ jQuery(document).ready(function() {
         return true;
     })
 
+
+
     $("body").on("change", "#critter-opx", function() {
         var opx = $(this)[0];
         var i = opx.selectedIndex;
+        var selOpt = opx.options[i];
+        Critters.transferAttribute(selOpt,"data-remsellvol","rem-sell-vol","value");
+        Critters.transferAttribute(selOpt,"data-price","price","value");
+        Critters.transferAttribute(selOpt,"data-buy","buy","value");
+        Critters.transferAttribute(selOpt,"data-spot","spot","value");
+        /*
         var remSellVol = opx.options[i].getAttribute("data-remsellvol");
         var remSellVolInput = document.getElementById("rem-sell-vol");
         remSellVolInput.setAttribute("value",remSellVol);
+        */
         return true;
     });
 })

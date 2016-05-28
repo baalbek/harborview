@@ -35,14 +35,9 @@ nav a, nav a:link, nav a:visited, nav a:active, nav a.current {
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(120, 100, 100, 0.3);
+  background: rgba(0, 0, 0, 0.8);
   z-index: 99999;
   opacity: 0;
-  /*
-  -webkit-transition: opacity 400ms ease-in;
-  -moz-transition: opacity 400ms ease-in;
-  transition: opacity 400ms ease-in;
-  */
   pointer-events: none; }
 
 .modalDialog:target {
@@ -60,30 +55,6 @@ nav a, nav a:link, nav a:visited, nav a:active, nav a.current {
   background: -webkit-linear-gradient(white, #999999);
   background: -o-linear-gradient(white, #999999); }
 
-/*
-.close {
-    background: #606061;
-    color: #FFFFFF;
-    line-height: 25px;
-    position: absolute;
-    right: -12px;
-    text-align: center;
-    top: -10px;
-    width: 24px;
-    text-decoration: none;
-    font-weight: bold;
-    -webkit-border-radius: 12px;
-    -moz-border-radius: 12px;
-    border-radius: 12px;
-    -moz-box-shadow: 1px 1px 3px #000;
-    -webkit-box-shadow: 1px 1px 3px #000;
-    box-shadow: 1px 1px 3px #000;
-}
-
-.close:hover {
-    background: #00d9ff;
-}
-*/
 a.href-button {
   background: #942d16;
   padding: 10px 20px;
