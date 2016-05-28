@@ -3,7 +3,9 @@
     <div class="container">
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#critter">Critter</a></li>
+            <!--
             <li><a data-toggle="tab" href="#critter-2">Critter 2</a></li>
+            -->
             <li><a data-toggle="tab" href="#accept-rule">Accept Rule</a></li>
         </ul>
         <div class="tab-content">
@@ -12,21 +14,46 @@
                 <!--
                 <form role="form" class="form-inline">
                 -->
-                <form role="form">
+                <form role="form" class="form-horizontal">
                     <div class="form-group">
-                        <label for="critter-opx">Option:</label>
-                        <select class="form-control" id="critter-opx"></select>
+                        <label class="control-label col-sm-2" for="critter-opx">Option:</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" id="critter-opx"></select>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="sell-vol">Sell Volume:</label>
-                        <input type="number" class="form-control" id="sell-vol">
+                        <label class="control-label col-sm-2" for="sell-vol">Sell V.:</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="sell-vol">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="rem-sell-vol">Remaining Sell Volume:</label>
-                        <input type="number" class="form-control" id="rem-sell-vol">
+                        <label class="control-label col-sm-2" for="rem-sell-vol">Rem. S.V.:</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="rem-sell-vol">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="price">Price:</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="price">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="buy">Buy:</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="buy">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="spot">Spot:</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="spot">
+                        </div>
                     </div>
                 </form>
             </div>
+            <!--
             <div id="critter-2" class="tab-pane">
                 <h3>Critter 2</h3>
                 <form role="form">
@@ -44,6 +71,7 @@
                     </div>
                 </form>
             </div>
+            -->
             <div id="accept-rule" class="tab-pane">
                 <h3>Accept Rule</h3>
                 <form role="form">
