@@ -32,6 +32,7 @@
     { :name (str "[" ticker "-" oid "] - opid: " opid " - " opname ", " optype)
       :value (str oid)
       :rem_sell_vol (.remainingVolume p)
+      :total_vol (.getVolume p)
       :opid opid
       :price (.getPrice p)
       :buy (.getBuyAtPurchase p)

@@ -79,6 +79,7 @@ var Critters = new function () {
                 var ci = items[i];
                 var o = HARBORVIEW.Utils.createHtmlOption(ci.value,ci.name);
                 o.setAttribute("data-remsellvol",ci.rem_sell_vol);
+                o.setAttribute("data-totvol",ci.total_vol);
                 o.setAttribute("data-price",ci.price);
                 o.setAttribute("data-buy",ci.buy);
                 o.setAttribute("data-spot",ci.spot);
@@ -197,11 +198,7 @@ jQuery(document).ready(function() {
         Critters.transferAttribute(selOpt,"data-price","price","value");
         Critters.transferAttribute(selOpt,"data-buy","buy","value");
         Critters.transferAttribute(selOpt,"data-spot","spot","value");
-        /*
-        var remSellVol = opx.options[i].getAttribute("data-remsellvol");
-        var remSellVolInput = document.getElementById("rem-sell-vol");
-        remSellVolInput.setAttribute("value",remSellVol);
-        */
+        Critters.transferAttribute(selOpt,"data-totvol","total-vol","value");
         return true;
     });
 })
