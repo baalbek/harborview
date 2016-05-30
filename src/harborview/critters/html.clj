@@ -141,7 +141,9 @@
 
 (defroutes my-routes
   (GET "/overlook/:id" [id] (overlook id))
-  ;(GET "/new/:id" [id] (new-critter id))
+  (GET "/newcritter" [puid sellvol] 
+    (let [critter (new-critter puid 7 sellvol)]
+      (U/json-response {:critid (.getOid critter)})))
   (GET "/purchases" [ptyp] (U/json-response (map purchase->select (DBX/active-purchases (U/rs ptyp)))))
   (GET "/rtyp" [] (U/json-response (map ruletype->select (DBX/rule-types))))
   (PUT "/togglerule" [oid isactive isaccrule]

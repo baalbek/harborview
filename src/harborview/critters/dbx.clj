@@ -63,11 +63,11 @@
     result))
 
 
-(defn insert-critter [oid status opx sellvol]
+(defn insert-critter [purchase-id status sellvol]
   (let [result (CritterBean.)]
     (doto result
+      (.setPurchaseId purchase-id)
       (.setStatus status)
-      (.setPurchaseId opx)
       (.setSellVolume sellvol))
     (DB/with-session :ranoraraku CritterMapper
       (.insertCritter it result))

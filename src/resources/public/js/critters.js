@@ -7,19 +7,18 @@ var Critters = new function () {
         $("#acc-header").text("[ " + Critters.purchaseId + " ] Critter Oid: " + Critters.critId);
         Critters.setRuleTypes();
     }
-    var onNewAccRule = function() {
-        var rule = $("#acc-rtyp").val();
-        var rule_amount = $("#acc-value").val();
-
-        console.log("critId: " + Critters.critId);
+    var onNewAccRuleAjax = function(rule,ruleAmount) {
         HARBORVIEW.Utils.htmlPUT(
             "/critters/addaccrule",
-            {cid: Critters.critId, value: rule_amount, rtyp: rule},
+            {cid: Critters.critId, value: ruleAmount, rtyp: rule},
             function(result){
                 var critterArea = "#critter-area-".concat(Critters.purchaseId.toString());
                 $(critterArea).html(result);
-                console.log(result);
-            })
+            });
+    }
+    var onNewAccRule = function(rule,ruleAmount) {
+        console.log("critId: " + Critters.critId + ", rule: " + rule + ", rule amount: " + ruleAmount);
+        onNewAccRuleAjax(rule,ruleAmount);
         var cancel = document.getElementById("new-acc-cancel");
         cancel.click();
     }
@@ -50,7 +49,8 @@ var Critters = new function () {
         Critters.setRuleTypes();
     }
     */
-    var onNewCritter = function() {
+    var onNewCritter = function(sellVol,rule,ruleAmount) {
+        onNewAccRuleAjax(rule,ruleAmount);
         var cancel = document.getElementById("new-critter-cancel");
         cancel.click();
     }
@@ -148,7 +148,9 @@ jQuery(document).ready(function() {
         toggleValue2("#dny-rtyp","dny-value-2","dny-lbl-2");
     })
     $("body").on("click", "#new-acc-ok", function() {
-        Critters.onNewAccRule();
+        var rule = $("#acc-rtyp").val();
+        var rule_amount = $("#acc-value").val();
+        Critters.onNewAccRule(rule,rule_amount);
     })
     $("body").on("click", "a.newaccrule", function() {
         var critId = $(this).attr("data-critid");
@@ -180,7 +182,10 @@ jQuery(document).ready(function() {
     });
     /*------------------ Deny Critter ---------------------*/
     $("body").on("click", "#new-critter-ok", function() {
-        Critters.onNewCritter();
+        var sell_vol = $("#sell-vol").val();
+        var rtyp = $("#critter-acc-rtyp").val();
+        var rtyp_amount = $("#acc-val").val();
+        Critters.onNewCritter(sell_vol);
     })
     $("body").on("click", "a.newcritter", function() {
         Critters.setRuleTypes();
@@ -199,6 +204,8 @@ jQuery(document).ready(function() {
         Critters.transferAttribute(selOpt,"data-buy","buy","value");
         Critters.transferAttribute(selOpt,"data-spot","spot","value");
         Critters.transferAttribute(selOpt,"data-totvol","total-vol","value");
+        Critters.purchaseId = selOpt.getAttribute("value");
+        alert(Critters.purchaseId);
         return true;
     });
 })
