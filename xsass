@@ -1,0 +1,5 @@
+#!/bin/bash
+
+sass sass-src/harborview.scss src/resources/public/css/harborview.css
+
+exit 0

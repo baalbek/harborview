@@ -1,5 +1,5 @@
 a.href-button {
-   background: #942d16;
+   background: $bg-href-btn;
    padding: 10px 20px;
    color: #fff;
    font-size: 14px;
@@ -9,10 +9,16 @@ a.href-button {
    }
 
 a.href-button:hover {
-   background: #942d16;
-   color: #ccc;
+   background: $bg-href-btn;
+   color: $fg-href-btn;
    }
 
 a.href-button:active {
-   background: #942d16;
+   background: $bg-href-btn;
    }
+
+a.href-td {
+   padding: 5px 5px 5px 5px;
+   background: $bg-href-btn;
+   color: #fff;
+}

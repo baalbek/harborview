@@ -27,7 +27,7 @@
                     <td>{{lx.sell_vol}}</td>
                     <td>{{lx.status}}</td>
                     {% if lx.oid %}
-                    <td><a href="#dlg-new-accrule" class="newaccrule" data-critid="{{lx.oid}}" data-puid="{{purchase.oid}}">New acc.</a></td>
+                    <td><a href="#dlg-new-accrule" class="newaccrule href-td" data-critid="{{lx.oid}}" data-puid="{{purchase.oid}}">Acc</a></td>
                     {% else %}
                     <td></td>
                     {% endif %}
@@ -45,7 +45,7 @@
                         <td></td>
                     {% endif %}
                     {% if lx.aoid %}
-                    <td><a href="#dlg-new-dnyrule" class="newdenyrule" data-accid="{{lx.aoid}}" data-puid="{{purchase.oid}}">New deny</a></td>
+                    <td><a href="#dlg-new-dnyrule" class="newdenyrule href-td" data-accid="{{lx.aoid}}" data-puid="{{purchase.oid}}">Deny</a></td>
                     {% else %}
                     <td></td>
                     {% endif %}

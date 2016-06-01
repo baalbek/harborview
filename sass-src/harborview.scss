@@ -13,6 +13,9 @@ $bg-ribbon: #50607B;
 $bg-main: #FFF8DC;
 //--------------- Pop-up dialog ------------------>>>
 $pop-width: 400px;
+//--------------- Href Button ------------------>>>
+$bg-href-btn: #942d16;
+$fg-href-btn: #ccc;
 
 body {
     color: $color;
@@ -50,6 +53,20 @@ nav a {
     margin-bottom: 30px
 }
 
+
+.logo {
+    background:url('/img/02.png') center no-repeat;
+    position: absolute;
+    top: 40px;
+    left: 0px;
+    /*
+   	display:inline;
+	float: right;
+	*/
+    width: 163px;
+    height: 159px;
+    z-index: 9999;
+}
 
 @import "dialog";
 @import "href-button";
