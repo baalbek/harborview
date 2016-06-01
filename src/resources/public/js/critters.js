@@ -50,7 +50,13 @@ var Critters = new function () {
     }
     */
     var onNewCritter = function(sellVol,rule,ruleAmount) {
-        onNewAccRuleAjax(rule,ruleAmount);
+        HARBORVIEW.Utils.jsonPUT(
+            "/critters/newcritter",
+            {puid: Critters.purchaseId, sellvol: sellVol},
+            function(result){
+                Critters.critId = result.critid;
+                onNewAccRuleAjax(rule,ruleAmount);
+            });
         var cancel = document.getElementById("new-critter-cancel");
         cancel.click();
     }
@@ -185,7 +191,7 @@ jQuery(document).ready(function() {
         var sell_vol = $("#sell-vol").val();
         var rtyp = $("#critter-acc-rtyp").val();
         var rtyp_amount = $("#acc-val").val();
-        Critters.onNewCritter(sell_vol);
+        Critters.onNewCritter(sell_vol,rtyp,rtyp_amount);
     })
     $("body").on("click", "a.newcritter", function() {
         Critters.setRuleTypes();
@@ -205,7 +211,6 @@ jQuery(document).ready(function() {
         Critters.transferAttribute(selOpt,"data-spot","spot","value");
         Critters.transferAttribute(selOpt,"data-totvol","total-vol","value");
         Critters.purchaseId = selOpt.getAttribute("value");
-        alert(Critters.purchaseId);
         return true;
     });
 })
