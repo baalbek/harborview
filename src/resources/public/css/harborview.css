@@ -31,9 +31,10 @@ nav a, nav a:link, nav a:visited, nav a:active, nav a.current {
 .logo {
   background: url("/img/02.png") center no-repeat;
   position: absolute;
-  top: 40px;
-  left: 0px;
+  top: 10px;
+  left: 88%;
     /*
+	float: right;
    	display:inline;
 	float: right;
 	*/
