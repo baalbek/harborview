@@ -17,7 +17,8 @@
     {:name (str account " - " text) :value (str account)}))
 
 (defn general-journal []
-  (P/render-file "templates/generaljournal/generaljournal.html" {}))
+  (P/render-file "templates/generaljournal/generaljournal.html"
+    {:ns4102 (map ns4102->select (DBX/fetch-ns4102))}))
 
 
 (defroutes my-routes

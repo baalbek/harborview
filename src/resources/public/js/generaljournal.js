@@ -42,6 +42,18 @@ var GeneralJournal = new function() {
         alert(textStatus)
         alert(errorThrown)
     }
+    /*
+    this.setNs4102 = function() {
+        if (GeneralJournal.hasNs4102 == false) {
+            GeneralJournal.hasNs4102 == true;
+            HARBORVIEW.Utils.jsonGET("/generaljournal/rtyp",null,function(items) {
+                var cb_acc = document.getElementById("acc-rtyp");
+                var cb_dny = document.getElementById("dny-rtyp");
+
+        }
+    }
+    this.hasNs4102 = false;
+    //*/
 }()
 
 
