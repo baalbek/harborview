@@ -1,5 +1,8 @@
 #!/bin/bash
 
-sass --style compressed sass-src/harborview.scss src/resources/public/css/harborview.css
+# sass --style compressed sass-src/harborview.scss src/resources/public/css/harborview.css
+sass sass-src/harborview.scss src/resources/public/css/harborview.css
+
+# sass --watch sass-src/harborview.scss:src/resources/public/css/harborview.css
 
 exit 0
