@@ -14,7 +14,10 @@
     <tbody>
     {% for ix in items %}
         <tr class="rows">
-           <td>{{ix.oid}}</td>
+            <td><a href="#" class="loadhourlistdata href-td" data-oid="{{ix.oid}}" data-desc="{{ix.desc}}" data-fnr="{{ix.fnr}}" data-date="{{ix.date}}"
+                   data-hours="{{ix.hours}}"
+                   data-fromtime="{{ix.fromtime}}"
+                   data-totime="{{ix.totime}}">{{ix.oid}}</a></td>
             <td>{{ix.desc}}</td>
             <td>{{ix.fnr}}</td>
             <td>{{ix.date}}</td>

@@ -47,6 +47,10 @@ var HourList = new function() {
 }()
 
 jQuery(document).ready(function() {
+    $("body").on("click", "a.loadhourlistdata", function() {
+        alert('Hi');
+        return true;
+    });
     $("#newhourlist").click(function() {
         HourList.insert();
         return false;
