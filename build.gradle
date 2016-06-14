@@ -37,7 +37,6 @@ dependencies {
     compile project(':koteriku')
     compile project(':oahu')
     compile project(':ranoraraku')
-    compile project(':kilauea')
 
     //---------------------------------------------------
     //---------------- Clojure clj jars -----------------
@@ -106,6 +105,7 @@ task coypJavaDeps(type: Copy) {
     }
 }
 
+/*
 buildscript {
     repositories {
         mavenLocal()
@@ -121,6 +121,7 @@ apply plugin: 'rcstadheim.palenque'
 task winLeinDeps(type: rcstadheim.palenque.LeinDepsTask) {
     useLibsSymlink = false
 }
+*/
 
 jar {
     from ("target/classes") 
