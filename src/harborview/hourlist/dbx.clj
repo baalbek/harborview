@@ -43,6 +43,9 @@
   (DB/with-session :koteriku HourlistMapper
     (.selectAll it (U/rs invoice))))
 
+(defn update-hourlist [oid fnr group curdate from_time to_time hours]
+  (println oid ", " fnr))
+
 (defn insert-hourlist [fnr group curdate from_time to_time hours]
   (let [hb (HourlistBean.)]
     (doto hb

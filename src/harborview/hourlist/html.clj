@@ -35,7 +35,8 @@
     {:items
      (map (fn [^HourlistBean x]
             {:oid (str (.getOid x))
-            :desc (.getDescription x)
+            :group (.getGroupId x)
+             :desc (.getDescription x)
             :fnr (str (.getInvoiceNr x))
             :date (U/date->str (.getLocalDate x))
             :hours (str (.getHours x))
@@ -73,6 +74,10 @@
   (PUT "/insert" [fnr group curdate from_time to_time hours]
     (do
       (DBX/insert-hourlist fnr group curdate from_time to_time hours)
+      (overview fnr DBX/fetch-last-5)))
+  (PUT "/update" [oid fnr group curdate from_time to_time hours]
+    (do
+      (DBX/update-hourlist oid fnr group curdate from_time to_time hours)
       (overview fnr DBX/fetch-last-5))))
 
 ;(U/json-response {"

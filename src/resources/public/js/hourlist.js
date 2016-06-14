@@ -7,9 +7,24 @@ var HourList = new function() {
                     "curdate" : $("#curdate").val(),
                     "from_time" : $("#from-time").val(),
                     "to_time" : $("#to-time").val(),
-                    "hours" : $("#hours").val(),
+                    "hours" : $("#hours").val()
             },
             function(items) {
+                $("#message").html(items);
+            });
+    }
+    this.update = function() {
+        HARBORVIEW.Utils.htmlPUT("/hourlist/update",
+            {
+                    "fnr" : $("#fnr").val(),
+                    "group" : $("#group").val(),
+                    "curdate" : $("#curdate").val(),
+                    "from_time" : $("#from-time").val(),
+                    "to_time" : $("#to-time").val(),
+                    "hours" : $("#hours").val(),
+                    "oid" : $("#oid").val()
+            },
+            function(result) {
                 $("#message").html(items);
             });
     }
@@ -48,11 +63,20 @@ var HourList = new function() {
 
 jQuery(document).ready(function() {
     $("body").on("click", "a.loadhourlistdata", function() {
-        alert('Hi');
+        $("#oid").val($(this).attr("data-oid"));
+        $("#hours").val($(this).attr("data-hours"));
+        $("#curdate").val($(this).attr("data-date"));
+        $("#from-time").val($(this).attr("data-fromtime"));
+        $("#to-time").val($(this).attr("data-totime"));
+        $("#group").val($(this).attr("data-group"));
         return true;
     });
     $("#newhourlist").click(function() {
         HourList.insert();
+        return false;
+    });
+    $("#updhourlist").click(function() {
+        HourList.update();
         return false;
     });
     $("#newhourlistgroup").click(function() {
