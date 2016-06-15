@@ -1,4 +1,7 @@
 (ns scaffold
+  (:import
+    [koteriku.beans
+      HourlistBean])
   (:require
    ;[selmer.parser :as P]
    ;[harborview.service.db :as DB]
@@ -15,6 +18,7 @@
   (DB/with-session :koteriku HourlistGroupMapper
                              (.selectGroupBySpec it fnr)))
 
+(def hb (HourlistBean.))
 
 
 (defn pa [oid]

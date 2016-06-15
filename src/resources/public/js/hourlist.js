@@ -24,7 +24,7 @@ var HourList = new function() {
                     "hours" : $("#hours").val(),
                     "oid" : $("#oid").val()
             },
-            function(result) {
+            function(items) {
                 $("#message").html(items);
             });
     }
@@ -55,7 +55,7 @@ var HourList = new function() {
             var cb = document.getElementById("group");
             HARBORVIEW.Utils.emptyHtmlOptions(cb);
             for (var i = 0; i < items.length; i++) {
-                HARBORVIEW.Utils.createHtmlOption(cb,items[i].value,items[i].name);
+                HARBORVIEW.Utils.addHtmlOption(cb,items[i].value,items[i].name);
             }
         });
     }
@@ -69,7 +69,7 @@ jQuery(document).ready(function() {
         $("#from-time").val($(this).attr("data-fromtime"));
         $("#to-time").val($(this).attr("data-totime"));
         $("#group").val($(this).attr("data-group"));
-        return true;
+        return false;
     });
     $("#newhourlist").click(function() {
         HourList.insert();
@@ -99,5 +99,6 @@ jQuery(document).ready(function() {
         var oid = $(this).attr("data-oid");
         var isActive = $(this).is(":checked") === true ? "y" : "n";
         HourList.toggleActiveGroup(oid,isActive);
+        return false;
     });
 })

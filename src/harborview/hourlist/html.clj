@@ -73,11 +73,11 @@
      (U/json-response {"oid" (.getId bean)})))
   (PUT "/insert" [fnr group curdate from_time to_time hours]
     (do
-      (DBX/insert-hourlist fnr group curdate from_time to_time hours)
+      (DBX/update-hourlist fnr group curdate from_time to_time hours nil)
       (overview fnr DBX/fetch-last-5)))
   (PUT "/update" [oid fnr group curdate from_time to_time hours]
     (do
-      (DBX/update-hourlist oid fnr group curdate from_time to_time hours)
-      (overview fnr DBX/fetch-last-5))))
+      (DBX/update-hourlist fnr group curdate from_time to_time hours oid)
+      (overview fnr DBX/fetch-all))))
 
 ;(U/json-response {"

@@ -43,10 +43,8 @@
   (DB/with-session :koteriku HourlistMapper
     (.selectAll it (U/rs invoice))))
 
-(defn update-hourlist [oid fnr group curdate from_time to_time hours]
-  (println oid ", " fnr))
 
-(defn insert-hourlist [fnr group curdate from_time to_time hours]
+(defn update-hourlist [fnr group curdate from_time to_time hours oid]
   (let [hb (HourlistBean.)]
     (doto hb
       (.setInvoiceNr (Integer. fnr))
@@ -56,7 +54,11 @@
       (.setToTime to_time)
       (.setHours (Double. hours)))
     (DB/with-session :koteriku HourlistMapper
-      (.insertHourlist it hb))))
+      (if (nil? oid)
+        (.insertHourlist it hb)
+        (do 
+          (.setOid hb (U/rs oid))
+          (.updateHourlist it hb))))))
 
 (defn insert-hourlist-group [name]
   (let [hb (HourlistGroupBean.)]
