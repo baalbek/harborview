@@ -4,8 +4,7 @@
     [java.time.format DateTimeFormatter]
     [stearnswharf.systems ProjectBean])
   (:require
-    [clj-json.core :as json]
-    [net.cgrand.enlive-html :as HTML]))
+    [clj-json.core :as json]))
 
 (def p1 #"\d\d\d\d-\d+-\d+")
 
