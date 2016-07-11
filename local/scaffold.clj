@@ -1,27 +1,24 @@
 (ns scaffold
   (:import
-    [koteriku.beans
-      HourlistBean])
+    [stearnswharf.mybatis.geometry 
+      ProjectsMapper])
   (:require
    ;[selmer.parser :as P]
-   ;[harborview.service.db :as DB]
-   ;[harborview.critters.html :as HTML]
-   [harborview.critters.dbx :as DBX]))
+   [harborview.service.db :as DB]))
 
 
-(comment groups [show-inactive]
-  (DB/with-session :koteriku HourlistGroupMapper
-                             (.selectHourlistGroups it show-inactive)))
-  ;(DBX/fetch-hourlist-groups show-inactive))
+(defn projects []
+  (DB/with-session :stearnswharf ProjectsMapper
+    (.fetchProjects it)))
 
 (comment gs [fnr]
   (DB/with-session :koteriku HourlistGroupMapper
                              (.selectGroupBySpec it fnr)))
 
-(def hb (HourlistBean.))
+(comment hb (HourlistBean.))
 
 
-(defn pa [oid]
+(comment pa [oid]
   (let [p (DBX/find-purchase-accid oid)]
     p))
 

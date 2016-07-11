@@ -17,9 +17,6 @@
         </environment>
     </environments>
     <mappers>
-        <mapper resource="FloorPlans.xml"/>
-        <mapper resource="Loads.xml"/>
-        <mapper resource="Nodes.xml"/>
-        <mapper resource="Elements.xml"/>
+        <mapper resource="geometry/Projects.xml"/>
     </mappers>
 </configuration>
