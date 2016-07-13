@@ -4,13 +4,35 @@
     <title>Vnapu</title>
     <meta charset="UTF-8">
     {% include "templates/head.html" %}
-    <script src="/js/hourlist.js"></script>
+    <script src="/js/vinapu/projects.js"></script>
 </head>
 <body>
     <div class="logo"></div>
     <div class="container">
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
+                <label for="projects">Projects:</label>
+                <select class="form-control" id="projects">
+                    {% for p in projects %}
+                    <option value="{{p.value}}">{{p.content}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <label for="locations">Locations:</label>
+                <select class="form-control" id="locations">
+                    {% for p in locations %}
+                    <option value="{{p.value}}">{{p.content}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <label for="systems">Systems:</label>
+                <select class="form-control" id="systems">
+                    {% for p in systems %}
+                    <option value="{{p.value}}">{{p.content}}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
     </div>

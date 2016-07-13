@@ -2,7 +2,7 @@
   (:import
     [java.time LocalDate]
     [java.time.format DateTimeFormatter]
-    [stearnswharf.systems ProjectBean])
+    [stearnswharf.geometry ProjectBean])
   (:require
     [clj-json.core :as json]))
 

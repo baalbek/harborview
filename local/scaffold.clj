@@ -1,15 +1,12 @@
 (ns scaffold
-  (:import
-    [stearnswharf.mybatis.geometry 
-      ProjectsMapper])
   (:require
    ;[selmer.parser :as P]
-   [harborview.service.db :as DB]))
+    [harborview.vinapu.dbx :as VIN]
+    [harborview.service.db :as DB]))
 
 
-(defn projects []
-  (DB/with-session :stearnswharf ProjectsMapper
-    (.fetchProjects it)))
+(defn elx []
+  (VIN/fetch-element-loads 2)) 
 
 (comment gs [fnr]
   (DB/with-session :koteriku HourlistGroupMapper

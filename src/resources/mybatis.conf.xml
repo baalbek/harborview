@@ -18,5 +18,8 @@
     </environments>
     <mappers>
         <mapper resource="geometry/Projects.xml"/>
+        <mapper resource="geometry/Locations.xml"/>
+        <mapper resource="geometry/Systems.xml"/>
+        <mapper resource="vinapu/Elements.xml"/>
     </mappers>
 </configuration>

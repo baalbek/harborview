@@ -49,6 +49,7 @@ dependencies {
     compile "clj-json:clj-json:$jsonVersion"
     compile "org.clojure:clojure-contrib:$clojureContribVersion"
     compile "org.clojure:math.numeric-tower:$numericTowerVersion"
+    runtime "org.clojure:clojure:$clojureVersion"
     //--------------- END Clojure clj jars --------------
 
     compile "commons-codec:commons-codec:1.10"

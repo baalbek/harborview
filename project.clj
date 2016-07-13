@@ -1,5 +1,5 @@
 (defproject harborview "1.0"
-  :description "FIXME: write description"
+  :locationName "FIXME: write locationName"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
