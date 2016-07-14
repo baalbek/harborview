@@ -25,7 +25,9 @@
 (defroutes my-routes
   (GET "/" request (projects))
   (GET "/locations" [oid] (fetch-x oid DBX/fetch-locations))
-  (GET "/systems" [oid] (fetch-x oid DBX/fetch-systems)))
+  (GET "/systems" [oid] (fetch-x oid DBX/fetch-systems))
+  (GET "/elementloads" [oid] 
+    (P/render-file "templates/vinapu/elementloads.html" {:curelementloads []})))
 
   ;(GET "/locations" [oid] (U/json-response (map U/bean->json (DBX/fetch-locations (U/rs oid)))))
   ;(GET "/systems" [oid] (U/json-response (map U/bean->json (DBX/fetch-systems (U/rs oid))))))

@@ -5,6 +5,9 @@ var Vinapu = new function () {
     this.getLocationId = function() {
         return $("#locations").val();
     };
+    this.getSystemId = function() {
+        return $("#systems").val();
+    };
 }()
 
 jQuery(document).ready(function() {
@@ -39,6 +42,16 @@ jQuery(document).ready(function() {
 
         return false;
     };
+    var fetchElementLoads = function() {
+        var oid = Vinapu.getLocationId();
+        if (oid == "-1") return false;
+        HARBORVIEW.Utils.htmlGET("/vinapu/elementloads", {"oid": oid},
+            function(result) {
+                $("#elementloads").html(result);
+            });
+        return false;
+    };
+
     $("#projects").change(function() {
         fetchLocations();
     });
@@ -46,5 +59,6 @@ jQuery(document).ready(function() {
         fetchSystems();
     });
     $("#systems").change(function() {
+        fetchElementLoads();
     });
 })
