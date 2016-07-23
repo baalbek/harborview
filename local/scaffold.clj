@@ -2,11 +2,15 @@
   (:require
    ;[selmer.parser :as P]
     [harborview.vinapu.dbx :as VIN]
+    [harborview.vinapu.html :as VH]
     [harborview.service.db :as DB]))
 
 
 (defn elx []
   (VIN/fetch-element-loads 2)) 
+
+(defn celx []
+  (VH/cur-element-loads 2)) 
 
 (comment gs [fnr]
   (DB/with-session :koteriku HourlistGroupMapper
