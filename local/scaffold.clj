@@ -6,6 +6,9 @@
     [harborview.service.db :as DB]))
 
 
+(defn proj []
+  (VIN/fetch-projects)) 
+
 (defn elx []
   (VIN/fetch-element-loads 2)) 
 

@@ -13,7 +13,6 @@
     {:projects 
       (concat
         [{:value "-1" :content "-"}]
-        ;(map #(.asClojureMap %) (DBX/fetch-projects)))}))
         (map (fn [v] {:content v :value (str (.getOid v))})
           (DBX/fetch-projects)))
     :locations [{:value "-1" :content "-"}]
