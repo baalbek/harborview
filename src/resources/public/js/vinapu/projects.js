@@ -11,6 +11,18 @@ var Vinapu = new function () {
 }()
 
 jQuery(document).ready(function() {
+    var fetchProjects = function() {
+        HARBORVIEW.Utils.jsonGET("/vinapu/projects",{},
+            function(items) {
+                var cb = document.getElementById("projects");
+                HARBORVIEW.Utils.emptyHtmlOptions(cb);
+                HARBORVIEW.Utils.addHtmlOption(cb,"-1","-");
+                for (var i = 0; i < items.length; i++) {
+                    HARBORVIEW.Utils.addHtmlOption(cb,items[i].oid,items[i].text);
+                }
+            });
+        return false;
+    };
     var fetchLocations = function() {
         var oid = Vinapu.getProjectId();
         /*if (oid == "-1") return false;*/
@@ -64,5 +76,38 @@ jQuery(document).ready(function() {
     });
     $("#systems").change(function() {
         fetchElementLoads();
+    });
+    /*-------------------- New Project -----------------------*/
+    /*
+    $("body").on("click", "a.shownewproject", function() {
+        return true;
+    });
+    */
+    $("body").on("click", "#dlg1-ok", function() {
+        var pn = $("#dlg1-name").val();
+        alert(pn);
+        /*
+        HARBORVIEW.Utils.htmlPUT(
+            "/vinapu/newproject",
+            {pn: },
+            function(result) {
+                var cb = document.getElementById("projects");
+            });
+        */
+        var cancel = document.getElementById("dlg1-cancel");
+        cancel.click();
+        return true;
+    });
+    /*-------------------- New Location -----------------------*/
+    $("body").on("click", "a.shownewlocation", function() {
+        var oid = Vinapu.getProjectId();
+        $("#dlg2-header").html("Project id: " + oid);
+        return true;
+    });
+    /*-------------------- New System -----------------------*/
+    $("body").on("click", "a.shownewsystem", function() {
+        var oid = Vinapu.getLocationId();
+        $("#dlg3-header").html("Location id: " + oid);
+        return true;
     });
 })

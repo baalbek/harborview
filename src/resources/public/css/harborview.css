@@ -11,18 +11,41 @@ body {
 a, a:link, a:visited, a:active, a.current {
   margin: 0px;
   text-decoration: none;
-  color: black;
+  color: #a94442;
   font-weight: normal; }
 
 img {
   border: 0px; }
+
+.navbar-inverse { background-color: #FFF8DC}
+.navbar-inverse .navbar-nav>.active>a:hover,.navbar-inverse .navbar-nav>li>a:hover, .navbar-inverse .navbar-nav>li>a:focus { background-color: #52555E}
+.navbar-inverse .navbar-nav>.active>a,.navbar-inverse .navbar-nav>.open>a,.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:hover,.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:hover, .navbar-inverse .navbar-nav>.open>a:focus { background-color: #52555E}
+.dropdown-menu { background-color: #FFFFFF}
+.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus { background-color: #52555E}
+.navbar-inverse { background-image: none; }
+.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus { background-image: none; }
+.navbar-inverse { border-color: #FFF8DC}
+.navbar-inverse .navbar-brand { color: #000000}
+.navbar-inverse .navbar-brand:hover { color: #A8A290}
+.navbar-inverse .navbar-nav>li>a { color: #000000}
+.navbar-inverse .navbar-nav>li>a:hover, .navbar-inverse .navbar-nav>li>a:focus { color: #FFFFFF}
+.navbar-inverse .navbar-nav>.active>a,.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:hover, .navbar-inverse .navbar-nav>.open>a:focus { color: #FFFFFF}
+.navbar-inverse .navbar-nav>.active>a:hover, .navbar-inverse .navbar-nav>.active>a:focus { color: #FFFFFF}
+.dropdown-menu>li>a { color: #52555E}
+.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus { color: #FFFFFF}
+.navbar-inverse .navbar-nav>.dropdown>a .caret { border-top-color: #000000}
+.navbar-inverse .navbar-nav>.dropdown>a:hover .caret { border-top-color: #FFFFFF}
+.navbar-inverse .navbar-nav>.dropdown>a .caret { border-bottom-color: #000000}
+.navbar-inverse .navbar-nav>.dropdown>a:hover .caret { border-bottom-color: #FFFFFF}
+
+
 
 nav a, nav a:link, nav a:visited, nav a:active, nav a.current {
   padding: 10px;
   font-size: 1.3em;
   margin: 0px;
   text-decoration: none;
-  color: black; }
+  color: #52555e; }
 
 .row {
   margin-top: 30px;
@@ -44,7 +67,7 @@ nav a, nav a:link, nav a:visited, nav a:active, nav a.current {
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(150, 50, 0, 0.2);
+  background: rgba(100, 0, 0, 0.2);
   z-index: 99999;
   opacity: 0;
   pointer-events: none; }

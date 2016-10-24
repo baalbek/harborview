@@ -1,18 +1,26 @@
 $fs : 1.3em;
 $bg-color: #FFF8DC;
+
 //--------------- Foreground Colors ------------------>>>
-$nav-color: #000;
+$nav-color: #52555e;
 $color: #000;
-$a-color: #000;
+$a-color: #b9becf;  // #a7acbd;
+
 //--------------- Table Colors ------------------>>>
 $table-border-color: #000;
 $td-ajax-color: #000;
-//--------------- Ribbon Colors ------------------>>>
-$bg-ribbon: #50607B;
+
+//--------------- Navbar Colors ------------------>>>
+$navbar-color-1: #FFF8DC;
+$navbar-color-2: #52555E;
+$navbar-color-3: #FFFFFF;
+
 //--------------- Main Colors------------------>>>
 $bg-main: #FFF8DC;
+
 //--------------- Pop-up dialog ------------------>>>
 $pop-width: 400px;
+
 //--------------- Href Button ------------------>>>
 $bg-href-btn: #942d16;
 $fg-href-btn: #ccc;
@@ -38,6 +46,7 @@ img {
     border: 0px;
 }
 
+/*
 nav a {
     &, &:link, &:visited, &:active, &.current {
        padding: 10px;
@@ -47,6 +56,7 @@ nav a {
        color: $nav-color;
     }
 }
+*/
 
 .row {
     margin-top: 30px;
@@ -67,6 +77,7 @@ nav a {
     z-index: 9999;
 }
 
+@import "ribbon";
 @import "dialog";
 @import "href-button";
 

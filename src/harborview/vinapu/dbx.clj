@@ -14,6 +14,10 @@
   (DB/with-session :stearnswharf ProjectsMapper
     (.fetchProjects it)))
 
+(defn insert-projects [pname]
+  (DB/with-session :stearnswharf ProjectsMapper
+    (.insertProjects it pname)))
+
 (defn fetch-locations[project-id]
   (DB/with-session :stearnswharf LocationsMapper 
     (.fetchLocations it project-id)))

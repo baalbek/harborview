@@ -3,11 +3,21 @@
    ;[selmer.parser :as P]
     [harborview.vinapu.dbx :as VIN]
     [harborview.vinapu.html :as VH]
-    [harborview.service.db :as DB]))
+    [harborview.service.db :as DB]
+    [harborview.service.htmlutils :as U]))
 
+
+(def jr U/json-response)
+(def bj U/bean->json)
 
 (defn proj []
   (VIN/fetch-projects)) 
+
+(defn projx []
+  (VH/fetch-projects)) 
+
+(defn sys [oid]
+  (VIN/fetch-systems oid)) 
 
 (defn elx []
   (VIN/fetch-element-loads 2)) 

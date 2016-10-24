@@ -19,6 +19,11 @@
     :systems [{:value "-1" :content "-"}]
                 }))
 
+(defn fetch-projects []
+  (U/json-response
+    (map (fn [v] {"text" (.toString v) "value" (str (.getOid v))})
+      (DBX/fetch-projects))))
+
 (defn fetch-x [oid fetch-fn]
   (U/json-response (map U/bean->json (fetch-fn (U/rs oid)))))
 
@@ -31,6 +36,8 @@
 
 (defroutes my-routes
   (GET "/" request (projects))
+  (GET "/projects" [] (fetch-projects))
+  (PUT "/newproject" [pn])
   (GET "/locations" [oid] (fetch-x oid DBX/fetch-locations))
   (GET "/systems" [oid] (fetch-x oid DBX/fetch-systems))
   (GET "/elementloads" [oid] 

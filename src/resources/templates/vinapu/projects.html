@@ -36,8 +36,61 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-sm-4">
+                <a href="#dlg1" class="shownewproject href-td">New Project</a>
+            </div>
+            <div class="col-sm-4">
+                <a href="#dlg2" class="shownewlocation href-td">New Location</a>
+            </div>
+            <div class="col-sm-4">
+                <a href="#dlg3" class="shownewsystem href-td">New System</a>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-sm-12" id="elementloads">
             </div>
+        </div>
+    </div>
+    <!-- New Project Dialog box -->
+    <div id="dlg1" class="modalDialog">
+        <div>
+            <label id="dlg1-header" style="display: block;">New Project</label>
+            <form role="form">
+                <div class="form-group">
+                    <label for="dlg1-name">Project Name:</label>
+                    <input class="form-control" id="dlg1-name">
+                </div>
+                <button type="button" class="btn btn-default" id="dlg1-ok">OK</button>
+                <a href="#close" id="dlg1-cancel">Cancel</a>
+            </form>
+        </div>
+    </div>
+    <!-- New Location Dialog box -->
+    <div id="dlg2" class="modalDialog">
+        <div>
+            <label id="dlg2-header" style="display: block;"></label>
+            <form role="form">
+                <div class="form-group">
+                    <label for="dlg2-name">Location Name:</label>
+                    <input class="form-control" id="dlg2-name">
+                </div>
+                <button type="button" class="btn btn-default" id="dlg2-ok">OK</button>
+                <a href="#close" id="dlg2-cancel">Cancel</a>
+            </form>
+        </div>
+    </div>
+    <!-- New System Dialog box -->
+    <div id="dlg3" class="modalDialog">
+        <div>
+            <label id="dlg3-header" style="display: block;"></label>
+            <form role="form">
+                <div class="form-group">
+                    <label for="dlg3-name">System Name:</label>
+                    <input class="form-control" id="dlg3-name">
+                </div>
+                <button type="button" class="btn btn-default" id="dlg3-ok">OK</button>
+                <a href="#close" id="dlg3-cancel">Cancel</a>
+            </form>
         </div>
     </div>
 </body>
