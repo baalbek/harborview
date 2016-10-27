@@ -16,7 +16,7 @@ libs
 target
 
 elm/elm-stuff/
-elm/one.js
+elm/*.js
 harborview_orig
 src/resources/templates/vinapu/elementload.html
 
