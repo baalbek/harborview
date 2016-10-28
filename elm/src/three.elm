@@ -27,7 +27,7 @@ update msg model = ( model, Cmd.none )
 view : Model -> Html Msg
 view model =
     div []
-       [ select [ HA.size model.yax ]
+       [ select [ HA.size 1 ]
             [ option [] [ text "1 youtertertj" ]
             , option [] [ text "2 s32r23fwrf" ]
             , option [] [ text "3 w23423sdffdsfs" ]
