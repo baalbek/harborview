@@ -60,22 +60,30 @@ view model =
         [ H.text lang ]
 
   in
-    H.div []
-    [ H.span []
-      [ H.label [] [ H.text "Choose your favorite language: " ]
-      , H.select
-        [ onChange SelectFavorite ]
-        (List.map selectListOptions <| Dict.toList model.languages)
-      ]
-    , H.hr [] []
-    , H.p
-      []
-      [ H.span [] [ H.text "Your favorite is: " ]
-      , H.strong [] [ H.text favorite ]
-      ]
+    H.div [ A.class "container" ] 
+    [
+        H.div [ A.class "row" ]
+        [
+            H.div [ A.class "col-sm-4"]
+                [ H.span []
+                [ H.label [] [ H.text "Choose your favorite language: " ]
+                , H.select
+                    [ onChange SelectFavorite
+                    , A.class "form-control"
+                    ]
+                    (List.map selectListOptions <| Dict.toList model.languages)
+                ]
+                , H.hr [] []
+                , H.p
+                []
+                [ H.span [] [ H.text "Your favorite is: " ]
+                , H.strong [] [ H.text favorite ]
+                ]
+            ]
+        ]
     ]
-
 
 onChange : (String -> a) -> VirtualDom.Property a 
 onChange tagger =
   E.on "change" (Json.map tagger E.targetValue)
+
