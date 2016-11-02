@@ -65,21 +65,34 @@ view model =
         H.div [ A.class "row" ]
         [
             H.div [ A.class "col-sm-4"]
-                [ H.span []
-                [ H.label [] [ H.text "Choose your favorite language: " ]
-                , H.select
+            [ 
+                H.span []
+                [ 
+                    H.label [] [ H.text "Choose your favorite language: " ]
+                    , H.select
                     [ onChange SelectFavorite
                     , A.class "form-control"
                     ]
                     (List.map selectListOptions <| Dict.toList model.languages)
                 ]
-                , H.hr [] []
-                , H.p
-                []
-                [ H.span [] [ H.text "Your favorite is: " ]
-                , H.strong [] [ H.text favorite ]
+            ]
+            , H.div [ A.class "col-sm-4"]
+            [ 
+                H.span []
+                [ 
+                    H.label [] [ H.text "Choose your favorite language: " ]
+                    , H.select
+                    [ onChange SelectFavorite
+                    , A.class "form-control"
+                    ]
+                    (List.map selectListOptions <| Dict.toList model.languages)
                 ]
             ]
+        ]
+        , H.p
+        []
+        [ H.span [] [ H.text "Your favorite is: " ]
+        , H.strong [] [ H.text favorite ]
         ]
     ]
 
