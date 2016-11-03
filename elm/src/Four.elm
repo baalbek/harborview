@@ -39,7 +39,8 @@ model =
 type Msg
   = SelectFavorite String
   
-  
+vxx = SelectFavorite "Joda"
+
 update : Msg -> Model -> Model 
 update msg model =
   case msg of
@@ -71,8 +72,9 @@ view model =
                 [ 
                     H.label [] [ H.text "Choose your favorite language: " ]
                     , H.select
-                    [ onChange SelectFavorite
-                    , A.class "form-control"
+                    [   
+                        onChange SelectFavorite
+                        , A.class "form-control"
                     ]
                     (List.map selectListOptions <| Dict.toList model.languages)
                 ]
@@ -83,19 +85,29 @@ view model =
                 [ 
                     H.label [] [ H.text "Choose your favorite language: " ]
                     , H.select
-                    [ onChange SelectFavorite
-                    , A.class "form-control"
+                    [ 
+                        onChange SelectFavorite
+                        , A.class "form-control"
                     ]
                     (List.map selectListOptions <| Dict.toList model.languages)
                 ]
             ]
         ]
-        , H.p
-        []
-        [ H.span [] [ H.text "Your favorite is: " ]
-        , H.strong [] [ H.text favorite ]
+        , H.p []
+        [ 
+            H.span [] 
+            [ 
+                H.text "Your favorite is: " 
+            ]
+            , H.strong [] 
+            [ 
+                H.text favorite
+            ]
         ]
     ]
+
+yax : String -> String
+yax v = "Hi " ++ v 
 
 onChange : (String -> a) -> VirtualDom.Property a 
 onChange tagger =
