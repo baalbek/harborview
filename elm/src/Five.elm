@@ -1,4 +1,4 @@
-module Main exposing (..)
+module Five exposing (..)
 
 import Html exposing (Attribute, Html, audio, div, text)
 import Html.Attributes exposing (class, controls, type', src)
@@ -89,7 +89,7 @@ view model =
         ]
 
 -- Custom event handler
-onTimeUpdate : (Float -> msg) -> Attribute msg
+onTimeUpdate : (Float -> a) -> Attribute a 
 onTimeUpdate msg =
     on "timeupdate" (Json.map msg targetCurrentTime)
 

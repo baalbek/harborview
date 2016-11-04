@@ -1,4 +1,4 @@
-module Main exposing (..)
+-- module Four exposing (..)
 import Dict exposing (Dict)
 import Html as H -- exposing (..)
 import Html.App as App
@@ -18,6 +18,7 @@ main =
     
 type alias Model =
   { languages : Dict String String
+  , locations : Dict String String
   , favorite : Maybe String
   }
   
@@ -31,6 +32,11 @@ model =
     , (".js", "JavaScript")
     , (".purs", "PureScript")
     , (".ts", "TypeScript")
+    ]
+  , locations = Dict.fromList
+    [ ("1", "Etg 1")
+    , ("2", "Etg 2")
+    , ("3", "Etg 3")
     ]
   , favorite = Just "Elm"
   }
@@ -83,13 +89,13 @@ view model =
             [ 
                 H.span []
                 [ 
-                    H.label [] [ H.text "Choose your favorite language: " ]
+                    H.label [] [ H.text "Locations" ]
                     , H.select
                     [ 
                         onChange SelectFavorite
                         , A.class "form-control"
                     ]
-                    (List.map selectListOptions <| Dict.toList model.languages)
+                    (List.map selectListOptions <| Dict.toList model.locations)
                 ]
             ]
         ]
