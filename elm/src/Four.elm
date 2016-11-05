@@ -20,6 +20,7 @@ type alias Model =
   { languages : Dict String String
   , locations : Dict String String
   , favorite : Maybe String
+  , favorite2 : Maybe String
   }
   
 model : Model 
@@ -39,20 +40,25 @@ model =
     , ("3", "Etg 3")
     ]
   , favorite = Just "Elm"
+  , favorite2 = Just "Etg 1"
   }
   
   
 type Msg
   = SelectFavorite String
-  
+    | SelectFavorite2 String
+
 vxx = SelectFavorite "Joda"
 
 update : Msg -> Model -> Model 
 update msg model =
   case msg of
     SelectFavorite ext ->
-      { model | favorite = Dict.get ext model.languages }
-      
+      { model | 
+          favorite = Dict.get ext model.languages 
+        , favorite2 = Just "3" }
+    SelectFavorite2 ext ->
+      { model | favorite2 = Dict.get ext model.locations }
       
 view : Model -> H.Html Msg
 view model =
@@ -60,6 +66,9 @@ view model =
     favorite =
       Maybe.withDefault "" model.favorite
   
+    favorite2 =
+      Maybe.withDefault "" model.favorite2
+
     selectListOptions (ext, lang) =
       H.option
         [ A.value ext
@@ -67,6 +76,12 @@ view model =
         ]
         [ H.text lang ]
 
+    selectListOptions2 (ext, lang) =
+      H.option
+        [ A.value ext
+        , A.selected (lang == favorite2)
+        ]
+        [ H.text lang ]
   in
     H.div [ A.class "container" ] 
     [
@@ -92,10 +107,10 @@ view model =
                     H.label [] [ H.text "Locations" ]
                     , H.select
                     [ 
-                        onChange SelectFavorite
+                        onChange SelectFavorite2
                         , A.class "form-control"
                     ]
-                    (List.map selectListOptions <| Dict.toList model.locations)
+                    (List.map selectListOptions2 <| Dict.toList model.locations)
                 ]
             ]
         ]
