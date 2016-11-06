@@ -1,4 +1,4 @@
--- module Four exposing (..)
+module Four exposing (..)
 import Dict exposing (Dict)
 import Html as H -- exposing (..)
 import Html.App as App
