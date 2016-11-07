@@ -110,7 +110,8 @@ view model =
                         onChange SelectFavorite2
                         , A.class "form-control"
                     ]
-                    (List.map selectListOptions2 <| Dict.toList model.locations)
+                    []
+                    -- (List.map selectListOptions2 <| Dict.toList model.locations)
                 ]
             ]
         ]

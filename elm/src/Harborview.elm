@@ -1,13 +1,14 @@
-module Five exposing (..)
+module Harborview exposing (..)
 
-import Html exposing (Attribute, Html, audio, div, text)
-import Html.Attributes exposing (class, controls, type', src)
+import Html as H 
+import Html.Attributes as A 
 import Html.App as App
 import Html.Events exposing (on) 
 import Debug
 import Json.Decode as Json
+import VirtualDom as VD
 
-
+main : Program Never
 main =
     App.program
         { init = init
@@ -21,11 +22,7 @@ main =
 -- MODEL
 
 
-type alias Model =
-    { mediaUrl : String
-    , mediaType : String
-    , currentTime : Float
-    }
+type alias Model = Int
 
 
 
@@ -41,25 +38,14 @@ type Msg
 
 
 init : ( Model, Cmd Msg )
-init =
-    { mediaUrl = "http://developer.mozilla.org/@api/deki/files/2926/=AudioTest_(1).ogg"
-    , mediaType = "audio/ogg"
-    , currentTime = 0.0 
-    }
-        ! []
-
-
+init = (4, Cmd.none) 
 
 -- UPDATE
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        TimeUpdate time -> 
-            ( { model | currentTime = time }, Cmd.none )
-        _ ->
-            Debug.log "Unknown message" ( model, Cmd.none )
+    Debug.log "Unknown message" ( model, Cmd.none )
 
 
 
@@ -71,23 +57,42 @@ subscriptions model =
     Sub.none
 
 
+type alias Ord a = 
+    { fromInt : Int -> a
+    , toInt   : a -> Int }
 
 -- VIEW
 
 
-view : Model -> Html Msg
+view : Model -> H.Html Msg
 view model =
-    div [ class "elm-audio-player" ]
-        [ audio
-            [ src model.mediaUrl
-            , type' model.mediaType
-            , controls True
-            , onTimeUpdate TimeUpdate
+    H.div [ A.class "container" ] 
+    [
+        H.div [ A.class "row" ]
+        [
+            makeSelect "Projects: "
+            , makeSelect "Locations: "
+        ]
+    ]
+
+makeSelect : String -> VD.Node a
+makeSelect caption = 
+    H.div [ A.class "col-sm-4"]
+    [ 
+        H.span []
+        [ 
+            H.label [] [ H.text caption ]
+            , H.select
+            [   
+                -- onChange SelectFavorite
+                A.class "form-control"
             ]
             []
-        , div [] [ text (toString model.currentTime) ]
+            -- (List.map selectListOptions <| Dict.toList model.languages)
         ]
+    ]
 
+{--
 -- Custom event handler
 onTimeUpdate : (Float -> a) -> Attribute a 
 onTimeUpdate msg =
@@ -97,3 +102,4 @@ onTimeUpdate msg =
 targetCurrentTime : Json.Decoder Float
 targetCurrentTime =
     Json.at [ "target", "currentTime" ] Json.float
+--}
