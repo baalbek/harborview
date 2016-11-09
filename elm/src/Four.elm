@@ -135,3 +135,22 @@ onChange : (String -> a) -> VirtualDom.Property a
 onChange tagger =
   E.on "change" (Json.map tagger E.targetValue)
 
+-- Assuming we have a list of items in the model (type alias Model = { items : List Item }
+-- where Item is a record like { id : Int, name : String }
+--
+-- this goes in the view and generates an html dropdown
+select
+    [ onSelect ValueSelectedMsg ]
+    (List.map (\item -> option [ value (toString item.id) ] [ text item.name ]) model.items)
+
+targetSelectedIndex : Json.Decoder Int
+targetSelectedIndex =
+    Json.at [ "target", "selectedIndex" ] Json.int
+
+onSelect : (Int -> msg) -> Html.Attribute msg
+onSelect msg =
+    on "change" (Json.map msg targetSelectedIndex)
+
+-- This will send a message containing the selected index (eg. ValueSelectedMsg 1)
+
+
