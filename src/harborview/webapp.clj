@@ -20,7 +20,7 @@
 (P/cache-off!)
 
 (defroutes main-routes
-  (GET "/" requestj (VIN/projects))
+  (GET "/" request (VIN/projects))
   ;(GET "/" request (GJ/general-journal))
   ;(GET "/" request (HRL/hourlist))
   ;(GET "/" request (CRT/overlook "11"))   ;(CRT/overlook (DBX/active-purchases (U/rs 11))))
