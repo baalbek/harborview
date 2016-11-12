@@ -13,7 +13,7 @@
    :body (json/generate-string data)})
 
 (defn projects []
-  (json-response {"oid" 3}))
+  (json-response {"oid" "Success! 3"}))
 
 (defroutes main-routes
   (GET "/" request (projects)))
@@ -23,5 +23,5 @@
     api
     wrap-params))
 
-; (def server (run-jetty #'webapp {:port 8082 :join? false}))
-(def server (run-jetty #'webapp {:port 8443 :join? false :ssl? true :keystore "keystore" :key-password "q2uebec9"}))
+(def server (run-jetty #'webapp {:port 8082 :join? false}))
+; (def server (run-jetty #'webapp {:port 8443 :join? false :ssl? true :keystore "keystore" :key-password "q2uebec9"}))
