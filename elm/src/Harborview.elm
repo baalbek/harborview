@@ -31,7 +31,11 @@ type alias ComboBoxItem =
         , val: String 
     }
 
-type alias SelectItems = Dict String String
+type alias What a =
+    { x : a
+      , s : String }
+
+type alias SelectItems = List ComboBoxItem -- Dict String String
 
 type alias ModelPayload = Maybe SelectItems 
 
@@ -46,6 +50,15 @@ type alias Model =
 model : Model 
 model =
     {
+        projects = Just [ComboBoxItem 1 "One1", ComboBoxItem 2 "Two!"]
+        , sp = "1"
+        , locations = Nothing
+        , sl = "1" 
+    }
+{-
+model : Model 
+model =
+    {
         projects = Just (Dict.fromList
         [ 
             ("1", "Project 1")
@@ -54,19 +67,6 @@ model =
         ])
         , sp = "1"
         , locations = Nothing
-        , sl = "1" 
-    }
-
-{-
-model : Model 
-model =
-    {
-        locations = Just (Dict.fromList
-        [ 
-            ("1", "Etg 1")
-            , ("2", "Etg 2")
-            , ("3", "Etg 3")
-        ])
         , sl = "1" 
     }
 -}
@@ -133,10 +133,18 @@ makeSelectOption (value, displayValue) =
         ]
         [ H.text displayValue ]
 
+
+makeSelectOption2 : ComboBoxItem -> VD.Node a
+makeSelectOption2 item = 
+      H.option
+        [ A.value (toString item.oid)
+        ]
+        [ H.text (item.val)]
+
 makeSelect : String -> (String -> a) -> ModelPayload -> VD.Node a
 makeSelect caption msg payload = 
     let px = case payload of 
-                    Just p -> (List.map makeSelectOption <| Dict.toList p)
+                    Just p -> List.map makeSelectOption2 p -- (List.map makeSelectOption <| Dict.toList p)
                     Nothing -> [] in
     H.div [ A.class "col-sm-4"]
     [ 
