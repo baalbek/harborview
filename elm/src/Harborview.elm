@@ -7,7 +7,7 @@ import Html.Attributes as A
 import Html.App as App
 import Html.Events as E 
 import Debug
-import Json.Decode as Json
+import Json.Decode as Json exposing ((:=))
 import VirtualDom as VD
 import Task
 
@@ -25,6 +25,11 @@ main =
 
 -- MODEL
 
+type alias ComboBoxItem = 
+    { 
+        oid: Int
+        , val: String 
+    }
 
 type alias SelectItems = Dict String String
 
@@ -153,7 +158,20 @@ onChange tagger =
 
 -- COMMANDS
 
-decodeProjects : Json.Decoder String
+-- decodeString (list (object2 Sel ("oid" := int) ("value" := string))) x
+
+comboBoxItemDecoder : Json.Decoder ComboBoxItem
+comboBoxItemDecoder =
+    Json.object2 
+        ComboBoxItem
+        ("oid" := Json.int)
+        ("val" := Json.string)
+
+comboBoxItemListDecoder : Json.Decoder (List ComboBoxItem)
+comboBoxItemListDecoder = 
+    Json.list comboBoxItemDecoder 
+
+decodeProjects : Json.Decoder String 
 decodeProjects =
     Json.at ["oid"] Json.string
 

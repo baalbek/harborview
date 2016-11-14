@@ -13,7 +13,13 @@
    :body (json/generate-string data)})
 
 (defn projects []
-  (json-response {"oid" "Success! 3"}))
+  (json-response 
+    [
+     {:oid 1 :val "NEW: Oid 1"}
+     {:oid 2 :val "NEW: Oid 2"}
+     {:oid 3 :val "NEW: Oid 3"}
+     ]))
+  ;(json-response {"oid" "Success! 3"}))
 
 (defroutes main-routes
   (GET "/" request (projects)))
