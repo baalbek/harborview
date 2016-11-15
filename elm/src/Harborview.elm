@@ -77,7 +77,7 @@ model =
 type Msg
   = Noop String
     | FetchProjects String
-    | ProjectsFetched String
+    | ProjectsFetched SelectItems -- String
     | FetchFail String 
 
 
@@ -93,10 +93,11 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of 
         FetchProjects s -> 
-            (model , fetchProjects s)
-            --Debug.log s ({ model | sp = s } , fetchProjects s)
+            --(model , fetchProjects s)
+            Debug.log s ({ model | sp = s } , fetchProjects s)
         ProjectsFetched s -> 
-            Debug.log "ProjectFetched" ({ model | sl = s }, Cmd.none)
+            Debug.log "ProjectFetched" ({ model | locations = Just s } , Cmd.none)
+            -- Debug.log "ProjectFetched" ({ model | sl = s }, Cmd.none)
         FetchFail s ->
             Debug.log s (model, Cmd.none)
         Noop _ ->
@@ -185,11 +186,14 @@ decodeProjects =
 
 fetchProjects : String -> Cmd Msg
 fetchProjects s = 
-    let url = "http://localhost:8082" in
-    Http.get decodeProjects url
+    --fetchComboBoxItems "http://localhost:8082"  
+    fetchComboBoxItems "https://192.168.1.48" 
+
+fetchComboBoxItems : String -> Cmd Msg
+fetchComboBoxItems url = 
+    Http.get comboBoxItemListDecoder url
         |> Task.mapError toString 
         |> Task.perform FetchFail ProjectsFetched 
-
 {--
 (>>=) : Maybe a -> (a -> Maybe b) -> Maybe b
 (>>=) = Maybe.andThen 
