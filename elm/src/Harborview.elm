@@ -27,8 +27,8 @@ main =
 
 type alias ComboBoxItem = 
     { 
-        oid: Int
-        , val: String 
+        val: Int
+        , txt: String 
     }
 
 type alias What a =
@@ -37,13 +37,11 @@ type alias What a =
 
 type alias SelectItems = List ComboBoxItem -- Dict String String
 
-type alias ModelPayload = Maybe SelectItems 
-
 type alias Model = 
     { 
-        projects : ModelPayload 
+        projects : Maybe SelectItems 
         , sp : String 
-        , locations : ModelPayload 
+        , locations : Maybe SelectItems 
         , sl : String 
     }
 
@@ -77,7 +75,9 @@ model =
 type Msg
   = Noop String
     | FetchProjects String
-    | ProjectsFetched SelectItems -- String
+    | ProjectsFetched SelectItems 
+    | FetchLocations String
+    | LocationsFetched SelectItems 
     | FetchFail String 
 
 
@@ -96,8 +96,12 @@ update msg model =
             --(model , fetchProjects s)
             Debug.log s ({ model | sp = s } , fetchProjects s)
         ProjectsFetched s -> 
-            Debug.log "ProjectFetched" ({ model | locations = Just s } , Cmd.none)
+            Debug.log "ProjectFetched" ({ model | projects = Just s } , Cmd.none)
             -- Debug.log "ProjectFetched" ({ model | sl = s }, Cmd.none)
+        FetchLocations s -> 
+            Debug.log s ({ model | sp = s } , fetchLocations s)
+        LocationsFetched s -> 
+            Debug.log "LocationsFetched" ({ model | locations = Just s } , Cmd.none)
         FetchFail s ->
             Debug.log s (model, Cmd.none)
         Noop _ ->
@@ -121,31 +125,22 @@ view model =
     [
         H.div [ A.class "row" ]
         [
-            makeSelect "Projects: " FetchProjects model.projects 
+            makeSelect "Projects: " FetchLocations model.projects 
             , makeSelect "Locations: " Noop model.locations
         ]
     ]
 
-makeSelectOption : (String,String) -> VD.Node a
-makeSelectOption (value, displayValue) = 
+makeSelectOption : ComboBoxItem -> VD.Node a
+makeSelectOption item = 
       H.option
-        [ A.value value
-        -- , A.selected (lang == favorite2)
+        [ A.value (toString item.val)
         ]
-        [ H.text displayValue ]
+        [ H.text (item.txt)]
 
-
-makeSelectOption2 : ComboBoxItem -> VD.Node a
-makeSelectOption2 item = 
-      H.option
-        [ A.value (toString item.oid)
-        ]
-        [ H.text (item.val)]
-
-makeSelect : String -> (String -> a) -> ModelPayload -> VD.Node a
+makeSelect : String -> (String -> a) -> Maybe SelectItems -> VD.Node a
 makeSelect caption msg payload = 
     let px = case payload of 
-                    Just p -> List.map makeSelectOption2 p -- (List.map makeSelectOption <| Dict.toList p)
+                    Just p -> List.map makeSelectOption p 
                     Nothing -> [] in
     H.div [ A.class "col-sm-4"]
     [ 
@@ -167,8 +162,6 @@ onChange tagger =
 
 -- COMMANDS
 
--- decodeString (list (object2 Sel ("oid" := int) ("value" := string))) x
-
 comboBoxItemDecoder : Json.Decoder ComboBoxItem
 comboBoxItemDecoder =
     Json.object2 
@@ -180,20 +173,27 @@ comboBoxItemListDecoder : Json.Decoder (List ComboBoxItem)
 comboBoxItemListDecoder = 
     Json.list comboBoxItemDecoder 
 
-decodeProjects : Json.Decoder String 
-decodeProjects =
-    Json.at ["oid"] Json.string
-
 fetchProjects : String -> Cmd Msg
 fetchProjects s = 
     --fetchComboBoxItems "http://localhost:8082"  
-    fetchComboBoxItems "https://192.168.1.48" 
+    fetchComboBoxItems ProjectsFetched "https://192.168.1.48" 
 
-fetchComboBoxItems : String -> Cmd Msg
-fetchComboBoxItems url = 
+fetchLocations : String -> Cmd Msg
+fetchLocations s = 
+    --fetchComboBoxItems "http://localhost:8082"  
+    fetchComboBoxItems LocationsFetched "https://192.168.1.48" 
+
+fetchComboBoxItems : (SelectItems -> Msg) -> String -> Cmd Msg
+fetchComboBoxItems fn url = 
     Http.get comboBoxItemListDecoder url
         |> Task.mapError toString 
-        |> Task.perform FetchFail ProjectsFetched 
+        |> Task.perform FetchFail fn 
+
+
+
+
+
+
 {--
 (>>=) : Maybe a -> (a -> Maybe b) -> Maybe b
 (>>=) = Maybe.andThen 

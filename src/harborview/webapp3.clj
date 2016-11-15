@@ -15,9 +15,9 @@
 (defn projects []
   (json-response 
     [
-     {:oid 1 :val "NEW: Oid 1"}
-     {:oid 2 :val "NEW: Oid 2"}
-     {:oid 3 :val "NEW: Oid 3"}
+     {:v 1 :t "NEW: Oid 1"}
+     {:v 2 :t "NEW: Oid 2"}
+     {:v 3 :t "NEW: Oid 3"}
      ]))
   ;(json-response {"oid" "Success! 3"}))
 
@@ -29,5 +29,5 @@
     api
     wrap-params))
 
-(def server (run-jetty #'webapp {:port 8082 :join? false}))
-; (def server (run-jetty #'webapp {:port 8443 :join? false :ssl? true :keystore "keystore" :key-password "q2uebec9"}))
+;(def server (run-jetty #'webapp {:port 8082 :join? false}))
+(def server (run-jetty #'webapp {:port 8443 :join? false :ssl? true :keystore "keystore" :key-password "q2uebec9"}))
