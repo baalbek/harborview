@@ -10,6 +10,7 @@
 <body>
     <div class="logo"></div>
     <div class="container">
+        <!--
         <div class="row">
             <div class="col-sm-4">
                 <a href="#dlg1" class="shownewproject href-td">New Project</a>
@@ -21,17 +22,15 @@
                 <a href="#dlg3" class="shownewsystem href-td">New System</a>
             </div>
         </div>
-        <!--
         <div class="row">
             <div class="col-sm-12" id="elementloads">
             </div>
         </div>
         -->
-        <div class="row">
-            <div id="my-app"></div>
-        </div>
+        <div id="my-app"></div>
     </div>
     <!-- New Project Dialog box -->
+    <!--
     <div id="dlg1" class="modalDialog">
         <div>
             <label id="dlg1-header" style="display: block;">New Project</label>
@@ -45,7 +44,9 @@
             </form>
         </div>
     </div>
+    -->
     <!-- New Location Dialog box -->
+    <!--
     <div id="dlg2" class="modalDialog">
         <div>
             <label id="dlg2-header" style="display: block;"></label>
@@ -59,7 +60,9 @@
             </form>
         </div>
     </div>
+    -->
     <!-- New System Dialog box -->
+    <!--
     <div id="dlg3" class="modalDialog">
         <div>
             <label id="dlg3-header" style="display: block;"></label>
@@ -73,6 +76,7 @@
             </form>
         </div>
     </div>
+    -->
     <script type="text/javascript">
         var node = document.getElementById('my-app');
         var app = Elm.Harborview.embed(node);

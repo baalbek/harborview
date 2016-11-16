@@ -124,6 +124,12 @@ view model =
     [
         H.div [ A.class "row" ]
         [
+            makeDlgButton "New projectx" "#dlg1" "shownewproject href-td"   
+            , makeDlgButton "New locationx" "#dlg2" "shownewlocation href-td"
+            , makeDlgButton "New systemx" "#dlg3" "shownewsystem href-td"
+        ]
+        , H.div [ A.class "row" ]
+        [
             makeSelect "Projects: " "projects" FetchLocations model.projects 
             , makeSelect "Locations: " "locations" FetchSystems model.locations
             , makeSelect "Systems: " "systems" FetchElementLoads model.systems
@@ -132,7 +138,32 @@ view model =
         [
             H.div [ A.class "col-sm-12", A.property "innerHTML" (JE.string model.elementLoads) ] []
         ]
+        , H.div [ A.id "dlg2", A.class "modalDialog" ]
+        [
+            H.div []
+            [
+                H.label [ A.id "dlg2-header" ] []
+                , H.form [ ]
+                [
+                    H.div [ A.class "form-group" ]
+                    [
+                        H.label [ A.for "dlg2-name" ] [ H.text "Location Name:" ]
+                        , H.input [ A.class "form-control", A.id "dlg2-name" ] []
+                    ]
+                    , H.button [ A.class "btn btn-default", A.id "dlg2-ok" ] [ H.text "OK" ]
+                    , H.a [ A.href "#close", A.id "dlg2-cancel" ] [ H.text "Cancel" ]
+                ]
+            ]
+        ]
     ]
+
+makeDlgButton : String -> String -> String -> VD.Node a
+makeDlgButton caption dlgName clazz = 
+    H.div [ A.class "col-sm-4" ]
+    [
+        H.a [ A.href dlgName, A.class clazz ] [ H.text caption ]
+    ]
+
 
 makeSelectOption : ComboBoxItem -> VD.Node a
 makeSelectOption item = 
