@@ -21,7 +21,7 @@
 
 (defn fetch-projects []
   (U/json-response
-    (map (fn [v] {"text" (.toString v) "value" (str (.getOid v))})
+    (map (fn [v] {"t" (.toString v) "v" (str (.getOid v))})
       (DBX/fetch-projects))))
 
 (defn fetch-x [oid fetch-fn]

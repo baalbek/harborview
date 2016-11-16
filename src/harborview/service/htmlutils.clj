@@ -25,7 +25,7 @@
    :body (json/generate-string data)})
 
 (defn bean->json [b]
-  {"oid" (.getOid b), "text" (.toHtml b)})
+  {"v" (str (.getOid b)) "t" (.toHtml b)})
 
 ;(defmacro bean->json [b & [oid-fn]]
 ;  (if (nil? oid-fn)
