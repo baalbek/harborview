@@ -67,7 +67,7 @@ type Msg
     | FetchSystems String
     | SystemsFetched SelectItems 
     | FetchElementLoads String
-    | ElementLoadsFetched SelectItems 
+    | ElementLoadsFetched String 
     | FetchFail String 
 
 
@@ -83,20 +83,19 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of 
         ProjectsFetched s -> 
-            Debug.log "ProjectFetched" ({ model | projects = Just s } , Cmd.none)
-            -- Debug.log "ProjectFetched" ({ model | sl = s }, Cmd.none)
+            Debug.log "ProjectFetched" ({ model | projects = Just s, locations = Nothing, systems = Nothing } , Cmd.none)
         FetchLocations s -> 
             Debug.log s (model, fetchLocations s)
         LocationsFetched s -> 
-            Debug.log "LocationsFetched" ({ model | locations = Just s } , Cmd.none)
+            Debug.log "LocationsFetched" ({ model | locations = Just s, systems = Nothing } , Cmd.none)
         FetchSystems s -> 
-            Debug.log s (model, Cmd.none)
+            Debug.log s (model, fetchSystems s)
         SystemsFetched s -> 
-            Debug.log "SystemsFetched" (model, Cmd.none)
+            Debug.log "SystemsFetched" ({ model | systems = Just s }, Cmd.none)
         FetchElementLoads s -> 
-            Debug.log s (model, Cmd.none)
+            Debug.log s (model, fetchElementLoads s)
         ElementLoadsFetched s -> 
-            Debug.log "ElementLoadsFetched" (model, Cmd.none)
+            Debug.log "ElementLoadsFetched" ({ model | elementLoads = s }, Cmd.none)
         FetchFail s ->
             Debug.log s (model, Cmd.none)
 
@@ -124,7 +123,7 @@ view model =
         ]
         , H.div [ A.class "row" ]
         [
-            H.div [ A.class "col-sm-12", A.property "innerHTML" (JE.string model.elementLoads ) ] []
+            H.div [ A.class "col-sm-12", A.property "innerHTML" (JE.string model.elementLoads) ] []
         ]
     ]
 
@@ -186,6 +185,10 @@ fetchLocations : String -> Cmd Msg
 fetchLocations s = 
     fetchComboBoxItems LocationsFetched (mainUrl ++ "/locations?oid=" ++ s)
 
+fetchSystems : String -> Cmd Msg
+fetchSystems s = 
+    fetchComboBoxItems SystemsFetched (mainUrl ++ "/systems?oid=" ++ s)
+
 fetchComboBoxItems : (SelectItems -> Msg) -> String -> Cmd Msg
 fetchComboBoxItems fn url = 
     Http.get comboBoxItemListDecoder url
@@ -193,7 +196,12 @@ fetchComboBoxItems fn url =
         |> Task.perform FetchFail fn 
 
 
-
+fetchElementLoads : String -> Cmd Msg
+fetchElementLoads s = 
+    let url = mainUrl ++ "/elementloads?oid=" ++ s in
+    Http.getString url
+        |> Task.mapError toString 
+        |> Task.perform FetchFail ElementLoadsFetched
 
 
 
