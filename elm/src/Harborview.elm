@@ -69,6 +69,7 @@ type Msg
     | FetchElementLoads String
     | ElementLoadsFetched String 
     | FetchFail String 
+    | Btn
 
 
 -- INIT
@@ -105,6 +106,8 @@ update msg model =
             ({ model | elementLoads = s }, Cmd.none)
         FetchFail s ->
             Debug.log s (model, Cmd.none)
+        Btn ->
+            Debug.log "Button ok"  (model, Cmd.none)
 
 
 -- SUBSCRIPTIONS
@@ -138,11 +141,12 @@ view model =
         [
             H.div [ A.class "col-sm-12", A.property "innerHTML" (JE.string model.elementLoads) ] []
         ]
-        , H.div [ A.id "dlg2", A.class "modalDialog" ]
+        , H.div [ A.id "dlg2", A.class "modalDialog", A.style [ ("opacity", "0") ]]
         [
             H.div []
             [
                 H.label [ A.id "dlg2-header" ] []
+                {-
                 , H.form [ ]
                 [
                     H.div [ A.class "form-group" ]
@@ -150,9 +154,12 @@ view model =
                         H.label [ A.for "dlg2-name" ] [ H.text "Location Name:" ]
                         , H.input [ A.class "form-control", A.id "dlg2-name" ] []
                     ]
-                    , H.button [ A.class "btn btn-default", A.id "dlg2-ok" ] [ H.text "OK" ]
+                    , H.button [ A.class "btn btn-default", E.onClick Btn ] [ H.text "OK" ]
                     , H.a [ A.href "#close", A.id "dlg2-cancel" ] [ H.text "Cancel" ]
                 ]
+                -}
+                , H.button [ A.class "btn btn-default", E.onClick Btn ] [ H.text "OK" ]
+                , H.a [ A.href "#close", A.id "dlg2-cancel" ] [ H.text "Cancel" ]
             ]
         ]
     ]
