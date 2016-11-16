@@ -83,19 +83,26 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of 
         ProjectsFetched s -> 
-            Debug.log "ProjectFetched" ({ model | projects = Just s, locations = Nothing, systems = Nothing } , Cmd.none)
+            --Debug.log "ProjectFetched" ({ model | projects = Just s, locations = Nothing, systems = Nothing } , Cmd.none)
+            ({ model | projects = Just s, locations = Nothing, systems = Nothing } , Cmd.none)
         FetchLocations s -> 
-            Debug.log s (model, fetchLocations s)
+            --Debug.log s (model, fetchLocations s)
+            (model, fetchLocations s)
         LocationsFetched s -> 
-            Debug.log "LocationsFetched" ({ model | locations = Just s, systems = Nothing } , Cmd.none)
+            --Debug.log "LocationsFetched" ({ model | locations = Just s, systems = Nothing } , Cmd.none)
+            ({ model | locations = Just s, systems = Nothing } , Cmd.none)
         FetchSystems s -> 
-            Debug.log s (model, fetchSystems s)
+            --Debug.log s (model, fetchSystems s)
+            (model, fetchSystems s)
         SystemsFetched s -> 
-            Debug.log "SystemsFetched" ({ model | systems = Just s }, Cmd.none)
+            --Debug.log "SystemsFetched" ({ model | systems = Just s }, Cmd.none)
+            ({ model | systems = Just s }, Cmd.none)
         FetchElementLoads s -> 
-            Debug.log s (model, fetchElementLoads s)
+            --Debug.log s (model, fetchElementLoads s)
+            (model, fetchElementLoads s)
         ElementLoadsFetched s -> 
-            Debug.log "ElementLoadsFetched" ({ model | elementLoads = s }, Cmd.none)
+            --Debug.log "ElementLoadsFetched" ({ model | elementLoads = s }, Cmd.none)
+            ({ model | elementLoads = s }, Cmd.none)
         FetchFail s ->
             Debug.log s (model, Cmd.none)
 
@@ -117,9 +124,9 @@ view model =
     [
         H.div [ A.class "row" ]
         [
-            makeSelect "Projects: " FetchLocations model.projects 
-            , makeSelect "Locations: " FetchSystems model.locations
-            , makeSelect "Systems: " FetchElementLoads model.systems
+            makeSelect "Projects: " "projects" FetchLocations model.projects 
+            , makeSelect "Locations: " "locations" FetchSystems model.locations
+            , makeSelect "Systems: " "systems" FetchElementLoads model.systems
         ]
         , H.div [ A.class "row" ]
         [
@@ -141,8 +148,8 @@ emptySelectOption =
         ]
         [ H.text "-"]
     
-makeSelect : String -> (String -> a) -> Maybe SelectItems -> VD.Node a
-makeSelect caption msg payload = 
+makeSelect : String -> String -> (String -> a) -> Maybe SelectItems -> VD.Node a
+makeSelect caption myId msg payload = 
     let px = case payload of 
                     Just p -> emptySelectOption :: List.map makeSelectOption p 
                     Nothing -> [] in
@@ -155,6 +162,7 @@ makeSelect caption msg payload =
             [   
                 onChange msg 
                 , A.class "form-control"
+                , A.id myId
             ]
             px
         ]

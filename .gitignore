@@ -19,5 +19,6 @@ elm/elm-stuff/
 elm/*.js
 harborview_orig
 src/resources/templates/vinapu/elementload.html
+src/resources/public/js/elm/
 
 

@@ -5,36 +5,11 @@
     <meta charset="UTF-8">
     {% include "templates/head.html" %}
     <script src="/js/vinapu/projects.js"></script>
+    <script src="/js/elm/elm.js"></script>
 </head>
 <body>
     <div class="logo"></div>
     <div class="container">
-        <div class="row">
-            <div class="col-sm-4">
-                <label for="projects">Projects:</label>
-                <select class="form-control" id="projects">
-                    {% for p in projects %}
-                    <option value="{{p.value}}">{{p.content}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-sm-4">
-                <label for="locations">Locations:</label>
-                <select class="form-control" id="locations">
-                    {% for p in locations %}
-                    <option value="{{p.value}}">{{p.content}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-sm-4">
-                <label for="systems">Systems:</label>
-                <select class="form-control" id="systems">
-                    {% for p in systems %}
-                    <option value="{{p.value}}">{{p.content}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
         <div class="row">
             <div class="col-sm-4">
                 <a href="#dlg1" class="shownewproject href-td">New Project</a>
@@ -46,9 +21,14 @@
                 <a href="#dlg3" class="shownewsystem href-td">New System</a>
             </div>
         </div>
+        <!--
         <div class="row">
             <div class="col-sm-12" id="elementloads">
             </div>
+        </div>
+        -->
+        <div class="row">
+            <div id="my-app"></div>
         </div>
     </div>
     <!-- New Project Dialog box -->
@@ -93,5 +73,9 @@
             </form>
         </div>
     </div>
+    <script type="text/javascript">
+        var node = document.getElementById('my-app');
+        var app = Elm.Harborview.embed(node);
+    </script>
 </body>
 </html>
