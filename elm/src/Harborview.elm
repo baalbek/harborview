@@ -46,6 +46,8 @@ type alias Model =
         , locations     : Maybe SelectItems 
         , systems       : Maybe SelectItems 
         , elementLoads  : String
+        , opacity       : String
+        , ptrEvts       : String
     }
 
 model : Model 
@@ -55,6 +57,8 @@ model =
         , locations = Nothing
         , systems = Nothing
         , elementLoads = "<p>-</p>"
+        , opacity = "0"
+        , ptrEvts = "none"
     }
 
 -- MSG
@@ -69,7 +73,8 @@ type Msg
     | FetchElementLoads String
     | ElementLoadsFetched String 
     | FetchFail String 
-    | Btn
+    | BtnOpen
+    | BtnClose
 
 
 -- INIT
@@ -106,8 +111,10 @@ update msg model =
             ({ model | elementLoads = s }, Cmd.none)
         FetchFail s ->
             Debug.log s (model, Cmd.none)
-        Btn ->
-            Debug.log "Button ok"  (model, Cmd.none)
+        BtnOpen ->
+            Debug.log "Button open"  ({ model | opacity = "1", ptrEvts = "auto" }, Cmd.none)
+        BtnClose ->
+            Debug.log "Button close"  ({ model | opacity = "0", ptrEvts = "none" }, Cmd.none)
 
 
 -- SUBSCRIPTIONS
@@ -127,9 +134,9 @@ view model =
     [
         H.div [ A.class "row" ]
         [
-            makeDlgButton "New projectx" "#dlg1" "shownewproject href-td"   
-            , makeDlgButton "New locationx" "#dlg2" "shownewlocation href-td"
-            , makeDlgButton "New systemx" "#dlg3" "shownewsystem href-td"
+            makeOpenDlgButton "New projectx" BtnOpen
+            , makeOpenDlgButton "New locationx" BtnOpen 
+            , makeOpenDlgButton "New systemx" BtnOpen
         ]
         , H.div [ A.class "row" ]
         [
@@ -141,7 +148,7 @@ view model =
         [
             H.div [ A.class "col-sm-12", A.property "innerHTML" (JE.string model.elementLoads) ] []
         ]
-        , H.div [ A.id "dlg2", A.class "modalDialog", A.style [ ("opacity", "0") ]]
+        , H.div [ A.id "dlg2", A.class "modalDialog", A.style [ ("opacity", model.opacity), ("pointer-events", model.ptrEvts) ]]
         [
             H.div []
             [
@@ -158,17 +165,20 @@ view model =
                     , H.a [ A.href "#close", A.id "dlg2-cancel" ] [ H.text "Cancel" ]
                 ]
                 -}
-                , H.button [ A.class "btn btn-default", E.onClick Btn ] [ H.text "OK" ]
+                , H.label [ A.for "dlg2-name" ] [ H.text "Location Name:" ]
+                , H.input [ A.class "form-control", A.id "dlg2-name" ] []
+                , H.button [ A.class "btn btn-default", E.onClick BtnClose ] [ H.text "OK" ]
                 , H.a [ A.href "#close", A.id "dlg2-cancel" ] [ H.text "Cancel" ]
             ]
         ]
     ]
 
-makeDlgButton : String -> String -> String -> VD.Node a
-makeDlgButton caption dlgName clazz = 
+makeOpenDlgButton : String -> Msg -> VD.Node Msg
+makeOpenDlgButton caption clickEvent = 
     H.div [ A.class "col-sm-4" ]
     [
-        H.a [ A.href dlgName, A.class clazz ] [ H.text caption ]
+        H.button [ A.class "btn btn-default", E.onClick clickEvent ] [ H.text caption ]
+        -- H.a [ A.href dlgName, A.class clazz ] [ H.text caption ]
     ]
 
 
