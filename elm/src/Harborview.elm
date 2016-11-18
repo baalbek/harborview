@@ -23,8 +23,8 @@ main =
         }
 
 
-mainUrl = "http://localhost:8082/vinapu"   
--- mainUrl = "https://192.168.1.48" 
+-- mainUrl = "http://localhost:8082/vinapu"   
+mainUrl = "https://192.168.1.48/vinapu" 
 
 -- MODEL
 
@@ -40,15 +40,29 @@ type alias What a =
 
 type alias SelectItems = List ComboBoxItem -- Dict String String
 
+type alias ModalDialog =
+    {
+        opacity : String
+        , pointerEvents : String   
+    }
+
+dlgOpen : ModalDialog 
+dlgOpen = ModalDialog "1" "auto"
+
+dlgClose : ModalDialog 
+dlgClose = ModalDialog "0" "none"
+
 type alias Model = 
     { 
         projects        : Maybe SelectItems 
         , locations     : Maybe SelectItems 
         , systems       : Maybe SelectItems 
         , elementLoads  : String
-        , opacity       : String
-        , ptrEvts       : String
+        , dlgLoc        : ModalDialog
+        , selectedProject : String 
+        , locName       : String 
     }
+
 
 model : Model 
 model =
@@ -57,8 +71,9 @@ model =
         , locations = Nothing
         , systems = Nothing
         , elementLoads = "<p>-</p>"
-        , opacity = "0"
-        , ptrEvts = "none"
+        , dlgLoc = dlgClose
+        , selectedProject = "-1"
+        , locName = "" 
     }
 
 -- MSG
@@ -73,9 +88,10 @@ type Msg
     | FetchElementLoads String
     | ElementLoadsFetched String 
     | FetchFail String 
-    | BtnOpen
-    | BtnClose
-
+    | LocOpen
+    | LocOk 
+    | LocCancel
+    | LocNameChange String
 
 -- INIT
 
@@ -93,7 +109,7 @@ update msg model =
             ({ model | projects = Just s, locations = Nothing, systems = Nothing } , Cmd.none)
         FetchLocations s -> 
             --Debug.log s (model, fetchLocations s)
-            (model, fetchLocations s)
+            ({ model | selectedProject = s }, fetchLocations s)
         LocationsFetched s -> 
             --Debug.log "LocationsFetched" ({ model | locations = Just s, systems = Nothing } , Cmd.none)
             ({ model | locations = Just s, systems = Nothing } , Cmd.none)
@@ -111,11 +127,14 @@ update msg model =
             ({ model | elementLoads = s }, Cmd.none)
         FetchFail s ->
             Debug.log s (model, Cmd.none)
-        BtnOpen ->
-            Debug.log "Button open"  ({ model | opacity = "1", ptrEvts = "auto" }, Cmd.none)
-        BtnClose ->
-            Debug.log "Button close"  ({ model | opacity = "0", ptrEvts = "none" }, Cmd.none)
-
+        LocOpen ->
+            Debug.log "Button open"  ({ model | dlgLoc = dlgOpen }, Cmd.none)
+        LocOk ->
+            ({ model | dlgLoc = dlgClose }, Cmd.none)
+        LocCancel ->
+            Debug.log "Button close"  ({ model | dlgLoc = dlgClose }, Cmd.none)
+        LocNameChange s -> 
+            Debug.log s (model, Cmd.none)
 
 -- SUBSCRIPTIONS
 
@@ -134,9 +153,12 @@ view model =
     [
         H.div [ A.class "row" ]
         [
-            makeOpenDlgButton "New projectx" BtnOpen
-            , makeOpenDlgButton "New locationx" BtnOpen 
-            , makeOpenDlgButton "New systemx" BtnOpen
+            makeOpenDlgButton "New location" LocOpen
+            {-
+            makeOpenDlgButton "New project" LocOpen
+            , makeOpenDlgButton "New location" LocOpen
+            , makeOpenDlgButton "New system" LocOpen
+            -}
         ]
         , H.div [ A.class "row" ]
         [
@@ -148,11 +170,11 @@ view model =
         [
             H.div [ A.class "col-sm-12", A.property "innerHTML" (JE.string model.elementLoads) ] []
         ]
-        , H.div [ A.id "dlg2", A.class "modalDialog", A.style [ ("opacity", model.opacity), ("pointer-events", model.ptrEvts) ]]
+        , H.div [ A.class "modalDialog", A.style [ ("opacity", model.dlgLoc.opacity), ("pointer-events", model.dlgLoc.pointerEvents) ]]
         [
             H.div []
             [
-                H.label [ A.id "dlg2-header" ] []
+                H.h4 [] [H.text ("New Location for Project id: " ++ model.selectedProject) ]
                 {-
                 , H.form [ ]
                 [
@@ -165,10 +187,11 @@ view model =
                     , H.a [ A.href "#close", A.id "dlg2-cancel" ] [ H.text "Cancel" ]
                 ]
                 -}
-                , H.label [ A.for "dlg2-name" ] [ H.text "Location Name:" ]
-                , H.input [ A.class "form-control", A.id "dlg2-name" ] []
-                , H.button [ A.class "btn btn-default", E.onClick BtnClose ] [ H.text "OK" ]
-                , H.a [ A.href "#close", A.id "dlg2-cancel" ] [ H.text "Cancel" ]
+                , H.label [ A.for "dlg2-name" ] [ H.text "Location name:" ]
+                , H.input [ A.class "form-control", onChange LocNameChange ] []
+                , H.button [ A.class "btn btn-default", E.onClick LocOk ] [ H.text "OK" ]
+                , H.button [ A.class "btn btn-default", E.onClick LocCancel ] [ H.text "Cancel" ]
+                -- , H.a [ A.href "#close", A.id "dlg2-cancel" ] [ H.text "Cancel" ]
             ]
         ]
     ]
