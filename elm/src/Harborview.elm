@@ -252,11 +252,17 @@ onChange tagger =
 
 -- COMMANDS
 
+asHttpBody : List (String, JE.Value) -> Http.Body
+asHttpBody lx = 
+    let x = JE.object lx in 
+    Http.string (JE.encode 0 x) 
+
 addNewProject : String -> Cmd Msg
 addNewProject pn =
     let url = mainUrl ++ "/newproject" 
-        pnJson = JE.object [ ("pn", JE.string pn) ]
-        pnBody = Http.string (JE.encode 0 pnJson) in
+        -- pnJson = JE.object [ ("pn", JE.string pn) ]
+        -- pnBody = Http.string (JE.encode 0 pnJson) in
+        pnBody = asHttpBody [ ("pn", JE.string pn) ] in
     Http.post Json.int url pnBody 
         |> Task.mapError toString 
         |> Task.perform FetchFail OnNewProject 
