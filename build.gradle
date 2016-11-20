@@ -4,7 +4,6 @@ group = 'rcstadheim'
 archivesBaseName = 'harborview'
 version = '2.0'
 
-
 ext.springVersion = '4.2.3.RELEASE'
 ext.junitVersion = '4.11'
 ext.log4jVersion = '1.2.17'
@@ -23,7 +22,8 @@ ext.selmerVersion = '1.0.4'
 ext.compojureVersion = '1.4.0'
 
 ext.major = '5'
-ext.minor = '1'
+ext.minor = '3'
+ext.parentDist = '/home/rcs/opt/java/harborview/dist'
 
 repositories {
     mavenCentral()

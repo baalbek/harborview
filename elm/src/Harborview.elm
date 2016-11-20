@@ -23,8 +23,8 @@ main =
         }
 
 
--- mainUrl = "http://localhost:8082/vinapu"   
-mainUrl = "https://192.168.1.48/vinapu" 
+mainUrl = "http://localhost:8082/vinapu"   
+-- mainUrl = "https://192.168.1.48/vinapu" 
 
 -- MODEL
 
@@ -34,11 +34,7 @@ type alias ComboBoxItem =
         , txt: String 
     }
 
-type alias What a =
-    { x : a
-      , s : String }
-
-type alias SelectItems = List ComboBoxItem -- Dict String String
+type alias SelectItems = List ComboBoxItem 
 
 type alias ModalDialog =
     {
@@ -54,13 +50,15 @@ dlgClose = ModalDialog "0" "none"
 
 type alias Model = 
     { 
-        projects        : Maybe SelectItems 
-        , locations     : Maybe SelectItems 
-        , systems       : Maybe SelectItems 
-        , elementLoads  : String
-        , dlgLoc        : ModalDialog
+        projects          : Maybe SelectItems 
+        , locations       : Maybe SelectItems 
+        , systems         : Maybe SelectItems 
+        , elementLoads    : String
         , selectedProject : String 
-        , locName       : String 
+        , dlgProj         : ModalDialog
+        , projName        : String 
+        , dlgLoc          : ModalDialog
+        , locName         : String 
     }
 
 
@@ -71,8 +69,10 @@ model =
         , locations = Nothing
         , systems = Nothing
         , elementLoads = "<p>-</p>"
-        , dlgLoc = dlgClose
         , selectedProject = "-1"
+        , dlgProj = dlgClose
+        , projName = "" 
+        , dlgLoc = dlgClose
         , locName = "" 
     }
 
@@ -88,6 +88,11 @@ type Msg
     | FetchElementLoads String
     | ElementLoadsFetched String 
     | FetchFail String 
+    | ProjOpen
+    | ProjOk 
+    | ProjCancel
+    | ProjNameChange String
+    | OnNewProject Int
     | LocOpen
     | LocOk 
     | LocCancel
@@ -105,34 +110,39 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of 
         ProjectsFetched s -> 
-            --Debug.log "ProjectFetched" ({ model | projects = Just s, locations = Nothing, systems = Nothing } , Cmd.none)
             ({ model | projects = Just s, locations = Nothing, systems = Nothing } , Cmd.none)
         FetchLocations s -> 
-            --Debug.log s (model, fetchLocations s)
             ({ model | selectedProject = s }, fetchLocations s)
         LocationsFetched s -> 
-            --Debug.log "LocationsFetched" ({ model | locations = Just s, systems = Nothing } , Cmd.none)
             ({ model | locations = Just s, systems = Nothing } , Cmd.none)
         FetchSystems s -> 
-            --Debug.log s (model, fetchSystems s)
             (model, fetchSystems s)
         SystemsFetched s -> 
-            --Debug.log "SystemsFetched" ({ model | systems = Just s }, Cmd.none)
             ({ model | systems = Just s }, Cmd.none)
         FetchElementLoads s -> 
-            --Debug.log s (model, fetchElementLoads s)
             (model, fetchElementLoads s)
         ElementLoadsFetched s -> 
-            --Debug.log "ElementLoadsFetched" ({ model | elementLoads = s }, Cmd.none)
             ({ model | elementLoads = s }, Cmd.none)
         FetchFail s ->
             Debug.log s (model, Cmd.none)
+        ProjOpen ->
+            Debug.log "Button open"  ({ model | dlgProj = dlgOpen }, Cmd.none)
+        ProjOk ->
+            -- Debug.log "ProjOk" (model, Cmd.none)
+            Debug.log "ProjOk" ({ model | dlgProj = dlgClose }, addNewProject model.projName)
+        ProjCancel ->
+            ({ model | dlgProj = dlgClose }, Cmd.none)
+        ProjNameChange s -> 
+            -- Debug.log s (model, Cmd.none)
+            ({ model | projName = s }, Cmd.none)
+        OnNewProject s -> 
+            Debug.log (toString s) (model, Cmd.none)
         LocOpen ->
             Debug.log "Button open"  ({ model | dlgLoc = dlgOpen }, Cmd.none)
         LocOk ->
             ({ model | dlgLoc = dlgClose }, Cmd.none)
         LocCancel ->
-            Debug.log "Button close"  ({ model | dlgLoc = dlgClose }, Cmd.none)
+            ({ model | dlgLoc = dlgClose }, Cmd.none)
         LocNameChange s -> 
             Debug.log s (model, Cmd.none)
 
@@ -153,7 +163,8 @@ view model =
     [
         H.div [ A.class "row" ]
         [
-            makeOpenDlgButton "New location" LocOpen
+            makeOpenDlgButton "New project" ProjOpen
+            , makeOpenDlgButton "New location" LocOpen
             {-
             makeOpenDlgButton "New project" LocOpen
             , makeOpenDlgButton "New location" LocOpen
@@ -170,28 +181,25 @@ view model =
         [
             H.div [ A.class "col-sm-12", A.property "innerHTML" (JE.string model.elementLoads) ] []
         ]
+        , H.div [ A.class "modalDialog", A.style [ ("opacity", model.dlgProj.opacity), ("pointer-events", model.dlgProj.pointerEvents) ]]
+        [
+            H.div []
+            [
+                H.h4 [] [ H.text "New project" ]
+                , H.input [ A.class "form-control", onChange ProjNameChange ] []
+                , H.button [ A.class "btn btn-default", E.onClick ProjOk ] [ H.text "OK" ]
+                , H.button [ A.class "btn btn-default", E.onClick ProjCancel ] [ H.text "Cancel" ]
+            ]
+        ]
         , H.div [ A.class "modalDialog", A.style [ ("opacity", model.dlgLoc.opacity), ("pointer-events", model.dlgLoc.pointerEvents) ]]
         [
             H.div []
             [
                 H.h4 [] [H.text ("New Location for Project id: " ++ model.selectedProject) ]
-                {-
-                , H.form [ ]
-                [
-                    H.div [ A.class "form-group" ]
-                    [
-                        H.label [ A.for "dlg2-name" ] [ H.text "Location Name:" ]
-                        , H.input [ A.class "form-control", A.id "dlg2-name" ] []
-                    ]
-                    , H.button [ A.class "btn btn-default", E.onClick Btn ] [ H.text "OK" ]
-                    , H.a [ A.href "#close", A.id "dlg2-cancel" ] [ H.text "Cancel" ]
-                ]
-                -}
                 , H.label [ A.for "dlg2-name" ] [ H.text "Location name:" ]
                 , H.input [ A.class "form-control", onChange LocNameChange ] []
                 , H.button [ A.class "btn btn-default", E.onClick LocOk ] [ H.text "OK" ]
                 , H.button [ A.class "btn btn-default", E.onClick LocCancel ] [ H.text "Cancel" ]
-                -- , H.a [ A.href "#close", A.id "dlg2-cancel" ] [ H.text "Cancel" ]
             ]
         ]
     ]
@@ -201,7 +209,6 @@ makeOpenDlgButton caption clickEvent =
     H.div [ A.class "col-sm-4" ]
     [
         H.button [ A.class "btn btn-default", E.onClick clickEvent ] [ H.text caption ]
-        -- H.a [ A.href dlgName, A.class clazz ] [ H.text caption ]
     ]
 
 
@@ -244,6 +251,15 @@ onChange tagger =
   E.on "change" (Json.map tagger E.targetValue)
 
 -- COMMANDS
+
+addNewProject : String -> Cmd Msg
+addNewProject pn =
+    let url = mainUrl ++ "/newproject" 
+        pnJson = JE.object [ ("pn", JE.string pn) ]
+        pnBody = Http.string (JE.encode 0 pnJson) in
+    Http.post Json.int url pnBody 
+        |> Task.mapError toString 
+        |> Task.perform FetchFail OnNewProject 
 
 comboBoxItemDecoder : Json.Decoder ComboBoxItem
 comboBoxItemDecoder =
