@@ -23,12 +23,13 @@ main =
         }
 
 
+mainUrl =
+    "http://localhost:8082/vinapu"
+
+
+
 --mainUrl =
---    "http://localhost:8082/vinapu"
-
-mainUrl = 
-    "https://192.168.1.48/vinapu"
-
+--    "https://192.168.1.48/vinapu"
 -- MODEL
 
 
@@ -87,7 +88,7 @@ initModel =
     , dlgSys = dlgClose
     , sysName = ""
     , selectedProject = "-1"
-    , selectedLocation = "-1" 
+    , selectedLocation = "-1"
     }
 
 
@@ -130,8 +131,25 @@ init =
 
 -- UPDATE
 
+
+emptyComboBoxItem : ComboBoxItem
+emptyComboBoxItem =
+    ComboBoxItem "-1" "-"
+
+
 updateProjects : Int -> Model -> Maybe SelectItems
-updateProjects newOid model = Nothing
+updateProjects newOid model =
+    let
+        newProject =
+            ComboBoxItem (toString newOid) model.projName
+    in
+        case model.projects of
+            Nothing ->
+                Just [ newProject ]
+
+            Just projx ->
+                Just (newProject :: projx)
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -173,15 +191,15 @@ update msg model =
             ( { model | projName = s }, Cmd.none )
 
         OnNewProject newOid ->
-            ( model , Cmd.none )
+            ( { model | projects = updateProjects newOid model, locations = Nothing, systems = Nothing, elementLoads = Nothing }, Cmd.none )
 
         LocOpen ->
             ( { model | dlgLoc = dlgOpen }, Cmd.none )
 
         LocOk ->
-            ( model , Cmd.none )
-            -- ( { model | dlgLoc = dlgClose }, addNewLocation model.locName )
+            ( { model | dlgLoc = dlgClose }, Cmd.none )
 
+        -- ( { model | dlgLoc = dlgClose }, addNewLocation model.locName )
         LocCancel ->
             ( { model | dlgLoc = dlgClose }, Cmd.none )
 
@@ -196,6 +214,7 @@ update msg model =
 
         SysCancel ->
             ( { model | dlgSys = dlgClose }, Cmd.none )
+
 
 
 -- SUBSCRIPTIONS
@@ -334,6 +353,7 @@ addNewProject pn =
     let
         url =
             mainUrl ++ "/newproject"
+
         pnBody =
             asHttpBody [ ( "pn", JE.string pn ) ]
     in
