@@ -23,12 +23,12 @@ main =
         }
 
 
-mainUrl =
-    "http://localhost:8082/vinapu"
+--mainUrl =
+--    "http://localhost:8082/vinapu"
 
+mainUrl = 
+    "https://192.168.1.48/vinapu"
 
-
--- mainUrl = "https://192.168.1.48/vinapu"
 -- MODEL
 
 
@@ -63,29 +63,31 @@ type alias Model =
     , locations : Maybe SelectItems
     , systems : Maybe SelectItems
     , elementLoads : Maybe String
-    , selectedProject : String
     , dlgProj : ModalDialog
     , projName : String
     , dlgLoc : ModalDialog
     , locName : String
+    , dlgSys : ModalDialog
+    , sysName : String
+    , selectedProject : String
+    , selectedLocation : String
     }
 
 
-model : Model
-model =
-    { projects =
-        Nothing
-        -- [ComboBoxItem 1 "One1", ComboBoxItem 2 "Two!"]
+initModel : Model
+initModel =
+    { projects = Nothing
     , locations = Nothing
     , systems = Nothing
-    , elementLoads =
-        Nothing
-        -- "<p>-</p>"
-    , selectedProject = "-1"
+    , elementLoads = Nothing
     , dlgProj = dlgClose
     , projName = ""
     , dlgLoc = dlgClose
     , locName = ""
+    , dlgSys = dlgClose
+    , sysName = ""
+    , selectedProject = "-1"
+    , selectedLocation = "-1" 
     }
 
 
@@ -111,6 +113,9 @@ type Msg
     | LocOk
     | LocCancel
     | LocNameChange String
+    | SysOpen
+    | SysOk
+    | SysCancel
 
 
 
@@ -119,30 +124,32 @@ type Msg
 
 init : ( Model, Cmd Msg )
 init =
-    ( model, fetchProjects )
+    ( initModel, fetchProjects )
 
 
 
 -- UPDATE
 
+updateProjects : Int -> Model -> Maybe SelectItems
+updateProjects newOid model = Nothing
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ProjectsFetched s ->
-            ( { model | projects = Just s, locations = Nothing, systems = Nothing }, Cmd.none )
+            ( { model | projects = Just s, locations = Nothing, systems = Nothing, elementLoads = Nothing }, Cmd.none )
 
         FetchLocations s ->
             ( { model | selectedProject = s }, fetchLocations s )
 
         LocationsFetched s ->
-            ( { model | locations = Just s, systems = Nothing }, Cmd.none )
+            ( { model | locations = Just s, systems = Nothing, elementLoads = Nothing }, Cmd.none )
 
         FetchSystems s ->
-            ( model, fetchSystems s )
+            ( { model | selectedLocation = s }, fetchSystems s )
 
         SystemsFetched s ->
-            ( { model | systems = Just s }, Cmd.none )
+            ( { model | systems = Just s, elementLoads = Nothing }, Cmd.none )
 
         FetchElementLoads s ->
             ( model, fetchElementLoads s )
@@ -154,34 +161,41 @@ update msg model =
             Debug.log s ( model, Cmd.none )
 
         ProjOpen ->
-            Debug.log "Button open" ( { model | dlgProj = dlgOpen }, Cmd.none )
+            ( { model | dlgProj = dlgOpen }, Cmd.none )
 
         ProjOk ->
-            -- Debug.log "ProjOk" (model, Cmd.none)
-            Debug.log "ProjOk" ( { model | dlgProj = dlgClose }, addNewProject model.projName )
+            ( { model | dlgProj = dlgClose }, addNewProject model.projName )
 
         ProjCancel ->
             ( { model | dlgProj = dlgClose }, Cmd.none )
 
         ProjNameChange s ->
-            -- Debug.log s (model, Cmd.none)
             ( { model | projName = s }, Cmd.none )
 
         OnNewProject newOid ->
-            ( model, Cmd.none )
+            ( model , Cmd.none )
 
         LocOpen ->
-            Debug.log "Button open" ( { model | dlgLoc = dlgOpen }, Cmd.none )
+            ( { model | dlgLoc = dlgOpen }, Cmd.none )
 
         LocOk ->
-            ( { model | dlgLoc = dlgClose }, Cmd.none )
+            ( model , Cmd.none )
+            -- ( { model | dlgLoc = dlgClose }, addNewLocation model.locName )
 
         LocCancel ->
             ( { model | dlgLoc = dlgClose }, Cmd.none )
 
         LocNameChange s ->
-            Debug.log s ( model, Cmd.none )
+            ( { model | locName = s }, Cmd.none )
 
+        SysOpen ->
+            ( { model | dlgSys = dlgOpen }, Cmd.none )
+
+        SysOk ->
+            ( { model | dlgSys = dlgClose }, Cmd.none )
+
+        SysCancel ->
+            ( { model | dlgSys = dlgClose }, Cmd.none )
 
 
 -- SUBSCRIPTIONS
@@ -211,11 +225,7 @@ view model =
             [ H.div [ A.class "row" ]
                 [ makeOpenDlgButton "New project" ProjOpen
                 , makeOpenDlgButton "New location" LocOpen
-                  {-
-                     makeOpenDlgButton "New project" LocOpen
-                     , makeOpenDlgButton "New location" LocOpen
-                     , makeOpenDlgButton "New system" LocOpen
-                  -}
+                , makeOpenDlgButton "New system" SysOpen
                 ]
             , H.div [ A.class "row" ]
                 [ makeSelect "Projects: " FetchLocations model.projects
@@ -236,10 +246,19 @@ view model =
             , H.div [ A.class "modalDialog", A.style [ ( "opacity", model.dlgLoc.opacity ), ( "pointer-events", model.dlgLoc.pointerEvents ) ] ]
                 [ H.div []
                     [ H.h4 [] [ H.text ("New Location for Project id: " ++ model.selectedProject) ]
-                    , H.label [ A.for "dlg2-name" ] [ H.text "Location name:" ]
+                    , H.label [ A.for "dlg1-name" ] [ H.text "Location name:" ]
                     , H.input [ A.class "form-control", onChange LocNameChange ] []
                     , H.button [ A.class "btn btn-default", E.onClick LocOk ] [ H.text "OK" ]
                     , H.button [ A.class "btn btn-default", E.onClick LocCancel ] [ H.text "Cancel" ]
+                    ]
+                ]
+            , H.div [ A.class "modalDialog", A.style [ ( "opacity", model.dlgSys.opacity ), ( "pointer-events", model.dlgSys.pointerEvents ) ] ]
+                [ H.div []
+                    [ H.h4 [] [ H.text ("New System for Location id: " ++ model.selectedLocation) ]
+                    , H.label [ A.for "dlg2-name" ] [ H.text "System name:" ]
+                    , H.input [ A.class "form-control" ] []
+                    , H.button [ A.class "btn btn-default", E.onClick SysOk ] [ H.text "OK" ]
+                    , H.button [ A.class "btn btn-default", E.onClick SysCancel ] [ H.text "Cancel" ]
                     ]
                 ]
             ]
@@ -315,9 +334,6 @@ addNewProject pn =
     let
         url =
             mainUrl ++ "/newproject"
-
-        -- pnJson = JE.object [ ("pn", JE.string pn) ]
-        -- pnBody = Http.string (JE.encode 0 pnJson) in
         pnBody =
             asHttpBody [ ( "pn", JE.string pn ) ]
     in
