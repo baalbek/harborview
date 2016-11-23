@@ -24,12 +24,10 @@ main =
 
 
 mainUrl =
-    "http://localhost:8082/vinapu"
+    -- "http://localhost:8082/vinapu"
+    "https://192.168.1.48/vinapu"
 
 
-
---mainUrl =
---    "https://192.168.1.48/vinapu"
 -- MODEL
 
 
@@ -114,9 +112,11 @@ type Msg
     | LocOk
     | LocCancel
     | LocNameChange String
+    | OnNewLocation Int
     | SysOpen
     | SysOk
     | SysCancel
+    | OnNewSystem Int
 
 
 
@@ -137,18 +137,18 @@ emptyComboBoxItem =
     ComboBoxItem "-1" "-"
 
 
-updateProjects : Int -> Model -> Maybe SelectItems
-updateProjects newOid model =
+updateComboBoxItems : Int -> String -> Maybe SelectItems -> Maybe SelectItems
+updateComboBoxItems newOid newItemName curItems =
     let
-        newProject =
-            ComboBoxItem (toString newOid) model.projName
+        newItem =
+            ComboBoxItem (toString newOid) newItemName
     in
-        case model.projects of
+        case curItems of
             Nothing ->
-                Just [ newProject ]
+                Just [ newItem ]
 
-            Just projx ->
-                Just (newProject :: projx)
+            Just itemx ->
+                Just (newItem :: itemx)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -191,20 +191,35 @@ update msg model =
             ( { model | projName = s }, Cmd.none )
 
         OnNewProject newOid ->
-            ( { model | projects = updateProjects newOid model, locations = Nothing, systems = Nothing, elementLoads = Nothing }, Cmd.none )
+            ( { model
+                | projects = updateComboBoxItems newOid model.projName model.projects
+                , locations = Nothing
+                , systems = Nothing
+                , elementLoads = Nothing
+              }
+            , Cmd.none
+            )
 
         LocOpen ->
             ( { model | dlgLoc = dlgOpen }, Cmd.none )
 
         LocOk ->
-            ( { model | dlgLoc = dlgClose }, Cmd.none )
+            ( { model | dlgLoc = dlgClose }, addNewLocation model.locName )
 
-        -- ( { model | dlgLoc = dlgClose }, addNewLocation model.locName )
         LocCancel ->
             ( { model | dlgLoc = dlgClose }, Cmd.none )
 
         LocNameChange s ->
             ( { model | locName = s }, Cmd.none )
+
+        OnNewLocation newOid ->
+            ( { model
+                | locations = updateComboBoxItems newOid model.locName model.locations
+                , systems = Nothing
+                , elementLoads = Nothing
+              }
+            , Cmd.none
+            )
 
         SysOpen ->
             ( { model | dlgSys = dlgOpen }, Cmd.none )
@@ -215,6 +230,13 @@ update msg model =
         SysCancel ->
             ( { model | dlgSys = dlgClose }, Cmd.none )
 
+        OnNewSystem newOid ->
+            ( { model
+                | systems = updateComboBoxItems newOid model.sysName model.systems
+                , elementLoads = Nothing
+              }
+            , Cmd.none
+            )
 
 
 -- SUBSCRIPTIONS
@@ -347,20 +369,30 @@ asHttpBody lx =
     in
         Http.string (JE.encode 0 x)
 
-
-addNewProject : String -> Cmd Msg
-addNewProject pn =
+addNewDbItem : String -> String -> String -> (Int -> Msg) -> Cmd Msg
+addNewDbItem urlAction key item msg = 
     let
         url =
-            mainUrl ++ "/newproject"
+            mainUrl ++ urlAction
 
         pnBody =
-            asHttpBody [ ( "pn", JE.string pn ) ]
+            asHttpBody [ ( key, JE.string item ), ( "jax", JE.int 34) ]
     in
         Http.post Json.int url pnBody
             |> Task.mapError toString
-            |> Task.perform FetchFail OnNewProject
+            |> Task.perform FetchFail msg 
 
+addNewProject : String -> Cmd Msg
+addNewProject pn =
+    addNewDbItem "/newproject" "pn" pn OnNewProject
+
+addNewLocation : String -> Cmd Msg
+addNewLocation loc =
+    addNewDbItem "/newlocation" "loc" loc OnNewLocation
+
+addNewSystem : String -> Cmd Msg
+addNewSystem sys =
+    addNewDbItem "/newsystem" "sys" sys OnNewSystem
 
 comboBoxItemDecoder : Json.Decoder ComboBoxItem
 comboBoxItemDecoder =

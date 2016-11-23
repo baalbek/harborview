@@ -34,6 +34,9 @@
         ;              )]
     (map bean loads)))
 
+(defn json-parse [req] 
+  (let [r (slurp (:body req))]
+    (json/parse-string r)))
 
 (defroutes my-routes
   (GET "/" request (projects))
@@ -43,6 +46,12 @@
           jr (json/parse-string r)
           result (DBX/insert-project (jr "pn"))]
           (U/json-response (.getOid result))))
+  (POST "/newlocation" request
+    (let [jr (json-parse request)]
+      (do
+        (println "Loc" (jr "loc"))
+        (println "Jax" (jr "jax"))
+        (U/json-response 12))))
   (GET "/locations" [oid] (fetch-x oid DBX/fetch-locations))
   (GET "/systems" [oid] (fetch-x oid DBX/fetch-systems))
   (GET "/elementloads" [oid] 
