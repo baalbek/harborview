@@ -11,6 +11,7 @@ import Json.Encode as JE
 import Json.Decode as Json exposing ((:=))
 import VirtualDom as VD
 import Task
+import String
 
 
 main : Program Never
@@ -24,10 +25,11 @@ main =
 
 
 mainUrl =
-    -- "http://localhost:8082/vinapu"
-    "https://192.168.1.48/vinapu"
+    "http://localhost:8082/vinapu"
 
 
+
+--"https://192.168.1.48/vinapu"
 -- MODEL
 
 
@@ -68,8 +70,10 @@ type alias Model =
     , locName : String
     , dlgSys : ModalDialog
     , sysName : String
+    , dlgElement : ModalDialog
     , selectedProject : String
     , selectedLocation : String
+    , selectedSystem : String
     }
 
 
@@ -85,8 +89,10 @@ initModel =
     , locName = ""
     , dlgSys = dlgClose
     , sysName = ""
+    , dlgElement = dlgClose
     , selectedProject = "-1"
     , selectedLocation = "-1"
+    , selectedSystem = "-1"
     }
 
 
@@ -116,8 +122,11 @@ type Msg
     | SysOpen
     | SysOk
     | SysCancel
+    | SysNameChange String
     | OnNewSystem Int
-
+    | ElementOpen
+    | ElementOk
+    | ElementCancel
 
 
 -- INIT
@@ -140,8 +149,11 @@ emptyComboBoxItem =
 updateComboBoxItems : Int -> String -> Maybe SelectItems -> Maybe SelectItems
 updateComboBoxItems newOid newItemName curItems =
     let
+        newOidStr =
+            toString newOid
+
         newItem =
-            ComboBoxItem (toString newOid) newItemName
+            ComboBoxItem newOidStr ("[" ++ newOidStr ++ "] " ++ newItemName ++ " (New)")
     in
         case curItems of
             Nothing ->
@@ -170,7 +182,7 @@ update msg model =
             ( { model | systems = Just s, elementLoads = Nothing }, Cmd.none )
 
         FetchElementLoads s ->
-            ( model, fetchElementLoads s )
+            ( { model | selectedSystem = s }, fetchElementLoads s )
 
         ElementLoadsFetched s ->
             ( { model | elementLoads = Just s }, Cmd.none )
@@ -204,7 +216,7 @@ update msg model =
             ( { model | dlgLoc = dlgOpen }, Cmd.none )
 
         LocOk ->
-            ( { model | dlgLoc = dlgClose }, addNewLocation model.locName )
+            ( { model | dlgLoc = dlgClose }, addNewLocation model.selectedProject model.locName )
 
         LocCancel ->
             ( { model | dlgLoc = dlgClose }, Cmd.none )
@@ -225,10 +237,13 @@ update msg model =
             ( { model | dlgSys = dlgOpen }, Cmd.none )
 
         SysOk ->
-            ( { model | dlgSys = dlgClose }, Cmd.none )
+            ( { model | dlgSys = dlgClose }, addNewSystem model.selectedLocation model.sysName )
 
         SysCancel ->
             ( { model | dlgSys = dlgClose }, Cmd.none )
+
+        SysNameChange s ->
+            ( { model | sysName = s }, Cmd.none )
 
         OnNewSystem newOid ->
             ( { model
@@ -237,6 +252,15 @@ update msg model =
               }
             , Cmd.none
             )
+
+        ElementOpen ->
+            ( { model | dlgElement = dlgOpen }, Cmd.none )
+
+        ElementOk ->
+            ( { model | dlgElement = dlgClose }, Cmd.none )
+
+        ElementCancel ->
+            ( { model | dlgElement = dlgClose }, Cmd.none )
 
 
 -- SUBSCRIPTIONS
@@ -267,6 +291,7 @@ view model =
                 [ makeOpenDlgButton "New project" ProjOpen
                 , makeOpenDlgButton "New location" LocOpen
                 , makeOpenDlgButton "New system" SysOpen
+                , makeOpenDlgButton "New element" ElementOpen
                 ]
             , H.div [ A.class "row" ]
                 [ makeSelect "Projects: " FetchLocations model.projects
@@ -287,8 +312,8 @@ view model =
             , H.div [ A.class "modalDialog", A.style [ ( "opacity", model.dlgLoc.opacity ), ( "pointer-events", model.dlgLoc.pointerEvents ) ] ]
                 [ H.div []
                     [ H.h4 [] [ H.text ("New Location for Project id: " ++ model.selectedProject) ]
-                    , H.label [ A.for "dlg1-name" ] [ H.text "Location name:" ]
-                    , H.input [ A.class "form-control", onChange LocNameChange ] []
+                    , H.label [ A.for "dlg2-name" ] [ H.text "Location name:" ]
+                    , H.input [ A.class "form-control", A.id "dlg2-name", onChange LocNameChange ] []
                     , H.button [ A.class "btn btn-default", E.onClick LocOk ] [ H.text "OK" ]
                     , H.button [ A.class "btn btn-default", E.onClick LocCancel ] [ H.text "Cancel" ]
                     ]
@@ -296,10 +321,17 @@ view model =
             , H.div [ A.class "modalDialog", A.style [ ( "opacity", model.dlgSys.opacity ), ( "pointer-events", model.dlgSys.pointerEvents ) ] ]
                 [ H.div []
                     [ H.h4 [] [ H.text ("New System for Location id: " ++ model.selectedLocation) ]
-                    , H.label [ A.for "dlg2-name" ] [ H.text "System name:" ]
-                    , H.input [ A.class "form-control" ] []
+                    , H.label [ A.for "dlg3-name" ] [ H.text "System name:" ]
+                    , H.input [ A.class "form-control", A.id "dlg3-name", onChange SysNameChange ] []
                     , H.button [ A.class "btn btn-default", E.onClick SysOk ] [ H.text "OK" ]
                     , H.button [ A.class "btn btn-default", E.onClick SysCancel ] [ H.text "Cancel" ]
+                    ]
+                ]
+            , H.div [ A.class "modalDialog", A.style [ ( "opacity", model.dlgElement.opacity ), ( "pointer-events", model.dlgElement.pointerEvents ) ] ]
+                [ H.div []
+                    [ H.h4 [] [ H.text ("New Element for System id: " ++ model.selectedSystem) ]
+                    , H.button [ A.class "btn btn-default", E.onClick ElementOk ] [ H.text "OK" ]
+                    , H.button [ A.class "btn btn-default", E.onClick ElementCancel ] [ H.text "Cancel" ]
                     ]
                 ]
             ]
@@ -307,7 +339,7 @@ view model =
 
 makeOpenDlgButton : String -> Msg -> VD.Node Msg
 makeOpenDlgButton caption clickEvent =
-    H.div [ A.class "col-sm-4" ]
+    H.div [ A.class "col-sm-3" ]
         [ H.button [ A.class "btn btn-default", E.onClick clickEvent ] [ H.text caption ]
         ]
 
@@ -369,30 +401,47 @@ asHttpBody lx =
     in
         Http.string (JE.encode 0 x)
 
-addNewDbItem : String -> String -> String -> (Int -> Msg) -> Cmd Msg
-addNewDbItem urlAction key item msg = 
+
+addNewDbItem : String -> List ( String, JE.Value ) -> (Int -> Msg) -> Cmd Msg
+addNewDbItem urlAction params msg =
     let
         url =
             mainUrl ++ urlAction
 
         pnBody =
-            asHttpBody [ ( key, JE.string item ), ( "jax", JE.int 34) ]
+            asHttpBody params
+
+        --  [ ( key, JE.string item ), ( "jax", JE.int 34) ]
     in
         Http.post Json.int url pnBody
             |> Task.mapError toString
-            |> Task.perform FetchFail msg 
+            |> Task.perform FetchFail msg
+
 
 addNewProject : String -> Cmd Msg
 addNewProject pn =
-    addNewDbItem "/newproject" "pn" pn OnNewProject
+    addNewDbItem "/newproject" [ ( "pn", JE.string pn ) ] OnNewProject
 
-addNewLocation : String -> Cmd Msg
-addNewLocation loc =
-    addNewDbItem "/newlocation" "loc" loc OnNewLocation
 
-addNewSystem : String -> Cmd Msg
-addNewSystem sys =
-    addNewDbItem "/newsystem" "sys" sys OnNewSystem
+addNewLocation : String -> String -> Cmd Msg
+addNewLocation pid loc =
+    case String.toInt pid of
+        Ok pidx ->
+            addNewDbItem "/newlocation" [ ( "pid", JE.int pidx ), ( "loc", JE.string loc ) ] OnNewLocation
+
+        Err errMsg ->
+            Cmd.none
+
+
+addNewSystem : String -> String -> Cmd Msg
+addNewSystem loc sys =
+    case String.toInt loc of
+        Ok locx ->
+            addNewDbItem "/newsystem" [ ( "loc", JE.int locx ), ( "sys", JE.string sys ) ] OnNewSystem
+
+        Err errMsg ->
+            Cmd.none
+
 
 comboBoxItemDecoder : Json.Decoder ComboBoxItem
 comboBoxItemDecoder =

@@ -5,7 +5,7 @@
     [stearnswharf.mybatis.vinapu
       ElementsMapper]
     [stearnswharf.geometry
-      ProjectBean])
+      ProjectBean LocationBean SystemBean])
   (:require
     [harborview.service.db :as DB]))
 
@@ -19,6 +19,22 @@
     (.setProjectName result pname)
   (DB/with-session :stearnswharf ProjectsMapper
     (.insertProject it result))
+    result))
+
+(defn insert-location [pid loc]
+  (let [result (LocationBean.)]
+    (.setProjectId result pid)
+    (.setLocationName result loc)
+  (DB/with-session :stearnswharf LocationsMapper
+    (.insertLocation it result))
+    result))
+
+(defn insert-system [loc sys]
+  (let [result (SystemBean.)]
+    (.setLocationId result loc)
+    (.setSystemName result sys)
+  (DB/with-session :stearnswharf SystemsMapper
+    (.insertSystem it result))
     result))
 
 (defn fetch-locations[project-id]

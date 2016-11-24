@@ -1,0 +1,7 @@
+#!/bin/bash
+
+docker run -it --rm -v "$(pwd):/code" -w "/code" -e "HOME=/tmp" -u $UID:$GID -p 8000:8000 codesimple/elm:0.17 make src/Harborview.elm --output elm.js
+
+cp elm.js ../src/resources/public/js/elm/
+
+exit 0
