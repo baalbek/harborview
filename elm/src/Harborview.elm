@@ -129,6 +129,7 @@ type Msg
     | ElementCancel
 
 
+
 -- INIT
 
 
@@ -167,13 +168,30 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ProjectsFetched s ->
-            ( { model | projects = Just s, locations = Nothing, systems = Nothing, elementLoads = Nothing }, Cmd.none )
+            ( { model
+                | projects = Just s
+                , selectedLocation = "-1"
+                , selectedSystem = "-1"
+                , locations = Nothing
+                , systems = Nothing
+                , elementLoads = Nothing
+              }
+            , Cmd.none
+            )
 
         FetchLocations s ->
             ( { model | selectedProject = s }, fetchLocations s )
 
         LocationsFetched s ->
-            ( { model | locations = Just s, systems = Nothing, elementLoads = Nothing }, Cmd.none )
+            ( { model
+                | locations = Just s
+                , selectedLocation = "-1"
+                , selectedSystem = "-1"
+                , systems = Nothing
+                , elementLoads = Nothing
+              }
+            , Cmd.none
+            )
 
         FetchSystems s ->
             ( { model | selectedLocation = s }, fetchSystems s )
@@ -263,6 +281,7 @@ update msg model =
             ( { model | dlgElement = dlgClose }, Cmd.none )
 
 
+
 -- SUBSCRIPTIONS
 
 
@@ -294,9 +313,9 @@ view model =
                 , makeOpenDlgButton "New element" ElementOpen
                 ]
             , H.div [ A.class "row" ]
-                [ makeSelect "Projects: " FetchLocations model.projects
-                , makeSelect "Locations: " FetchSystems model.locations
-                , makeSelect "Systems: " FetchElementLoads model.systems
+                [ makeSelect "Projects: " FetchLocations model.projects Nothing
+                , makeSelect "Locations: " FetchSystems model.locations (Just model.selectedLocation)
+                , makeSelect "Systems: " FetchElementLoads model.systems Nothing
                 ]
             , H.div [ A.class "row" ]
                 [ elementLoadsTable
@@ -344,13 +363,21 @@ makeOpenDlgButton caption clickEvent =
         ]
 
 
-makeSelectOption : ComboBoxItem -> VD.Node a
-makeSelectOption item =
-    H.option
-        [ A.value item.val
-          -- (toString item.val)
-        ]
-        [ H.text item.txt ]
+makeSelectOption : Maybe String -> ComboBoxItem -> VD.Node a
+makeSelectOption selected item =
+    case selected of
+        Nothing ->
+            H.option
+                [ A.value item.val
+                ]
+                [ H.text item.txt ]
+
+        Just selected' ->
+            H.option
+                [ A.value item.val
+                , A.selected (selected' == item.val)
+                ]
+                [ H.text item.txt ]
 
 
 emptySelectOption : VD.Node a
@@ -361,13 +388,16 @@ emptySelectOption =
         [ H.text "-" ]
 
 
-makeSelect : String -> (String -> a) -> Maybe SelectItems -> VD.Node a
-makeSelect caption msg payload =
+makeSelect : String -> (String -> a) -> Maybe SelectItems -> Maybe String -> VD.Node a
+makeSelect caption msg payload selected =
     let
+        makeSelectOption' =
+            makeSelectOption selected
+
         px =
             case payload of
                 Just p ->
-                    emptySelectOption :: List.map makeSelectOption p
+                    emptySelectOption :: List.map makeSelectOption' p
 
                 Nothing ->
                     []
