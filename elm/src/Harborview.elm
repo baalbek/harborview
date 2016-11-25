@@ -313,9 +313,9 @@ view model =
                 , makeOpenDlgButton "New element" ElementOpen
                 ]
             , H.div [ A.class "row" ]
-                [ makeSelect "Projects: " FetchLocations model.projects Nothing
-                , makeSelect "Locations: " FetchSystems model.locations (Just model.selectedLocation)
-                , makeSelect "Systems: " FetchElementLoads model.systems Nothing
+                [ makeSelect "Projects: " FetchLocations model.projects model.selectedProject
+                , makeSelect "Locations: " FetchSystems model.locations model.selectedLocation
+                , makeSelect "Systems: " FetchElementLoads model.systems model.selectedSystem
                 ]
             , H.div [ A.class "row" ]
                 [ elementLoadsTable
@@ -363,21 +363,13 @@ makeOpenDlgButton caption clickEvent =
         ]
 
 
-makeSelectOption : Maybe String -> ComboBoxItem -> VD.Node a
+makeSelectOption : String -> ComboBoxItem -> VD.Node a
 makeSelectOption selected item =
-    case selected of
-        Nothing ->
-            H.option
-                [ A.value item.val
-                ]
-                [ H.text item.txt ]
-
-        Just selected' ->
-            H.option
-                [ A.value item.val
-                , A.selected (selected' == item.val)
-                ]
-                [ H.text item.txt ]
+    H.option
+        [ A.value item.val
+        , A.selected (selected == item.val)
+        ]
+        [ H.text item.txt ]
 
 
 emptySelectOption : VD.Node a
@@ -388,7 +380,7 @@ emptySelectOption =
         [ H.text "-" ]
 
 
-makeSelect : String -> (String -> a) -> Maybe SelectItems -> Maybe String -> VD.Node a
+makeSelect : String -> (String -> a) -> Maybe SelectItems -> String -> VD.Node a
 makeSelect caption msg payload selected =
     let
         makeSelectOption' =
