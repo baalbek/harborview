@@ -1,7 +1,20 @@
 #!/bin/bash
 
-docker run -it --rm -v "$(pwd):/code" -w "/code" -e "HOME=/tmp" -u $UID:$GID -p 8000:8000 codesimple/elm:0.17 make src/Harborview.elm --output elm.js
 
-cp elm.js ../src/resources/public/js/elm/
+
+case "$1" in 
+    
+    1) ELM="src/Harborview.elm"
+       JS="elm.js" 
+        ;;
+
+    2) ELM="src/Maunaloa.elm"
+       JS="elm.js" 
+        ;;
+esac
+
+docker run -it --rm -v "$(pwd):/code" -w "/code" -e "HOME=/tmp" -u $UID:$GID -p 8000:8000 codesimple/elm:0.17 make $ELM --output $JS
+
+cp $JS ../src/resources/public/js/elm/
 
 exit 0

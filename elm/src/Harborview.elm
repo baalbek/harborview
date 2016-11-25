@@ -25,11 +25,11 @@ main =
 
 
 mainUrl =
-    "http://localhost:8082/vinapu"
+    --"http://localhost:8082/vinapu"
+    "https://192.168.1.48/vinapu"
 
 
 
---"https://192.168.1.48/vinapu"
 -- MODEL
 
 
