@@ -4,17 +4,19 @@
 
 case "$1" in 
     
-    1) ELM="src/Harborview.elm"
-       JS="elm.js" 
+    1) ELM="src/Vinapu/Projects.elm"
+       JS="elm-projects.js" 
+       TODIR="vinapu" 
         ;;
 
-    2) ELM="src/Maunaloa.elm"
-       JS="elm.js" 
+    2) ELM="src/Maunaloa/Charts.elm"
+       JS="elm-charts.js" 
+       TODIR="maunaloa"
         ;;
 esac
 
 docker run -it --rm -v "$(pwd):/code" -w "/code" -e "HOME=/tmp" -u $UID:$GID -p 8000:8000 codesimple/elm:0.17 make $ELM --output $JS
 
-cp $JS ../src/resources/public/js/elm/
+cp $JS ../src/resources/public/js/elm/$TODIR/$JS
 
 exit 0

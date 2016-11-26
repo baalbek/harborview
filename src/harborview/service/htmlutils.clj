@@ -24,6 +24,10 @@
    :headers {"Content-Type" "application/json"}
    :body (json/generate-string data)})
 
+(defn json-req-parse [req] 
+  (let [r (slurp (:body req))]
+    (json/parse-string r)))
+
 (defn bean->json [b]
   {"v" (str (.getOid b)) "t" (.toHtml b)})
 
