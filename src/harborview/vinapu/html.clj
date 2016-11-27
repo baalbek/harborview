@@ -2,23 +2,15 @@
   (:import
     [stearnswharf.vinapu.elements ElementLoadBean])
   (:use
-   [compojure.core :only (GET POST defroutes)])
+    [compojure.core :only (GET POST defroutes)])
   (:require
     [clj-json.core :as json]
-   [selmer.parser :as P]
-   [harborview.vinapu.dbx :as DBX]
-   [harborview.service.htmlutils :as U]))
+    [selmer.parser :as P]
+    [harborview.vinapu.dbx :as DBX]
+    [harborview.service.htmlutils :as U]))
 
 (defn projects []
-  (P/render-file "templates/vinapu/projects.html"
-    {:projects 
-      (concat
-        [{:value "-1" :content "-"}]
-        (map (fn [v] {:content v :value (str (.getOid v))})
-          (DBX/fetch-projects)))
-    :locations [{:value "-1" :content "-"}]
-    :systems [{:value "-1" :content "-"}]
-                }))
+  (P/render-file "templates/vinapu/projects.html" {}))
 
 (defn fetch-projects []
   (U/json-response
