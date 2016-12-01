@@ -3,6 +3,7 @@
    ;[selmer.parser :as P]
     [harborview.vinapu.dbx :as VIN]
     [harborview.vinapu.html :as VH]
+    [harborview.maunaloa.html :as MAU]
     [harborview.service.db :as DB]
     [harborview.service.htmlutils :as U]))
 
@@ -24,6 +25,12 @@
 
 (defn celx []
   (VH/cur-element-loads 2)) 
+
+(defn tix []
+  (MAU/tickers))
+
+(defn tixc []
+  (MAU/ticker-chart 2))
 
 (comment gs [fnr]
   (DB/with-session :koteriku HourlistGroupMapper

@@ -4,6 +4,7 @@ import Html.App as App
 import Html as H
 
 import Common.ModalDialog exposing (ModalDialog,dlgOpen,dlgClose)
+import Common.ComboBox exposing (ComboBoxItem,SelectItems,comboBoxItemDecoder,comboBoxItemListDecoder)
 
 main : Program Never
 main =

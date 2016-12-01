@@ -13,6 +13,7 @@ import VirtualDom as VD
 import Task
 import String
 import Common.ModalDialog exposing (ModalDialog,dlgOpen,dlgClose)
+import Common.ComboBox exposing (ComboBoxItem,SelectItems,comboBoxItemDecoder,comboBoxItemListDecoder)
 
 
 main : Program Never
@@ -32,17 +33,6 @@ mainUrl =
 
 
 -- MODEL
-
-
-type alias ComboBoxItem =
-    { val : String
-    , txt : String
-    }
-
-
-type alias SelectItems =
-    List ComboBoxItem
-
 
 type alias Model =
     { projects : Maybe SelectItems
@@ -448,19 +438,6 @@ addNewSystem loc sys =
 
         Err errMsg ->
             Cmd.none
-
-
-comboBoxItemDecoder : Json.Decoder ComboBoxItem
-comboBoxItemDecoder =
-    Json.object2
-        ComboBoxItem
-        ("v" := Json.string)
-        ("t" := Json.string)
-
-
-comboBoxItemListDecoder : Json.Decoder (List ComboBoxItem)
-comboBoxItemListDecoder =
-    Json.list comboBoxItemDecoder
 
 
 fetchProjects : Cmd Msg
