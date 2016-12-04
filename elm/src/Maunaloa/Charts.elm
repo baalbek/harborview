@@ -2,9 +2,15 @@ module Maunaloa.Charts exposing (..)
 
 import Html.App as App
 import Html as H
+import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose)
+import Common.ComboBox
+    exposing
+        ( ComboBoxItem
+        , SelectItems
+        , comboBoxItemDecoder
+        , comboBoxItemListDecoder
+        )
 
-import Common.ModalDialog exposing (ModalDialog,dlgOpen,dlgClose)
-import Common.ComboBox exposing (ComboBoxItem,SelectItems,comboBoxItemDecoder,comboBoxItemListDecoder)
 
 main : Program Never
 main =
@@ -16,13 +22,17 @@ main =
         }
 
 
+
 -----------------------------------------------
 -------------------- IMIT ---------------------
 -----------------------------------------------
 
+
 init : ( Model, Cmd Msg )
 init =
     ( initModel, Cmd.none )
+
+
 
 -----------------------------------------------
 ------------------- MODEL ---------------------
@@ -72,6 +82,7 @@ update msg model =
     case msg of
         Noop ->
             ( model, Cmd.none )
+
 
 
 -----------------------------------------------

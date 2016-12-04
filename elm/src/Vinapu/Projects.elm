@@ -12,8 +12,18 @@ import Json.Decode as Json exposing ((:=))
 import VirtualDom as VD
 import Task
 import String
-import Common.ModalDialog exposing (ModalDialog,dlgOpen,dlgClose)
-import Common.ComboBox exposing (ComboBoxItem,SelectItems,comboBoxItemDecoder,comboBoxItemListDecoder)
+import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
+import Common.ComboBox
+    exposing
+        ( ComboBoxItem
+        , SelectItems
+        , comboBoxItemDecoder
+        , comboBoxItemListDecoder
+        , makeSelectOption
+        , emptySelectOption
+        , makeSelect 
+        , onChange 
+        )
 
 
 main : Program Never
@@ -28,11 +38,16 @@ main =
 
 mainUrl =
     "http://localhost:8082/vinapu"
-    --"https://192.168.1.48/vinapu"
+
+
+makeOpenDlgButton' =
+    makeOpenDlgButton "col-sm-3"
 
 
 
+--"https://192.168.1.48/vinapu"
 -- MODEL
+
 
 type alias Model =
     { projects : Maybe SelectItems
@@ -282,10 +297,10 @@ view model =
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
-                [ makeOpenDlgButton "New project" ProjOpen
-                , makeOpenDlgButton "New location" LocOpen
-                , makeOpenDlgButton "New system" SysOpen
-                , makeOpenDlgButton "New element" ElementOpen
+                [ makeOpenDlgButton' "New project" ProjOpen
+                , makeOpenDlgButton' "New location" LocOpen
+                , makeOpenDlgButton' "New system" SysOpen
+                , makeOpenDlgButton' "New element" ElementOpen
                 ]
             , H.div [ A.class "row" ]
                 [ makeSelect "Projects: " FetchLocations model.projects model.selectedProject
@@ -295,66 +310,37 @@ view model =
             , H.div [ A.class "row" ]
                 [ elementLoadsTable
                 ]
-            , H.div [ A.class "modalDialog", A.style [ ( "opacity", model.dlgProj.opacity ), ( "pointer-events", model.dlgProj.pointerEvents ) ] ]
-                [ H.div []
-                    [ H.h4 [] [ H.text "New project" ]
-                    , H.input [ A.class "form-control", onChange ProjNameChange ] []
-                    , H.button [ A.class "btn btn-default", E.onClick ProjOk ] [ H.text "OK" ]
-                    , H.button [ A.class "btn btn-default", E.onClick ProjCancel ] [ H.text "Cancel" ]
-                    ]
+            , modalDialog "New project"
+                model.dlgProj
+                ProjOk
+                ProjCancel
+                [ H.input [ A.class "form-control", onChange ProjNameChange ] []
                 ]
-            , H.div [ A.class "modalDialog", A.style [ ( "opacity", model.dlgLoc.opacity ), ( "pointer-events", model.dlgLoc.pointerEvents ) ] ]
-                [ H.div []
-                    [ H.h4 [] [ H.text ("New Location for Project id: " ++ model.selectedProject) ]
-                    , H.label [ A.for "dlg2-name" ] [ H.text "Location name:" ]
-                    , H.input [ A.class "form-control", A.id "dlg2-name", onChange LocNameChange ] []
-                    , H.button [ A.class "btn btn-default", E.onClick LocOk ] [ H.text "OK" ]
-                    , H.button [ A.class "btn btn-default", E.onClick LocCancel ] [ H.text "Cancel" ]
-                    ]
+            , modalDialog ("New Location for Project id: " ++ model.selectedProject)
+                model.dlgLoc
+                LocOk
+                LocCancel
+                [ H.label [] [ H.text "Location name:" ]
+                , H.input [ A.class "form-control", onChange LocNameChange ] []
                 ]
-            , H.div [ A.class "modalDialog", A.style [ ( "opacity", model.dlgSys.opacity ), ( "pointer-events", model.dlgSys.pointerEvents ) ] ]
-                [ H.div []
-                    [ H.h4 [] [ H.text ("New System for Location id: " ++ model.selectedLocation) ]
-                    , H.label [ A.for "dlg3-name" ] [ H.text "System name:" ]
-                    , H.input [ A.class "form-control", A.id "dlg3-name", onChange SysNameChange ] []
-                    , H.button [ A.class "btn btn-default", E.onClick SysOk ] [ H.text "OK" ]
-                    , H.button [ A.class "btn btn-default", E.onClick SysCancel ] [ H.text "Cancel" ]
-                    ]
+            , modalDialog ("New System for Location id: " ++ model.selectedLocation)
+                model.dlgSys
+                SysOk
+                SysCancel
+                [ H.label [] [ H.text "System name:" ]
+                , H.input [ A.class "form-control", onChange SysNameChange ] []
                 ]
-            , H.div [ A.class "modalDialog", A.style [ ( "opacity", model.dlgElement.opacity ), ( "pointer-events", model.dlgElement.pointerEvents ) ] ]
-                [ H.div []
-                    [ H.h4 [] [ H.text ("New Element for System id: " ++ model.selectedSystem) ]
-                    , H.button [ A.class "btn btn-default", E.onClick ElementOk ] [ H.text "OK" ]
-                    , H.button [ A.class "btn btn-default", E.onClick ElementCancel ] [ H.text "Cancel" ]
-                    ]
+            , modalDialog ("New Element for System id: " ++ model.selectedSystem)
+                model.dlgElement
+                ElementOk
+                ElementCancel
+                [ H.label [] [ H.text "System name:" ]
+                , H.input [ A.class "form-control", onChange SysNameChange ] []
                 ]
             ]
 
 
-makeOpenDlgButton : String -> Msg -> VD.Node Msg
-makeOpenDlgButton caption clickEvent =
-    H.div [ A.class "col-sm-3" ]
-        [ H.button [ A.class "btn btn-default", E.onClick clickEvent ] [ H.text caption ]
-        ]
-
-
-makeSelectOption : String -> ComboBoxItem -> VD.Node a
-makeSelectOption selected item =
-    H.option
-        [ A.value item.val
-        , A.selected (selected == item.val)
-        ]
-        [ H.text item.txt ]
-
-
-emptySelectOption : VD.Node a
-emptySelectOption =
-    H.option
-        [ A.value "-1"
-        ]
-        [ H.text "-" ]
-
-
+{-
 makeSelect : String -> (String -> a) -> Maybe SelectItems -> String -> VD.Node a
 makeSelect caption msg payload selected =
     let
@@ -385,6 +371,7 @@ onChange : (String -> a) -> VD.Property a
 onChange tagger =
     E.on "change" (Json.map tagger E.targetValue)
 
+-}
 
 
 -- COMMANDS
