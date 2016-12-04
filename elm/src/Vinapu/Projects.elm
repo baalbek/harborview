@@ -340,40 +340,6 @@ view model =
             ]
 
 
-{-
-makeSelect : String -> (String -> a) -> Maybe SelectItems -> String -> VD.Node a
-makeSelect caption msg payload selected =
-    let
-        makeSelectOption' =
-            makeSelectOption selected
-
-        px =
-            case payload of
-                Just p ->
-                    emptySelectOption :: List.map makeSelectOption' p
-
-                Nothing ->
-                    []
-    in
-        H.div [ A.class "col-sm-4" ]
-            [ H.span []
-                [ H.label [] [ H.text caption ]
-                , H.select
-                    [ onChange msg
-                    , A.class "form-control"
-                    ]
-                    px
-                ]
-            ]
-
-
-onChange : (String -> a) -> VD.Property a
-onChange tagger =
-    E.on "change" (Json.map tagger E.targetValue)
-
--}
-
-
 -- COMMANDS
 
 
