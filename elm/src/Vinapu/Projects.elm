@@ -21,8 +21,8 @@ import Common.ComboBox
         , comboBoxItemListDecoder
         , makeSelectOption
         , emptySelectOption
-        , makeSelect 
-        , onChange 
+        , makeSelect
+        , onChange
         )
 
 
@@ -340,6 +340,7 @@ view model =
             ]
 
 
+
 -- COMMANDS
 
 
@@ -360,8 +361,6 @@ addNewDbItem urlAction params msg =
 
         pnBody =
             asHttpBody params
-
-        --  [ ( key, JE.string item ), ( "jax", JE.int 34) ]
     in
         Http.post Json.int url pnBody
             |> Task.mapError toString
