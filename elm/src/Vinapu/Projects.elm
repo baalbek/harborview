@@ -23,6 +23,7 @@ import Common.ComboBox
         , emptySelectOption
         , makeSelect
         , onChange
+        , updateComboBoxItems 
         )
 
 
@@ -135,24 +136,6 @@ init =
 emptyComboBoxItem : ComboBoxItem
 emptyComboBoxItem =
     ComboBoxItem "-1" "-"
-
-
-updateComboBoxItems : Int -> String -> Maybe SelectItems -> Maybe SelectItems
-updateComboBoxItems newOid newItemName curItems =
-    let
-        newOidStr =
-            toString newOid
-
-        newItem =
-            ComboBoxItem newOidStr ("[" ++ newOidStr ++ "] " ++ newItemName ++ " (New)")
-    in
-        case curItems of
-            Nothing ->
-                Just [ newItem ]
-
-            Just itemx ->
-                Just (newItem :: itemx)
-
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =

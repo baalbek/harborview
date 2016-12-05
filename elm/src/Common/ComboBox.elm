@@ -8,6 +8,7 @@ module Common.ComboBox
         , emptySelectOption 
         , makeSelect 
         , onChange 
+        , updateComboBoxItems 
         )
 
 import VirtualDom as VD
@@ -72,6 +73,22 @@ makeSelect caption msg payload selected =
                 ]
             ]
 
+
+updateComboBoxItems : Int -> String -> Maybe SelectItems -> Maybe SelectItems
+updateComboBoxItems newOid newItemName curItems =
+    let
+        newOidStr =
+            toString newOid
+
+        newItem =
+            ComboBoxItem newOidStr ("[" ++ newOidStr ++ "] " ++ newItemName ++ " (New)")
+    in
+        case curItems of
+            Nothing ->
+                Just [ newItem ]
+
+            Just itemx ->
+                Just (newItem :: itemx)
 
 comboBoxItemDecoder : Json.Decoder ComboBoxItem
 comboBoxItemDecoder =

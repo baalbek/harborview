@@ -2,13 +2,17 @@ module Maunaloa.Charts exposing (..)
 
 import Html.App as App
 import Html as H
-import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose)
+import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
 import Common.ComboBox
     exposing
         ( ComboBoxItem
         , SelectItems
         , comboBoxItemDecoder
         , comboBoxItemListDecoder
+        , makeSelectOption
+        , emptySelectOption
+        , makeSelect
+        , onChange
         )
 
 
@@ -68,7 +72,11 @@ type Msg
 
 view : Model -> H.Html Msg
 view model =
-    H.div [] []
+    H.div [ A.class "container" ]
+        [ H.div [ A.class "row" ]
+            [ makeSelect "Tickers: " FetchLocations model.projects model.selectedProject
+            ]
+        ]
 
 
 
