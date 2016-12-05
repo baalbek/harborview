@@ -37,8 +37,9 @@ main =
         }
 
 
-mainUrl =
-    "http://localhost:8082/vinapu"
+mainUrl = "/vinapu"
+
+-- "http://localhost:8082/vinapu"
 
 
 makeOpenDlgButton' =

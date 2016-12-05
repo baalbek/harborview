@@ -6,8 +6,6 @@
     [selmer.parser :as P]
     [harborview.service.htmlutils :as U]))
 
-(defn charts []
-  (P/render-file "templates/maunaloa/charts.html" {}))
 
 (defn ticker-chart [oid]
   (U/json-response
@@ -16,13 +14,16 @@
     
 
 (defn tickers []
-  (map (fn [x] (let [[v t] x] {"t" t "v" v}))
-    [[2 "STL"] [1 "NHY"] [3 "YAR"]]))
+  (U/json-response
+    (map (fn [x] (let [[v t] x] {"t" t "v" v}))
+      [["2" "STL"] ["1" "NHY"] ["3" "YAR"]])))
 
+(defn init []
+  (P/render-file "templates/maunaloa/charts.html" {}))
 
 
 (defroutes my-routes
-  (GET "/" request (charts))
+  (GET "/" request (init))
   (GET "/tickers" request (tickers))
   (GET "/ticker" [oid] (ticker-chart oid)))
 
