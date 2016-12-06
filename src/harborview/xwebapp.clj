@@ -9,6 +9,7 @@
    [harborview.derivatives.html :as OPX]
    [harborview.generaljournal.html :as GJ]
    [harborview.vinapu.html :as VIN]
+   [harborview.maunaloa.html :as MAU]
    [harborview.service.htmlutils :as UTIL])
   (:use
    [compojure.handler :only (api)]
@@ -20,11 +21,13 @@
 (P/cache-off!)
 
 (defroutes main-routes
-  (GET "/" request (VIN/projects))
+  ;(GET "/" request (VIN/projects))
+  (GET "/" request (MAU/init))
   ;(GET "/" request (HRL/hourlist))
   ;(GET "/" request (CRT/overlook (DBX/active-purchases (U/rs 11))))
   (context "/generaljournal" [] GJ/my-routes)
   (context "/vinapu" [] VIN/my-routes)
+  (context "/maunaloa" [] MAU/my-routes)
   (context "/hourlist" [] HRL/my-routes)
   (context "/critters" [] CRT/my-routes)
   (context "/opx" [] OPX/my-routes)

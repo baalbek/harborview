@@ -81,6 +81,9 @@ view model =
         [ H.div [ A.class "row" ]
             [ makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
             ]
+        , H.div [ A.id "chart1", A.style "position: absolute; top:200px; left:200px;" ]
+            [ 
+            ]
         ]
 
 
