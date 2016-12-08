@@ -5,7 +5,12 @@ import Task
 import Html.App as App
 import Html as H
 import Html.Attributes as A
+import Svg as S
+import Svg.Attributes as SA
+
+
 -- import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
+
 import Common.ComboBox
     exposing
         ( SelectItems
@@ -13,9 +18,11 @@ import Common.ComboBox
         , makeSelect
         , onChange
         )
+import ChartRuler.VRuler as VR
 
+mainUrl =
+    "/maunaloa"
 
-mainUrl = "/maunaloa"
 
 main : Program Never
 main =
@@ -77,12 +84,19 @@ type Msg
 
 view : Model -> H.Html Msg
 view model =
+    let 
+        w = "1200"
+        h = "300"
+    in 
     H.div [ A.class "container" ]
         [ H.div [ A.class "row" ]
             [ makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
             ]
-        , H.div [ A.id "chart1", A.style [("position", "absolute"), ("top","200px"), ("left","200px")] ]
-            [ 
+        , H.div [ A.style [ ( "position", "absolute" ), ( "top", "200px" ), ( "left", "200px" ) ] ]
+            [ S.svg [ SA.width (w ++ "px"), SA.height (h ++ "px") ]
+                [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 h, SA.stroke "#023963" ] []
+                , S.line [ SA.x1 "0", SA.y1 h, SA.x2 w, SA.y2 h, SA.stroke "#023963" ] []
+                ]
             ]
         ]
 
@@ -100,16 +114,16 @@ update msg model =
             Debug.log ("FetchFail: " ++ s) ( model, Cmd.none )
 
         TickersFetched s ->
-            Debug.log "TickersFetched" 
-            ( { model
-                | tickers = Just s
-              }
-            , Cmd.none
-            )
+            Debug.log "TickersFetched"
+                ( { model
+                    | tickers = Just s
+                  }
+                , Cmd.none
+                )
 
         FetchCharts s ->
-            Debug.log "FetchCharts" 
-            ( { model | selectedTicker = s }, Cmd.none )
+            Debug.log "FetchCharts"
+                ( { model | selectedTicker = s }, Cmd.none )
 
 
 
