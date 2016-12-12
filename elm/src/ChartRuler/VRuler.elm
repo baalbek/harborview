@@ -3,7 +3,7 @@ module ChartRuler.VRuler exposing (..)
 import Svg as S
 import Svg.Attributes as SA
 
-import ChartCommon.Point exposing (Point)
+import ChartCommon exposing (Point)
 
 {-|
 

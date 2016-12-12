@@ -1,5 +1,4 @@
-module ChartCommon.Point exposing (..)
-
+module ChartCommon exposing (..)
 
 type alias Point =
     { x : Float
