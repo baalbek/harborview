@@ -2,20 +2,20 @@ module ChartRuler.VRuler exposing (..)
 
 import Svg as S
 import Svg.Attributes as SA
+import ChartCommon as C exposing (Point, ChartValues)
 
-import ChartCommon exposing (Point)
 
 {-|
 
-    ppy : pixels pr y value 
+    ppy : pixels pr y value
 
 -}
-
 type alias VRuler =
-    { ul : Point 
-    , lr : Point 
-    , ppy : Float
-    , values : Maybe (List (List Float))
+    { ul : Point
+    , lr : Point
+    , ppy :
+        Float
+        -- , values : Maybe ChartValues
     }
 
 
@@ -29,13 +29,35 @@ calcPix ruler val =
     20.2
 
 
-initVruler : Point -> Point -> VRuler
-initVruler ul lr = 
-    let 
-        maxVal = 100.0
-        h = lr.y - ul.y
-        ppy = h / maxVal
-    in
-        VRuler ul lr ppy Nothing 
+vruler : Point -> Point -> Maybe ChartValues -> VRuler
+vruler ul lr cv =
+    let
+        ( minVal, maxVal ) =
+            minMax cv
 
-vruler : Point -> Point ->
+        valueSpan =
+            maxVal - minVal
+
+        h =
+            lr.y - ul.y
+
+        ppy =
+            h / valueSpan
+    in
+        VRuler ul lr ppy
+
+
+
+-- (Just (C.ChartPoints [[]]))
+
+
+minMax : Maybe ChartValues -> ( Float, Float )
+minMax cv =
+    case cv of
+        Nothing ->
+            ( 0.0, 100.0 )
+
+        Just cv' ->
+            ( 0.0, 100.0 )
+
+
