@@ -13,8 +13,9 @@ import ChartCommon as C exposing (Point, ChartValues)
 type alias VRuler =
     { ul : Point
     , lr : Point
-    , ppy :
-        Float
+    , ppy : Float
+    , minVal : Float
+    , maxVal : Float
         -- , values : Maybe ChartValues
     }
 
@@ -28,6 +29,8 @@ calcPix : VRuler -> Float -> Float
 calcPix ruler val =
     20.2
 
+lines : VRuler -> List (S.Svg a)
+lines vr = []
 
 vruler : Point -> Point -> Maybe ChartValues -> VRuler
 vruler ul lr cv =
@@ -44,7 +47,7 @@ vruler ul lr cv =
         ppy =
             h / valueSpan
     in
-        VRuler ul lr ppy
+        VRuler ul lr ppy minVal maxVal
 
 
 
