@@ -15,9 +15,22 @@ type alias VRuler =
     , lr : Point
     , ppy : Float
     , minVal : Float
-    , maxVal : Float
+    , maxVal :
+        Float
         -- , values : Maybe ChartValues
     }
+
+
+r : VRuler
+r =
+    let
+        p0 =
+            Point 0 0
+
+        p1 =
+            Point 1200 950
+    in
+        vruler p0 p1 Nothing
 
 
 calcValue : VRuler -> Float -> Float
@@ -29,8 +42,31 @@ calcPix : VRuler -> Float -> Float
 calcPix ruler val =
     20.2
 
+
 lines : VRuler -> List (S.Svg a)
-lines vr = []
+lines vr =
+    let
+        step =
+            vr.ppy * ((vr.maxVal - vr.minVal) / 10.0)
+
+        x1s =
+            toString vr.ul.x
+
+        x2s =
+            toString vr.lr.x
+
+        range =
+            [1..10]
+
+        lineFn x =
+            let
+                curY =
+                    toString <| step * x
+            in
+                S.line [ SA.x1 x1s, SA.y1 "0", SA.x2 x2s, SA.y2 curY, SA.stroke "#023963" ] []
+    in
+        List.map lineFn range
+
 
 vruler : Point -> Point -> Maybe ChartValues -> VRuler
 vruler ul lr cv =
@@ -62,5 +98,3 @@ minMax cv =
 
         Just cv' ->
             ( 0.0, 100.0 )
-
-

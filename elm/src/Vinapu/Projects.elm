@@ -22,8 +22,9 @@ import Common.ComboBox
         , makeSelectOption
         , emptySelectOption
         , makeSelect
+        , makeSimpleSelect
         , onChange
-        , updateComboBoxItems 
+        , updateComboBoxItems
         )
 
 
@@ -37,7 +38,10 @@ main =
         }
 
 
-mainUrl = "/vinapu"
+mainUrl =
+    "/vinapu"
+
+
 
 -- "http://localhost:8082/vinapu"
 
@@ -55,6 +59,7 @@ type alias Model =
     { projects : Maybe SelectItems
     , locations : Maybe SelectItems
     , systems : Maybe SelectItems
+    , nodes : Maybe SelectItems
     , elementLoads : Maybe String
     , dlgProj : ModalDialog
     , projName : String
@@ -74,6 +79,7 @@ initModel =
     { projects = Nothing
     , locations = Nothing
     , systems = Nothing
+    , nodes = Nothing
     , elementLoads = Nothing
     , dlgProj = dlgClose
     , projName = ""
@@ -119,6 +125,7 @@ type Msg
     | ElementOpen
     | ElementOk
     | ElementCancel
+    | ElementNameChange String
 
 
 
@@ -137,6 +144,7 @@ init =
 emptyComboBoxItem : ComboBoxItem
 emptyComboBoxItem =
     ComboBoxItem "-1" "-"
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -254,6 +262,9 @@ update msg model =
         ElementCancel ->
             ( { model | dlgElement = dlgClose }, Cmd.none )
 
+        ElementNameChange s ->
+            ( model, Cmd.none )
+
 
 
 -- SUBSCRIPTIONS
@@ -318,8 +329,9 @@ view model =
                 model.dlgElement
                 ElementOk
                 ElementCancel
-                [ H.label [] [ H.text "System name:" ]
-                , H.input [ A.class "form-control", onChange SysNameChange ] []
+                [ H.label [] [ H.text "Element name:" ]
+                , H.input [ A.class "form-control", onChange ElementNameChange ] []
+                , makeSimpleSelect "Node 1: " model.nodes "-1"
                 ]
             ]
 
@@ -376,6 +388,19 @@ addNewSystem loc sys =
             Cmd.none
 
 
+
+{-
+   addNewElement : String -> String -> Cmd Msg
+   addNewElement sys elname =
+       case String.toInt sys of
+           Ok sysx ->
+               addNewDbItem "/newelement" [ ( "sys", JE.int sysx ), ( "elname", JE.string elname) ] OnNewElement
+
+           Err errMsg ->
+               Cmd.none
+-}
+
+
 fetchProjects : Cmd Msg
 fetchProjects =
     fetchComboBoxItems ProjectsFetched (mainUrl ++ "/projects")
@@ -384,6 +409,24 @@ fetchProjects =
 fetchLocations : String -> Cmd Msg
 fetchLocations s =
     fetchComboBoxItems LocationsFetched (mainUrl ++ "/locations?oid=" ++ s)
+
+
+type alias DualComboBoxList =
+    { systems : List ComboBoxItem
+    , nodes : List ComboBoxItem
+    }
+
+
+fetchSystemsx : String -> Result String DualComboBoxList
+fetchSystemsx s =
+    let
+        myDecoder =
+            Json.object2
+                DualComboBoxList
+                ("systems" := comboBoxItemListDecoder)
+                ("nodes" := comboBoxItemListDecoder)
+    in
+        Json.decodeString myDecoder s
 
 
 fetchSystems : String -> Cmd Msg

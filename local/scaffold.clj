@@ -17,8 +17,14 @@
 (defn projx []
   (VH/fetch-projects)) 
 
-(defn sys [oid]
-  (VIN/fetch-systems oid)) 
+(defn locs [oid]
+  (VIN/fetch-locations oid)) 
+
+(defn sys [loc-id]
+  (VIN/fetch-systems loc-id)) 
+
+(defn nodes [loc-id]
+  (VIN/fetch-nodes loc-id)) 
 
 (defn elx []
   (VIN/fetch-element-loads 2)) 

@@ -7,6 +7,7 @@ module Common.ComboBox
         , makeSelectOption 
         , emptySelectOption 
         , makeSelect 
+        , makeSimpleSelect 
         , onChange 
         , updateComboBoxItems 
         )
@@ -73,6 +74,29 @@ makeSelect caption msg payload selected =
                 ]
             ]
 
+makeSimpleSelect : String -> Maybe SelectItems -> String -> VD.Node a
+makeSimpleSelect caption payload selected =
+    let
+        makeSelectOption' =
+            makeSelectOption selected
+
+        px =
+            case payload of
+                Just p ->
+                    emptySelectOption :: List.map makeSelectOption' p
+
+                Nothing ->
+                    []
+    in
+        H.div [ A.class "col-sm-4" ]
+            [ H.span []
+                [ H.label [] [ H.text caption ]
+                , H.select
+                    [ A.class "form-control"
+                    ]
+                    px
+                ]
+            ]
 
 updateComboBoxItems : Int -> String -> Maybe SelectItems -> Maybe SelectItems
 updateComboBoxItems newOid newItemName curItems =
