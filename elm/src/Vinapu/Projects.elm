@@ -12,6 +12,7 @@ import Json.Decode as Json exposing ((:=))
 import VirtualDom as VD
 import Task
 import String
+import Common.Miscellaneous exposing (makeLabel,onChange)
 import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
 import Common.ComboBox
     exposing
@@ -23,7 +24,6 @@ import Common.ComboBox
         , emptySelectOption
         , makeSelect
         , makeSimpleSelect
-        , onChange
         , updateComboBoxItems
         )
 
@@ -329,14 +329,10 @@ view model =
                 model.dlgElement
                 ElementOk
                 ElementCancel
-                [ H.label [] [ H.text "Element name:" ]
+                [ makeLabel "Element Name:"
                 , H.input [ A.class "form-control", onChange ElementNameChange ] []
-                , H.input [ A.class "form-control", onChange ElementNameChange ] []
-                , H.input [ A.class "form-control", onChange ElementNameChange ] []
-                , H.select
-                    [ A.class "form-control"
-                    ] []
-                -- , makeSimpleSelect "Node 1: " model.nodes "-1"
+                , makeLabel "Node 1:"
+                , makeSimpleSelect model.locations "-1"
                 ]
             ]
 

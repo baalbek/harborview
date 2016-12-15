@@ -8,7 +8,6 @@ module Common.ComboBox
         , emptySelectOption 
         , makeSelect 
         , makeSimpleSelect 
-        , onChange 
         , updateComboBoxItems 
         )
 
@@ -16,7 +15,6 @@ import VirtualDom as VD
 import Json.Decode as Json exposing ((:=))
 import Html as H
 import Html.Attributes as A
-import Html.Events as E
 
 
 type alias ComboBoxItem =
@@ -45,9 +43,6 @@ emptySelectOption =
         ]
         [ H.text "-" ]
 
-onChange : (String -> a) -> VD.Property a
-onChange tagger =
-    E.on "change" (Json.map tagger E.targetValue)
 
 makeSelect : String -> (String -> a) -> Maybe SelectItems -> String -> VD.Node a
 makeSelect caption msg payload selected =
@@ -74,8 +69,8 @@ makeSelect caption msg payload selected =
                 ]
             ]
 
-makeSimpleSelect : String -> Maybe SelectItems -> String -> VD.Node a
-makeSimpleSelect caption payload selected =
+makeSimpleSelect : Maybe SelectItems -> String -> VD.Node a
+makeSimpleSelect payload selected =
     let
         makeSelectOption' =
             makeSelectOption selected
@@ -88,15 +83,11 @@ makeSimpleSelect caption payload selected =
                 Nothing ->
                     []
     in
-        H.div [ A.class "col-sm-4" ]
-            [ H.span []
-                [ H.label [] [ H.text caption ]
-                , H.select
-                    [ A.class "form-control"
-                    ]
-                    px
-                ]
-            ]
+        H.select
+        [ A.class "form-control"
+        ]
+        px
+        
 
 updateComboBoxItems : Int -> String -> Maybe SelectItems -> Maybe SelectItems
 updateComboBoxItems newOid newItemName curItems =

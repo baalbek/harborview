@@ -11,12 +11,13 @@ import Svg.Attributes as SA
 
 -- import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
 
+
+import Common.Miscellaneous exposing (makeLabel,onChange)
 import Common.ComboBox
     exposing
         ( SelectItems
         , comboBoxItemListDecoder
         , makeSelect
-        , onChange
         )
 import ChartRuler.VRuler as VR
 
