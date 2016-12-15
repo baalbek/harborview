@@ -331,7 +331,12 @@ view model =
                 ElementCancel
                 [ H.label [] [ H.text "Element name:" ]
                 , H.input [ A.class "form-control", onChange ElementNameChange ] []
-                , makeSimpleSelect "Node 1: " model.nodes "-1"
+                , H.input [ A.class "form-control", onChange ElementNameChange ] []
+                , H.input [ A.class "form-control", onChange ElementNameChange ] []
+                , H.select
+                    [ A.class "form-control"
+                    ] []
+                -- , makeSimpleSelect "Node 1: " model.nodes "-1"
                 ]
             ]
 
