@@ -16,6 +16,7 @@ import Json.Decode as Json exposing ((:=))
 import Html as H
 import Html.Attributes as A
 
+import Common.Miscellaneous exposing (onChange)
 
 type alias ComboBoxItem =
     { val : String
