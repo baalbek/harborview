@@ -50,9 +50,9 @@
 
   (GET "/locations" [oid] (fetch-x oid DBX/fetch-locations))
 
-  (GET "/systems" [oid] (fetch-x oid DBX/fetch-systems))
+  ;(GET "/systems" [oid] (fetch-x oid DBX/fetch-systems))
 
-  (GET "/systemsx" [oid] 
+  (GET "/systems" [oid] 
     (let [my-fetch (fn [fetch-fnx] (map U/bean->json (fetch-fnx (U/rs oid))))
           systems (my-fetch DBX/fetch-systems)
           nodes (my-fetch DBX/fetch-nodes)]

@@ -103,7 +103,7 @@ type Msg
     | FetchLocations String
     | LocationsFetched SelectItems
     | FetchSystems String
-    | SystemsFetched SelectItems
+    | SystemsFetched DualComboBoxList 
     | FetchElementLoads String
     | ElementLoadsFetched String
     | FetchFail String
@@ -179,7 +179,8 @@ update msg model =
             ( { model | selectedLocation = s }, fetchSystems s )
 
         SystemsFetched s ->
-            ( { model | systems = Just s, elementLoads = Nothing }, Cmd.none )
+            ( { model | systems = Just s.systems, nodes = Just s.nodes, elementLoads = Nothing }, Cmd.none )
+            -- Debug.log (toString s.nodes) ( model, Cmd.none )
 
         FetchElementLoads s ->
             ( { model | selectedSystem = s }, fetchElementLoads s )
@@ -332,7 +333,9 @@ view model =
                 [ makeLabel "Element Name:"
                 , H.input [ A.class "form-control", onChange ElementNameChange ] []
                 , makeLabel "Node 1:"
-                , makeSimpleSelect model.locations "-1"
+                , makeSimpleSelect model.nodes "-1"
+                , makeLabel "Node 2:"
+                , makeSimpleSelect model.nodes "-1"
                 ]
             ]
 
@@ -432,7 +435,17 @@ fetchSystemsx s =
 
 fetchSystems : String -> Cmd Msg
 fetchSystems s =
-    fetchComboBoxItems SystemsFetched (mainUrl ++ "/systems?oid=" ++ s)
+    let
+        myDecoder =
+            Json.object2
+                DualComboBoxList
+                ("systems" := comboBoxItemListDecoder)
+                ("nodes" := comboBoxItemListDecoder)
+        myUrl = (mainUrl ++ "/systems?oid=" ++ s)
+    in
+        Http.get myDecoder myUrl
+            |> Task.mapError toString
+            |> Task.perform FetchFail SystemsFetched 
 
 
 fetchComboBoxItems : (SelectItems -> Msg) -> String -> Cmd Msg
