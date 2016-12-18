@@ -12,7 +12,7 @@ import Json.Decode as Json exposing ((:=))
 import VirtualDom as VD
 import Task
 import String
-import Common.Miscellaneous exposing (makeLabel,onChange)
+import Common.Miscellaneous exposing (makeLabel, makeInput, onChange)
 import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
 import Common.ComboBox
     exposing
@@ -55,8 +55,15 @@ makeOpenDlgButton' =
 -- MODEL
 
 
+type alias DualComboBoxList =
+    { first : List ComboBoxItem
+    , second : List ComboBoxItem
+    }
+
+
 type alias Model =
     { projects : Maybe SelectItems
+    , loads : Maybe SelectItems
     , locations : Maybe SelectItems
     , systems : Maybe SelectItems
     , nodes : Maybe SelectItems
@@ -77,6 +84,7 @@ type alias Model =
 initModel : Model
 initModel =
     { projects = Nothing
+    , loads = Nothing
     , locations = Nothing
     , systems = Nothing
     , nodes = Nothing
@@ -99,11 +107,11 @@ initModel =
 
 
 type Msg
-    = ProjectsFetched SelectItems
+    = ProjectsFetched DualComboBoxList
     | FetchLocations String
     | LocationsFetched SelectItems
     | FetchSystems String
-    | SystemsFetched DualComboBoxList 
+    | SystemsFetched DualComboBoxList
     | FetchElementLoads String
     | ElementLoadsFetched String
     | FetchFail String
@@ -151,7 +159,8 @@ update msg model =
     case msg of
         ProjectsFetched s ->
             ( { model
-                | projects = Just s
+                | projects = Just s.first
+                , loads = Just s.second
                 , selectedLocation = "-1"
                 , selectedSystem = "-1"
                 , locations = Nothing
@@ -179,9 +188,9 @@ update msg model =
             ( { model | selectedLocation = s }, fetchSystems s )
 
         SystemsFetched s ->
-            ( { model | systems = Just s.systems, nodes = Just s.nodes, elementLoads = Nothing }, Cmd.none )
-            -- Debug.log (toString s.nodes) ( model, Cmd.none )
+            ( { model | systems = Just s.first, nodes = Just s.second, elementLoads = Nothing }, Cmd.none )
 
+        -- Debug.log (toString s.nodes) ( model, Cmd.none )
         FetchElementLoads s ->
             ( { model | selectedSystem = s }, fetchElementLoads s )
 
@@ -310,32 +319,36 @@ view model =
                 model.dlgProj
                 ProjOk
                 ProjCancel
-                [ H.input [ A.class "form-control", onChange ProjNameChange ] []
+                [ makeInput ProjNameChange
                 ]
             , modalDialog ("New Location for Project id: " ++ model.selectedProject)
                 model.dlgLoc
                 LocOk
                 LocCancel
-                [ H.label [] [ H.text "Location name:" ]
-                , H.input [ A.class "form-control", onChange LocNameChange ] []
+                [ makeLabel "Location Name:"
+                , makeInput LocNameChange
                 ]
             , modalDialog ("New System for Location id: " ++ model.selectedLocation)
                 model.dlgSys
                 SysOk
                 SysCancel
-                [ H.label [] [ H.text "System name:" ]
-                , H.input [ A.class "form-control", onChange SysNameChange ] []
+                [ makeLabel "System Name:"
+                , makeInput SysNameChange
                 ]
             , modalDialog ("New Element for System id: " ++ model.selectedSystem)
                 model.dlgElement
                 ElementOk
                 ElementCancel
                 [ makeLabel "Element Name:"
-                , H.input [ A.class "form-control", onChange ElementNameChange ] []
+                , makeInput ElementNameChange
                 , makeLabel "Node 1:"
                 , makeSimpleSelect model.nodes "-1"
                 , makeLabel "Node 2:"
                 , makeSimpleSelect model.nodes "-1"
+                , makeLabel "Dead Load:"
+                , makeSimpleSelect model.loads "-1"
+                , makeLabel "Live Load:"
+                , makeSimpleSelect model.loads "-1"
                 ]
             ]
 
@@ -392,45 +405,30 @@ addNewSystem loc sys =
             Cmd.none
 
 
-
-{-
-   addNewElement : String -> String -> Cmd Msg
-   addNewElement sys elname =
-       case String.toInt sys of
-           Ok sysx ->
-               addNewDbItem "/newelement" [ ( "sys", JE.int sysx ), ( "elname", JE.string elname) ] OnNewElement
-
-           Err errMsg ->
-               Cmd.none
--}
-
-
 fetchProjects : Cmd Msg
 fetchProjects =
-    fetchComboBoxItems ProjectsFetched (mainUrl ++ "/projects")
+    let
+        myDecoder =
+            Json.object2
+                DualComboBoxList
+                ("projects" := comboBoxItemListDecoder)
+                ("loads" := comboBoxItemListDecoder)
+
+        myUrl =
+            (mainUrl ++ "/projects")
+    in
+        Http.get myDecoder myUrl
+            |> Task.mapError toString
+            |> Task.perform FetchFail ProjectsFetched
+
+
+
+-- fetchComboBoxItems ProjectsFetched (mainUrl ++ "/projects")
 
 
 fetchLocations : String -> Cmd Msg
 fetchLocations s =
     fetchComboBoxItems LocationsFetched (mainUrl ++ "/locations?oid=" ++ s)
-
-
-type alias DualComboBoxList =
-    { systems : List ComboBoxItem
-    , nodes : List ComboBoxItem
-    }
-
-
-fetchSystemsx : String -> Result String DualComboBoxList
-fetchSystemsx s =
-    let
-        myDecoder =
-            Json.object2
-                DualComboBoxList
-                ("systems" := comboBoxItemListDecoder)
-                ("nodes" := comboBoxItemListDecoder)
-    in
-        Json.decodeString myDecoder s
 
 
 fetchSystems : String -> Cmd Msg
@@ -441,11 +439,13 @@ fetchSystems s =
                 DualComboBoxList
                 ("systems" := comboBoxItemListDecoder)
                 ("nodes" := comboBoxItemListDecoder)
-        myUrl = (mainUrl ++ "/systems?oid=" ++ s)
+
+        myUrl =
+            (mainUrl ++ "/systems?oid=" ++ s)
     in
         Http.get myDecoder myUrl
             |> Task.mapError toString
-            |> Task.perform FetchFail SystemsFetched 
+            |> Task.perform FetchFail SystemsFetched
 
 
 fetchComboBoxItems : (SelectItems -> Msg) -> String -> Cmd Msg
@@ -467,6 +467,31 @@ fetchElementLoads s =
 
 
 
+{-
+   dc : String -> DualComboBoxList-- Result String DualComboBoxList
+   dc s =
+       let
+           myDecoder =
+               Json.object2
+               DualComboBoxList
+                   ("projects" := comboBoxItemListDecoder)
+                   ("loads" := comboBoxItemListDecoder)
+           result = Json.decodeString myDecoder s
+       in
+           case result of
+               Ok r -> r
+               Err _ -> DualComboBoxList [ComboBoxItem "" ""] [ComboBoxItem "" ""]
+-}
+{-
+   addNewElement : String -> String -> Cmd Msg
+   addNewElement sys elname =
+       case String.toInt sys of
+           Ok sysx ->
+               addNewDbItem "/newelement" [ ( "sys", JE.int sysx ), ( "elname", JE.string elname) ] OnNewElement
+
+           Err errMsg ->
+               Cmd.none
+-}
 {--
 (>>=) : Maybe a -> (a -> Maybe b) -> Maybe b
 (>>=) = Maybe.andThen

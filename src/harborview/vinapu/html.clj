@@ -31,7 +31,13 @@
 
   (GET "/" request (projects))
 
-  (GET "/projects" [] (fetch-projects))
+  (GET "/projects" [] 
+    (let [my-fetch (fn [fetch-fnx] (map U/bean->json (fetch-fnx)))
+          projects (my-fetch DBX/fetch-projects)
+          loads (my-fetch DBX/fetch-loads)]
+      (U/json-response
+        {:projects projects :loads loads})))
+
 
   (POST "/newproject" request 
     (let [jr (U/json-req-parse request)

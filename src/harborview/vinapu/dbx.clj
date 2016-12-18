@@ -2,6 +2,8 @@
   (:import
     [stearnswharf.mybatis.geometry 
       ProjectsMapper LocationsMapper SystemsMapper NodesMapper]
+    [stearnswharf.mybatis.materials
+      LoadsMapper]
     [stearnswharf.mybatis.vinapu
       ElementsMapper]
     [stearnswharf.geometry
@@ -48,6 +50,11 @@
 (defn fetch-nodes [loc-id]
   (DB/with-session :stearnswharf NodesMapper 
     (.locationNodes it loc-id)))
+
+(defn fetch-loads []
+  (DB/with-session :stearnswharf LoadsMapper
+    (.fetchLoads it)))
+
 
 (defn fetch-element-loads [sys-id]
   (DB/with-session :stearnswharf ElementsMapper 
