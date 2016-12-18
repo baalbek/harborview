@@ -60,10 +60,16 @@ type alias DualComboBoxList =
     , second : List ComboBoxItem
     }
 
+type alias TripleComboBoxList =
+    { first : List ComboBoxItem
+    , second : List ComboBoxItem
+    , third : List ComboBoxItem
+    }
 
 type alias Model =
     { projects : Maybe SelectItems
-    , loads : Maybe SelectItems
+    , deadloads : Maybe SelectItems
+    , liveloads : Maybe SelectItems
     , locations : Maybe SelectItems
     , systems : Maybe SelectItems
     , nodes : Maybe SelectItems
@@ -84,7 +90,8 @@ type alias Model =
 initModel : Model
 initModel =
     { projects = Nothing
-    , loads = Nothing
+    , deadloads = Nothing
+    , liveloads = Nothing
     , locations = Nothing
     , systems = Nothing
     , nodes = Nothing
@@ -107,7 +114,7 @@ initModel =
 
 
 type Msg
-    = ProjectsFetched DualComboBoxList
+    = ProjectsFetched TripleComboBoxList
     | FetchLocations String
     | LocationsFetched SelectItems
     | FetchSystems String
@@ -409,10 +416,11 @@ fetchProjects : Cmd Msg
 fetchProjects =
     let
         myDecoder =
-            Json.object2
-                DualComboBoxList
+            Json.object3
+                TripleComboBoxList
                 ("projects" := comboBoxItemListDecoder)
-                ("loads" := comboBoxItemListDecoder)
+                ("deadloads" := comboBoxItemListDecoder)
+                ("liveloads" := comboBoxItemListDecoder)
 
         myUrl =
             (mainUrl ++ "/projects")

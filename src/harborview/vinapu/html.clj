@@ -34,9 +34,13 @@
   (GET "/projects" [] 
     (let [my-fetch (fn [fetch-fnx] (map U/bean->json (fetch-fnx)))
           projects (my-fetch DBX/fetch-projects)
-          loads (my-fetch DBX/fetch-loads)]
+          loads (DBX/fetch-loads)
+          load-cat-fn (fn [cat] (map U/bean->json (filter #(= (.getLoadCategory %) cat) loads)))
+          dead-loads (load-cat-fn 1)
+          live-loads (load-cat-fn 2)
+          ]
       (U/json-response
-        {:projects projects :loads loads})))
+        {:projects projects :deadloads dead-loads :liveloads live-loads})))
 
 
   (POST "/newproject" request 

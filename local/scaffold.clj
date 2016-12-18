@@ -29,6 +29,9 @@
 (defn elx []
   (VIN/fetch-element-loads 2)) 
 
+(defn loads []
+  (VIN/fetch-loads)) 
+
 (defn celx []
   (VH/cur-element-loads 2)) 
 
