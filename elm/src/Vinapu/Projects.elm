@@ -81,9 +81,12 @@ type alias Model =
     , dlgSys : ModalDialog
     , sysName : String
     , dlgElement : ModalDialog
+    , dlgElementLoad : ModalDialog
     , selectedProject : String
     , selectedLocation : String
     , selectedSystem : String
+    , plw : String
+    , width : String
     }
 
 
@@ -103,9 +106,12 @@ initModel =
     , dlgSys = dlgClose
     , sysName = ""
     , dlgElement = dlgClose
+    , dlgElementLoad = dlgClose
     , selectedProject = "-1"
     , selectedLocation = "-1"
     , selectedSystem = "-1"
+    , plw = "0.5"
+    , width = "5.0"
     }
 
 
@@ -140,9 +146,12 @@ type Msg
     | ElementOpen
     | ElementOk
     | ElementCancel
-    | ElementNameChange String
-
-
+    | ElementDescChange String
+    | ElementLoadOpen
+    | ElementLoadOk
+    | ElementLoadCancel
+    | PlwChange String
+    | PlateWidthChange String
 
 -- INIT
 
@@ -280,10 +289,23 @@ update msg model =
         ElementCancel ->
             ( { model | dlgElement = dlgClose }, Cmd.none )
 
-        ElementNameChange s ->
+        ElementDescChange s ->
             ( model, Cmd.none )
 
+        PlwChange s ->
+            ( model, Cmd.none )
 
+        PlateWidthChange s ->
+            ( model, Cmd.none )
+
+        ElementLoadOpen ->
+            ( model, Cmd.none )
+
+        ElementLoadOk ->
+            ( model, Cmd.none )
+        
+        ElementLoadCancel ->
+            ( model, Cmd.none )
 
 -- SUBSCRIPTIONS
 
@@ -347,17 +369,22 @@ view model =
                 model.dlgElement
                 ElementOk
                 ElementCancel
-                [ makeLabel "Element Name:"
-                , makeInput ElementNameChange
+                [ makeLabel "Element Desc:"
+                , makeInput ElementDescChange
                 , makeLabel "Node 1:"
                 , makeSimpleSelect model.nodes "-1"
                 , makeLabel "Node 2:"
                 , makeSimpleSelect model.nodes "-1"
-                , makeLabel "Dead Load:"
-                , makeSimpleSelect model.deadloads "-1"
-                , makeLabel "Live Load:"
-                , makeSimpleSelect model.liveloads "-1"
+                , makeLabel "Load Distribution Factor:"
+                , makeInput PlwChange
+                , makeLabel "Plate Width:"
+                , makeInput PlateWidthChange
                 ]
+            , modalDialog "Element Load for Element id: " 
+                model.dlgElementLoad
+                ElementLoadOk
+                ElementLoadCancel
+                []
             ]
 
 
