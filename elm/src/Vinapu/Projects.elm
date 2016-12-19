@@ -167,7 +167,8 @@ update msg model =
         ProjectsFetched s ->
             ( { model
                 | projects = Just s.first
-                , loads = Just s.second
+                , deadloads = Just s.second
+                , liveloads = Just s.third
                 , selectedLocation = "-1"
                 , selectedSystem = "-1"
                 , locations = Nothing
@@ -353,9 +354,9 @@ view model =
                 , makeLabel "Node 2:"
                 , makeSimpleSelect model.nodes "-1"
                 , makeLabel "Dead Load:"
-                , makeSimpleSelect model.loads "-1"
+                , makeSimpleSelect model.deadloads "-1"
                 , makeLabel "Live Load:"
-                , makeSimpleSelect model.loads "-1"
+                , makeSimpleSelect model.liveloads "-1"
                 ]
             ]
 
