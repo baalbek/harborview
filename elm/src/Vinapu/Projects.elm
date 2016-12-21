@@ -12,7 +12,7 @@ import Json.Decode as Json exposing ((:=))
 import VirtualDom as VD
 import Task
 import String
-import Common.Miscellaneous exposing (makeLabel, makeInput, onChange)
+import Common.Miscellaneous as CM exposing (makeLabel, makeInput, onChange, makeFGRInput )
 import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
 import Common.ComboBox
     exposing
@@ -87,6 +87,8 @@ type alias Model =
     , selectedSystem : String
     , plw : String
     , width : String
+    , loadFactor1 : String
+    , formFactor1 : String
     }
 
 
@@ -112,6 +114,8 @@ initModel =
     , selectedSystem = "-1"
     , plw = "0.5"
     , width = "5.0"
+    , loadFactor1 = "5.0"
+    , formFactor1 = "1.0"
     }
 
 
@@ -375,10 +379,25 @@ view model =
                 , makeSimpleSelect model.nodes "-1"
                 , makeLabel "Node 2:"
                 , makeSimpleSelect model.nodes "-1"
+                {-
                 , makeLabel "Load Distribution Factor:"
                 , makeInput PlwChange
                 , makeLabel "Plate Width:"
                 , makeInput PlateWidthChange
+                , makeLabel "Dead Load:"
+                , makeSimpleSelect model.deadloads "-1"
+                , makeLabel "Load Factor Dead Load:"
+                , makeInput PlateWidthChange
+                , makeLabel "Form Factor Dead Load:"
+                , makeInput PlateWidthChange
+                , makeLabel "Live Load:"
+                , makeSimpleSelect model.liveloads "-1"
+                , makeLabel "Load Factor Live Load:"
+                , makeInput PlateWidthChange
+                , makeLabel "Form Factor Live Load:"
+                , makeInput PlateWidthChange
+                -}
+                , makeFGRInput "plw" "Load dist. fact.:" "number" CM.CX66 (Just "2.2")
                 ]
             , modalDialog "Element Load for Element id: " 
                 model.dlgElementLoad
