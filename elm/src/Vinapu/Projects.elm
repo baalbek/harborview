@@ -25,6 +25,7 @@ import Common.ComboBox
         , makeSelect
         , makeSimpleSelect
         , updateComboBoxItems
+        , makeFGRSelect 
         )
 
 
@@ -373,13 +374,15 @@ view model =
                 model.dlgElement
                 ElementOk
                 ElementCancel
-                [ makeLabel "Element Desc:"
+                [ makeFGRInput ElementDescChange "id1" "Element desc:" "text" CM.CX39 Nothing
+                , makeFGRSelect "id2" "Node 1:" CM.CX39 model.nodes 
+                , makeFGRSelect "id3" "Node 2:" CM.CX39 model.nodes 
+                {- makeLabel "Element Desc:"
                 , makeInput ElementDescChange
                 , makeLabel "Node 1:"
                 , makeSimpleSelect model.nodes "-1"
                 , makeLabel "Node 2:"
                 , makeSimpleSelect model.nodes "-1"
-                {-
                 , makeLabel "Load Distribution Factor:"
                 , makeInput PlwChange
                 , makeLabel "Plate Width:"
@@ -397,7 +400,7 @@ view model =
                 , makeLabel "Form Factor Live Load:"
                 , makeInput PlateWidthChange
                 -}
-                , makeFGRInput "plw" "Load dist. fact.:" "number" CM.CX66 (Just "2.2")
+                -- , makeFGRInput "plw" "Load dist. fact.:" "number" CM.CX66 (Just "2.2")
                 ]
             , modalDialog "Element Load for Element id: " 
                 model.dlgElementLoad

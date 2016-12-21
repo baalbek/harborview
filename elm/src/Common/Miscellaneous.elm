@@ -6,7 +6,6 @@ import Html as H
 import Html.Attributes as A
 import Html.Events as E
 
-
 makeLabel : String -> VD.Node a
 makeLabel caption =
     H.label [] [ H.text caption ]
@@ -39,8 +38,8 @@ colXs x =
 
     defVal : default value of input
 -}
-makeFGRInput : String -> String -> String -> ColXs -> Maybe String -> VD.Node a
-makeFGRInput id lbl aType cx defVal =
+makeFGRInput : (String -> a) -> String -> String -> String -> ColXs -> Maybe String -> VD.Node a
+makeFGRInput msg id lbl aType cx defVal =
     let
         defVal' = Maybe.withDefault "" defVal
         

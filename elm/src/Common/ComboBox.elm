@@ -9,6 +9,7 @@ module Common.ComboBox
         , makeSelect 
         , makeSimpleSelect 
         , updateComboBoxItems 
+        , makeFGRSelect 
         )
 
 import VirtualDom as VD
@@ -16,7 +17,7 @@ import Json.Decode as Json exposing ((:=))
 import Html as H
 import Html.Attributes as A
 
-import Common.Miscellaneous exposing (onChange)
+import Common.Miscellaneous as CM exposing (onChange)
 
 type alias ComboBoxItem =
     { val : String
@@ -89,6 +90,30 @@ makeSimpleSelect payload selected =
         ]
         px
         
+makeFGRSelect : String -> String -> CM.ColXs -> Maybe SelectItems -> VD.Node a
+makeFGRSelect id lbl cx payload = 
+    let
+        makeSelectOption' =
+            makeSelectOption "-1"
+
+        px =
+            case payload of
+                Just p ->
+                    emptySelectOption :: List.map makeSelectOption' p
+
+                Nothing ->
+                    []
+
+        cx' = CM.colXs cx
+
+    in
+        H.div [ A.class "form-group row" ]
+            [ H.label [ A.for id, A.class (fst cx') ] [ H.text lbl ]
+            , H.div [ A.class (snd cx') ]
+                [ H.select [ A.class "form-control", A.id id ]
+                    px
+                ]
+            ]
 
 updateComboBoxItems : Int -> String -> Maybe SelectItems -> Maybe SelectItems
 updateComboBoxItems newOid newItemName curItems =
