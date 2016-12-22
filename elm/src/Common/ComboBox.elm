@@ -90,6 +90,11 @@ makeSimpleSelect payload selected =
         ]
         px
         
+{-|
+
+    Makes a bootstrap form-group row with select 
+
+-}
 makeFGRSelect : String -> String -> CM.ColXs -> Maybe SelectItems -> VD.Node a
 makeFGRSelect id lbl cx payload = 
     let
