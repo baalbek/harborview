@@ -10,7 +10,8 @@
 (defn ticker-chart [oid]
   (U/json-response
     {:daily [1 2 3 2 3 4 3 1 2]
-     :dx [0 1 2 3 4 5 6 7 8]}))
+     :itrend [1 2 3 2 3 4 3 1 2]
+     :dx ["2016-7-20" "2016-7-23" "2016-8-1"  "2016-8-18" ]}))
     
 
 (defn tickers []

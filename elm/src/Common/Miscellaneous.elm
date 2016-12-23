@@ -5,6 +5,10 @@ import VirtualDom as VD
 import Html as H
 import Html.Attributes as A
 import Html.Events as E
+import Date exposing (Date,fromString)
+
+stringToDateDecoder : Json.Decoder Date
+stringToDateDecoder = Json.customDecoder Json.string fromString
 
 makeLabel : String -> VD.Node a
 makeLabel caption =

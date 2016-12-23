@@ -402,11 +402,13 @@ view model =
                         ]
                     ]
                 ]
+            {-
             , modalDialog "Element Load for Element id: " 
                 model.dlgElementLoad
                 ElementLoadOk
                 ElementLoadCancel
                 []
+            --}
             ]
 
 

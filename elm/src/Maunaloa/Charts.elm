@@ -7,15 +7,18 @@ import Html as H
 import Html.Attributes as A
 import Svg as S
 import Svg.Attributes as SA
+import Json.Decode as Json exposing ((:=))
+import Date exposing (Date)
 
 
 -- import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
 
 
-import Common.Miscellaneous exposing (makeLabel,onChange)
+import Common.Miscellaneous exposing (makeLabel,onChange,stringToDateDecoder)
 import Common.ComboBox
     exposing
-        ( SelectItems
+        ( ComboBoxItem
+        , SelectItems
         , comboBoxItemListDecoder
         , makeSelect
         )
@@ -67,15 +70,21 @@ initModel =
 
 
 -----------------------------------------------
--------------------- MSG ----------------------
+------------------- TYPES ---------------------
 -----------------------------------------------
+--
+type alias TripleComboBoxList =
+    { first : List Float 
+    , second : List Float 
+    , third : List Date
+    }
 
 
 type Msg
     = FetchFail String
     | TickersFetched SelectItems
     | FetchCharts String
-
+    | ChartsFetched TripleComboBoxList
 
 
 -----------------------------------------------
@@ -124,7 +133,11 @@ update msg model =
 
         FetchCharts s ->
             Debug.log "FetchCharts"
-                ( { model | selectedTicker = s }, Cmd.none )
+                ( { model | selectedTicker = s }, fetchCharts s )
+
+        ChartsFetched s ->
+            Debug.log (toString s) 
+                ( model, Cmd.none )
 
 
 
@@ -144,6 +157,23 @@ fetchTickers =
             |> Task.perform FetchFail TickersFetched
 
 
+
+fetchCharts : String -> Cmd Msg
+fetchCharts ticker =
+    let
+        myDecoder =
+            Json.object3
+                TripleComboBoxList
+                ("daily" := Json.list Json.float)
+                ("itrend" := Json.list Json.float)
+                ("dx" := Json.list stringToDateDecoder)
+
+        url =
+            mainUrl ++ "/ticker?oid=" ++ ticker
+    in
+        Http.get myDecoder url
+            |> Task.mapError toString
+            |> Task.perform FetchFail ChartsFetched 
 
 -----------------------------------------------
 ---------------- SUBSCRIPTIONS ----------------
