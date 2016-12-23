@@ -387,28 +387,21 @@ view model =
                 , H.div [ A.class "tab-content" ]
                     [ H.div [ A.id "geo1", A.class "tab-pane in active" ]
                         [ makeFGRInput ElementDescChange "id1" "Element desc:" "text" CM.CX39 Nothing
-                        , makeFGRSelect "id2" "Node 1:" CM.CX39 model.nodes 
-                        , makeFGRSelect "id3" "Node 2:" CM.CX39 model.nodes 
-                        , makeFGRInput PlwChange "id4" "Load distribution factor:" "number" CM.CX66 (Just "0.5")
-                        , makeFGRInput PlateWidthChange "id5" "Plate width:" "number" CM.CX66 (Just "4.0")
+                        , makeFGRSelect "id2" "Node 1:" CM.CX39 model.nodes Nothing
+                        , makeFGRSelect "id3" "Node 2:" CM.CX39 model.nodes Nothing
+                        , makeFGRInput PlwChange "id4" "Load distribution factor:" "number" CM.CX66 (Just "0.5") 
+                        , makeFGRInput PlateWidthChange "id5" "Plate width:" "number" CM.CX66 (Just "4.0") 
                         ]
                     , H.div [ A.id "loads1", A.class "tab-pane" ]
-                        [ makeFGRSelect "id6" "Dead load:" CM.CX39 model.deadloads
-                        , makeFGRInput PlateWidthChange "id7" "Load factor dead load:" "text" CM.CX66 (Just "1.0")
-                        , makeFGRInput PlateWidthChange "id8" "Form factor dead load:" "text" CM.CX66 (Just "1.0")
-                        , makeFGRSelect "id9" "Live load:" CM.CX39 model.liveloads
-                        , makeFGRInput PlateWidthChange "id10" "Load factor live load:" "text" CM.CX66 (Just "1.0")
-                        , makeFGRInput PlateWidthChange "id11" "Form factor live load:" "text" CM.CX66 (Just "1.0")
+                        [ makeFGRSelect "id6" "Dead load:" CM.CX39 model.deadloads Nothing
+                        , makeFGRInput PlateWidthChange "id7" "Load factor dead load:" "number" CM.CX66 (Just "1.0")
+                        , makeFGRInput PlateWidthChange "id8" "Form factor dead load:" "number" CM.CX66 (Just "1.0")
+                        , makeFGRSelect "id9" "Live load:" CM.CX39 model.liveloads Nothing
+                        , makeFGRInput PlateWidthChange "id10" "Load factor live load:" "number" CM.CX66 (Just "1.0")
+                        , makeFGRInput PlateWidthChange "id11" "Form factor live load:" "number" CM.CX66 (Just "1.0")
                         ]
                     ]
                 ]
-            {-
-            , modalDialog "Element Load for Element id: " 
-                model.dlgElementLoad
-                ElementLoadOk
-                ElementLoadCancel
-                []
-            --}
             ]
 
 

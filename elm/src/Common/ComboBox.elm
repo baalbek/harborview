@@ -95,8 +95,8 @@ makeSimpleSelect payload selected =
     Makes a bootstrap form-group row with select 
 
 -}
-makeFGRSelect : String -> String -> CM.ColXs -> Maybe SelectItems -> VD.Node a
-makeFGRSelect id lbl cx payload = 
+makeFGRSelect : String -> String -> CM.ColXs -> Maybe SelectItems -> Maybe (String -> a) -> VD.Node a
+makeFGRSelect id lbl cx payload onChangeEvent = 
     let
         makeSelectOption' =
             makeSelectOption "-1"
@@ -111,13 +111,22 @@ makeFGRSelect id lbl cx payload =
 
         cx' = CM.colXs cx
 
+        selectBlock = 
+            case onChangeEvent of 
+                Just onChangeEvent' -> 
+                    [ H.select [ onChange onChangeEvent', A.class "form-control", A.id id ]
+                        px
+                    ]
+                Nothing ->
+                    [ H.select [ A.class "form-control", A.id id ]
+                        px
+                    ]
+
     in
         H.div [ A.class "form-group row" ]
             [ H.label [ A.for id, A.class (fst cx') ] [ H.text lbl ]
             , H.div [ A.class (snd cx') ]
-                [ H.select [ A.class "form-control", A.id id ]
-                    px
-                ]
+                selectBlock 
             ]
 
 updateComboBoxItems : Int -> String -> Maybe SelectItems -> Maybe SelectItems
