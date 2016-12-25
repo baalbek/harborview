@@ -6,13 +6,13 @@ type alias Point =
     { x : Float
     , y : Float }
 
-type alias CandleStick = 
+type alias Candlestick = 
     { opn : Float
     , hi : Float
     , lo : Float
     , cls : Float }
 
 type ChartValues 
-    = CandleSticks (List CandleStick)
+    = Candlesticks (List Candlestick)
     | ChartPoints (List (List Float))
 

@@ -53,7 +53,7 @@ makeFGRInput msg id lbl aType cx defVal =
         H.div [ A.class "form-group row" ]
             [ H.label [ A.for id, A.class (fst cx') ] [ H.text lbl ]
             , H.div [ A.class (snd cx') ]
-                [ H.input [ A.class "form-control", A.attribute "type" aType, A.value defVal', A.id id ]
+                [ H.input [ A.step "0.1", A.class "form-control", A.attribute "type" aType, A.value defVal', A.id id ]
                     []
                 ]
             ]

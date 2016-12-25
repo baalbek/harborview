@@ -8,6 +8,7 @@ import Html.Attributes as A
 import Svg as S
 import Svg.Attributes as SA
 import Json.Decode as Json exposing ((:=))
+import Json.Decode.Pipeline as JP 
 import Date exposing (Date)
 
 
@@ -23,6 +24,7 @@ import Common.ComboBox
         , makeSelect
         )
 import ChartRuler.VRuler as VR
+import ChartCommon exposing (Candlestick)
 
 mainUrl =
     "/maunaloa"
@@ -54,6 +56,16 @@ init =
 ------------------- MODEL ---------------------
 -----------------------------------------------
 
+type alias ChartInfo =
+    { minDx : Date  
+    , maxDx : Date  
+    , spots : Maybe (List Float)
+    }
+
+    {-
+    , spots : Maybe (List Float)
+    , candlesticks : Maybe (List Candlestick)
+    -}
 
 type alias Model =
     { tickers : Maybe SelectItems
@@ -73,18 +85,13 @@ initModel =
 ------------------- TYPES ---------------------
 -----------------------------------------------
 --
-type alias TripleComboBoxList =
-    { first : List Float 
-    , second : List Float 
-    , third : List Date
-    }
 
 
 type Msg
     = FetchFail String
     | TickersFetched SelectItems
     | FetchCharts String
-    | ChartsFetched TripleComboBoxList
+    | ChartsFetched ChartInfo 
 
 
 -----------------------------------------------
@@ -159,7 +166,21 @@ fetchTickers =
 
 
 fetchCharts : String -> Cmd Msg
-fetchCharts ticker =
+fetchCharts ticker = 
+    let
+        myDecoder =
+            JP.decode ChartInfo
+                |> JP.required "min-dx" stringToDateDecoder 
+                |> JP.required "max-dx" stringToDateDecoder 
+                |> JP.required "spots" (Json.nullable (Json.list Json.float))
+
+        url =
+            mainUrl ++ "/ticker?oid=" ++ ticker
+    in
+        Http.get myDecoder url
+            |> Task.mapError toString
+            |> Task.perform FetchFail ChartsFetched 
+{-
     let
         myDecoder =
             Json.object3
@@ -174,6 +195,8 @@ fetchCharts ticker =
         Http.get myDecoder url
             |> Task.mapError toString
             |> Task.perform FetchFail ChartsFetched 
+
+-}
 
 -----------------------------------------------
 ---------------- SUBSCRIPTIONS ----------------
