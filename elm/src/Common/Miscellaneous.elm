@@ -1,14 +1,29 @@
 module Common.Miscellaneous exposing (..)
 
-import Json.Decode as Json
+import Json.Decode as JD
 import VirtualDom as VD
 import Html as H
 import Html.Attributes as A
 import Html.Events as E
 import Date exposing (Date,fromString)
+import Tuple exposing (first,second)
 
-stringToDateDecoder : Json.Decoder Date
-stringToDateDecoder = Json.customDecoder Json.string fromString
+customDecoder : JD.Decoder a -> (a -> Result String b) -> JD.Decoder b
+customDecoder d f =
+    let
+        resultDecoder x =
+            case x of
+                Ok a ->
+                    JD.succeed a
+
+                Err e ->
+                    JD.fail e
+
+    in
+        JD.map f d |> JD.andThen resultDecoder
+
+stringToDateDecoder : JD.Decoder Date
+stringToDateDecoder = customDecoder JD.string fromString
 
 makeLabel : String -> VD.Node a
 makeLabel caption =
@@ -45,15 +60,15 @@ colXs x =
 makeFGRInput : (String -> a) -> String -> String -> String -> ColXs -> Maybe String -> VD.Node a
 makeFGRInput msg id lbl aType cx defVal =
     let
-        defVal' = Maybe.withDefault "" defVal
+        defVal_ = Maybe.withDefault "" defVal
         
-        cx' = colXs cx
+        cx_ = colXs cx
         
     in
         H.div [ A.class "form-group row" ]
-            [ H.label [ A.for id, A.class (fst cx') ] [ H.text lbl ]
-            , H.div [ A.class (snd cx') ]
-                [ H.input [ A.step "0.1", A.class "form-control", A.attribute "type" aType, A.value defVal', A.id id ]
+            [ H.label [ A.for id, A.class (first cx_) ] [ H.text lbl ]
+            , H.div [ A.class (second cx_) ]
+                [ H.input [ A.step "0.1", A.class "form-control", A.attribute "type" aType, A.value defVal_, A.id id ]
                     []
                 ]
             ]
@@ -61,4 +76,4 @@ makeFGRInput msg id lbl aType cx defVal =
 
 onChange : (String -> a) -> VD.Property a
 onChange tagger =
-    E.on "change" (Json.map tagger E.targetValue)
+    E.on "change" (JD.map tagger E.targetValue)

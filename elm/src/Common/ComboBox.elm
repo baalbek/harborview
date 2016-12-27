@@ -13,9 +13,10 @@ module Common.ComboBox
         )
 
 import VirtualDom as VD
-import Json.Decode as Json exposing ((:=))
+import Json.Decode as Json exposing (field)
 import Html as H
 import Html.Attributes as A
+import Tuple exposing (first,second)
 
 import Common.Miscellaneous as CM exposing (onChange)
 
@@ -49,13 +50,13 @@ emptySelectOption =
 makeSelect : String -> (String -> a) -> Maybe SelectItems -> String -> VD.Node a
 makeSelect caption msg payload selected =
     let
-        makeSelectOption' =
+        makeSelectOption_ =
             makeSelectOption selected
 
         px =
             case payload of
                 Just p ->
-                    emptySelectOption :: List.map makeSelectOption' p
+                    emptySelectOption :: List.map makeSelectOption_ p
 
                 Nothing ->
                     []
@@ -74,13 +75,13 @@ makeSelect caption msg payload selected =
 makeSimpleSelect : Maybe SelectItems -> String -> VD.Node a
 makeSimpleSelect payload selected =
     let
-        makeSelectOption' =
+        makeSelectOption_ =
             makeSelectOption selected
 
         px =
             case payload of
                 Just p ->
-                    emptySelectOption :: List.map makeSelectOption' p
+                    emptySelectOption :: List.map makeSelectOption_ p
 
                 Nothing ->
                     []
@@ -98,23 +99,23 @@ makeSimpleSelect payload selected =
 makeFGRSelect : String -> String -> CM.ColXs -> Maybe SelectItems -> Maybe (String -> a) -> VD.Node a
 makeFGRSelect id lbl cx payload onChangeEvent = 
     let
-        makeSelectOption' =
+        makeSelectOption_ =
             makeSelectOption "-1"
 
         px =
             case payload of
                 Just p ->
-                    emptySelectOption :: List.map makeSelectOption' p
+                    emptySelectOption :: List.map makeSelectOption_ p
 
                 Nothing ->
                     []
 
-        cx' = CM.colXs cx
+        cx_ = CM.colXs cx
 
         selectBlock = 
             case onChangeEvent of 
-                Just onChangeEvent' -> 
-                    [ H.select [ onChange onChangeEvent', A.class "form-control", A.id id ]
+                Just onChangeEvent_ -> 
+                    [ H.select [ onChange onChangeEvent_, A.class "form-control", A.id id ]
                         px
                     ]
                 Nothing ->
@@ -124,8 +125,8 @@ makeFGRSelect id lbl cx payload onChangeEvent =
 
     in
         H.div [ A.class "form-group row" ]
-            [ H.label [ A.for id, A.class (fst cx') ] [ H.text lbl ]
-            , H.div [ A.class (snd cx') ]
+            [ H.label [ A.for id, A.class (first cx_) ] [ H.text lbl ]
+            , H.div [ A.class (second cx_) ]
                 selectBlock 
             ]
 
@@ -147,10 +148,10 @@ updateComboBoxItems newOid newItemName curItems =
 
 comboBoxItemDecoder : Json.Decoder ComboBoxItem
 comboBoxItemDecoder =
-    Json.object2
+    Json.map2
         ComboBoxItem
-        ("v" := Json.string)
-        ("t" := Json.string)
+        (field "v" Json.string)
+        (field "t" Json.string)
 
 
 comboBoxItemListDecoder : Json.Decoder (List ComboBoxItem)

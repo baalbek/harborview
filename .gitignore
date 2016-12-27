@@ -16,7 +16,9 @@ libs
 target
 
 elm/elm-stuff/
+elm/elm-stuff-0.17/
 elm/*.js
+tmp/
 harborview_orig
 src/resources/templates/vinapu/elementload.html
 src/resources/public/js/elm/

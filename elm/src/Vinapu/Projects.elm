@@ -4,11 +4,11 @@ import Dict exposing (Dict)
 import Http
 import Html as H
 import Html.Attributes as A
-import Html.App as App
+-- import Html.App as App
 import Html.Events as E
 import Debug
 import Json.Encode as JE
-import Json.Decode as Json exposing ((:=))
+import Json.Decode as Json exposing (field)
 import VirtualDom as VD
 import Task
 import String
@@ -29,6 +29,7 @@ import Common.ComboBox
         )
 
 
+{-
 main : Program Never
 main =
     App.program
@@ -37,7 +38,7 @@ main =
         , update = update
         , subscriptions = subscriptions
         }
-
+-}
 
 mainUrl =
     "/vinapu"
@@ -47,7 +48,7 @@ mainUrl =
 -- "http://localhost:8082/vinapu"
 
 
-makeOpenDlgButton' =
+makeOpenDlgButton_ =
     makeOpenDlgButton "col-sm-3"
 
 
@@ -125,14 +126,13 @@ initModel =
 
 
 type Msg
-    = ProjectsFetched TripleComboBoxList
+    = ProjectsFetched (Result Http.Error TripleComboBoxList)
     | FetchLocations String
     | LocationsFetched SelectItems
     | FetchSystems String
-    | SystemsFetched DualComboBoxList
+    | SystemsFetched (Result Http.Error DualComboBoxList)
     | FetchElementLoads String
-    | ElementLoadsFetched String
-    | FetchFail String
+    | ElementLoadsFetched (Result Http.Error String)
     | ProjOpen
     | ProjOk
     | ProjCancel
@@ -178,7 +178,7 @@ emptyComboBoxItem =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ProjectsFetched s ->
+        ProjectsFetched (Ok s) ->
             ( { model
                 | projects = Just s.first
                 , deadloads = Just s.second
@@ -191,6 +191,8 @@ update msg model =
               }
             , Cmd.none
             )
+        ProjectsFetched (Err s) ->
+            Debug.log "ProjectsFetched Error" ( model, Cmd.none )
 
         FetchLocations s ->
             ( { model | selectedProject = s }, fetchLocations s )
@@ -209,18 +211,20 @@ update msg model =
         FetchSystems s ->
             ( { model | selectedLocation = s }, fetchSystems s )
 
-        SystemsFetched s ->
+        SystemsFetched (Ok s) ->
             ( { model | systems = Just s.first, nodes = Just s.second, elementLoads = Nothing }, Cmd.none )
 
-        -- Debug.log (toString s.nodes) ( model, Cmd.none )
+        SystemsFetched (Err _) ->
+            Debug.log "SystemsFetched Error" ( model, Cmd.none )
+
         FetchElementLoads s ->
             ( { model | selectedSystem = s }, fetchElementLoads s )
 
-        ElementLoadsFetched s ->
+        ElementLoadsFetched (Ok s) ->
             ( { model | elementLoads = Just s }, Cmd.none )
 
-        FetchFail s ->
-            Debug.log s ( model, Cmd.none )
+        ElementLoadsFetched (Err _) ->
+            Debug.log "ElementLoadsFetched Error" ( model, Cmd.none )
 
         ProjOpen ->
             ( { model | dlgProj = dlgOpen }, Cmd.none )
@@ -337,10 +341,10 @@ view model =
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
-                [ makeOpenDlgButton' "New project" ProjOpen
-                , makeOpenDlgButton' "New location" LocOpen
-                , makeOpenDlgButton' "New system" SysOpen
-                , makeOpenDlgButton' "New element" ElementOpen
+                [ makeOpenDlgButton_ "New project" ProjOpen
+                , makeOpenDlgButton_ "New location" LocOpen
+                , makeOpenDlgButton_ "New system" SysOpen
+                , makeOpenDlgButton_ "New element" ElementOpen
                 ]
             , H.div [ A.class "row" ]
                 [ makeSelect "Projects: " FetchLocations model.projects model.selectedProject
@@ -415,11 +419,12 @@ asHttpBody lx =
         x =
             JE.object lx
     in
-        Http.string (JE.encode 0 x)
+        Http.stringBody "application/json" (JE.encode 0 x)
 
 
 addNewDbItem : String -> List ( String, JE.Value ) -> (Int -> Msg) -> Cmd Msg
-addNewDbItem urlAction params msg =
+addNewDbItem urlAction params msg = Cmd.none
+    {-
     let
         url =
             mainUrl ++ urlAction
@@ -430,7 +435,7 @@ addNewDbItem urlAction params msg =
         Http.post Json.int url pnBody
             |> Task.mapError toString
             |> Task.perform FetchFail msg
-
+    -}
 
 addNewProject : String -> Cmd Msg
 addNewProject pn =
@@ -461,19 +466,17 @@ fetchProjects : Cmd Msg
 fetchProjects =
     let
         myDecoder =
-            Json.object3
+            Json.map3
                 TripleComboBoxList
-                ("projects" := comboBoxItemListDecoder)
-                ("deadloads" := comboBoxItemListDecoder)
-                ("liveloads" := comboBoxItemListDecoder)
+                (field "projects" comboBoxItemListDecoder)
+                (field "deadloads" comboBoxItemListDecoder)
+                (field "liveloads" comboBoxItemListDecoder)
 
         myUrl =
             (mainUrl ++ "/projects")
     in
-        Http.get myDecoder myUrl
-            |> Task.mapError toString
-            |> Task.perform FetchFail ProjectsFetched
-
+        Http.send ProjectsFetched
+            <| Http.get myUrl myDecoder 
 
 
 -- fetchComboBoxItems ProjectsFetched (mainUrl ++ "/projects")
@@ -485,81 +488,35 @@ fetchLocations s =
 
 
 fetchSystems : String -> Cmd Msg
-fetchSystems s =
+fetchSystems s = 
     let
         myDecoder =
-            Json.object2
+            Json.map2
                 DualComboBoxList
-                ("systems" := comboBoxItemListDecoder)
-                ("nodes" := comboBoxItemListDecoder)
+                (field "systems" comboBoxItemListDecoder)
+                (field "nodes" comboBoxItemListDecoder)
 
         myUrl =
             (mainUrl ++ "/systems?oid=" ++ s)
     in
-        Http.get myDecoder myUrl
-            |> Task.mapError toString
-            |> Task.perform FetchFail SystemsFetched
-
+        Http.send SystemsFetched
+            <| Http.get myUrl myDecoder 
 
 fetchComboBoxItems : (SelectItems -> Msg) -> String -> Cmd Msg
-fetchComboBoxItems fn url =
+fetchComboBoxItems fn url = Cmd.none
+    {-
     Http.get comboBoxItemListDecoder url
         |> Task.mapError toString
         |> Task.perform FetchFail fn
-
+    -}
 
 fetchElementLoads : String -> Cmd Msg
-fetchElementLoads s =
+fetchElementLoads s = 
     let
         url =
             mainUrl ++ "/elementloads?oid=" ++ s
     in
-        Http.getString url
-            |> Task.mapError toString
-            |> Task.perform FetchFail ElementLoadsFetched
+        Http.send ElementLoadsFetched 
+            <| Http.getString url
 
 
-
-{-
-   dc : String -> DualComboBoxList-- Result String DualComboBoxList
-   dc s =
-       let
-           myDecoder =
-               Json.object2
-               DualComboBoxList
-                   ("projects" := comboBoxItemListDecoder)
-                   ("loads" := comboBoxItemListDecoder)
-           result = Json.decodeString myDecoder s
-       in
-           case result of
-               Ok r -> r
-               Err _ -> DualComboBoxList [ComboBoxItem "" ""] [ComboBoxItem "" ""]
--}
-{-
-   addNewElement : String -> String -> Cmd Msg
-   addNewElement sys elname =
-       case String.toInt sys of
-           Ok sysx ->
-               addNewDbItem "/newelement" [ ( "sys", JE.int sysx ), ( "elname", JE.string elname) ] OnNewElement
-
-           Err errMsg ->
-               Cmd.none
--}
-{--
-(>>=) : Maybe a -> (a -> Maybe b) -> Maybe b
-(>>=) = Maybe.andThen
-
--- Custom event handler
-onTimeUpdate : (Float -> a) -> Attribute a
-onTimeUpdate msg =
-    on "timeupdate" (Json.map msg targetCurrentTime)
-
--- A `Json.Decoder` for grabbing `event.target.currentTime`.
-targetCurrentTime : Json.Decoder Float
-targetCurrentTime =
-    Json.at [ "target", "currentTime" ] Json.float
-
-type alias Ord a =
-    { fromInt : Int -> a
-    , toInt   : a -> Int }
---}
