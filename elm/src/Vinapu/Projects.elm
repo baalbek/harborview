@@ -4,7 +4,6 @@ import Dict exposing (Dict)
 import Http
 import Html as H
 import Html.Attributes as A
--- import Html.App as App
 import Html.Events as E
 import Debug
 import Json.Encode as JE
@@ -29,16 +28,14 @@ import Common.ComboBox
         )
 
 
-{-
-main : Program Never
+main : Program Never Model Msg
 main =
-    App.program
+    H.program
         { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
         }
--}
 
 mainUrl =
     "/vinapu"
@@ -128,7 +125,7 @@ initModel =
 type Msg
     = ProjectsFetched (Result Http.Error TripleComboBoxList)
     | FetchLocations String
-    | LocationsFetched SelectItems
+    | LocationsFetched (Result Http.Error SelectItems)
     | FetchSystems String
     | SystemsFetched (Result Http.Error DualComboBoxList)
     | FetchElementLoads String
@@ -197,7 +194,7 @@ update msg model =
         FetchLocations s ->
             ( { model | selectedProject = s }, fetchLocations s )
 
-        LocationsFetched s ->
+        LocationsFetched (Ok s) ->
             ( { model
                 | locations = Just s
                 , selectedLocation = "-1"
@@ -207,6 +204,8 @@ update msg model =
               }
             , Cmd.none
             )
+        LocationsFetched (Err _) ->
+            Debug.log "LocationsFetched Error" ( model, Cmd.none )
 
         FetchSystems s ->
             ( { model | selectedLocation = s }, fetchSystems s )
@@ -479,13 +478,14 @@ fetchProjects =
             <| Http.get myUrl myDecoder 
 
 
--- fetchComboBoxItems ProjectsFetched (mainUrl ++ "/projects")
-
-
 fetchLocations : String -> Cmd Msg
-fetchLocations s =
-    fetchComboBoxItems LocationsFetched (mainUrl ++ "/locations?oid=" ++ s)
-
+fetchLocations s = 
+    let
+        myUrl =
+            (mainUrl ++ "/locations?oid=" ++ s)
+    in 
+        Http.send LocationsFetched 
+            <| Http.get myUrl comboBoxItemListDecoder 
 
 fetchSystems : String -> Cmd Msg
 fetchSystems s = 
@@ -501,14 +501,6 @@ fetchSystems s =
     in
         Http.send SystemsFetched
             <| Http.get myUrl myDecoder 
-
-fetchComboBoxItems : (SelectItems -> Msg) -> String -> Cmd Msg
-fetchComboBoxItems fn url = Cmd.none
-    {-
-    Http.get comboBoxItemListDecoder url
-        |> Task.mapError toString
-        |> Task.perform FetchFail fn
-    -}
 
 fetchElementLoads : String -> Cmd Msg
 fetchElementLoads s = 
