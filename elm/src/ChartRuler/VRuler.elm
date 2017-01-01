@@ -56,12 +56,12 @@ lines vr =
             toString vr.lr.x
 
         range =
-            [1..10]
+            List.range 1 10
 
         lineFn x =
             let
                 curY =
-                    toString <| step * x
+                    toString <| step * (toFloat x)
             in
                 S.line [ SA.x1 x1s, SA.y1 "0", SA.x2 x2s, SA.y2 curY, SA.stroke "#023963" ] []
     in
@@ -96,5 +96,5 @@ minMax cv =
         Nothing ->
             ( 0.0, 100.0 )
 
-        Just cv' ->
+        Just cv_ ->
             ( 0.0, 100.0 )

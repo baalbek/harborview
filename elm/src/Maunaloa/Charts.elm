@@ -2,12 +2,11 @@ module Maunaloa.Charts exposing (..)
 
 import Http
 import Task
-import Html.App as App
 import Html as H
 import Html.Attributes as A
 import Svg as S
 import Svg.Attributes as SA
-import Json.Decode as Json exposing ((:=))
+import Json.Decode as Json 
 import Json.Decode.Pipeline as JP 
 import Date exposing (Date)
 
@@ -29,10 +28,9 @@ import ChartCommon exposing (Candlestick)
 mainUrl =
     "/maunaloa"
 
-
-main : Program Never
+main : Program Never Model Msg
 main =
-    App.program
+    H.program
         { init = init
         , view = view
         , update = update
@@ -88,10 +86,9 @@ initModel =
 
 
 type Msg
-    = FetchFail String
-    | TickersFetched SelectItems
+    = TickersFetched (Result Http.Error SelectItems)
     | FetchCharts String
-    | ChartsFetched ChartInfo 
+    | ChartsFetched (Result Http.Error ChartInfo)
 
 
 -----------------------------------------------
@@ -127,16 +124,16 @@ view model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        FetchFail s ->
-            Debug.log ("FetchFail: " ++ s) ( model, Cmd.none )
 
-        TickersFetched s ->
+        TickersFetched (Ok s) ->
             Debug.log "TickersFetched"
                 ( { model
                     | tickers = Just s
                   }
                 , Cmd.none
                 )
+        TickersFetched (Err s) ->
+            Debug.log "TickersFetched Error" ( model, Cmd.none )
 
         FetchCharts s ->
             Debug.log "FetchCharts"
@@ -154,15 +151,13 @@ update msg model =
 
 
 fetchTickers : Cmd Msg
-fetchTickers =
+fetchTickers = 
     let
         url =
             mainUrl ++ "/tickers"
     in
-        Http.get comboBoxItemListDecoder url
-            |> Task.mapError toString
-            |> Task.perform FetchFail TickersFetched
-
+        Http.send TickersFetched
+            <| Http.get url comboBoxItemListDecoder 
 
 
 fetchCharts : String -> Cmd Msg
@@ -177,26 +172,8 @@ fetchCharts ticker =
         url =
             mainUrl ++ "/ticker?oid=" ++ ticker
     in
-        Http.get myDecoder url
-            |> Task.mapError toString
-            |> Task.perform FetchFail ChartsFetched 
-{-
-    let
-        myDecoder =
-            Json.object3
-                TripleComboBoxList
-                ("daily" := Json.list Json.float)
-                ("itrend" := Json.list Json.float)
-                ("dx" := Json.list stringToDateDecoder)
-
-        url =
-            mainUrl ++ "/ticker?oid=" ++ ticker
-    in
-        Http.get myDecoder url
-            |> Task.mapError toString
-            |> Task.perform FetchFail ChartsFetched 
-
--}
+        Http.send ChartsFetched 
+            <| Http.get url myDecoder 
 
 -----------------------------------------------
 ---------------- SUBSCRIPTIONS ----------------
