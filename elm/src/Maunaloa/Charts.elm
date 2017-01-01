@@ -6,15 +6,14 @@ import Html as H
 import Html.Attributes as A
 import Svg as S
 import Svg.Attributes as SA
-import Json.Decode as Json 
-import Json.Decode.Pipeline as JP 
+import Json.Decode as Json
+import Json.Decode.Pipeline as JP
 import Date exposing (Date)
 
 
 -- import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
 
-
-import Common.Miscellaneous exposing (makeLabel,onChange,stringToDateDecoder)
+import Common.Miscellaneous exposing (makeLabel, onChange, stringToDateDecoder)
 import Common.ComboBox
     exposing
         ( ComboBoxItem
@@ -25,8 +24,10 @@ import Common.ComboBox
 import ChartRuler.VRuler as VR
 import ChartCommon exposing (Candlestick)
 
+
 mainUrl =
     "/maunaloa"
+
 
 main : Program Never Model Msg
 main =
@@ -54,16 +55,20 @@ init =
 ------------------- MODEL ---------------------
 -----------------------------------------------
 
+
 type alias ChartInfo =
-    { minDx : Date  
-    , maxDx : Date  
+    { minDx : Date
+    , maxDx : Date
     , spots : Maybe (List Float)
     }
 
-    {-
-    , spots : Maybe (List Float)
-    , candlesticks : Maybe (List Candlestick)
-    -}
+
+
+{-
+   , spots : Maybe (List Float)
+   , candlesticks : Maybe (List Candlestick)
+-}
+
 
 type alias Model =
     { tickers : Maybe SelectItems
@@ -91,6 +96,7 @@ type Msg
     | ChartsFetched (Result Http.Error ChartInfo)
 
 
+
 -----------------------------------------------
 -------------------- VIEW ---------------------
 -----------------------------------------------
@@ -98,21 +104,24 @@ type Msg
 
 view : Model -> H.Html Msg
 view model =
-    let 
-        w = "1200"
-        h = "300"
-    in 
-    H.div [ A.class "container" ]
-        [ H.div [ A.class "row" ]
-            [ makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
-            ]
-        , H.div [ A.style [ ( "position", "absolute" ), ( "top", "200px" ), ( "left", "200px" ) ] ]
-            [ S.svg [ SA.width (w ++ "px"), SA.height (h ++ "px") ]
-                [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 h, SA.stroke "#023963" ] []
-                , S.line [ SA.x1 "0", SA.y1 h, SA.x2 w, SA.y2 h, SA.stroke "#023963" ] []
+    let
+        w =
+            "1200"
+
+        h =
+            "300"
+    in
+        H.div [ A.class "container" ]
+            [ H.div [ A.class "row" ]
+                [ makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
+                ]
+            , H.div [ A.style [ ( "position", "absolute" ), ( "top", "200px" ), ( "left", "200px" ) ] ]
+                [ S.svg [ SA.width (w ++ "px"), SA.height (h ++ "px") ]
+                    [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 h, SA.stroke "#023963" ] []
+                    , S.line [ SA.x1 "0", SA.y1 h, SA.x2 w, SA.y2 h, SA.stroke "#023963" ] []
+                    ]
                 ]
             ]
-        ]
 
 
 
@@ -124,7 +133,6 @@ view model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-
         TickersFetched (Ok s) ->
             Debug.log "TickersFetched"
                 ( { model
@@ -132,6 +140,7 @@ update msg model =
                   }
                 , Cmd.none
                 )
+
         TickersFetched (Err s) ->
             Debug.log "TickersFetched Error" ( model, Cmd.none )
 
@@ -140,7 +149,7 @@ update msg model =
                 ( { model | selectedTicker = s }, fetchCharts s )
 
         ChartsFetched s ->
-            Debug.log (toString s) 
+            Debug.log (toString s)
                 ( model, Cmd.none )
 
 
@@ -151,29 +160,31 @@ update msg model =
 
 
 fetchTickers : Cmd Msg
-fetchTickers = 
+fetchTickers =
     let
         url =
             mainUrl ++ "/tickers"
     in
-        Http.send TickersFetched
-            <| Http.get url comboBoxItemListDecoder 
+        Http.send TickersFetched <|
+            Http.get url comboBoxItemListDecoder
 
 
 fetchCharts : String -> Cmd Msg
-fetchCharts ticker = 
+fetchCharts ticker =
     let
         myDecoder =
             JP.decode ChartInfo
-                |> JP.required "min-dx" stringToDateDecoder 
-                |> JP.required "max-dx" stringToDateDecoder 
+                |> JP.required "min-dx" stringToDateDecoder
+                |> JP.required "max-dx" stringToDateDecoder
                 |> JP.required "spots" (Json.nullable (Json.list Json.float))
 
         url =
             mainUrl ++ "/ticker?oid=" ++ ticker
     in
-        Http.send ChartsFetched 
-            <| Http.get url myDecoder 
+        Http.send ChartsFetched <|
+            Http.get url myDecoder
+
+
 
 -----------------------------------------------
 ---------------- SUBSCRIPTIONS ----------------
