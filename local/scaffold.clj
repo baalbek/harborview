@@ -4,6 +4,7 @@
     [harborview.vinapu.dbx :as VIN]
     [harborview.vinapu.html :as VH]
     [harborview.maunaloa.html :as MAU]
+    [harborview.maunaloa.dbx :as MAUX]
     [harborview.service.db :as DB]
     [harborview.service.htmlutils :as U]))
 
@@ -12,34 +13,34 @@
 (def bj U/bean->json)
 
 (defn proj []
-  (VIN/fetch-projects)) 
+  (VIN/fetch-projects))
 
 (defn projx []
-  (VH/fetch-projects)) 
+  (VH/fetch-projects))
 
 (defn locs [oid]
-  (VIN/fetch-locations oid)) 
+  (VIN/fetch-locations oid))
 
 (defn sys [loc-id]
-  (VIN/fetch-systems loc-id)) 
+  (VIN/fetch-systems loc-id))
 
 (defn nodes [loc-id]
-  (VIN/fetch-nodes loc-id)) 
+  (VIN/fetch-nodes loc-id))
 
 (defn elx []
-  (VIN/fetch-element-loads 2)) 
+  (VIN/fetch-element-loads 2))
 
 (defn loads []
-  (VIN/fetch-loads)) 
+  (VIN/fetch-loads))
 
 (defn celx []
-  (VH/cur-element-loads 2)) 
+  (VH/cur-element-loads 2))
 
 (defn tix []
   (MAU/tickers))
 
 (defn tixc []
-  (MAU/ticker-chart 2))
+  (MAUX/fetch-tickers))
 
 (comment gs [fnr]
   (DB/with-session :koteriku HourlistGroupMapper
