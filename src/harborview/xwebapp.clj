@@ -21,8 +21,8 @@
 (P/cache-off!)
 
 (defroutes main-routes
-  ;(GET "/" request (VIN/projects))
-  (GET "/" request (MAU/init))
+  (GET "/" request (VIN/projects))
+  ;(GET "/" request (MAU/init))
   ;(GET "/" request (HRL/hourlist))
   ;(GET "/" request (CRT/overlook (DBX/active-purchases (U/rs 11))))
   (context "/generaljournal" [] GJ/my-routes)
