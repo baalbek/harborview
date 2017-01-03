@@ -109,7 +109,7 @@ view model =
             "1200"
 
         h =
-            "300"
+            "200"
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
