@@ -145,9 +145,18 @@ update msg model =
             Debug.log "FetchCharts"
                 ( { model | selectedTicker = s }, fetchCharts s )
 
-        ChartsFetched s ->
-            Debug.log (toString s)
-                ( model, drawCanvas [] )
+        ChartsFetched (Ok s) ->
+            case s.spots of
+                Just s_ ->
+                    Debug.log (toString s_)
+                        ( model, drawCanvas s_ )
+
+                Nothing ->
+                    ( model, drawCanvas [] )
+
+        ChartsFetched (Err _) ->
+            Debug.log "ChartsFetched err"
+                ( model, Cmd.none )
 
 
 

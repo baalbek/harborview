@@ -29,10 +29,17 @@
           ctx.lineWidth = 0.5;
           ctx.strokeStyle = "#FF0000";
           ctx.moveTo(offset,offset);
+          for (var i = 0; i < xs.length; ++i) {
+            var y = xs[i];
+            var x = i*10;
+            ctx.lineTo(x,y);
+          }
+          /*
           ctx.lineTo(offset,h);
           ctx.lineTo(w,h);
           ctx.lineTo(w,offset);
           ctx.lineTo(offset,offset);
+          */
           ctx.stroke();
         }
         app.ports.drawCanvas.subscribe(drawCanvas);

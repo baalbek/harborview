@@ -10,7 +10,7 @@
 
 (defn ticker-chart [oid]
   (U/json-response
-    {:spots [1 2 3 2 3 4 3 1 2]
+    {:spots [50 70 20 30 80 100 120 90 140 180 170]
      :candlesticks [
                     {:o 3, :h 4, :l 1, :c 2.5}
                     {:o 3, :h 4, :l 1, :c 2.5}
