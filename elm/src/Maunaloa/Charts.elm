@@ -43,7 +43,7 @@ main =
 -------------------- PORTS ---------------------
 
 
-port drawCanvas : List Float -> Cmd msg
+port drawCanvas : (List Float, List Float, String) -> Cmd msg
 
 
 
@@ -63,6 +63,7 @@ type alias ChartInfo =
     { minDx : Date
     , maxDx : Date
     , spots : Maybe (List Float)
+    , xAxis : List Float
     }
 
 
@@ -149,10 +150,10 @@ update msg model =
             case s.spots of
                 Just s_ ->
                     Debug.log (toString s_)
-                        ( model, drawCanvas s_ )
+                        ( model, drawCanvas (s.xAxis, s_, "#00ff00") )
 
                 Nothing ->
-                    ( model, drawCanvas [] )
+                    ( model, Cmd.none )
 
         ChartsFetched (Err _) ->
             Debug.log "ChartsFetched err"
@@ -181,6 +182,7 @@ fetchCharts ticker =
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "max-dx" stringToDateDecoder
                 |> JP.required "spots" (Json.nullable (Json.list Json.float))
+                |> JP.required "x-axis" (Json.list Json.float)
 
         url =
             mainUrl ++ "/ticker?oid=" ++ ticker

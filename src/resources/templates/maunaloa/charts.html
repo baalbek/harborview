@@ -20,18 +20,22 @@
     <script type="text/javascript">
         var node = document.getElementById('my-app');
         var app = Elm.Maunaloa.Charts.embed(node);
-        var drawCanvas = function (xs) {
+        var drawCanvas = function (xss) {
+          var xs = xss[0];
+          var ys = xss[1];
+
           var canvas = document.getElementById('my-canvas');
           var ctx = canvas.getContext("2d");
           var h = 100;
           var w = 200;
           var offset = 5;
           ctx.lineWidth = 0.5;
-          ctx.strokeStyle = "#FF0000";
+          ctx.setLineDash([5,10]);
+          ctx.strokeStyle = "#FF0000"; 
           ctx.moveTo(offset,offset);
           for (var i = 0; i < xs.length; ++i) {
-            var y = xs[i];
-            var x = i*10;
+            var y = ys[i];
+            var x = xs[i];
             ctx.lineTo(x,y);
           }
           /*
