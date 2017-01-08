@@ -43,7 +43,7 @@ main =
 -------------------- PORTS ---------------------
 
 
-port drawCanvas : (List Float, List Float, String) -> Cmd msg
+port drawCanvas : ( List Float, List Float, String ) -> Cmd msg
 
 
 
@@ -109,7 +109,7 @@ view model =
             "1200"
 
         h =
-            "200"
+            "600"
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
@@ -150,7 +150,7 @@ update msg model =
             case s.spots of
                 Just s_ ->
                     Debug.log (toString s_)
-                        ( model, drawCanvas (s.xAxis, s_, "#00ff00") )
+                        ( model, drawCanvas ( s.xAxis, s_, "#00ff00" ) )
 
                 Nothing ->
                     ( model, Cmd.none )

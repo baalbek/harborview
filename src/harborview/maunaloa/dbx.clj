@@ -7,3 +7,7 @@
 (defn fetch-tickers []
   (DB/with-session :ranoraraku StockMapper
     (.selectStocks it)))
+
+(defn fetch-prices [oid from-date]
+  (DB/with-session :ranoraraku StockMapper
+    (.selectStockPrices it oid from-date)))

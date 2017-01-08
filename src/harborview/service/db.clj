@@ -9,8 +9,8 @@
 
 (def mybatis-conf {:ranoraraku "ranoraraku-mybatis.conf.xml"
                    :koteriku "koteriku-mybatis.conf.xml"
-                   :stearnswharf "mybatis.conf.xml"
-                   })
+                   :stearnswharf "mybatis.conf.xml"})
+
 
 (def get-factory
   (memoize
@@ -28,4 +28,3 @@
          result# ~@body]
      (doto session# .commit .close)
      result#))
-

@@ -24,7 +24,7 @@
    :headers {"Content-Type" "application/json"}
    :body (json/generate-string data)})
 
-(defn json-req-parse [req] 
+(defn json-req-parse [req]
   (let [r (slurp (:body req))]
     (json/parse-string r)))
 
@@ -77,8 +77,8 @@
 (defn date->str [dx]
   (.format dx date-fmt-1))
 
-  (comment
-  (let [dxx (if (= (class dx) java.util.Date)
-              (DateMidnight. dx)
-              dx)]
-    (.print date-fmt-1 dxx)))
+(comment
+ (let [dxx (if (= (class dx) java.util.Date)
+             (DateMidnight. dx)
+             dx)]
+   (.print date-fmt-1 dxx)))
