@@ -16,12 +16,14 @@
   :java-test-paths ["test-java"]
   :aot :all
   :resource-paths [
+    
+    
+    
     ;deps
 		    "/home/rcs/opt/java/stearnswharf-repos/build/libs/stearnswharf-1.0.jar"
-		    "/home/rcs/opt/java/koteriku/build/libs/koteriku-5.1.1.jar"
-		    "/home/rcs/opt/java/oahu/build/libs/oahu-5.1.5.jar"
-		    "/home/rcs/opt/java/ranoraraku/build/libs/ranoraraku-5.1.5.jar"
-		    "/home/rcs/opt/java/kilauea/build/libs/kilauea-5.1.2.jar"
+		    "/home/rcs/opt/java/koteriku/build/libs/koteriku-5.3.1.jar"
+		    "/home/rcs/opt/java/oahu/build/libs/oahu-5.3.1.jar"
+		    "/home/rcs/opt/java/ranoraraku/build/libs/ranoraraku-5.3.5.jar"
 		    "libs/selmer/selmer/1.0.4/f7ecad9bb123a4716c62ba9df4185e30973550ea/selmer-1.0.4.jar"
 		    "libs/compojure/compojure/1.4.0/2b5ff46cc06d64eda9980735b5a51f19b2528e41/compojure-1.4.0.jar"
 		    "libs/ring/ring-core/1.4.0/6ac9a134048f031e7067bf834ab9085a0c840386/ring-core-1.4.0.jar"
@@ -32,13 +34,11 @@
 		    "libs/org.clojure/math.numeric-tower/0.0.4/800736ac4101947663c788ce5b20c2103007e821/math.numeric-tower-0.0.4.jar"
 		    "libs/commons-codec/commons-codec/1.10/4b95f4897fa13f2cd904aee711aeafc0c5295cd8/commons-codec-1.10.jar"
 		    "libs/commons-logging/commons-logging/1.2/4bfc12adfe4842bf07b657f0369c4cb522955686/commons-logging-1.2.jar"
+		    "libs/org.clojure/clojure/1.7.0/4953eb1ffa4adca22760c9324c9c26d2038c392a/clojure-1.7.0.jar"
 		    "libs/log4j/log4j/1.2.17/5af35056b4d257e4b64b9e8069c0746e8b08629f/log4j-1.2.17.jar"
 		    "libs/org.mybatis/mybatis/3.3.0/7c0e3582a1518b6d8e4e37ce2fc49b7bb6f2040f/mybatis-3.3.0.jar"
 		    "libs/org.postgresql/postgresql/9.4-1206-jdbc42/e91af69cfb3390a73449d1157753ca4e7b97765c/postgresql-9.4-1206-jdbc42.jar"
 		    "libs/junit/junit/4.11/4e031bb61df09069aeb2bffb4019e7a5034a4ee0/junit-4.11.jar"
-		    "libs/org.clojure/clojure/1.7.0/4953eb1ffa4adca22760c9324c9c26d2038c392a/clojure-1.7.0.jar"
-		    "libs/enlive/enlive/1.1.5/2a0104c467e2778ce5c1316da1f9a78b6bb5722c/enlive-1.1.5.jar"
-		    "libs/org.clojure/algo.monads/0.1.5/bc4c31f3b08eb8bed1c57e9ed786b3448c3c325b/algo.monads-0.1.5.jar"
 		    "libs/joda-time/joda-time/2.9.2/36d6e77a419cb455e6fd5909f6f96b168e21e9d0/joda-time-2.9.2.jar"
 		    "libs/json-html/json-html/0.3.9/fe636fe1d4566b6f4d8188810fb013698c6bd17/json-html-0.3.9.jar"
 		    "libs/cheshire/cheshire/5.5.0/d9f9e2f0c53c744ddfbdb8042c134a2a6f222fe1/cheshire-5.5.0.jar"
@@ -55,8 +55,6 @@
 		    "libs/org.eclipse.jetty/jetty-server/9.2.10.v20150310/e6b8bff28b3e9ca6254415d2aa49603a5887fe8/jetty-server-9.2.10.v20150310.jar"
 		    "libs/org.codehaus.jackson/jackson-core-asl/1.9.9/b198f9d20dcc5bd2fe211e10f4110639b8243d6/jackson-core-asl-1.9.9.jar"
 		    "libs/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar"
-		    "libs/org.ccil.cowan.tagsoup/tagsoup/1.2.1/5584627487e984c03456266d3f8802eb85a9ce97/tagsoup-1.2.1.jar"
-		    "libs/org.jsoup/jsoup/1.7.2/d7e275ba05aa380ca254f72d0c0ffebaedc3adcf/jsoup-1.7.2.jar"
 		    "libs/hiccup/hiccup/1.0.5/75940a400111bbb8f80e43325e23100b6e2227bc/hiccup-1.0.5.jar"
 		    "libs/hiccups/hiccups/0.3.0/350401390e43eb446bc2a452f41caa921e4f8916/hiccups-0.3.0.jar"
 		    "libs/instaparse/instaparse/1.4.0/ade13d743d1ec8a6c5103fd0f5701b0f997e2cc4/instaparse-1.4.0.jar"
@@ -80,5 +78,8 @@
 		    "libs/com.fasterxml.jackson.dataformat/jackson-dataformat-cbor/2.5.3/292edada1ec779903b9f45a8232533791588342/jackson-dataformat-cbor-2.5.3.jar"
 		    "libs/tigris/tigris/0.1.1/187674e86c2e94eefb4f80c13a6b10345dd6ad2/tigris-0.1.1.jar"
     ;deps
+
+
+
                    ]
   :profiles {:uberjar {:aot :all}})

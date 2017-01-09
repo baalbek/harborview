@@ -1,5 +1,8 @@
 (ns harborview.maunaloa.html
   (:import
+    [java.sql Date]
+    [java.time LocalDate]
+    [java.time.temporal ChronoUnit]
     [vega.filters.ehlers Itrend CyberCycle])
   (:use
     [compojure.core :only (GET POST defroutes)])
@@ -23,12 +26,26 @@
         (println pix-pr-v)
         (double (* pix-pr-v diff))))))
 
+(defn hruler [w min-dx max-dx]
+  (let [diff-days
+        (fn [d1 d2]
+          (.between ChronoUnit/DAYS d1 d2))
+        days (diff-days min-dx max-dx)
+        pix-pr-h (/ w days)]
+    (fn [dx]
+      (let [cur-diff (diff-days min-dx dx)]
+        (double (* pix-pr-h cur-diff))))))
+
+
 (defn ticker-chart [oid w h]
-  (let [;stox (DBX/fetch-prices (U/rs oid))
+  (let [;stox (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
         spots [50 70 20 30 80 100 120 90 140 180 170]
         min-val 20
         max-val 180
-        vr (vruler w min-val max-val)]
+        max-dx (LocalDate/now)
+        min-dx (.minusDays max-dx 90)
+        vr (vruler w min-val max-val)
+        hr (hruler w min-dx max-dx)]
     (U/json-response
       {:spots (map vr spots)
        :candlesticks [
@@ -45,8 +62,8 @@
        :x-axis [10 30 50 70 90 110 150 170 190 210]
        :min-val min-val
        :max-val max-val
-       :min-dx "2016-7-20"
-       :max-dx "2016-8-18"})))
+       :min-dx max-dx
+       :max-dx min-dx})))
 
 
 (defn tickers []
