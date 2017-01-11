@@ -36,15 +36,21 @@
       (let [cur-diff (diff-days min-dx dx)]
         (double (* pix-pr-h cur-diff))))))
 
+(defn ld->str [v]
+  (let [y (.getYear v)
+        m (.getMonthValue v)
+        d (.getDayOfMonth v)]
+    (str y "-" m "-" d)))
+
 
 (defn ticker-chart [oid w h]
   (let [;stox (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
-        spots [50 70 20 30 80 100 120 90 140 180 170]
-        min-val 20
-        max-val 180
+        spots [50 225 150 400 300]
+        min-val 50
+        max-val 400
         max-dx (LocalDate/now)
         min-dx (.minusDays max-dx 90)
-        vr (vruler w min-val max-val)
+        vr (vruler h min-val max-val)
         hr (hruler w min-dx max-dx)]
     (U/json-response
       {:spots (map vr spots)
@@ -59,11 +65,11 @@
                       {:o 3, :h 4, :l 1, :c 2.5}
                       {:o 3, :h 4, :l 1, :c 2.5}]
 
-       :x-axis [10 30 50 70 90 110 150 170 190 210]
+       :x-axis [0 50 100 150 200]
        :min-val min-val
        :max-val max-val
-       :min-dx max-dx
-       :max-dx min-dx})))
+       :min-dx (ld->str max-dx)
+       :max-dx (ld->str min-dx)})))
 
 
 (defn tickers []
