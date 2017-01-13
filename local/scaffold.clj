@@ -1,4 +1,7 @@
 (ns scaffold
+  (:import 
+    [java.time LocalDate]
+    [java.sql Date])
   (:require
    ;[selmer.parser :as P]
     [harborview.vinapu.dbx :as VIN]
@@ -8,39 +11,45 @@
     [harborview.service.db :as DB]
     [harborview.service.htmlutils :as U]))
 
+(def pdx (Date/valueOf (LocalDate/of 2014 7 1)))
 
-(def jr U/json-response)
-(def bj U/bean->json)
+(defn fp []
+  (MAUX/fetch-prices 3 pdx))
 
-(defn proj []
-  (VIN/fetch-projects))
+(comment
+  (def jr U/json-response)
+  (def bj U/bean->json)
 
-(defn projx []
-  (VH/fetch-projects))
+  (defn proj []
+    (VIN/fetch-projects))
 
-(defn locs [oid]
-  (VIN/fetch-locations oid))
+  (defn projx []
+    (VH/fetch-projects))
 
-(defn sys [loc-id]
-  (VIN/fetch-systems loc-id))
+  (defn locs [oid]
+    (VIN/fetch-locations oid))
 
-(defn nodes [loc-id]
-  (VIN/fetch-nodes loc-id))
+  (defn sys [loc-id]
+    (VIN/fetch-systems loc-id))
 
-(defn elx []
-  (VIN/fetch-element-loads 2))
+  (defn nodes [loc-id]
+    (VIN/fetch-nodes loc-id))
 
-(defn loads []
-  (VIN/fetch-loads))
+  (defn elx []
+    (VIN/fetch-element-loads 2))
 
-(defn celx []
-  (VH/cur-element-loads 2))
+  (defn loads []
+    (VIN/fetch-loads))
 
-(defn tix []
-  (MAU/tickers))
+  (defn celx []
+    (VH/cur-element-loads 2))
 
-(defn tixc []
-  (MAUX/fetch-tickers))
+  (defn tix []
+    (MAU/tickers))
+
+  (defn tixc []
+    (MAUX/fetch-tickers))
+  )
 
 (comment gs [fnr]
   (DB/with-session :koteriku HourlistGroupMapper

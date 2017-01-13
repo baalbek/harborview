@@ -43,39 +43,39 @@
     (str y "-" m "-" d)))
 
 
-(defn ticker-chart [oid w h]
+(comment ticker-chart [oid w h]
   (let [min-dx (LocalDate/of 2014 7 1)
         spot-objs (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
         spots (map #(.getCls %) spot-objs)
-        dx (map #(-> .getDx % .toLocalDate) spot-objs)
-        max-dx (.toLocalDate (last dx))
+        dx (map #(.toLocalDate (.getDx %)) spot-objs)
+        max-dx (last dx)
         min-val (apply min spots)
         max-val (apply max spots)
         hr (hruler w min-dx max-dx)]
     dx))
 
-(defn xticker-chart [oid w h]
+(defn ticker-chart [oid w h]
   (let [min-dx (LocalDate/of 2014 7 1)
         spot-objs (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
         spots (map #(.getCls %) spot-objs)
-        dx (map #(.getDx %) spot-objs)
-        max-dx (.toLocalDate (last dx))
+        dx (map #(.toLocalDate (.getDx %)) spot-objs)
+        max-dx (last dx)
         min-val (apply min spots)
         max-val (apply max spots)
         vr (vruler h min-val max-val)
         hr (hruler w min-dx max-dx)]
     (U/json-response
       {:spots (map vr spots)
-       :candlesticks [
-                      {:o 3, :h 4, :l 1, :c 2.5}
-                      {:o 3, :h 4, :l 1, :c 2.5}
-                      {:o 3, :h 4, :l 1, :c 2.5}
-                      {:o 3, :h 4, :l 1, :c 2.5}
-                      {:o 3, :h 4, :l 1, :c 2.5}
-                      {:o 3, :h 4, :l 1, :c 2.5}
-                      {:o 3, :h 4, :l 1, :c 2.5}
-                      {:o 3, :h 4, :l 1, :c 2.5}
-                      {:o 3, :h 4, :l 1, :c 2.5}]
+       ;:candlesticks [
+       ;               {:o 3, :h 4, :l 1, :c 2.5}
+       ;               {:o 3, :h 4, :l 1, :c 2.5}
+       ;               {:o 3, :h 4, :l 1, :c 2.5}
+       ;               {:o 3, :h 4, :l 1, :c 2.5}
+       ;               {:o 3, :h 4, :l 1, :c 2.5}
+       ;               {:o 3, :h 4, :l 1, :c 2.5}
+       ;               {:o 3, :h 4, :l 1, :c 2.5}
+       ;               {:o 3, :h 4, :l 1, :c 2.5}
+       ;               {:o 3, :h 4, :l 1, :c 2.5}]
 
        :x-axis (map hr dx) ; [0 50 100 150 200]
        :min-val min-val
