@@ -19,12 +19,14 @@
 (defn create-freqs [f data-values freqs]
   (map #(f data-values %) freqs))
 
+(defn double->decimal [v]
+  (/ (Math/round (* v 10)) 10.0))
+
 (defn vruler [h min-val max-val]
   (let [pix-pr-v (/ h (- max-val min-val))]
     (fn [v]
       (let [diff (- max-val v)]
-        (println pix-pr-v)
-        (double (* pix-pr-v diff))))))
+        (double->decimal (double (* pix-pr-v diff)))))))
 
 (defn hruler [w min-dx max-dx]
   (let [diff-days
@@ -34,7 +36,7 @@
         pix-pr-h (/ w days)]
     (fn [dx]
       (let [cur-diff (diff-days min-dx dx)]
-        (double (* pix-pr-h cur-diff))))))
+        (double->decimal (double (* pix-pr-h cur-diff)))))))
 
 (defn ld->str [v]
   (let [y (.getYear v)
@@ -54,10 +56,12 @@
         hr (hruler w min-dx max-dx)]
     dx))
 
+
 (defn ticker-chart [oid w h]
-  (let [min-dx (LocalDate/of 2014 7 1)
+  (let [min-dx (LocalDate/of 2014 1 1)
         spot-objs (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
         spots (map #(.getCls %) spot-objs)
+        itrend-20 (calc-itrend spots 20)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
         max-dx (last dx)
         min-val (apply min spots)
@@ -66,6 +70,7 @@
         hr (hruler w min-dx max-dx)]
     (U/json-response
       {:spots (map vr spots)
+       :itrend-20 (map vr itrend-20)
        ;:candlesticks [
        ;               {:o 3, :h 4, :l 1, :c 2.5}
        ;               {:o 3, :h 4, :l 1, :c 2.5}

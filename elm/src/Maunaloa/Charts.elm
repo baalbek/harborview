@@ -43,7 +43,7 @@ main =
 -------------------- PORTS ---------------------
 
 
-port drawCanvas : ( List Float, List Float, String ) -> Cmd msg
+port drawCanvas : ( List (List Float), List Float, List String ) -> Cmd msg
 
 
 
@@ -62,8 +62,9 @@ init =
 type alias ChartInfo =
     { minDx : Date
     , maxDx : Date
-    , spots : Maybe (List Float)
     , xAxis : List Float
+    , spots : Maybe (List Float)
+    , itrend20 : Maybe (List Float)
     }
 
 
@@ -147,17 +148,34 @@ update msg model =
                 ( { model | selectedTicker = s }, fetchCharts s )
 
         ChartsFetched (Ok s) ->
-            case s.spots of
-                Just s_ ->
-                    Debug.log (toString s_)
-                        ( model, drawCanvas ( s.xAxis, s_, "#00ff00" ) )
+            ( model, drawChartInfo s )
 
-                Nothing ->
-                    ( model, Cmd.none )
+        {-
+           case s.spots of
+               Just s_ ->
+                   Debug.log (toString s_)
+                       ( model, drawCanvas ( s.xAxis, s_, "#00ff00" ) )
 
+               Nothing ->
+                   ( model, Cmd.none )
+        -}
         ChartsFetched (Err _) ->
             Debug.log "ChartsFetched err"
                 ( model, Cmd.none )
+
+
+drawChartInfo : ChartInfo -> Cmd Msg
+drawChartInfo ci =
+    let
+        spots =
+            Maybe.withDefault [] ci.spots
+
+        itrend20 =
+            Maybe.withDefault [] ci.itrend20
+    in
+        Debug.log (toString itrend20)
+            drawCanvas
+            ( [ spots, itrend20 ], ci.xAxis, [ "#00ffcc", "#ff0000" ] )
 
 
 
@@ -181,8 +199,9 @@ fetchCharts ticker =
             JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "max-dx" stringToDateDecoder
-                |> JP.required "spots" (Json.nullable (Json.list Json.float))
                 |> JP.required "x-axis" (Json.list Json.float)
+                |> JP.required "spots" (Json.nullable (Json.list Json.float))
+                |> JP.required "itrend-20" (Json.nullable (Json.list Json.float))
 
         url =
             mainUrl ++ "/ticker?oid=" ++ ticker

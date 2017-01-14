@@ -21,29 +21,31 @@
         var node = document.getElementById('my-app');
         var app = Elm.Maunaloa.Charts.embed(node);
         var drawCanvas = function (xss) {
-          var xs = xss[0];
-          var ys = xss[1];
-
+          var graphs = xss[0];
+          var xs = xss[1];
+          var strokes = xss[2];
           var canvas = document.getElementById('my-canvas');
           var ctx = canvas.getContext("2d");
-          var h = 100;
-          var w = 200;
-          var offset = 5;
+
+          for (var i = 0; i < graphs.length; ++i) {
+              var curStroke = strokes[i] === undefined ? "#000000" : strokes[i];
+              var ys = graphs[i];
+              drawGraph(ctx,xs,ys,curStroke)
+          }
+        }
+        var drawGraph = function (ctx,xs,ys,strokeStyle) {
+          if (xs.length !== ys.length) {
+            return;
+          }
           ctx.lineWidth = 0.5;
-          //ctx.setLineDash([5,10]);
-          ctx.strokeStyle = "#FF0000";
-          ctx.moveTo(offset,offset);
-          for (var i = 0; i < xs.length; ++i) {
+          // ctx.setLineDash([5,10]);
+          ctx.strokeStyle = strokeStyle; // "#FF0000";
+          ctx.moveTo(xs[0],ys[0]);
+          for (var i = 1; i < xs.length; ++i) {
             var y = ys[i];
             var x = xs[i];
             ctx.lineTo(x,y);
           }
-          /*
-          ctx.lineTo(offset,h);
-          ctx.lineTo(w,h);
-          ctx.lineTo(w,offset);
-          ctx.lineTo(offset,offset);
-          */
           ctx.stroke();
         }
         app.ports.drawCanvas.subscribe(drawCanvas);
