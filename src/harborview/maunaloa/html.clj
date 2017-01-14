@@ -64,8 +64,9 @@
         itrend-20 (calc-itrend spots 20)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
         max-dx (last dx)
-        min-val (apply min spots)
-        max-val (apply max spots)
+        ys (concat spots itrend-20)
+        min-val (apply min ys)
+        max-val (apply max ys)
         vr (vruler h min-val max-val)
         hr (hruler w min-dx max-dx)]
     (U/json-response
@@ -85,8 +86,8 @@
        :x-axis (map hr dx) ; [0 50 100 150 200]
        :min-val min-val
        :max-val max-val
-       :min-dx (ld->str max-dx)
-       :max-dx (ld->str min-dx)})))
+       :min-dx (ld->str min-dx)
+       :max-dx (ld->str max-dx)})))
 
 
 (defn tickers []
