@@ -111,6 +111,9 @@ view model =
 
         h =
             "600"
+
+        stroke =
+            "#023963"
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
@@ -118,8 +121,9 @@ view model =
                 ]
             , H.div [ A.style [ ( "position", "absolute" ), ( "top", "200px" ), ( "left", "200px" ) ] ]
                 [ S.svg [ SA.width (w ++ "px"), SA.height (h ++ "px") ]
-                    [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 h, SA.stroke "#023963" ] []
-                    , S.line [ SA.x1 "0", SA.y1 h, SA.x2 w, SA.y2 h, SA.stroke "#023963" ] []
+                    [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 h, SA.stroke stroke ] []
+                    , S.line [ SA.x1 "0", SA.y1 h, SA.x2 w, SA.y2 h, SA.stroke stroke ] []
+                    , S.line [ SA.x1 "0", SA.y1 "0", SA.x2 w, SA.y2 "0", SA.stroke stroke ] []
                     ]
                 ]
             ]

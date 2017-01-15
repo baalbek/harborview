@@ -1,5 +1,5 @@
 (ns scaffold
-  (:import 
+  (:import
     [java.time LocalDate]
     [java.sql Date])
   (:require
@@ -11,7 +11,7 @@
     [harborview.service.db :as DB]
     [harborview.service.htmlutils :as U]))
 
-(def pdx (Date/valueOf (LocalDate/of 2014 7 1)))
+(def pdx (Date/valueOf (LocalDate/of 2014 1 1)))
 
 (defn fp []
   (MAUX/fetch-prices 3 pdx))
@@ -48,8 +48,8 @@
     (MAU/tickers))
 
   (defn tixc []
-    (MAUX/fetch-tickers))
-  )
+    (MAUX/fetch-tickers)))
+
 
 (comment gs [fnr]
   (DB/with-session :koteriku HourlistGroupMapper

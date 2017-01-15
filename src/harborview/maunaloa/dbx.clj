@@ -2,7 +2,9 @@
   (:import
     [ranoraraku.models.mybatis StockMapper])
   (:require
+    [harborview.service.commonutils :as CU]
     [harborview.service.db :as DB]))
+
 
 (defn fetch-tickers []
   (DB/with-session :ranoraraku StockMapper
@@ -11,3 +13,6 @@
 (defn fetch-prices [oid from-date]
   (DB/with-session :ranoraraku StockMapper
     (.selectStockPrices it oid from-date)))
+
+(def fetch-prices-m
+  (CU/memoize-arg0 fetch-prices))
