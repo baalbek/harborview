@@ -1,5 +1,8 @@
 (ns harborview.service.commonutils)
 
+(defmacro defn-memo [name & body]
+  `(def ~name (memoize (fn ~body))))
+
 (defn memoize-arg0 [f]
   (let [mem (atom {})]
     (fn [& args]
