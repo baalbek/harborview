@@ -58,10 +58,10 @@
 
 
 (defn ticker-chart [oid w h]
-  (let [min-dx (LocalDate/of 2014 1 1)
+  (let [min-dx (LocalDate/of 2012 1 1)
         spot-objs (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
         spots (map #(.getCls %) spot-objs)
-        itrend-20 (calc-itrend spots 20)
+        itrend-20 (calc-itrend spots 50)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
         max-dx (last dx)
         ys (concat spots itrend-20)

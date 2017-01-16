@@ -11,7 +11,7 @@ import Json.Decode as Json exposing (field)
 import VirtualDom as VD
 import Task
 import String
-import Common.Miscellaneous as CM exposing (makeLabel, makeInput, onChange, makeFGRInput )
+import Common.Miscellaneous as CM exposing (makeLabel, makeInput, onChange, makeFGRInput)
 import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
 import Common.ComboBox
     exposing
@@ -24,7 +24,7 @@ import Common.ComboBox
         , makeSelect
         , makeSimpleSelect
         , updateComboBoxItems
-        , makeFGRSelect 
+        , makeFGRSelect
         )
 
 
@@ -36,6 +36,7 @@ main =
         , update = update
         , subscriptions = subscriptions
         }
+
 
 mainUrl =
     "/vinapu"
@@ -59,11 +60,13 @@ type alias DualComboBoxList =
     , second : List ComboBoxItem
     }
 
+
 type alias TripleComboBoxList =
     { first : List ComboBoxItem
     , second : List ComboBoxItem
     , third : List ComboBoxItem
     }
+
 
 type alias Model =
     { projects : Maybe SelectItems
@@ -84,6 +87,7 @@ type alias Model =
     , selectedProject : String
     , selectedLocation : String
     , selectedSystem : String
+    , elementDesc : String
     , plw : String
     , width : String
     , loadFactor1 : String
@@ -111,6 +115,7 @@ initModel =
     , selectedProject = "-1"
     , selectedLocation = "-1"
     , selectedSystem = "-1"
+    , elementDesc = ""
     , plw = "0.5"
     , width = "5.0"
     , loadFactor1 = "5.0"
@@ -155,6 +160,8 @@ type Msg
     | PlwChange String
     | PlateWidthChange String
 
+
+
 -- INIT
 
 
@@ -188,6 +195,7 @@ update msg model =
               }
             , Cmd.none
             )
+
         ProjectsFetched (Err s) ->
             Debug.log "ProjectsFetched Error" ( model, Cmd.none )
 
@@ -204,6 +212,7 @@ update msg model =
               }
             , Cmd.none
             )
+
         LocationsFetched (Err _) ->
             Debug.log "LocationsFetched Error" ( model, Cmd.none )
 
@@ -292,28 +301,34 @@ update msg model =
             ( { model | dlgElement = dlgOpen }, Cmd.none )
 
         ElementOk ->
-            ( { model | dlgElement = dlgClose }, Cmd.none )
+            Debug.log "ElementOk"
+                ( { model | dlgElement = dlgClose }, Cmd.none )
 
         ElementCancel ->
             ( { model | dlgElement = dlgClose }, Cmd.none )
 
         ElementDescChange s ->
-            ( model, Cmd.none )
+            Debug.log "ElementDescChange"
+                ( { model | elementDesc = s }, Cmd.none )
 
         PlwChange s ->
-            ( model, Cmd.none )
+            Debug.log "PlwChange"
+                ( { model | plw = s }, Cmd.none )
 
         PlateWidthChange s ->
-            ( model, Cmd.none )
+            Debug.log "PlateWidthChange"
+                ( model, Cmd.none )
 
         ElementLoadOpen ->
             ( model, Cmd.none )
 
         ElementLoadOk ->
             ( model, Cmd.none )
-        
+
         ElementLoadCancel ->
             ( model, Cmd.none )
+
+
 
 -- SUBSCRIPTIONS
 
@@ -379,11 +394,11 @@ view model =
                 ElementCancel
                 [ H.ul [ A.class "nav nav-tabs" ]
                     [ H.li [ A.class "active" ]
-                        [ H.a [ A.href "#geo1", A.attribute "data-toggle" "pill" ] 
+                        [ H.a [ A.href "#geo1", A.attribute "data-toggle" "pill" ]
                             [ H.text "Geometry" ]
                         ]
                     , H.li []
-                        [ H.a [ A.href "#loads1", A.attribute "data-toggle" "pill" ] 
+                        [ H.a [ A.href "#loads1", A.attribute "data-toggle" "pill" ]
                             [ H.text "Loads" ]
                         ]
                     ]
@@ -392,8 +407,8 @@ view model =
                         [ makeFGRInput ElementDescChange "id1" "Element desc:" "text" CM.CX39 Nothing
                         , makeFGRSelect "id2" "Node 1:" CM.CX39 model.nodes Nothing
                         , makeFGRSelect "id3" "Node 2:" CM.CX39 model.nodes Nothing
-                        , makeFGRInput PlwChange "id4" "Load distribution factor:" "number" CM.CX66 (Just "0.5") 
-                        , makeFGRInput PlateWidthChange "id5" "Plate width:" "number" CM.CX66 (Just "4.0") 
+                        , makeFGRInput PlwChange "id4" "Load distribution factor:" "number" CM.CX66 (Just "0.5")
+                        , makeFGRInput PlateWidthChange "id5" "Plate width:" "number" CM.CX66 (Just "4.0")
                         ]
                     , H.div [ A.id "loads1", A.class "tab-pane" ]
                         [ makeFGRSelect "id6" "Dead load:" CM.CX39 model.deadloads Nothing
@@ -422,19 +437,24 @@ asHttpBody lx =
 
 
 addNewDbItem : String -> List ( String, JE.Value ) -> (Int -> Msg) -> Cmd Msg
-addNewDbItem urlAction params msg = Cmd.none
-    {-
-    let
-        url =
-            mainUrl ++ urlAction
+addNewDbItem urlAction params msg =
+    Cmd.none
 
-        pnBody =
-            asHttpBody params
-    in
-        Http.post Json.int url pnBody
-            |> Task.mapError toString
-            |> Task.perform FetchFail msg
-    -}
+
+
+{-
+   let
+       url =
+           mainUrl ++ urlAction
+
+       pnBody =
+           asHttpBody params
+   in
+       Http.post Json.int url pnBody
+           |> Task.mapError toString
+           |> Task.perform FetchFail msg
+-}
+
 
 addNewProject : String -> Cmd Msg
 addNewProject pn =
@@ -474,21 +494,22 @@ fetchProjects =
         myUrl =
             (mainUrl ++ "/projects")
     in
-        Http.send ProjectsFetched
-            <| Http.get myUrl myDecoder 
+        Http.send ProjectsFetched <|
+            Http.get myUrl myDecoder
 
 
 fetchLocations : String -> Cmd Msg
-fetchLocations s = 
+fetchLocations s =
     let
         myUrl =
             (mainUrl ++ "/locations?oid=" ++ s)
-    in 
-        Http.send LocationsFetched 
-            <| Http.get myUrl comboBoxItemListDecoder 
+    in
+        Http.send LocationsFetched <|
+            Http.get myUrl comboBoxItemListDecoder
+
 
 fetchSystems : String -> Cmd Msg
-fetchSystems s = 
+fetchSystems s =
     let
         myDecoder =
             Json.map2
@@ -499,16 +520,15 @@ fetchSystems s =
         myUrl =
             (mainUrl ++ "/systems?oid=" ++ s)
     in
-        Http.send SystemsFetched
-            <| Http.get myUrl myDecoder 
+        Http.send SystemsFetched <|
+            Http.get myUrl myDecoder
+
 
 fetchElementLoads : String -> Cmd Msg
-fetchElementLoads s = 
+fetchElementLoads s =
     let
         url =
             mainUrl ++ "/elementloads?oid=" ++ s
     in
-        Http.send ElementLoadsFetched 
-            <| Http.getString url
-
-
+        Http.send ElementLoadsFetched <|
+            Http.getString url
