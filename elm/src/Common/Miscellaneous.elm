@@ -71,19 +71,16 @@ colXs x =
 
     defVal : default value of input
 -}
-makeFGRInput : (String -> a) -> String -> String -> String -> ColXs -> Maybe String -> VD.Node a
-makeFGRInput msg id lbl aType cx defVal =
+makeFGRInput : (String -> a) -> String -> String -> String -> ColXs -> String -> VD.Node a
+makeFGRInput msg id lbl aType cx inputValue =
     let
-        defVal_ =
-            Maybe.withDefault "" defVal
-
         cx_ =
             colXs cx
     in
         H.div [ A.class "form-group row" ]
             [ H.label [ A.for id, A.class (first cx_) ] [ H.text lbl ]
             , H.div [ A.class (second cx_) ]
-                [ H.input [ A.step "0.1", A.class "form-control", A.attribute "type" aType, A.value defVal_, A.id id ]
+                [ H.input [ onChange msg, A.step "0.1", A.class "form-control", A.attribute "type" aType, A.value inputValue, A.id id ]
                     []
                 ]
             ]
