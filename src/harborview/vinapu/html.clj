@@ -58,6 +58,11 @@
           result (DBX/insert-system (jr "loc") (jr "sys"))]
          (U/json-response (.getOid result))))
 
+  (POST "/newelement" request
+    (let [jr (U/json-req-parse request)]
+        (println (jr "el"))
+        (U/json-response "BlaBlaBla!")))
+
   (GET "/locations" [oid] (fetch-x oid DBX/fetch-locations))
 
   ;(GET "/systems" [oid] (fetch-x oid DBX/fetch-systems))

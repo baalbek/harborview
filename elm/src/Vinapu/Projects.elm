@@ -179,6 +179,7 @@ type Msg
     | FormFactor2Change String
     | Node1Selected String
     | Node2Selected String
+    | OnNewElement (Result Http.Error String)
 
 
 
@@ -322,7 +323,7 @@ update msg model =
 
         ElementOk ->
             Debug.log "ElementOk"
-                ( { model | dlgElement = dlgClose }, Cmd.none )
+                ( { model | dlgElement = dlgClose }, addNewElement model )
 
         ElementCancel ->
             ( { model | dlgElement = dlgClose }, Cmd.none )
@@ -379,6 +380,14 @@ update msg model =
         Node2Selected s ->
             Debug.log "Node2Selected"
                 ( { model | node2 = s }, Cmd.none )
+
+        OnNewElement (Ok s) ->
+            Debug.log ("OnNewElement: " ++ s)
+                ( model, Cmd.none )
+
+        OnNewElement (Err _) ->
+            Debug.log ("Error: OnNewElement: ")
+                ( model, Cmd.none )
 
 
 
@@ -496,41 +505,80 @@ addNewDbItem urlAction params msg =
 
 {-
    let
+       myDecoder =
+           Json.map3
+               TripleComboBoxList
+               (field "projects" comboBoxItemListDecoder)
+               (field "deadloads" comboBoxItemListDecoder)
+               (field "liveloads" comboBoxItemListDecoder)
+
        url =
            mainUrl ++ urlAction
 
        pnBody =
            asHttpBody params
    in
-       Http.post Json.int url pnBody
-           |> Task.mapError toString
-           |> Task.perform FetchFail msg
+       Http.send ProjectsFetched <|
+           Http.post url pnBody myDecoder
 -}
+-- Json.string
+
+
+addNewElement : Model -> Cmd Msg
+addNewElement m =
+    let
+        url =
+            mainUrl ++ "/newelement"
+
+        pnBody =
+            asHttpBody [ ( "el", JE.string m.elementDesc ) ]
+    in
+        Http.send OnNewElement <|
+            Http.post url pnBody Json.string
 
 
 addNewProject : String -> Cmd Msg
 addNewProject pn =
-    addNewDbItem "/newproject" [ ( "pn", JE.string pn ) ] OnNewProject
+    Cmd.none
+
+
+
+{-
+   addNewDbItem "/newproject" [ ( "pn", JE.string pn ) ] ProjectsFetched
+-}
 
 
 addNewLocation : String -> String -> Cmd Msg
 addNewLocation pid loc =
-    case String.toInt pid of
-        Ok pidx ->
-            addNewDbItem "/newlocation" [ ( "pid", JE.int pidx ), ( "loc", JE.string loc ) ] OnNewLocation
+    Cmd.none
 
-        Err errMsg ->
-            Cmd.none
+
+
+{-
+   case String.toInt pid of
+       Ok pidx ->
+           addNewDbItem "/newlocation" [ ( "pid", JE.int pidx ), ( "loc", JE.string loc ) ] OnNewLocation
+
+       Err errMsg ->
+           Cmd.none
+-}
 
 
 addNewSystem : String -> String -> Cmd Msg
 addNewSystem loc sys =
-    case String.toInt loc of
-        Ok locx ->
-            addNewDbItem "/newsystem" [ ( "loc", JE.int locx ), ( "sys", JE.string sys ) ] OnNewSystem
+    Cmd.none
 
-        Err errMsg ->
-            Cmd.none
+
+
+{-
+   case String.toInt loc of
+       Ok locx ->
+           addNewDbItem "/newsystem" [ ( "loc", JE.int locx ), ( "sys", JE.string sys ) ] OnNewSystem
+
+       Err errMsg ->
+           Cmd.none
+
+-}
 
 
 fetchProjects : Cmd Msg
