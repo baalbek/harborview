@@ -22,10 +22,13 @@
 
 (defn cur-element-loads [sys-id]
   (let [loads (DBX/fetch-element-loads sys-id)]
-        ;load->html (fn [^ElementLoadBean lx]
-        ;              )]
     (map bean loads)))
 
+(defn elementloads->html [sys-id]
+    (P/render-file
+      "templates/vinapu/elementloads.html"
+      {:curelementloads
+        (cur-element-loads (U/rs sys-id))}))
 
 (defroutes my-routes
 
@@ -60,6 +63,7 @@
 
   (POST "/newelement" request
     (let [jr (U/json-req-parse request)]
+        (println (jr "sysid"))
         (println (jr "el"))
         (U/json-response "BlaBlaBla!")))
 
@@ -75,7 +79,9 @@
         {:systems systems :nodes nodes})))
 
   (GET "/elementloads" [oid]
-    (P/render-file "templates/vinapu/elementloads.html" {:curelementloads (cur-element-loads (U/rs oid))})))
+    (elementloads->html [oid])))
+
+    ;(P/render-file "templates/vinapu/elementloads.html" {:curelementloads (cur-element-loads (U/rs oid))})))
 
   ;(GET "/locations" [oid] (U/json-response (map U/bean->json (DBX/fetch-locations (U/rs oid)))))
   ;(GET "/systems" [oid] (U/json-response (map U/bean->json (DBX/fetch-systems (U/rs oid))))))

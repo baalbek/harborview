@@ -151,17 +151,17 @@ type Msg
     | ProjOk
     | ProjCancel
     | ProjNameChange String
-    | OnNewProject Int
+    | OnNewProject (Result Http.Error Int)
     | LocOpen
     | LocOk
     | LocCancel
     | LocNameChange String
-    | OnNewLocation Int
+    | OnNewLocation (Result Http.Error Int)
     | SysOpen
     | SysOk
     | SysCancel
     | SysNameChange String
-    | OnNewSystem Int
+    | OnNewSystem (Result Http.Error Int)
     | ElementOpen
     | ElementOk
     | ElementCancel
@@ -259,7 +259,7 @@ update msg model =
             ( { model | dlgProj = dlgOpen }, Cmd.none )
 
         ProjOk ->
-            ( { model | dlgProj = dlgClose }, addNewProject model.projName )
+            ( { model | dlgProj = dlgClose }, addNewProject model )
 
         ProjCancel ->
             ( { model | dlgProj = dlgClose }, Cmd.none )
@@ -267,7 +267,7 @@ update msg model =
         ProjNameChange s ->
             ( { model | projName = s }, Cmd.none )
 
-        OnNewProject newOid ->
+        OnNewProject (Ok newOid) ->
             ( { model
                 | projects = updateComboBoxItems newOid model.projName model.projects
                 , locations = Nothing
@@ -277,19 +277,23 @@ update msg model =
             , Cmd.none
             )
 
+        OnNewProject (Err _) ->
+            Debug.log "OnNewProject Error" ( model, Cmd.none )
+
         LocOpen ->
             ( { model | dlgLoc = dlgOpen }, Cmd.none )
 
         LocOk ->
-            ( { model | dlgLoc = dlgClose }, addNewLocation model.selectedProject model.locName )
+            ( { model | dlgLoc = dlgClose }, addNewLocation model )
 
+        -- model.selectedProject model.locName )
         LocCancel ->
             ( { model | dlgLoc = dlgClose }, Cmd.none )
 
         LocNameChange s ->
             ( { model | locName = s }, Cmd.none )
 
-        OnNewLocation newOid ->
+        OnNewLocation (Ok newOid) ->
             ( { model
                 | locations = updateComboBoxItems newOid model.locName model.locations
                 , systems = Nothing
@@ -298,11 +302,14 @@ update msg model =
             , Cmd.none
             )
 
+        OnNewLocation (Err _) ->
+            Debug.log "OnNewLocation Error" ( model, Cmd.none )
+
         SysOpen ->
             ( { model | dlgSys = dlgOpen }, Cmd.none )
 
         SysOk ->
-            ( { model | dlgSys = dlgClose }, addNewSystem model.selectedLocation model.sysName )
+            ( { model | dlgSys = dlgClose }, addNewSystem model )
 
         SysCancel ->
             ( { model | dlgSys = dlgClose }, Cmd.none )
@@ -310,13 +317,16 @@ update msg model =
         SysNameChange s ->
             ( { model | sysName = s }, Cmd.none )
 
-        OnNewSystem newOid ->
+        OnNewSystem (Ok newOid) ->
             ( { model
                 | systems = updateComboBoxItems newOid model.sysName model.systems
                 , elementLoads = Nothing
               }
             , Cmd.none
             )
+
+        OnNewSystem (Err _) ->
+            Debug.log "OnNewSystem Error" ( model, Cmd.none )
 
         ElementOpen ->
             ( { model | dlgElement = dlgOpen }, Cmd.none )
@@ -497,76 +507,80 @@ asHttpBody lx =
         Http.stringBody "application/json" (JE.encode 0 x)
 
 
-addNewDbItem : String -> List ( String, JE.Value ) -> (Int -> Msg) -> Cmd Msg
-addNewDbItem urlAction params msg =
-    Cmd.none
-
-
-
-{-
-   let
-       myDecoder =
-           Json.map3
-               TripleComboBoxList
-               (field "projects" comboBoxItemListDecoder)
-               (field "deadloads" comboBoxItemListDecoder)
-               (field "liveloads" comboBoxItemListDecoder)
-
-       url =
-           mainUrl ++ urlAction
-
-       pnBody =
-           asHttpBody params
-   in
-       Http.send ProjectsFetched <|
-           Http.post url pnBody myDecoder
--}
--- Json.string
-
-
 addNewElement : Model -> Cmd Msg
 addNewElement m =
     let
         url =
             mainUrl ++ "/newelement"
 
-        pnBody =
-            asHttpBody [ ( "el", JE.string m.elementDesc ) ]
+        jbody =
+            asHttpBody
+                [ ( "sysid", JE.string m.selectedSystem )
+                , ( "el", JE.string m.elementDesc )
+                ]
     in
         Http.send OnNewElement <|
-            Http.post url pnBody Json.string
+            Http.post url jbody Json.string
 
 
-addNewProject : String -> Cmd Msg
-addNewProject pn =
-    Cmd.none
+addNewDbItem : String -> List ( String, JE.Value ) -> (Result Http.Error Int -> Msg) -> Cmd Msg
+addNewDbItem url params msg =
+    let
+        jbody =
+            asHttpBody params
+    in
+        Http.send msg <|
+            Http.post url jbody Json.int
 
 
+addNewProject : Model -> Cmd Msg
+addNewProject m =
+    let
+        url =
+            mainUrl ++ "/newproject"
 
-{-
-   addNewDbItem "/newproject" [ ( "pn", JE.string pn ) ] ProjectsFetched
--}
-
-
-addNewLocation : String -> String -> Cmd Msg
-addNewLocation pid loc =
-    Cmd.none
-
-
-
-{-
-   case String.toInt pid of
-       Ok pidx ->
-           addNewDbItem "/newlocation" [ ( "pid", JE.int pidx ), ( "loc", JE.string loc ) ] OnNewLocation
-
-       Err errMsg ->
-           Cmd.none
--}
+        params =
+            [ ( "pn", JE.string m.selectedProject ) ]
+    in
+        addNewDbItem url params OnNewProject
 
 
-addNewSystem : String -> String -> Cmd Msg
-addNewSystem loc sys =
-    Cmd.none
+addNewLocation : Model -> Cmd Msg
+addNewLocation m =
+    case String.toInt m.selectedProject of
+        Ok pid ->
+            let
+                url =
+                    mainUrl ++ "/newlocation"
+
+                params =
+                    [ ( "pid", JE.int pid )
+                    , ( "loc", JE.string m.locName )
+                    ]
+            in
+                addNewDbItem url params OnNewLocation
+
+        Err errMsg ->
+            Cmd.none
+
+
+addNewSystem : Model -> Cmd Msg
+addNewSystem m =
+    case String.toInt m.selectedLocation of
+        Ok loc ->
+            let
+                url =
+                    mainUrl ++ "/newsystem"
+
+                params =
+                    [ ( "loc", JE.int loc )
+                    , ( "sys", JE.string m.sysName )
+                    ]
+            in
+                addNewDbItem url params OnNewSystem
+
+        Err errMsg ->
+            Cmd.none
 
 
 
