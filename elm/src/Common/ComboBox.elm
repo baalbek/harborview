@@ -4,21 +4,21 @@ module Common.ComboBox
         , SelectItems
         , comboBoxItemDecoder
         , comboBoxItemListDecoder
-        , makeSelectOption 
-        , emptySelectOption 
-        , makeSelect 
-        , makeSimpleSelect 
-        , updateComboBoxItems 
-        , makeFGRSelect 
+        , makeSelectOption
+        , emptySelectOption
+        , makeSelect
+        , makeSimpleSelect
+        , updateComboBoxItems
+        , makeFGRSelect
         )
 
 import VirtualDom as VD
 import Json.Decode as Json exposing (field)
 import Html as H
 import Html.Attributes as A
-import Tuple exposing (first,second)
-
+import Tuple exposing (first, second)
 import Common.Miscellaneous as CM exposing (onChange)
+
 
 type alias ComboBoxItem =
     { val : String
@@ -72,6 +72,7 @@ makeSelect caption msg payload selected =
                 ]
             ]
 
+
 makeSimpleSelect : Maybe SelectItems -> String -> VD.Node a
 makeSimpleSelect payload selected =
     let
@@ -87,17 +88,18 @@ makeSimpleSelect payload selected =
                     []
     in
         H.select
-        [ A.class "form-control"
-        ]
-        px
-        
+            [ A.class "form-control"
+            ]
+            px
+
+
 {-|
 
-    Makes a bootstrap form-group row with select 
+    Makes a bootstrap form-group row with select
 
 -}
 makeFGRSelect : String -> String -> CM.ColXs -> Maybe SelectItems -> Maybe (String -> a) -> VD.Node a
-makeFGRSelect id lbl cx payload onChangeEvent = 
+makeFGRSelect id lbl cx payload onChangeEvent =
     let
         makeSelectOption_ =
             makeSelectOption "-1"
@@ -110,25 +112,27 @@ makeFGRSelect id lbl cx payload onChangeEvent =
                 Nothing ->
                     []
 
-        cx_ = CM.colXs cx
+        cx_ =
+            CM.colXs cx
 
-        selectBlock = 
-            case onChangeEvent of 
-                Just onChangeEvent_ -> 
+        selectBlock =
+            case onChangeEvent of
+                Just onChangeEvent_ ->
                     [ H.select [ onChange onChangeEvent_, A.class "form-control", A.id id ]
                         px
                     ]
+
                 Nothing ->
                     [ H.select [ A.class "form-control", A.id id ]
                         px
                     ]
-
     in
         H.div [ A.class "form-group row" ]
             [ H.label [ A.for id, A.class (first cx_) ] [ H.text lbl ]
             , H.div [ A.class (second cx_) ]
-                selectBlock 
+                selectBlock
             ]
+
 
 updateComboBoxItems : Int -> String -> Maybe SelectItems -> Maybe SelectItems
 updateComboBoxItems newOid newItemName curItems =
@@ -145,6 +149,7 @@ updateComboBoxItems newOid newItemName curItems =
 
             Just itemx ->
                 Just (newItem :: itemx)
+
 
 comboBoxItemDecoder : Json.Decoder ComboBoxItem
 comboBoxItemDecoder =

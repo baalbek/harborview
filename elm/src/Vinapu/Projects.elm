@@ -89,9 +89,15 @@ type alias Model =
     , selectedSystem : String
     , elementDesc : String
     , plw : String
-    , width : String
+    , plateWidth : String
+    , load1 : String
     , loadFactor1 : String
     , formFactor1 : String
+    , load2 : String
+    , loadFactor2 : String
+    , formFactor2 : String
+    , node1 : String
+    , node2 : String
     }
 
 
@@ -117,9 +123,15 @@ initModel =
     , selectedSystem = "-1"
     , elementDesc = ""
     , plw = "0.5"
-    , width = "5.0"
+    , plateWidth = "5.0"
+    , load1 = "-1"
     , loadFactor1 = "5.0"
     , formFactor1 = "1.0"
+    , load2 = "-1"
+    , loadFactor2 = "5.0"
+    , formFactor2 = "1.0"
+    , node1 = "-1"
+    , node2 = "-1"
     }
 
 
@@ -159,7 +171,14 @@ type Msg
     | ElementLoadCancel
     | PlwChange String
     | PlateWidthChange String
+    | Load1Selected String
     | LoadFactor1Change String
+    | FormFactor1Change String
+    | Load2Selected String
+    | LoadFactor2Change String
+    | FormFactor2Change String
+    | Node1Selected String
+    | Node2Selected String
 
 
 
@@ -328,10 +347,39 @@ update msg model =
 
         ElementLoadCancel ->
             ( model, Cmd.none )
-    
+
+        Load1Selected s ->
+            Debug.log "Load1Selected"
+                ( { model | load1 = s }, Cmd.none )
+
         LoadFactor1Change s ->
             Debug.log "LoadFactor1Change"
                 ( { model | loadFactor1 = s }, Cmd.none )
+
+        FormFactor1Change s ->
+            Debug.log "FormFactor1Change"
+                ( { model | formFactor1 = s }, Cmd.none )
+
+        Load2Selected s ->
+            Debug.log "Load2Selected"
+                ( { model | load2 = s }, Cmd.none )
+
+        LoadFactor2Change s ->
+            Debug.log "LoadFactor2Change"
+                ( { model | loadFactor2 = s }, Cmd.none )
+
+        FormFactor2Change s ->
+            Debug.log "FormFactor2Change"
+                ( { model | formFactor2 = s }, Cmd.none )
+
+        Node1Selected s ->
+            Debug.log "Node1Selected"
+                ( { model | node1 = s }, Cmd.none )
+
+        Node2Selected s ->
+            Debug.log "Node2Selected"
+                ( { model | node2 = s }, Cmd.none )
+
 
 
 -- SUBSCRIPTIONS
@@ -408,19 +456,19 @@ view model =
                     ]
                 , H.div [ A.class "tab-content" ]
                     [ H.div [ A.id "geo1", A.class "tab-pane in active" ]
-                        [ makeFGRInput ElementDescChange "id1" "Element desc:" "text" CM.CX39 model.elementDesc 
-                        , makeFGRSelect "id2" "Node 1:" CM.CX39 model.nodes Nothing
-                        , makeFGRSelect "id3" "Node 2:" CM.CX39 model.nodes Nothing
+                        [ makeFGRInput ElementDescChange "id1" "Element desc:" "text" CM.CX39 model.elementDesc
+                        , makeFGRSelect "id2" "Node 1:" CM.CX39 model.nodes (Just Node1Selected)
+                        , makeFGRSelect "id3" "Node 2:" CM.CX39 model.nodes (Just Node2Selected)
                         , makeFGRInput PlwChange "id4" "Load distribution factor:" "number" CM.CX66 model.plw
-                        , makeFGRInput PlateWidthChange "id5" "Plate width:" "number" CM.CX66 "4.0"
+                        , makeFGRInput PlateWidthChange "id5" "Plate width:" "number" CM.CX66 model.plateWidth
                         ]
                     , H.div [ A.id "loads1", A.class "tab-pane" ]
-                        [ makeFGRSelect "id6" "Dead load:" CM.CX39 model.deadloads Nothing
+                        [ makeFGRSelect "id6" "Dead load:" CM.CX39 model.deadloads (Just Load1Selected)
                         , makeFGRInput LoadFactor1Change "id7" "Load factor dead load:" "number" CM.CX66 model.loadFactor1
-                        , makeFGRInput PlateWidthChange "id8" "Form factor dead load:" "number" CM.CX66 "1.0"
-                        , makeFGRSelect "id9" "Live load:" CM.CX39 model.liveloads Nothing
-                        , makeFGRInput PlateWidthChange "id10" "Load factor live load:" "number" CM.CX66 "1.0"
-                        , makeFGRInput PlateWidthChange "id11" "Form factor live load:" "number" CM.CX66 "1.0"
+                        , makeFGRInput FormFactor1Change "id8" "Form factor dead load:" "number" CM.CX66 model.formFactor1
+                        , makeFGRSelect "id9" "Live load:" CM.CX39 model.liveloads (Just Load2Selected)
+                        , makeFGRInput LoadFactor2Change "id10" "Load factor dead load:" "number" CM.CX66 model.loadFactor2
+                        , makeFGRInput FormFactor2Change "id11" "Form factor dead load:" "number" CM.CX66 model.formFactor2
                         ]
                     ]
                 ]
