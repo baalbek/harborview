@@ -63,8 +63,18 @@
 
   (POST "/newelement" request
     (let [jr (U/json-req-parse request)]
-        (println (jr "sysid"))
-        (println (jr "el"))
+        (println "sysid: " (jr "sysid"))
+        (println "el: " (jr "el"))
+        (println "n1: " (jr "n1"))
+        (println "n2: " (jr "n2"))
+        (println "plw: " (jr "plw"))
+        (println "w: " (jr "w"))
+        (println "l1: " (jr "l1"))
+        (println "lf1: " (jr "lf1"))
+        (println "ff1: " (jr "ff1"))
+        (println "l2: " (jr "l2"))
+        (println "lf2: " (jr "lf2"))
+        (println "lf2: " (jr "ff2"))
         (U/json-response "BlaBlaBla!")))
 
   (GET "/locations" [oid] (fetch-x oid DBX/fetch-locations))
@@ -79,7 +89,7 @@
         {:systems systems :nodes nodes})))
 
   (GET "/elementloads" [oid]
-    (elementloads->html [oid])))
+    (elementloads->html oid)))
 
     ;(P/render-file "templates/vinapu/elementloads.html" {:curelementloads (cur-element-loads (U/rs oid))})))
 

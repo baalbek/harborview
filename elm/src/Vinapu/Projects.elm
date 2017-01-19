@@ -125,10 +125,10 @@ initModel =
     , plw = "0.5"
     , plateWidth = "5.0"
     , load1 = "-1"
-    , loadFactor1 = "5.0"
+    , loadFactor1 = "1.2"
     , formFactor1 = "1.0"
     , load2 = "-1"
-    , loadFactor2 = "5.0"
+    , loadFactor2 = "1.5"
     , formFactor2 = "1.0"
     , node1 = "-1"
     , node2 = "-1"
@@ -348,7 +348,7 @@ update msg model =
 
         PlateWidthChange s ->
             Debug.log "PlateWidthChange"
-                ( model, Cmd.none )
+                ( { model | plateWidth = s }, Cmd.none )
 
         ElementLoadOpen ->
             ( model, Cmd.none )
@@ -486,8 +486,8 @@ view model =
                         , makeFGRInput LoadFactor1Change "id7" "Load factor dead load:" "number" CM.CX66 model.loadFactor1
                         , makeFGRInput FormFactor1Change "id8" "Form factor dead load:" "number" CM.CX66 model.formFactor1
                         , makeFGRSelect "id9" "Live load:" CM.CX39 model.liveloads (Just Load2Selected)
-                        , makeFGRInput LoadFactor2Change "id10" "Load factor dead load:" "number" CM.CX66 model.loadFactor2
-                        , makeFGRInput FormFactor2Change "id11" "Form factor dead load:" "number" CM.CX66 model.formFactor2
+                        , makeFGRInput LoadFactor2Change "id10" "Load factor live load:" "number" CM.CX66 model.loadFactor2
+                        , makeFGRInput FormFactor2Change "id11" "Form factor live load:" "number" CM.CX66 model.formFactor2
                         ]
                     ]
                 ]
@@ -517,6 +517,16 @@ addNewElement m =
             asHttpBody
                 [ ( "sysid", JE.string m.selectedSystem )
                 , ( "el", JE.string m.elementDesc )
+                , ( "n1", JE.string m.node1 )
+                , ( "n2", JE.string m.node2 )
+                , ( "plw", JE.string m.plw )
+                , ( "w", JE.string m.plateWidth )
+                , ( "l1", JE.string m.load1 )
+                , ( "lf1", JE.string m.loadFactor1 )
+                , ( "ff1", JE.string m.formFactor1 )
+                , ( "l2", JE.string m.load2 )
+                , ( "lf2", JE.string m.loadFactor2 )
+                , ( "ff2", JE.string m.formFactor2 )
                 ]
     in
         Http.send OnNewElement <|
