@@ -62,20 +62,42 @@
          (U/json-response (.getOid result))))
 
   (POST "/newelement" request
-    (let [jr (U/json-req-parse request)]
-        (println "sysid: " (jr "sysid"))
-        (println "el: " (jr "el"))
-        (println "n1: " (jr "n1"))
-        (println "n2: " (jr "n2"))
-        (println "plw: " (jr "plw"))
-        (println "w: " (jr "w"))
-        (println "l1: " (jr "l1"))
-        (println "lf1: " (jr "lf1"))
-        (println "ff1: " (jr "ff1"))
-        (println "l2: " (jr "l2"))
-        (println "lf2: " (jr "lf2"))
-        (println "lf2: " (jr "ff2"))
-        (U/json-response "BlaBlaBla!")))
+    (let [insert-load (fn [new-el load-id load-factor form-factor]
+                        (DBX/insert-element-load
+                         (.getOid new-el)
+                         (U/rs load-id)
+                         (U/rs load-factor)
+                         (U/rs form-factor)))
+          jr (U/json-req-parse request)
+          sysid (U/rs (jr "sysid"))
+          n1 (U/rs (jr "n1"))
+          n2 (U/rs (jr "n2"))
+          plw (U/rs (jr "plw"))
+          w (U/rs (jr "w"))
+          l1 (U/rs (jr "l1"))
+          l2 (U/rs (jr "l2"))
+          dsc (jr "el")
+          new-element (DBX/insert-element sysid dsc n1 n2 plw w)]
+      (if (> l1 0)
+        (insert-load new-element (jr "l1") (jr "lf1") (jr "ff1")))
+      (if (> l2 0)
+        (insert-load new-element (jr "l2") (jr "lf2") (jr "ff2")))
+      (U/json-response
+        (elementloads->html (.getOid new-element)))))
+
+        ;(println "sysid: " (jr "sysid"))
+        ;(println "el: " (jr "el"))
+        ;(println "n1: " (jr "n1"))
+        ;(println "n2: " (jr "n2"))
+        ;(println "plw: " (jr "plw"))
+        ;(println "w: " (jr "w"))
+        ;(println "l1: " (jr "l1"))
+        ;(println "lf1: " (jr "lf1"))
+        ;(println "ff1: " (jr "ff1"))
+        ;(println "l2: " (jr "l2"))
+        ;(println "lf2: " (jr "lf2"))
+        ;(println "lf2: " (jr "ff2"))
+        ;(U/json-response "BlaBlaBla!")))
 
   (GET "/locations" [oid] (fetch-x oid DBX/fetch-locations))
 

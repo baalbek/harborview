@@ -7,7 +7,9 @@
     [stearnswharf.mybatis.vinapu
       ElementsMapper]
     [stearnswharf.geometry
-      ProjectBean LocationBean SystemBean])
+      ProjectBean LocationBean SystemBean]
+    [stearnswharf.vinapu.elements
+      ElementLoadBean])
   (:require
     [harborview.service.db :as DB]))
 
@@ -38,6 +40,28 @@
    (DB/with-session :stearnswharf SystemsMapper
      (.insertSystem it result))
    result))
+
+(defn insert-element [sys-id dsc n1 n2 plw w1]
+  (let [result (ElementLoadBean.)]
+    (.setSystemId result sys-id)
+    (.setDsc result dsc)
+    (.setN1 result n1)
+    (.setN2 result n2)
+    (.setPlw result plw)
+    (.setW1 result w1)
+    (DB/with-session :stearnswharf ElementsMapper
+     (.insertElement it result))
+    result))
+
+(defn insert-element-load [element-id load-id load-factor form-factor]
+  (let [result (ElementLoadBean.)]
+    (.setOid result element-id)
+    (.setLoadId result load-id)
+    (.setLoadFactor result load-factor)
+    (.setFormFactor result form-factor)
+    (DB/with-session :stearnswharf ElementsMapper
+     (.insertElementLoad it result))
+    result))
 
 (defn fetch-locations [project-id]
   (DB/with-session :stearnswharf LocationsMapper
