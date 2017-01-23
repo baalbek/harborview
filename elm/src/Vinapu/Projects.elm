@@ -393,7 +393,7 @@ update msg model =
 
         OnNewElement (Ok s) ->
             Debug.log ("OnNewElement: " ++ s)
-                ( model, Cmd.none )
+                ( { model | elementLoads = Just s }, Cmd.none )
 
         OnNewElement (Err _) ->
             Debug.log ("Error: OnNewElement: ")

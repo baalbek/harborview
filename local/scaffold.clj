@@ -16,6 +16,8 @@
 (defn fp []
   (MAUX/fetch-prices 3 pdx))
 
+(def nel VIN/insert-element)
+
 (comment
   (def jr U/json-response)
   (def bj U/bean->json)
