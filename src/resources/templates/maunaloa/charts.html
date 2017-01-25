@@ -15,7 +15,7 @@
         <div id="my-app"></div>
     </div>
     <div style="position: absolute; top:200px; left:200px;">
-        <canvas id="my-canvas" width="1200" height="600"></canvas>
+        <canvas id="my-canvas" width="1300" height="600"></canvas>
     </div>
     <script type="text/javascript">
         var node = document.getElementById('my-app');
@@ -26,7 +26,11 @@
           var strokes = xss[2];
           var canvas = document.getElementById('my-canvas');
           var ctx = canvas.getContext("2d");
-
+          ctx.clearRect(0,0,1300,600);
+          /*
+          ctx.fillStyle="#abffff";
+          ctx.fillRect(0,0,1300,600);
+          */
           for (var i = 0; i < graphs.length; ++i) {
               var curStroke = strokes[i] === undefined ? "#000000" : strokes[i];
               var ys = graphs[i];

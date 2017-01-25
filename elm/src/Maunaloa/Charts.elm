@@ -8,7 +8,6 @@ import Svg as S
 import Svg.Attributes as SA
 import Json.Decode as Json
 import Json.Decode.Pipeline as JP
-import Date exposing (Date)
 
 
 -- import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
@@ -22,7 +21,7 @@ import Common.ComboBox
         , makeSelect
         )
 import ChartRuler.VRuler as VR
-import ChartCommon exposing (Candlestick)
+import ChartCommon exposing (Candlestick, ChartInfo)
 
 
 mainUrl =
@@ -57,18 +56,6 @@ init =
 
 
 ------------------- MODEL ---------------------
-
-
-type alias ChartInfo =
-    { minDx : Date
-    , maxDx : Date
-    , xAxis : List Float
-    , spots : Maybe (List Float)
-    , itrend20 : Maybe (List Float)
-    }
-
-
-
 {-
    , spots : Maybe (List Float)
    , candlesticks : Maybe (List Candlestick)
@@ -78,6 +65,7 @@ type alias ChartInfo =
 type alias Model =
     { tickers : Maybe SelectItems
     , selectedTicker : String
+    , chartInfo : Maybe ChartInfo
     }
 
 
@@ -85,6 +73,7 @@ initModel : Model
 initModel =
     { tickers = Nothing
     , selectedTicker = "-1"
+    , chartInfo = Nothing
     }
 
 
@@ -107,24 +96,52 @@ view : Model -> H.Html Msg
 view model =
     let
         w =
-            "1200"
+            1300
 
         h =
-            "600"
+            600
+
+        ws =
+            toString w
+
+        hs =
+            toString h
 
         stroke =
             "#023963"
+
+        svgBaseLines =
+            [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 hs, SA.stroke stroke ] []
+              --, S.line [ SA.x1 "0", SA.y1 hs, SA.x2 ws, SA.y2 hs, SA.stroke stroke ] []
+              -- , S.line [ SA.x2 "0", SA.y1 "0", SA.x2 ws, SA.y2 "0", SA.stroke stroke ] []
+            ]
+
+        hruler =
+            case model.chartInfo of
+                Nothing ->
+                    []
+
+                Just ci ->
+                    []
+
+        vruler =
+            case model.chartInfo of
+                Nothing ->
+                    []
+
+                Just ci ->
+                    VR.lines w h ci
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
                 [ makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
                 ]
             , H.div [ A.style [ ( "position", "absolute" ), ( "top", "200px" ), ( "left", "200px" ) ] ]
-                [ S.svg [ SA.width (w ++ "px"), SA.height (h ++ "px") ]
-                    [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 h, SA.stroke stroke ] []
-                    , S.line [ SA.x1 "0", SA.y1 h, SA.x2 w, SA.y2 h, SA.stroke stroke ] []
-                    , S.line [ SA.x1 "0", SA.y1 "0", SA.x2 w, SA.y2 "0", SA.stroke stroke ] []
-                    ]
+                [ S.svg [ SA.width (ws ++ "px"), SA.height (hs ++ "px") ]
+                    (List.append
+                        svgBaseLines
+                        (List.append hruler vruler)
+                    )
                 ]
             ]
 
@@ -152,17 +169,8 @@ update msg model =
                 ( { model | selectedTicker = s }, fetchCharts s )
 
         ChartsFetched (Ok s) ->
-            ( model, drawChartInfo s )
+            ( { model | chartInfo = Just s }, drawChartInfo s )
 
-        {-
-           case s.spots of
-               Just s_ ->
-                   Debug.log (toString s_)
-                       ( model, drawCanvas ( s.xAxis, s_, "#00ff00" ) )
-
-               Nothing ->
-                   ( model, Cmd.none )
-        -}
         ChartsFetched (Err _) ->
             Debug.log "ChartsFetched err"
                 ( model, Cmd.none )
@@ -177,7 +185,7 @@ drawChartInfo ci =
         itrend20 =
             Maybe.withDefault [] ci.itrend20
     in
-        Debug.log (toString itrend20)
+        Debug.log (toString ci)
             drawCanvas
             ( [ spots, itrend20 ], ci.xAxis, [ "#00ffcc", "#ff0000" ] )
 
@@ -203,6 +211,8 @@ fetchCharts ticker =
             JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "max-dx" stringToDateDecoder
+                |> JP.required "min-val" Json.float
+                |> JP.required "max-val" Json.float
                 |> JP.required "x-axis" (Json.list Json.float)
                 |> JP.required "spots" (Json.nullable (Json.list Json.float))
                 |> JP.required "itrend-20" (Json.nullable (Json.list Json.float))

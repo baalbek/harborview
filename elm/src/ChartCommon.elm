@@ -1,18 +1,34 @@
 module ChartCommon exposing (..)
 
 import String
+import Date exposing (Date)
+
 
 type alias Point =
     { x : Float
-    , y : Float }
+    , y : Float
+    }
 
-type alias Candlestick = 
+
+type alias Candlestick =
     { opn : Float
     , hi : Float
     , lo : Float
-    , cls : Float }
+    , cls : Float
+    }
 
-type ChartValues 
+
+type ChartValues
     = Candlesticks (List Candlestick)
     | ChartPoints (List (List Float))
 
+
+type alias ChartInfo =
+    { minDx : Date
+    , maxDx : Date
+    , minVal : Float
+    , maxVal : Float
+    , xAxis : List Float
+    , spots : Maybe (List Float)
+    , itrend20 : Maybe (List Float)
+    }

@@ -2,7 +2,7 @@ module ChartRuler.VRuler exposing (..)
 
 import Svg as S
 import Svg.Attributes as SA
-import ChartCommon as C exposing (Point, ChartValues)
+import ChartCommon as C exposing (Point, ChartValues, ChartInfo)
 
 
 {-|
@@ -10,50 +10,58 @@ import ChartCommon as C exposing (Point, ChartValues)
     ppy : pixels pr y value
 
 -}
-type alias VRuler =
-    { ul : Point
-    , lr : Point
-    , ppy : Float
-    , minVal : Float
-    , maxVal :
-        Float
-        -- , values : Maybe ChartValues
-    }
 
 
-r : VRuler
-r =
+
+{-
+   type alias VRuler =
+       { ul : Point
+       , lr : Point
+       , ppy : Float
+       , minVal : Float
+       , maxVal :
+           Float
+           -- , values : Maybe ChartValues
+       }
+
+
+   r : VRuler
+   r =
+       let
+           p0 =
+               Point 0 0
+
+           p1 =
+               Point 1200 950
+       in
+           vruler p0 p1 Nothing
+
+
+   calcValue : VRuler -> Float -> Float
+   calcValue ruler pix =
+       20.2
+
+
+   calcPix : VRuler -> Float -> Float
+   calcPix ruler val =
+       20.2
+-}
+
+
+lines : Int -> Int -> ChartInfo -> List (S.Svg a)
+lines w h ci =
     let
-        p0 =
-            Point 0 0
+        valueSpan =
+            ci.maxVal - ci.minVal
 
-        p1 =
-            Point 1200 950
-    in
-        vruler p0 p1 Nothing
+        ppy =
+            toFloat h / valueSpan
 
-
-calcValue : VRuler -> Float -> Float
-calcValue ruler pix =
-    20.2
-
-
-calcPix : VRuler -> Float -> Float
-calcPix ruler val =
-    20.2
-
-
-lines : VRuler -> List (S.Svg a)
-lines vr =
-    let
         step =
-            vr.ppy * ((vr.maxVal - vr.minVal) / 10.0)
-
-        x1s =
-            toString vr.ul.x
+            ppy * (valueSpan / 10.0)
 
         x2s =
-            toString vr.lr.x
+            toString w
 
         range =
             List.range 1 10
@@ -63,38 +71,38 @@ lines vr =
                 curY =
                     toString <| step * (toFloat x)
             in
-                S.line [ SA.x1 x1s, SA.y1 "0", SA.x2 x2s, SA.y2 curY, SA.stroke "#023963" ] []
+                S.line [ SA.x1 "0", SA.y1 curY, SA.x2 x2s, SA.y2 curY, SA.stroke "#023963" ] []
     in
         List.map lineFn range
 
 
-vruler : Point -> Point -> Maybe ChartValues -> VRuler
-vruler ul lr cv =
-    let
-        ( minVal, maxVal ) =
-            minMax cv
 
-        valueSpan =
-            maxVal - minVal
+{-
+   vruler : Point -> Point -> Maybe ChartValues -> VRuler
+   vruler ul lr cv =
+       let
+           ( minVal, maxVal ) =
+               minMax cv
 
-        h =
-            lr.y - ul.y
+           valueSpan =
+               maxVal - minVal
 
-        ppy =
-            h / valueSpan
-    in
-        VRuler ul lr ppy minVal maxVal
+           h =
+               lr.y - ul.y
 
-
-
--- (Just (C.ChartPoints [[]]))
+           ppy =
+               h / valueSpan
+       in
+           VRuler ul lr ppy minVal maxVal
 
 
-minMax : Maybe ChartValues -> ( Float, Float )
-minMax cv =
-    case cv of
-        Nothing ->
-            ( 0.0, 100.0 )
 
-        Just cv_ ->
-            ( 0.0, 100.0 )
+   minMax : Maybe ChartValues -> ( Float, Float )
+   minMax cv =
+       case cv of
+           Nothing ->
+               ( 0.0, 100.0 )
+
+           Just cv_ ->
+               ( 0.0, 100.0 )
+-}

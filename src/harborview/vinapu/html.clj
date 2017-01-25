@@ -82,8 +82,10 @@
         (insert-load new-element (jr "l1") (jr "lf1") (jr "ff1")))
       (if (> l2 0)
         (insert-load new-element (jr "l2") (jr "lf2") (jr "ff2")))
-      (U/json-response
-        (elementloads->html (.getOid new-element)))))
+      (let [new-oid (.getOid new-element)]
+        (println "new oid: " new-oid)
+        (U/json-response
+          (elementloads->html (.getOid new-element))))))
 
         ;(println "sysid: " (jr "sysid"))
         ;(println "el: " (jr "el"))

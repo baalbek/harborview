@@ -63,7 +63,7 @@
         spots (map #(.getCls %) spot-objs)
         itrend-20 (calc-itrend spots 50)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
-        max-dx (last dx)
+        max-dx (last dx) ;(.plusWeeks (last dx) 7)
         ys (concat spots itrend-20)
         min-val (apply min ys)
         max-val (apply max ys)
