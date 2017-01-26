@@ -17,6 +17,9 @@
     <div style="position: absolute; top:200px; left:200px;">
         <canvas id="my-canvas" width="1300" height="600"></canvas>
     </div>
+    <div id="buttons">
+        <input type="button" id="clear" value="Clear">
+    </div>
     <script type="text/javascript">
         var node = document.getElementById('my-app');
         var app = Elm.Maunaloa.Charts.embed(node);
@@ -26,7 +29,7 @@
           var strokes = xss[2];
           var canvas = document.getElementById('my-canvas');
           var ctx = canvas.getContext("2d");
-          ctx.clearRect(0,0,1300,600);
+          ctx.clearRect(0,0,ctx.width,ctx.height);
           /*
           ctx.fillStyle="#abffff";
           ctx.fillRect(0,0,1300,600);
@@ -51,8 +54,15 @@
             ctx.lineTo(x,y);
           }
           ctx.stroke();
+          ctx.closePath();
         }
         app.ports.drawCanvas.subscribe(drawCanvas);
+        document.getElementById('clear').addEventListener('click', function() {
+            var canvas = document.getElementById('my-canvas');
+            var ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, ctx.width, ctx.height);
+            alert("Did it clear?");
+        }, false);
     </script>
 </body>
 </html>
