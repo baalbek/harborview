@@ -187,7 +187,7 @@ drawChartInfo ci =
     in
         Debug.log (toString ci)
             drawCanvas
-            ( [ spots, itrend20 ], ci.xAxis, [ "#00ffcc", "#ff0000" ] )
+            ( [ spots, itrend20 ], ci.xAxis, [ "#000000", "#ff0000" ] )
 
 
 
