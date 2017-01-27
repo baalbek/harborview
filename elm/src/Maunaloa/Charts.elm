@@ -179,6 +179,7 @@ update msg model =
 drawChartInfo : ChartInfo -> Cmd Msg
 drawChartInfo ci =
     let
+        numSpots = 300
         spots =
             Maybe.withDefault [] ci.spots
 
@@ -187,7 +188,7 @@ drawChartInfo ci =
     in
         Debug.log (toString ci)
             drawCanvas
-            ( [ spots, itrend20 ], ci.xAxis, [ "#000000", "#ff0000" ] )
+            ( [ (List.take numSpots spots), (List.take numSpots itrend20) ], (List.take numSpots ci.xAxis), [ "#000000", "#ff0000" ] )
 
 
 
