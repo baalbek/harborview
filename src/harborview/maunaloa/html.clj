@@ -22,13 +22,13 @@
 (defn double->decimal [v]
   (/ (Math/round (* v 10)) 10.0))
 
-(defn vruler [h min-val max-val]
+(defn vruler-static [h min-val max-val]
   (let [pix-pr-v (/ h (- max-val min-val))]
     (fn [v]
       (let [diff (- max-val v)]
         (double->decimal (double (* pix-pr-v diff)))))))
 
-(defn hruler [w min-dx max-dx]
+(defn hruler-static [w min-dx max-dx]
   (let [diff-days
         (fn [d1 d2]
           (.between ChronoUnit/DAYS d1 d2))
@@ -57,7 +57,7 @@
     dx))
 
 
-(defn ticker-chart [oid w h]
+(defn ticker-chart-static [oid w h]
   (let [min-dx (LocalDate/of 2012 1 1)
         spot-objs (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
         spots (map #(.getCls %) spot-objs)
@@ -67,8 +67,8 @@
         ys (concat spots itrend-20)
         min-val (apply min ys)
         max-val (apply max ys)
-        vr (vruler h min-val max-val)
-        hr (hruler w min-dx max-dx)]
+        vr (vruler-static h min-val max-val)
+        hr (hruler-static w min-dx max-dx)]
     (U/json-response
       {:spots (map vr spots)
        :itrend-20 (map vr itrend-20)
@@ -89,6 +89,16 @@
        :min-dx (ld->str min-dx)
        :max-dx (ld->str max-dx)})))
 
+(defn ticker-chart [oid]
+  (let [min-dx (LocalDate/of 2012 1 1)
+        spot-objs (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
+        spots (map #(.getCls %) spot-objs)
+        itrend-20 (calc-itrend spots 50)
+        dx (map #(.toLocalDate (.getDx %)) spot-objs)
+        max-dx (last dx)]
+    ;(U/json-response
+      {:spots spots
+       :itrend-20 (map double->decimal itrend-20)}))
 
 (defn tickers []
   (U/json-response

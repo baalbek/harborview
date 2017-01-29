@@ -48,6 +48,16 @@ import ChartCommon as C exposing (Point, ChartValues, ChartInfo)
 -}
 
 
+vruler : Int -> (Float -> Float)
+vruler h =
+    let
+        vruler_ : Float -> Float
+        vruler_ x =
+            2 * x
+    in
+        vruler_
+
+
 lines : Int -> Int -> ChartInfo -> List (S.Svg a)
 lines w h ci =
     let

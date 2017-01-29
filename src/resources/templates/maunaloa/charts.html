@@ -40,7 +40,8 @@
               ctx.beginPath();
               var curStroke = strokes[i] === undefined ? "#000000" : strokes[i];
               var ys = graphs[i];
-              drawGraph(ctx,xs,ys,curStroke)
+              drawGraph(ctx,xs,ys,curStroke);
+
           }
         }
         var drawGraph = function (ctx,xs,ys,strokeStyle) {

@@ -11,10 +11,10 @@ type alias Point =
 
 
 type alias Candlestick =
-    { opn : Float
-    , hi : Float
-    , lo : Float
-    , cls : Float
+    { o : Float
+    , h : Float
+    , l : Float
+    , c : Float
     }
 
 
@@ -26,9 +26,7 @@ type ChartValues
 type alias ChartInfo =
     { minDx : Date
     , maxDx : Date
-    , minVal : Float
-    , maxVal : Float
-    , xAxis : List Float
+    , xAxis : List Int
     , spots : Maybe (List Float)
     , itrend20 : Maybe (List Float)
     }

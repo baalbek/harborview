@@ -179,7 +179,9 @@ update msg model =
 drawChartInfo : ChartInfo -> Cmd Msg
 drawChartInfo ci =
     let
-        numSpots = 300
+        numSpots =
+            1300
+
         spots =
             Maybe.withDefault [] ci.spots
 
@@ -212,9 +214,7 @@ fetchCharts ticker =
             JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "max-dx" stringToDateDecoder
-                |> JP.required "min-val" Json.float
-                |> JP.required "max-val" Json.float
-                |> JP.required "x-axis" (Json.list Json.float)
+                |> JP.required "x-axis" (Json.list Json.int)
                 |> JP.required "spots" (Json.nullable (Json.list Json.float))
                 |> JP.required "itrend-20" (Json.nullable (Json.list Json.float))
 
