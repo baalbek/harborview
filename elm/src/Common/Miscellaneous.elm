@@ -89,3 +89,8 @@ makeFGRInput msg id lbl aType cx inputValue =
 onChange : (String -> a) -> VD.Property a
 onChange tagger =
     E.on "change" (JD.map tagger E.targetValue)
+
+
+lastElem : List a -> Maybe a         
+lastElem =            
+    List.foldl (Just >> always) Nothing         
