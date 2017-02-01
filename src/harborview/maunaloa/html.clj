@@ -28,15 +28,20 @@
       (let [diff (- max-val v)]
         (double->decimal (double (* pix-pr-v diff)))))))
 
+(defn diff-days [d1 d2]
+  (.between ChronoUnit/DAYS d1 d2))
+
 (defn hruler-static [w min-dx max-dx]
-  (let [diff-days
-        (fn [d1 d2]
-          (.between ChronoUnit/DAYS d1 d2))
-        days (diff-days min-dx max-dx)
+  (let [days (diff-days min-dx max-dx)
         pix-pr-h (/ w days)]
     (fn [dx]
       (let [cur-diff (diff-days min-dx dx)]
         (double->decimal (double (* pix-pr-h cur-diff)))))))
+
+(defn hruler [min-dx]
+  (fn [dx]
+    (let [cur-diff (diff-days min-dx dx)]
+      cur-diff)))
 
 (defn ld->str [v]
   (let [y (.getYear v)
@@ -95,10 +100,14 @@
         spots (map #(.getCls %) spot-objs)
         itrend-20 (calc-itrend spots 50)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
-        max-dx (last dx)]
+        max-dx (last dx)
+        hr (hruler min-dx)]
     ;(U/json-response
       {:spots spots
-       :itrend-20 (map double->decimal itrend-20)}))
+       :x-axis (map hr dx)
+       :itrend-20 (map double->decimal itrend-20)
+       :min-dx (ld->str min-dx)
+       :max-dx (ld->str max-dx)}))
 
 (defn tickers []
   (U/json-response

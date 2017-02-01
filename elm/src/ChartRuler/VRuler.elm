@@ -2,7 +2,11 @@ module ChartRuler.VRuler exposing (..)
 
 import Svg as S
 import Svg.Attributes as SA
+import Time exposing (Time)
+import Common.DateUtil as DU
 import ChartCommon as C exposing (Point, ChartValues, ChartInfo)
+import Date exposing (Date, fromTime)
+import Common.Miscellaneous exposing (lastElem)
 
 
 {-|
@@ -48,6 +52,26 @@ import ChartCommon as C exposing (Point, ChartValues, ChartInfo)
 -}
 
 
+maybeLen : Maybe (List a) -> Int
+maybeLen v =
+    case v of
+        Nothing ->
+            0
+
+        Just v_ ->
+            List.length v_
+
+
+dci : ChartInfo
+dci =
+    { minDx = DU.toDate "2016-7-1"
+    , maxDx = DU.toDate "2016-8-1"
+    , xAxis = List.reverse <| List.map toFloat <| List.range 0 400
+    , spots = Just <| List.reverse <| List.map toFloat <| List.range 100 500
+    , itrend20 = Nothing
+    }
+
+
 vruler : Int -> (Float -> Float)
 vruler h =
     let
@@ -58,11 +82,49 @@ vruler h =
         vruler_
 
 
+minMax_ : Maybe (List Float) -> ( Float, Float )
+minMax_ v =
+    case v of
+        Nothing ->
+            ( 0, 0 )
+
+        Just v_ ->
+            let
+                minVal =
+                    List.minimum v_ |> Maybe.withDefault 0
+
+                maxVal =
+                    List.maximum v_ |> Maybe.withDefault 0
+            in
+                ( minVal, maxVal )
+
+
+minMax : ChartInfo -> ( Float, Float )
+minMax ci =
+    let
+        ( s1, s2 ) =
+            minMax_ ci.spots
+
+        ( i1, i2 ) =
+            minMax_ ci.itrend20
+    in
+        ( min s1 i1, max s2 i2 )
+
+
+
+-- List.drop 90 dci.xAxis |> List.take 90 |> dateRangeOf dci
+
+
 lines : Int -> Int -> ChartInfo -> List (S.Svg a)
 lines w h ci =
     let
+        --valueSpan =
+        --    ci.maxVal - ci.minVal
+        ( minVal, maxVal ) =
+            minMax ci
+
         valueSpan =
-            ci.maxVal - ci.minVal
+            maxVal - minVal
 
         ppy =
             toFloat h / valueSpan

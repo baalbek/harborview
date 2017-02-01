@@ -26,7 +26,7 @@ type ChartValues
 type alias ChartInfo =
     { minDx : Date
     , maxDx : Date
-    , xAxis : List Int
+    , xAxis : List Float
     , spots : Maybe (List Float)
     , itrend20 : Maybe (List Float)
     }
