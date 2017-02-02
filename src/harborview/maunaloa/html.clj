@@ -102,12 +102,12 @@
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
         max-dx (last dx)
         hr (hruler min-dx)]
-    ;(U/json-response
+    (U/json-response
       {:spots spots
        :x-axis (map hr dx)
        :itrend-20 (map double->decimal itrend-20)
        :min-dx (ld->str min-dx)
-       :max-dx (ld->str max-dx)}))
+       :max-dx (ld->str max-dx)})))
 
 (defn tickers []
   (U/json-response
@@ -123,4 +123,4 @@
 (defroutes my-routes
   (GET "/" request (init))
   (GET "/tickers" request (tickers))
-  (GET "/ticker" [oid] (ticker-chart (U/rs oid) 1200 600)))
+  (GET "/ticker" [oid] (ticker-chart (U/rs oid))))

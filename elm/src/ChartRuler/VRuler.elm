@@ -62,15 +62,6 @@ maybeLen v =
             List.length v_
 
 
-dci : ChartInfo
-dci =
-    { minDx = DU.toDate "2016-7-1"
-    , maxDx = DU.toDate "2016-8-1"
-    , xAxis = List.reverse <| List.map toFloat <| List.range 0 400
-    , spots = Just <| List.reverse <| List.map toFloat <| List.range 100 500
-    , itrend20 = Nothing
-    }
-
 
 vruler : Int -> (Float -> Float)
 vruler h =

@@ -9,6 +9,10 @@ import Svg.Attributes as SA
 import Json.Decode as Json
 import Json.Decode.Pipeline as JP
 
+import Common.Miscellaneous as M
+import Common.DateUtil as DU
+import ChartRuler.HRuler as HR
+
 
 -- import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
 
@@ -66,6 +70,9 @@ type alias Model =
     { tickers : Maybe SelectItems
     , selectedTicker : String
     , chartInfo : Maybe ChartInfo
+    , chartInfoWin : Maybe ChartInfo
+    , dropItems : Int
+    , takeItems : Int
     }
 
 
@@ -74,6 +81,9 @@ initModel =
     { tickers = Nothing
     , selectedTicker = "-1"
     , chartInfo = Nothing
+    , chartInfoWin = Nothing
+    , dropItems = 0 
+    , takeItems = 90 
     }
 
 
@@ -117,7 +127,7 @@ view model =
             ]
 
         hruler =
-            case model.chartInfo of
+            case model.chartInfoWin of
                 Nothing ->
                     []
 
@@ -125,7 +135,7 @@ view model =
                     []
 
         vruler =
-            case model.chartInfo of
+            case model.chartInfoWin of
                 Nothing ->
                     []
 
@@ -149,6 +159,21 @@ view model =
 
 ------------------- UPDATE --------------------
 
+chartWindow : ChartInfo -> Int -> Int -> ChartInfo 
+chartWindow ci offset numItems = 
+    let 
+        xAxis_ = List.take numItems <| List.drop offset ci.xAxis         
+        (minDx_,maxDx_) = HR.dateRangeOf ci xAxis_
+        spots_ = case ci.spots of 
+                    Nothing -> Nothing
+                    Just s -> Just <| List.take numItems <| List.drop offset s
+    in 
+        { minDx = minDx_
+        , maxDx = maxDx_ 
+        , xAxis = xAxis_ 
+        , spots = spots_ 
+        , itrend20 = Nothing 
+        }
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -169,7 +194,10 @@ update msg model =
                 ( { model | selectedTicker = s }, fetchCharts s )
 
         ChartsFetched (Ok s) ->
-            ( { model | chartInfo = Just s }, drawChartInfo s )
+            let 
+                ciWin = chartWindow s model.dropItems model.takeItems 
+            in
+                ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, drawChartInfo ciWin )
 
         ChartsFetched (Err _) ->
             Debug.log "ChartsFetched err"
@@ -179,9 +207,6 @@ update msg model =
 drawChartInfo : ChartInfo -> Cmd Msg
 drawChartInfo ci =
     let
-        numSpots =
-            1300
-
         spots =
             Maybe.withDefault [] ci.spots
 
@@ -190,7 +215,7 @@ drawChartInfo ci =
     in
         Debug.log (toString ci)
             drawCanvas
-            ( [ (List.take numSpots spots), (List.take numSpots itrend20) ], (List.take numSpots ci.xAxis), [ "#000000", "#ff0000" ] )
+            ( [ spots, itrend20 ], ci.xAxis, [ "#000000", "#ff0000" ] )
 
 
 
@@ -214,7 +239,7 @@ fetchCharts ticker =
             JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "max-dx" stringToDateDecoder
-                |> JP.required "x-axis" (Json.list Json.int)
+                |> JP.required "x-axis" (Json.list Json.float)
                 |> JP.required "spots" (Json.nullable (Json.list Json.float))
                 |> JP.required "itrend-20" (Json.nullable (Json.list Json.float))
 
