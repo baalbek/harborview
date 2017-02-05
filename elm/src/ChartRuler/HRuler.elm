@@ -8,6 +8,7 @@ import ChartCommon as C exposing (Point, ChartValues, ChartInfo)
 import Date exposing (Date, fromTime)
 import Common.Miscellaneous exposing (lastElem)
 
+
 dci : ChartInfo
 dci =
     { minDx = DU.toDate "2016-7-1"
@@ -34,7 +35,14 @@ dateRangeOf dx lx =
     in
         ( dxOf dx offsetLow, dxOf dx offsetHi )
 
-hruler : ChartInfo -> List Float -> ( Float -> Float )
-hruler origChart newRange = 
-    
-    \x -> x
+
+hruler : Date -> Date -> List Float -> Float -> (Float -> Float)
+hruler newStartDate newEndDate newRange chartWidth =
+    let
+        days =
+            DU.diffDays newStartDate newEndDate
+
+        ppx =
+            chartWidth / days
+    in
+        \x -> x

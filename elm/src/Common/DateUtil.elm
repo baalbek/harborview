@@ -41,3 +41,15 @@ addWeeks dx weeks =
             x + (weeks * week_)
     in
         fromTime tx
+
+
+diffDays : Date -> Date -> Time
+diffDays d0 d1 =
+    let
+        t0 =
+            toTime d0
+
+        t1 =
+            toTime d1
+    in
+        (t1 - t0) / day_

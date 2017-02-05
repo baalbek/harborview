@@ -62,7 +62,6 @@ maybeLen v =
             List.length v_
 
 
-
 vruler : Int -> (Float -> Float)
 vruler h =
     let
@@ -106,7 +105,7 @@ minMax ci =
 -- List.drop 90 dci.xAxis |> List.take 90 |> dateRangeOf dci
 
 
-lines : Int -> Int -> ChartInfo -> List (S.Svg a)
+lines : Float -> Float -> ChartInfo -> List (S.Svg a)
 lines w h ci =
     let
         --valueSpan =
@@ -118,7 +117,7 @@ lines w h ci =
             maxVal - minVal
 
         ppy =
-            toFloat h / valueSpan
+            h / valueSpan
 
         step =
             ppy * (valueSpan / 10.0)

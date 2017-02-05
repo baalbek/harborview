@@ -8,7 +8,6 @@ import Svg as S
 import Svg.Attributes as SA
 import Json.Decode as Json
 import Json.Decode.Pipeline as JP
-
 import Common.Miscellaneous as M
 import Common.DateUtil as DU
 import ChartRuler.HRuler as HR
@@ -73,6 +72,8 @@ type alias Model =
     , chartInfoWin : Maybe ChartInfo
     , dropItems : Int
     , takeItems : Int
+    , chartWidth : Float
+    , chartHeight : Float
     }
 
 
@@ -82,8 +83,10 @@ initModel =
     , selectedTicker = "-1"
     , chartInfo = Nothing
     , chartInfoWin = Nothing
-    , dropItems = 0 
-    , takeItems = 90 
+    , dropItems = 0
+    , takeItems = 90
+    , chartWidth = 1300
+    , chartHeight = 600
     }
 
 
@@ -106,16 +109,13 @@ view : Model -> H.Html Msg
 view model =
     let
         w =
-            1300
-
-        h =
-            600
+            model.chartWidth + 100
 
         ws =
             toString w
 
         hs =
-            toString h
+            toString model.chartHeight
 
         stroke =
             "#023963"
@@ -140,7 +140,7 @@ view model =
                     []
 
                 Just ci ->
-                    VR.lines w h ci
+                    VR.lines w model.chartHeight ci
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
@@ -159,21 +159,31 @@ view model =
 
 ------------------- UPDATE --------------------
 
-chartWindow : ChartInfo -> Int -> Int -> ChartInfo 
-chartWindow ci offset numItems = 
-    let 
-        xAxis_ = List.take numItems <| List.drop offset ci.xAxis         
-        (minDx_,maxDx_) = HR.dateRangeOf ci xAxis_
-        spots_ = case ci.spots of 
-                    Nothing -> Nothing
-                    Just s -> Just <| List.take numItems <| List.drop offset s
-    in 
+
+chartWindow : ChartInfo -> Int -> Int -> Float -> ChartInfo
+chartWindow ci offset numItems chartWidth =
+    let
+        xAxis_ =
+            List.take numItems <| List.drop offset ci.xAxis
+
+        ( minDx_, maxDx_ ) =
+            HR.dateRangeOf ci.minDx xAxis_
+
+        spots_ =
+            case ci.spots of
+                Nothing ->
+                    Nothing
+
+                Just s ->
+                    Just <| List.take numItems <| List.drop offset s
+    in
         { minDx = minDx_
-        , maxDx = maxDx_ 
-        , xAxis = xAxis_ 
-        , spots = spots_ 
-        , itrend20 = Nothing 
+        , maxDx = maxDx_
+        , xAxis = xAxis_
+        , spots = spots_
+        , itrend20 = Nothing
         }
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -194,8 +204,9 @@ update msg model =
                 ( { model | selectedTicker = s }, fetchCharts s )
 
         ChartsFetched (Ok s) ->
-            let 
-                ciWin = chartWindow s model.dropItems model.takeItems 
+            let
+                ciWin =
+                    chartWindow s model.dropItems model.takeItems model.chartWidth
             in
                 ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, drawChartInfo ciWin )
 
