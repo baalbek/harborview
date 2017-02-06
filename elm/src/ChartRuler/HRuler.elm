@@ -9,14 +9,16 @@ import Date exposing (Date, fromTime)
 import Common.Miscellaneous exposing (lastElem)
 
 
-dci : ChartInfo
-dci =
-    { minDx = DU.toDate "2016-7-1"
-    , maxDx = DU.toDate "2016-8-1"
-    , xAxis = List.reverse <| List.map toFloat <| List.range 0 400
-    , spots = Just <| List.reverse <| List.map toFloat <| List.range 100 500
-    , itrend20 = Nothing
-    }
+{-
+   dci : ChartInfo
+   dci =
+       { minDx = DU.toDate "2016-7-1"
+       , maxDx = DU.toDate "2016-8-1"
+       , xAxis = List.reverse <| List.map toFloat <| List.range 0 400
+       , spots = Just <| List.reverse <| List.map toFloat <| List.range 100 500
+       , itrend20 = Nothing
+       }
+-}
 
 
 dxOf : Date -> Float -> Date
@@ -36,8 +38,8 @@ dateRangeOf dx lx =
         ( dxOf dx offsetLow, dxOf dx offsetHi )
 
 
-hruler : Date -> Date -> List Float -> Float -> (Float -> Float)
-hruler newStartDate newEndDate newRange chartWidth =
+hruler : Date -> Date -> List Float -> Float -> Float -> Float
+hruler newStartDate newEndDate newRange chartWidth rangeIndex =
     let
         days =
             DU.diffDays newStartDate newEndDate
@@ -48,7 +50,7 @@ hruler newStartDate newEndDate newRange chartWidth =
         lastIndex =
             List.head newRange |> Maybe.withDefault 0
     in
-        \x -> chartWidth - ((lastIndex - x) * ppx)
+        chartWidth - ((lastIndex - rangeIndex) * ppx)
 
 
 
