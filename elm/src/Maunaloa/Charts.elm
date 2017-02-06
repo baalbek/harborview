@@ -169,6 +169,9 @@ chartWindow ci offset numItems chartWidth =
         ( minDx_, maxDx_ ) =
             HR.dateRangeOf ci.minDx xAxis_
 
+        hr =
+            HR.hruler minDx_ maxDx_ xAxis_ chartWidth
+
         spots_ =
             case ci.spots of
                 Nothing ->
@@ -179,7 +182,7 @@ chartWindow ci offset numItems chartWidth =
     in
         { minDx = minDx_
         , maxDx = maxDx_
-        , xAxis = xAxis_
+        , xAxis = List.map hr xAxis_
         , spots = spots_
         , itrend20 = Nothing
         }
