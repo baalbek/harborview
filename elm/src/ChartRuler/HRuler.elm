@@ -36,7 +36,7 @@ dateRangeOf dx lx =
         ( dxOf dx offsetLow, dxOf dx offsetHi )
 
 
-hruler : Date -> Date -> List Float -> Float -> (Float -> Float)
+hruler : Date -> Date -> List Float -> Float -> String -- (Float -> Float)
 hruler newStartDate newEndDate newRange chartWidth =
     let
         days =
@@ -44,5 +44,8 @@ hruler newStartDate newEndDate newRange chartWidth =
 
         ppx =
             chartWidth / days
+
+        lastIndex = List.head newRange |> Maybe.withDefault 0 
     in
-        \x -> x
+    "ppx: " ++ (toString ppx) ++ ", days: " ++ (toString days) ++ ", head: " ++ (toString lastIndex)
+    -- \x -> chartWidth - ((lastIndex - x) * ppx)
