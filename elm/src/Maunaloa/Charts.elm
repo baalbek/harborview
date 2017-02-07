@@ -160,8 +160,8 @@ view model =
 ------------------- UPDATE --------------------
 
 
-chartWindow : ChartInfo -> Int -> Int -> Float -> ChartInfo
-chartWindow ci offset numItems chartWidth =
+chartWindow : Model -> ChartInfo
+chartWindow model =
     let
         xAxis_ =
             List.take numItems <| List.drop offset ci.xAxis
