@@ -160,17 +160,17 @@ view model =
 ------------------- UPDATE --------------------
 
 
-chartWindow : Model -> ChartInfo
-chartWindow model =
+chartWindow : ChartInfo -> Model -> ChartInfo
+chartWindow ci model =
     let
         xAxis_ =
-            List.take numItems <| List.drop offset ci.xAxis
+            List.take model.takeItems <| List.drop model.dropItems ci.xAxis
 
         ( minDx_, maxDx_ ) =
             HR.dateRangeOf ci.minDx xAxis_
 
         hr =
-            HR.hruler minDx_ maxDx_ xAxis_ chartWidth
+            HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
 
         spots_ =
             case ci.spots of
@@ -178,7 +178,7 @@ chartWindow model =
                     Nothing
 
                 Just s ->
-                    Just <| List.take numItems <| List.drop offset s
+                    Just <| List.take model.takeItems <| List.drop model.dropItems s
     in
         { minDx = minDx_
         , maxDx = maxDx_
@@ -209,7 +209,7 @@ update msg model =
         ChartsFetched (Ok s) ->
             let
                 ciWin =
-                    chartWindow s model.dropItems model.takeItems model.chartWidth
+                    chartWindow s model
             in
                 ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, drawChartInfo ciWin )
 
