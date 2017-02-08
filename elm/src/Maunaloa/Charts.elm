@@ -11,6 +11,7 @@ import Json.Decode.Pipeline as JP
 import Common.Miscellaneous as M
 import Common.DateUtil as DU
 import ChartRuler.HRuler as HR
+import ChartRuler.VRuler as VR
 
 
 -- import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
@@ -179,11 +180,14 @@ chartWindow ci model =
 
                 Just s ->
                     Just <| List.take model.takeItems <| List.drop model.dropItems s
+
+        vr =
+            VR.vruler [ spots_ ] model.chartHeight
     in
         { minDx = minDx_
         , maxDx = maxDx_
         , xAxis = List.map hr xAxis_
-        , spots = spots_
+        , spots = List.map vr spots_
         , itrend20 = Nothing
         }
 

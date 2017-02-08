@@ -62,16 +62,6 @@ maybeLen v =
             List.length v_
 
 
-vruler : Int -> (Float -> Float)
-vruler h =
-    let
-        vruler_ : Float -> Float
-        vruler_ x =
-            2 * x
-    in
-        vruler_
-
-
 minMax_ : Maybe (List Float) -> ( Float, Float )
 minMax_ v =
     case v of
@@ -136,6 +126,11 @@ lines w h ci =
                 S.line [ SA.x1 "0", SA.y1 curY, SA.x2 x2s, SA.y2 curY, SA.stroke "#023963" ] []
     in
         List.map lineFn range
+
+
+vruler : List (Maybe (List Float)) -> Float -> Float -> Float
+vruler graphs chartHeight yValue =
+    3
 
 
 
