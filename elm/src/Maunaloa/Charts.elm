@@ -12,6 +12,8 @@ import Common.Miscellaneous as M
 import Common.DateUtil as DU
 import ChartRuler.HRuler as HR
 import ChartRuler.VRuler as VR
+import ChartCommon exposing (ChartValues)
+import Tuple as TUP
 
 
 -- import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
@@ -164,6 +166,15 @@ view model =
 chartWindow : ChartInfo -> Model -> ChartInfo
 chartWindow ci model =
     let
+        valueFn : ChartValues -> ChartValues
+        valueFn vals =
+            case vals of
+                Nothing ->
+                    Nothing
+
+                Just s ->
+                    Just <| List.take model.takeItems <| List.drop model.dropItems s
+
         xAxis_ =
             List.take model.takeItems <| List.drop model.dropItems ci.xAxis
 
@@ -174,21 +185,27 @@ chartWindow ci model =
             HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
 
         spots_ =
-            case ci.spots of
-                Nothing ->
-                    Nothing
+            valueFn ci.spots
 
-                Just s ->
-                    Just <| List.take model.takeItems <| List.drop model.dropItems s
+        itrend20_ =
+            valueFn ci.itrend20
+
+        graphs =
+            [ spots_, itrend20_ ]
+
+        valueRange =
+            List.map VR.minMax graphs |> M.minMaxTuples
 
         vr =
-            VR.vruler [ spots_ ] model.chartHeight
+            VR.vruler valueRange model.chartHeight
     in
         { minDx = minDx_
         , maxDx = maxDx_
+        , minVal = TUP.first valueRange
+        , maxVal = TUP.second valueRange
         , xAxis = List.map hr xAxis_
-        , spots = List.map vr spots_
-        , itrend20 = Nothing
+        , spots = M.maybeMap vr spots_
+        , itrend20 = M.maybeMap vr itrend20_
         }
 
 
@@ -257,6 +274,8 @@ fetchCharts ticker =
             JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "max-dx" stringToDateDecoder
+                |> JP.optional "min-val" Json.float 0.0
+                |> JP.optional "max-val" Json.float 0.0
                 |> JP.required "x-axis" (Json.list Json.float)
                 |> JP.required "spots" (Json.nullable (Json.list Json.float))
                 |> JP.required "itrend-20" (Json.nullable (Json.list Json.float))

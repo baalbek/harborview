@@ -4,52 +4,10 @@ import Svg as S
 import Svg.Attributes as SA
 import Time exposing (Time)
 import Common.DateUtil as DU
-import ChartCommon as C exposing (Point, ChartValues, ChartInfo)
+import ChartCommon as C exposing (ChartValues, ChartInfo)
 import Date exposing (Date, fromTime)
 import Common.Miscellaneous exposing (lastElem)
-
-
-{-|
-
-    ppy : pixels pr y value
-
--}
-
-
-
-{-
-   type alias VRuler =
-       { ul : Point
-       , lr : Point
-       , ppy : Float
-       , minVal : Float
-       , maxVal :
-           Float
-           -- , values : Maybe ChartValues
-       }
-
-
-   r : VRuler
-   r =
-       let
-           p0 =
-               Point 0 0
-
-           p1 =
-               Point 1200 950
-       in
-           vruler p0 p1 Nothing
-
-
-   calcValue : VRuler -> Float -> Float
-   calcValue ruler pix =
-       20.2
-
-
-   calcPix : VRuler -> Float -> Float
-   calcPix ruler val =
-       20.2
--}
+import Tuple exposing (first, second)
 
 
 maybeLen : Maybe (List a) -> Int
@@ -62,8 +20,8 @@ maybeLen v =
             List.length v_
 
 
-minMax_ : Maybe (List Float) -> ( Float, Float )
-minMax_ v =
+minMax : ChartValues -> ( Float, Float )
+minMax v =
     case v of
         Nothing ->
             ( 0, 0 )
@@ -79,18 +37,6 @@ minMax_ v =
                 ( minVal, maxVal )
 
 
-minMax : ChartInfo -> ( Float, Float )
-minMax ci =
-    let
-        ( s1, s2 ) =
-            minMax_ ci.spots
-
-        ( i1, i2 ) =
-            minMax_ ci.itrend20
-    in
-        ( min s1 i1, max s2 i2 )
-
-
 
 -- List.drop 90 dci.xAxis |> List.take 90 |> dateRangeOf dci
 
@@ -98,13 +44,8 @@ minMax ci =
 lines : Float -> Float -> ChartInfo -> List (S.Svg a)
 lines w h ci =
     let
-        --valueSpan =
-        --    ci.maxVal - ci.minVal
-        ( minVal, maxVal ) =
-            minMax ci
-
         valueSpan =
-            maxVal - minVal
+            ci.maxVal - ci.minVal
 
         ppy =
             h / valueSpan
@@ -128,38 +69,19 @@ lines w h ci =
         List.map lineFn range
 
 
-vruler : List (Maybe (List Float)) -> Float -> Float -> Float
-vruler graphs chartHeight yValue =
-    3
+vruler : ( Float, Float ) -> Float -> Float -> Float
+vruler valueRange chartHeight yValue =
+    let
+        min_ =
+            first valueRange
 
+        max_ =
+            second valueRange
 
+        valueSpan =
+            max_ - min_
 
-{-
-   vruler : Point -> Point -> Maybe ChartValues -> VRuler
-   vruler ul lr cv =
-       let
-           ( minVal, maxVal ) =
-               minMax cv
-
-           valueSpan =
-               maxVal - minVal
-
-           h =
-               lr.y - ul.y
-
-           ppy =
-               h / valueSpan
-       in
-           VRuler ul lr ppy minVal maxVal
-
-
-
-   minMax : Maybe ChartValues -> ( Float, Float )
-   minMax cv =
-       case cv of
-           Nothing ->
-               ( 0.0, 100.0 )
-
-           Just cv_ ->
-               ( 0.0, 100.0 )
--}
+        ppy =
+            chartHeight / valueSpan
+    in
+        (max_ - yValue) * ppy

@@ -9,6 +9,28 @@ import Date exposing (Date, fromString)
 import Tuple exposing (first, second)
 
 
+minMaxTuples : List ( Float, Float ) -> ( Float, Float )
+minMaxTuples tuples =
+    let
+        min_ =
+            List.map first tuples |> List.minimum |> Maybe.withDefault 0
+
+        max_ =
+            List.map second tuples |> List.maximum |> Maybe.withDefault 0
+    in
+        ( min_, max_ )
+
+
+maybeMap : (a -> a) -> Maybe (List a) -> Maybe (List a)
+maybeMap fn lx =
+    case lx of
+        Nothing ->
+            Nothing
+
+        Just lx_ ->
+            Just (List.map fn lx_)
+
+
 customDecoder : JD.Decoder a -> (a -> Result String b) -> JD.Decoder b
 customDecoder d f =
     let
@@ -91,6 +113,6 @@ onChange tagger =
     E.on "change" (JD.map tagger E.targetValue)
 
 
-lastElem : List a -> Maybe a         
-lastElem =            
-    List.foldl (Just >> always) Nothing         
+lastElem : List a -> Maybe a
+lastElem =
+    List.foldl (Just >> always) Nothing
