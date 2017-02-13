@@ -6,7 +6,7 @@ import Time exposing (Time)
 import Common.DateUtil as DU
 import ChartCommon as C exposing (ChartValues, ChartInfo)
 import Date exposing (Date, fromTime)
-import Common.Miscellaneous exposing (lastElem)
+import Common.Miscellaneous exposing (lastElem, toDecimal)
 import Tuple exposing (first, second)
 
 
@@ -59,14 +59,32 @@ lines w h ci =
         range =
             List.range 1 10
 
+        valFn y =
+            let
+                convY =
+                    ci.maxVal - (y / ppy)
+            in
+                toDecimal convY 10
+
         lineFn x =
             let
                 curY =
-                    toString <| step * (toFloat x)
+                    step * (toFloat x)
+
+                curYl =
+                    toString curY
+
+                curYs =
+                    toString (curY - 5)
+
+                valY =
+                    toString (valFn curY)
             in
-                S.line [ SA.x1 "0", SA.y1 curY, SA.x2 x2s, SA.y2 curY, SA.stroke "#023963" ] []
+                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, SA.stroke "#023963" ] []
+                , S.text_ [ SA.x "5", SA.y curYs, SA.fill "red", SA.style "font: 20px/normal Helvetica, Arial;" ] [ S.text valY ]
+                ]
     in
-        List.map lineFn range
+        List.concat <| List.map lineFn range
 
 
 vruler : ( Float, Float ) -> Float -> Float -> Float

@@ -9,6 +9,15 @@ import Date exposing (Date, fromString)
 import Tuple exposing (first, second)
 
 
+toDecimal : Float -> Float -> Float
+toDecimal value roundFactor =
+    let
+        valx =
+            toFloat <| round <| value * roundFactor
+    in
+        valx / roundFactor
+
+
 minMaxTuples : List ( Float, Float ) -> ( Float, Float )
 minMaxTuples tuples =
     let
