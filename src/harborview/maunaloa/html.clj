@@ -66,7 +66,7 @@
   (let [min-dx (LocalDate/of 2012 1 1)
         spot-objs (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
         spots (map #(.getCls %) spot-objs)
-        itrend-20 (calc-itrend spots 50)
+        itrend-20 (calc-itrend spots 10)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
         max-dx (last dx) ;(.plusWeeks (last dx) 7)
         ys (concat spots itrend-20)
@@ -103,9 +103,9 @@
         max-dx (last dx)
         hr (hruler min-dx)]
     (U/json-response
-      {:spots spots
-       :x-axis (map hr dx)
-       :itrend-20 (map double->decimal itrend-20)
+      {:spots (reverse spots)
+       :x-axis (reverse (map hr dx))
+       :itrend-20 (reverse (map double->decimal itrend-20))
        :min-dx (ld->str min-dx)
        :max-dx (ld->str max-dx)})))
 
