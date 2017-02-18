@@ -1,7 +1,7 @@
 port module Maunaloa.Charts exposing (..)
 
+import Date exposing (Date)
 import Http
-import Task
 import Html as H
 import Html.Attributes as A
 import Svg as S
@@ -12,7 +12,6 @@ import Common.Miscellaneous as M
 import Common.DateUtil as DU
 import ChartRuler.HRuler as HR
 import ChartRuler.VRuler as VR
-import ChartCommon exposing (ChartValues)
 import Tuple as TUP
 
 
@@ -27,7 +26,7 @@ import Common.ComboBox
         , makeSelect
         )
 import ChartRuler.VRuler as VR
-import ChartCommon exposing (Candlestick, ChartInfo)
+import ChartCommon as C exposing (ChartValues, Candlestick, ChartInfo)
 
 
 mainUrl =
@@ -87,7 +86,7 @@ initModel =
     , chartInfo = Nothing
     , chartInfoWin = Nothing
     , dropItems = 0
-    , takeItems = 90
+    , takeItems = 900
     , chartWidth = 1300
     , chartHeight = 600
     }
@@ -164,49 +163,55 @@ view model =
 
 
 chartWindow : ChartInfo -> Model -> ChartInfo
-chartWindow ci model =
-    let
-        valueFn : ChartValues -> ChartValues
-        valueFn vals =
-            case vals of
-                Nothing ->
-                    Nothing
+chartWindow cix model =
+    case cix of
+        C.ChartInfo2 ci ->
+            C.ChartInfo2 { minVal = 2 }
 
-                Just s ->
-                    Just <| List.take model.takeItems <| List.drop model.dropItems s
+        C.ChartInfo1 ci ->
+            let
+                valueFn : ChartValues -> ChartValues
+                valueFn vals =
+                    case vals of
+                        Nothing ->
+                            Nothing
 
-        xAxis_ =
-            List.take model.takeItems <| List.drop model.dropItems ci.xAxis
+                        Just s ->
+                            Just <| List.take model.takeItems <| List.drop model.dropItems s
 
-        ( minDx_, maxDx_ ) =
-            HR.dateRangeOf ci.minDx xAxis_
+                xAxis_ =
+                    List.take model.takeItems <| List.drop model.dropItems ci.xAxis
 
-        hr =
-            HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
+                ( minDx_, maxDx_ ) =
+                    HR.dateRangeOf ci.minDx xAxis_
 
-        spots_ =
-            valueFn ci.spots
+                hr =
+                    HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
 
-        itrend20_ =
-            valueFn ci.itrend20
+                spots_ =
+                    valueFn ci.spots
 
-        graphs =
-            [ spots_, itrend20_ ]
+                itrend20_ =
+                    valueFn ci.itrend20
 
-        valueRange =
-            List.map VR.minMax graphs |> M.minMaxTuples
+                graphs =
+                    [ spots_, itrend20_ ]
 
-        vr =
-            VR.vruler valueRange model.chartHeight
-    in
-        { minDx = minDx_
-        , maxDx = maxDx_
-        , minVal = TUP.first valueRange
-        , maxVal = TUP.second valueRange
-        , xAxis = List.map hr xAxis_
-        , spots = M.maybeMap vr spots_
-        , itrend20 = M.maybeMap vr itrend20_
-        }
+                valueRange =
+                    List.map VR.minMax graphs |> M.minMaxTuples
+
+                vr =
+                    VR.vruler valueRange model.chartHeight
+            in
+                C.ChartInfo1
+                    { minDx = minDx_
+                    , maxDx = maxDx_
+                    , minVal = TUP.first valueRange
+                    , maxVal = TUP.second valueRange
+                    , xAxis = List.map hr xAxis_
+                    , spots = M.maybeMap vr spots_
+                    , itrend20 = M.maybeMap vr itrend20_
+                    }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -240,17 +245,22 @@ update msg model =
 
 
 drawChartInfo : ChartInfo -> Cmd Msg
-drawChartInfo ci =
-    let
-        spots =
-            Maybe.withDefault [] ci.spots
+drawChartInfo cix =
+    case cix of
+        C.ChartInfo2 ci ->
+            Cmd.none
 
-        itrend20 =
-            Maybe.withDefault [] ci.itrend20
-    in
-        Debug.log (toString ci)
-            drawCanvas
-            ( [ spots, itrend20 ], ci.xAxis, [ "#000000", "#ff0000" ] )
+        C.ChartInfo1 ci ->
+            let
+                spots =
+                    Maybe.withDefault [] ci.spots
+
+                itrend20 =
+                    Maybe.withDefault [] ci.itrend20
+            in
+                Debug.log (toString ci)
+                    drawCanvas
+                    ( [ spots, itrend20 ], ci.xAxis, [ "#000000", "#ff0000" ] )
 
 
 
@@ -267,11 +277,24 @@ fetchTickers =
             Http.get url comboBoxItemListDecoder
 
 
+decode2ci : Date -> Date -> Float -> Float -> List Float -> Maybe (List Float) -> Maybe (List Float) -> ChartInfo
+decode2ci minDx maxDx minVal maxVal x spots i20 =
+    C.ChartInfo1
+        { minDx = minDx
+        , maxDx = maxDx
+        , minVal = minVal
+        , maxVal = maxVal
+        , xAxis = x
+        , spots = spots
+        , itrend20 = i20
+        }
+
+
 fetchCharts : String -> Cmd Msg
 fetchCharts ticker =
     let
         myDecoder =
-            JP.decode ChartInfo
+            JP.decode decode2ci
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "max-dx" stringToDateDecoder
                 |> JP.optional "min-val" Json.float 0.0

@@ -42,49 +42,54 @@ minMax v =
 
 
 lines : Float -> Float -> ChartInfo -> List (S.Svg a)
-lines w h ci =
-    let
-        valueSpan =
-            ci.maxVal - ci.minVal
+lines w h cix =
+    case cix of
+        C.ChartInfo2 ci ->
+            []
 
-        ppy =
-            h / valueSpan
-
-        step =
-            ppy * (valueSpan / 10.0)
-
-        x2s =
-            toString w
-
-        range =
-            List.range 1 10
-
-        valFn y =
+        C.ChartInfo1 ci ->
             let
-                convY =
-                    ci.maxVal - (y / ppy)
+                valueSpan =
+                    ci.maxVal - ci.minVal
+
+                ppy =
+                    h / valueSpan
+
+                step =
+                    ppy * (valueSpan / 10.0)
+
+                x2s =
+                    toString w
+
+                range =
+                    List.range 1 10
+
+                valFn y =
+                    let
+                        convY =
+                            ci.maxVal - (y / ppy)
+                    in
+                        toDecimal convY 10
+
+                lineFn x =
+                    let
+                        curY =
+                            step * (toFloat x)
+
+                        curYl =
+                            toString curY
+
+                        curYs =
+                            toString (curY - 5)
+
+                        valY =
+                            toString (valFn curY)
+                    in
+                        [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, SA.stroke "#023963" ] []
+                        , S.text_ [ SA.x "5", SA.y curYs, SA.fill "red", SA.style "font: 20px/normal Helvetica, Arial;" ] [ S.text valY ]
+                        ]
             in
-                toDecimal convY 10
-
-        lineFn x =
-            let
-                curY =
-                    step * (toFloat x)
-
-                curYl =
-                    toString curY
-
-                curYs =
-                    toString (curY - 5)
-
-                valY =
-                    toString (valFn curY)
-            in
-                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, SA.stroke "#023963" ] []
-                , S.text_ [ SA.x "5", SA.y curYs, SA.fill "red", SA.style "font: 20px/normal Helvetica, Arial;" ] [ S.text valY ]
-                ]
-    in
-        List.concat <| List.map lineFn range
+                List.concat <| List.map lineFn range
 
 
 vruler : ( Float, Float ) -> Float -> Float -> Float

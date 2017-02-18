@@ -30,12 +30,16 @@ type alias ChartValues =
 -}
 
 
-type alias ChartInfo =
-    { minDx : Date
-    , maxDx : Date
-    , minVal : Float
-    , maxVal : Float
-    , xAxis : List Float
-    , spots : Maybe (List Float)
-    , itrend20 : Maybe (List Float)
-    }
+type ChartInfo
+    = ChartInfo1
+        { minDx : Date
+        , maxDx : Date
+        , minVal : Float
+        , maxVal : Float
+        , xAxis : List Float
+        , spots : Maybe (List Float)
+        , itrend20 : Maybe (List Float)
+        }
+    | ChartInfo2
+        { minVal : Float
+        }
