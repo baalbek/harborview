@@ -26,7 +26,7 @@ import Common.ComboBox
         , makeSelect
         )
 import ChartRuler.VRuler as VR
-import ChartCommon as C exposing (ChartValues, Candlestick, ChartInfo)
+import ChartCommon as C exposing (ChartValues, Candlestick, ChartInfo, chartInfo1)
 
 
 mainUrl =
@@ -277,24 +277,11 @@ fetchTickers =
             Http.get url comboBoxItemListDecoder
 
 
-decode2ci : Date -> Date -> Float -> Float -> List Float -> Maybe (List Float) -> Maybe (List Float) -> ChartInfo
-decode2ci minDx maxDx minVal maxVal x spots i20 =
-    C.ChartInfo1
-        { minDx = minDx
-        , maxDx = maxDx
-        , minVal = minVal
-        , maxVal = maxVal
-        , xAxis = x
-        , spots = spots
-        , itrend20 = i20
-        }
-
-
 fetchCharts : String -> Cmd Msg
 fetchCharts ticker =
     let
         myDecoder =
-            JP.decode decode2ci
+            JP.decode chartInfo1
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "max-dx" stringToDateDecoder
                 |> JP.optional "min-val" Json.float 0.0

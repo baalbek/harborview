@@ -28,6 +28,15 @@ type alias ChartValues =
        = Candlesticks (List Candlestick)
        | ChartPoints (List (List Float))
 -}
+{-
+   type alias ChartInfoBase =
+       { minDx : Date
+       , maxDx : Date
+       , minVal : Float
+       , maxVal : Float
+       , xAxis : List Float
+       }
+-}
 
 
 type ChartInfo
@@ -42,4 +51,24 @@ type ChartInfo
         }
     | ChartInfo2
         { minVal : Float
+        }
+
+
+chartInfo1 :
+    Date
+    -> Date
+    -> Float
+    -> Float
+    -> List Float
+    -> Maybe (List Float)
+    -> Maybe (List Float)
+    -> ChartInfo
+chartInfo1 minDx maxDx minVal maxVal x spots i20 =
+    ChartInfo1
+        { minDx = minDx
+        , maxDx = maxDx
+        , minVal = minVal
+        , maxVal = maxVal
+        , spots = spots
+        , itrend20 = i20
         }
