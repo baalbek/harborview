@@ -180,10 +180,10 @@ chartWindow cix model =
                             Just <| List.take model.takeItems <| List.drop model.dropItems s
 
                 xAxis_ =
-                    List.take model.takeItems <| List.drop model.dropItems ci.xAxis
+                    List.take model.takeItems <| List.drop model.dropItems ci.base.xAxis
 
                 ( minDx_, maxDx_ ) =
-                    HR.dateRangeOf ci.minDx xAxis_
+                    HR.dateRangeOf ci.base.minDx xAxis_
 
                 hr =
                     HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
@@ -202,13 +202,18 @@ chartWindow cix model =
 
                 vr =
                     VR.vruler valueRange model.chartHeight
+
+                myBase =
+                    C.ChartInfoBase minDx_ maxDx_ (TUP.first valueRange) (TUP.second valueRange) (List.map hr xAxis_)
             in
                 C.ChartInfo1
-                    { minDx = minDx_
-                    , maxDx = maxDx_
-                    , minVal = TUP.first valueRange
-                    , maxVal = TUP.second valueRange
-                    , xAxis = List.map hr xAxis_
+                    {- minDx = minDx_
+                       , maxDx = maxDx_
+                       , minVal = TUP.first valueRange
+                       , maxVal = TUP.second valueRange
+                       , xAxis = List.map hr xAxis_
+                    -}
+                    { base = myBase
                     , spots = M.maybeMap vr spots_
                     , itrend20 = M.maybeMap vr itrend20_
                     }
@@ -260,7 +265,7 @@ drawChartInfo cix =
             in
                 Debug.log (toString ci)
                     drawCanvas
-                    ( [ spots, itrend20 ], ci.xAxis, [ "#000000", "#ff0000" ] )
+                    ( [ spots, itrend20 ], ci.base.xAxis, [ "#000000", "#ff0000" ] )
 
 
 

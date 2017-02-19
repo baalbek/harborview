@@ -50,7 +50,7 @@ lines w h cix =
         C.ChartInfo1 ci ->
             let
                 valueSpan =
-                    ci.maxVal - ci.minVal
+                    ci.base.maxVal - ci.base.minVal
 
                 ppy =
                     h / valueSpan
@@ -67,7 +67,7 @@ lines w h cix =
                 valFn y =
                     let
                         convY =
-                            ci.maxVal - (y / ppy)
+                            ci.base.maxVal - (y / ppy)
                     in
                         toDecimal convY 10
 
