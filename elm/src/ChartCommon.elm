@@ -69,6 +69,7 @@ chartInfo1 minDx maxDx minVal maxVal x spots i20 =
         , maxDx = maxDx
         , minVal = minVal
         , maxVal = maxVal
+        , xAxis = x
         , spots = spots
         , itrend20 = i20
         }
