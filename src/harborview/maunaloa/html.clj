@@ -96,7 +96,7 @@
 
 (defn ticker-chart [oid]
   (let [min-dx (LocalDate/of 2012 1 1)
-        spot-objs (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
+        spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))
         spots (map #(.getCls %) spot-objs)
         itrend-20 (calc-itrend spots 50)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
@@ -108,6 +108,25 @@
        :itrend-20 (reverse (map double->decimal itrend-20))
        :min-dx (ld->str min-dx)
        :max-dx (ld->str max-dx)})))
+
+(defn bean->candlestick [b]
+  {:o (.getOpn b)
+   :h (.getHi b)
+   :l (.getLo b)
+   :c (.getCls b)})
+
+
+(defn ticker-candlesticks-chart [oid]
+  (let [min-dx (LocalDate/of 2012 1 1)
+        spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))
+        dx (map #(.toLocalDate (.getDx %)) spot-objs)
+        max-dx (last dx)
+        hr (hruler min-dx)]
+    (U/json-response
+       {:x-axis (reverse (map hr dx))
+        :min-dx (ld->str min-dx)
+        :max-dx (ld->str max-dx)
+        :cndl (map #(bean->candlestick %) spot-objs)})))
 
 (defn tickers []
   (U/json-response
@@ -123,4 +142,5 @@
 (defroutes my-routes
   (GET "/" request (init))
   (GET "/tickers" request (tickers))
-  (GET "/ticker" [oid] (ticker-chart (U/rs oid))))
+  (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
+  (GET "/tickercndl" [oid] (ticker-candlesticks-chart (U/rs oid))))

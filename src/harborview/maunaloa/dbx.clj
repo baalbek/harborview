@@ -11,6 +11,7 @@
     (.selectStocks it)))
 
 (defn fetch-prices [oid from-date]
+  (println "fetch-prices, ticker: " oid)
   (DB/with-session :ranoraraku StockMapper
     (.selectStockPrices it oid from-date)))
 

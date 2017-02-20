@@ -17,7 +17,7 @@ import Tuple as TUP
 
 -- import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
 
-import Common.Miscellaneous exposing (makeLabel, onChange, stringToDateDecoder)
+import Common.Miscellaneous exposing (checkbox, makeLabel, onChange, stringToDateDecoder)
 import Common.ComboBox
     exposing
         ( ComboBoxItem
@@ -76,6 +76,7 @@ type alias Model =
     , takeItems : Int
     , chartWidth : Float
     , chartHeight : Float
+    , isCandlesticks : Bool
     }
 
 
@@ -89,6 +90,7 @@ initModel =
     , takeItems = 900
     , chartWidth = 1300
     , chartHeight = 600
+    , isCandlesticks = False
     }
 
 
@@ -101,6 +103,7 @@ type Msg
     = TickersFetched (Result Http.Error SelectItems)
     | FetchCharts String
     | ChartsFetched (Result Http.Error ChartInfo)
+    | ToggleCandlestics
 
 
 
@@ -146,7 +149,8 @@ view model =
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
-                [ makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
+                [ checkbox ToggleCandlestics "Candlesticks"
+                , makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
                 ]
             , H.div [ A.style [ ( "position", "absolute" ), ( "top", "200px" ), ( "left", "200px" ) ] ]
                 [ S.svg [ SA.width (ws ++ "px"), SA.height (hs ++ "px") ]
@@ -169,7 +173,26 @@ chartWindow cix model =
             C.EmptyChartInfo
 
         C.ChartInfo2 ci ->
-            C.EmptyChartInfo
+            let
+                xAxis_ =
+                    List.take model.takeItems <| List.drop model.dropItems ci.base.xAxis
+
+                ( minDx_, maxDx_ ) =
+                    HR.dateRangeOf ci.base.minDx xAxis_
+
+                hr =
+                    HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
+
+                valueRange =
+                    VR.minMaxCndl ci.cndl
+
+                vr =
+                    VR.vruler valueRange model.chartHeight
+
+                myBase =
+                    C.ChartInfoBase minDx_ maxDx_ (TUP.first valueRange) (TUP.second valueRange) (List.map hr xAxis_)
+            in
+                C.EmptyChartInfo
 
         C.ChartInfo1 ci ->
             let
@@ -210,12 +233,6 @@ chartWindow cix model =
                     C.ChartInfoBase minDx_ maxDx_ (TUP.first valueRange) (TUP.second valueRange) (List.map hr xAxis_)
             in
                 C.ChartInfo1
-                    {- minDx = minDx_
-                       , maxDx = maxDx_
-                       , minVal = TUP.first valueRange
-                       , maxVal = TUP.second valueRange
-                       , xAxis = List.map hr xAxis_
-                    -}
                     { base = myBase
                     , spots = M.maybeMap vr spots_
                     , itrend20 = M.maybeMap vr itrend20_
@@ -225,6 +242,9 @@ chartWindow cix model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ToggleCandlestics ->
+            ( { model | isCandlesticks = not model.isCandlesticks }, Cmd.none )
+
         TickersFetched (Ok s) ->
             Debug.log "TickersFetched"
                 ( { model
@@ -237,15 +257,23 @@ update msg model =
             Debug.log "TickersFetched Error" ( model, Cmd.none )
 
         FetchCharts s ->
-            Debug.log "FetchCharts"
-                ( { model | selectedTicker = s }, fetchCharts s )
+            let
+                fetchCharts_ =
+                    if model.isCandlesticks == True then
+                        fetchCharts2
+                    else
+                        fetchCharts
+            in
+                Debug.log "FetchCharts"
+                    ( { model | selectedTicker = s }, fetchCharts_ s )
 
         ChartsFetched (Ok s) ->
             let
                 ciWin =
                     chartWindow s model
             in
-                ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, drawChartInfo ciWin )
+                Debug.log "ChartsFetched "
+                    ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, drawChartInfo ciWin )
 
         ChartsFetched (Err _) ->
             Debug.log "ChartsFetched err"

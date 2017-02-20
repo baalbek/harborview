@@ -61,15 +61,13 @@ makeSelect caption msg payload selected =
                 Nothing ->
                     []
     in
-        H.div [ A.class "col-sm-4" ]
-            [ H.span []
-                [ H.label [] [ H.text caption ]
-                , H.select
-                    [ onChange msg
-                    , A.class "form-control"
-                    ]
-                    px
+        H.span []
+            [ H.label [] [ H.text caption ]
+            , H.select
+                [ onChange msg
+                , A.class "form-control"
                 ]
+                px
             ]
 
 

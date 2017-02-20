@@ -4,7 +4,7 @@ import Svg as S
 import Svg.Attributes as SA
 import Time exposing (Time)
 import Common.DateUtil as DU
-import ChartCommon as C exposing (ChartValues, ChartInfo)
+import ChartCommon as C exposing (Candlestick, ChartValues, ChartInfo)
 import Date exposing (Date, fromTime)
 import Common.Miscellaneous exposing (lastElem, toDecimal)
 import Tuple exposing (first, second)
@@ -35,6 +35,18 @@ minMax v =
                     List.maximum v_ |> Maybe.withDefault 0
             in
                 ( minVal, maxVal )
+
+
+minMaxCndl : List Candlestick -> ( Float, Float )
+minMaxCndl cndl =
+    let
+        lows =
+            List.map .l cndl
+
+        his =
+            List.map .h cndl
+    in
+        ( List.minimum lows, List.maximum his )
 
 
 

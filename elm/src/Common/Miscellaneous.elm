@@ -125,3 +125,13 @@ onChange tagger =
 lastElem : List a -> Maybe a
 lastElem =
     List.foldl (Just >> always) Nothing
+
+
+checkbox : msg -> String -> H.Html msg
+checkbox msg name =
+    H.div [ A.class "col-sm-4 checkbox" ]
+        [ H.label []
+            [ H.input [ A.type_ "checkbox", E.onClick msg ] []
+            , H.text name
+            ]
+        ]
