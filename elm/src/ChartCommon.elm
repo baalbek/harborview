@@ -46,8 +46,10 @@ type ChartInfo
         , itrend20 : Maybe (List Float)
         }
     | ChartInfo2
-        { minVal : Float
+        { base : ChartInfoBase
+        , cndl : List Candlestick
         }
+    | EmptyChartInfo
 
 
 chartInfo1 :
@@ -68,4 +70,23 @@ chartInfo1 minDx maxDx minVal maxVal x spots i20 =
             { base = base
             , spots = spots
             , itrend20 = i20
+            }
+
+
+chartInfo2 :
+    Date
+    -> Date
+    -> Float
+    -> Float
+    -> List Float
+    -> List Candlestick
+    -> ChartInfo
+chartInfo2 minDx maxDx minVal maxVal x cndl =
+    let
+        base =
+            ChartInfoBase minDx maxDx minVal maxVal x
+    in
+        ChartInfo2
+            { base = base
+            , cndl = cndl
             }

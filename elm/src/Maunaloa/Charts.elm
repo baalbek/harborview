@@ -26,7 +26,7 @@ import Common.ComboBox
         , makeSelect
         )
 import ChartRuler.VRuler as VR
-import ChartCommon as C exposing (ChartValues, Candlestick, ChartInfo, chartInfo1)
+import ChartCommon as C exposing (ChartValues, Candlestick, ChartInfo, chartInfo1, chartInfo2)
 
 
 mainUrl =
@@ -165,8 +165,11 @@ view model =
 chartWindow : ChartInfo -> Model -> ChartInfo
 chartWindow cix model =
     case cix of
+        C.EmptyChartInfo ->
+            C.EmptyChartInfo
+
         C.ChartInfo2 ci ->
-            C.ChartInfo2 { minVal = 2 }
+            C.EmptyChartInfo
 
         C.ChartInfo1 ci ->
             let
@@ -252,6 +255,9 @@ update msg model =
 drawChartInfo : ChartInfo -> Cmd Msg
 drawChartInfo cix =
     case cix of
+        C.EmptyChartInfo ->
+            Cmd.none
+
         C.ChartInfo2 ci ->
             Cmd.none
 
@@ -297,6 +303,31 @@ fetchCharts ticker =
 
         url =
             mainUrl ++ "/ticker?oid=" ++ ticker
+    in
+        Http.send ChartsFetched <| Http.get url myDecoder
+
+
+fetchCharts2 : String -> Cmd Msg
+fetchCharts2 ticker =
+    let
+        candlestickDecoder =
+            Json.map4 Candlestick
+                (Json.field "o" Json.float)
+                (Json.field "h" Json.float)
+                (Json.field "l" Json.float)
+                (Json.field "c" Json.float)
+
+        myDecoder =
+            JP.decode chartInfo2
+                |> JP.required "min-dx" stringToDateDecoder
+                |> JP.required "max-dx" stringToDateDecoder
+                |> JP.optional "min-val" Json.float 0.0
+                |> JP.optional "max-val" Json.float 0.0
+                |> JP.required "x-axis" (Json.list Json.float)
+                |> JP.required "cndl" (Json.list candlestickDecoder)
+
+        url =
+            mainUrl ++ "/tickercndl?oid=" ++ ticker
     in
         Http.send ChartsFetched <| Http.get url myDecoder
 

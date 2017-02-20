@@ -44,6 +44,9 @@ minMax v =
 lines : Float -> Float -> ChartInfo -> List (S.Svg a)
 lines w h cix =
     case cix of
+        C.EmptyChartInfo ->
+            []
+
         C.ChartInfo2 ci ->
             []
 
