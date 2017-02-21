@@ -94,6 +94,12 @@
        :min-dx (ld->str min-dx)
        :max-dx (ld->str max-dx)})))
 
+(defn bean->candlestick [b]
+  {:o (.getOpn b)
+   :h (.getHi b)
+   :l (.getLo b)
+   :c (.getCls b)})
+
 (defn ticker-chart [oid]
   (let [min-dx (LocalDate/of 2012 1 1)
         spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))
@@ -103,21 +109,16 @@
         max-dx (last dx)
         hr (hruler min-dx)]
     (U/json-response
-      {;:spots (reverse spots)
-       ;:itrend-20 (reverse (map double->decimal itrend-20))
+      {
        :lines [(reverse spots) (reverse (map double->decimal itrend-20))]
        :x-axis (reverse (map hr dx))
        :min-dx (ld->str min-dx)
-       :max-dx (ld->str max-dx)})))
-
-(defn bean->candlestick [b]
-  {:o (.getOpn b)
-   :h (.getHi b)
-   :l (.getLo b)
-   :c (.getCls b)})
+       :max-dx (ld->str max-dx)
+       :cndl (reverse (map #(bean->candlestick %) spot-objs))})))
 
 
-(defn ticker-candlesticks-chart [oid]
+
+(comment ticker-candlesticks-chart [oid]
   (let [min-dx (LocalDate/of 2012 1 1)
         spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
@@ -129,12 +130,15 @@
         :max-dx (ld->str max-dx)
         :cndl (map #(bean->candlestick %) spot-objs)})))
 
-(defn tickers []
+(comment tickers []
   (U/json-response
     (map (fn [s] {"t" (.getTicker s) "v" (str (.getOid s))})
       (DBX/fetch-tickers))))
-    ;(map (fn [x] (let [[v t] x] {"t" t "v" v}))
-    ;  [["2" "STL"] ["1" "NHY"] ["3" "YAR"]])))
+
+(defn tickers []
+  (U/json-response
+    (map (fn [x] (let [[v t] x] {"t" t "v" v}))
+      [["2" "STL"] ["1" "NHY"] ["3" "YAR"]])))
 
 (defn init []
   (P/render-file "templates/maunaloa/charts.html" {}))

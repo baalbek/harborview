@@ -166,10 +166,28 @@ view model =
 ------------------- UPDATE --------------------
 
 
+scaledCandlestick : (Float -> Float) -> Candlestick -> Candlestick
+scaledCandlestick vruler cndl =
+    let
+        opn =
+            vruler cndl.o
+
+        hi =
+            vruler cndl.h
+
+        lo =
+            vruler cndl.l
+
+        cls =
+            vruler cndl.c
+    in
+        Candlestick opn hi lo cls
+
+
 chartWindow : ChartInfo -> Model -> ChartInfo
 chartWindow ci model =
     let
-        valueFn : List Float -> List Float
+        valueFn : List a -> List a
         valueFn vals =
             List.take model.takeItems <| List.drop model.dropItems vals
 
@@ -193,6 +211,21 @@ chartWindow ci model =
 
         vrLines_ =
             List.map (List.map vr) lines_
+
+        cndl_ =
+            case ci.candlesticks of
+                Nothing ->
+                    Nothing
+
+                Just cs ->
+                    let
+                        vr_cndl =
+                            scaledCandlestick vr
+
+                        my_cndls =
+                            valueFn cs
+                    in
+                        Just (List.map vr_cndl my_cndls)
     in
         C.ChartInfo minDx_
             maxDx_
@@ -200,6 +233,7 @@ chartWindow ci model =
             (TUP.second valueRange)
             (List.map hr xAxis_)
             vrLines_
+            cndl_
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -238,9 +272,7 @@ update msg model =
 
 drawChartInfo : ChartInfo -> Cmd Msg
 drawChartInfo ci =
-    Debug.log (toString ci)
-        drawCanvas
-        ( ci.lines, ci.xAxis, [ "#000000", "#ff0000" ] )
+    drawCanvas ( ci.lines, ci.xAxis, [ "#000000", "#ff0000" ] )
 
 
 
@@ -257,6 +289,15 @@ fetchTickers =
             Http.get url comboBoxItemListDecoder
 
 
+candlestickDecoder : Json.Decoder Candlestick
+candlestickDecoder =
+    Json.map4 Candlestick
+        (Json.field "o" Json.float)
+        (Json.field "h" Json.float)
+        (Json.field "l" Json.float)
+        (Json.field "c" Json.float)
+
+
 fetchCharts : String -> Cmd Msg
 fetchCharts ticker =
     let
@@ -268,6 +309,7 @@ fetchCharts ticker =
                 |> JP.optional "max-val" Json.float 0.0
                 |> JP.required "x-axis" (Json.list Json.float)
                 |> JP.required "lines" (Json.list (Json.list Json.float))
+                |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))
 
         url =
             mainUrl ++ "/ticker?oid=" ++ ticker
@@ -282,7 +324,7 @@ fetchCharts ticker =
        let
            candlestickDecoder =
                Json.map4 Candlestick
-                   (Json.field "o" Json.float)
+                    (Json.field "o" Json.float)
                    (Json.field "h" Json.float)
                    (Json.field "l" Json.float)
                    (Json.field "c" Json.float)

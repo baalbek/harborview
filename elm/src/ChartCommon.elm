@@ -37,4 +37,5 @@ type alias ChartInfo =
     , maxVal : Float
     , xAxis : List Float
     , lines : List (List Float)
+    , candlesticks : Maybe (List Candlestick)
     }
