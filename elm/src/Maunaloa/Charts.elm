@@ -26,7 +26,7 @@ import Common.ComboBox
         , makeSelect
         )
 import ChartRuler.VRuler as VR
-import ChartCommon as C exposing (ChartValues, Candlestick, ChartInfo, chartInfo1, chartInfo2)
+import ChartCommon as C exposing (Candlestick, ChartInfo)
 
 
 mainUrl =
@@ -167,76 +167,36 @@ view model =
 
 
 chartWindow : ChartInfo -> Model -> ChartInfo
-chartWindow cix model =
-    case cix of
-        C.EmptyChartInfo ->
-            C.EmptyChartInfo
+chartWindow ci model =
+    let
+        valueFn : List Float -> List Float
+        valueFn vals =
+            List.take model.takeItems <| List.drop model.dropItems vals
 
-        C.ChartInfo2 ci ->
-            let
-                xAxis_ =
-                    List.take model.takeItems <| List.drop model.dropItems ci.base.xAxis
+        xAxis_ =
+            List.take model.takeItems <| List.drop model.dropItems ci.xAxis
 
-                ( minDx_, maxDx_ ) =
-                    HR.dateRangeOf ci.base.minDx xAxis_
+        ( minDx_, maxDx_ ) =
+            HR.dateRangeOf ci.minDx xAxis_
 
-                hr =
-                    HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
+        hr =
+            HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
 
-                valueRange =
-                    VR.minMaxCndl ci.cndl
+        lines_ =
+            List.map valueFn ci.lines
 
-                vr =
-                    VR.vruler valueRange model.chartHeight
+        valueRange =
+            List.map VR.minMax lines_ |> M.minMaxTuples
 
-                myBase =
-                    C.ChartInfoBase minDx_ maxDx_ (TUP.first valueRange) (TUP.second valueRange) (List.map hr xAxis_)
-            in
-                C.EmptyChartInfo
-
-        C.ChartInfo1 ci ->
-            let
-                valueFn : ChartValues -> ChartValues
-                valueFn vals =
-                    case vals of
-                        Nothing ->
-                            Nothing
-
-                        Just s ->
-                            Just <| List.take model.takeItems <| List.drop model.dropItems s
-
-                xAxis_ =
-                    List.take model.takeItems <| List.drop model.dropItems ci.base.xAxis
-
-                ( minDx_, maxDx_ ) =
-                    HR.dateRangeOf ci.base.minDx xAxis_
-
-                hr =
-                    HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
-
-                spots_ =
-                    valueFn ci.spots
-
-                itrend20_ =
-                    valueFn ci.itrend20
-
-                graphs =
-                    [ spots_, itrend20_ ]
-
-                valueRange =
-                    List.map VR.minMax graphs |> M.minMaxTuples
-
-                vr =
-                    VR.vruler valueRange model.chartHeight
-
-                myBase =
-                    C.ChartInfoBase minDx_ maxDx_ (TUP.first valueRange) (TUP.second valueRange) (List.map hr xAxis_)
-            in
-                C.ChartInfo1
-                    { base = myBase
-                    , spots = M.maybeMap vr spots_
-                    , itrend20 = M.maybeMap vr itrend20_
-                    }
+        vr =
+            VR.vruler valueRange model.chartHeight
+    in
+        C.ChartInfo minDx_
+            maxDx_
+            (TUP.first valueRange)
+            (TUP.second valueRange)
+            (List.map hr xAxis_)
+            lines_
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -257,15 +217,8 @@ update msg model =
             Debug.log "TickersFetched Error" ( model, Cmd.none )
 
         FetchCharts s ->
-            let
-                fetchCharts_ =
-                    if model.isCandlesticks == True then
-                        fetchCharts2
-                    else
-                        fetchCharts
-            in
-                Debug.log "FetchCharts"
-                    ( { model | selectedTicker = s }, fetchCharts_ s )
+            Debug.log "FetchCharts"
+                ( { model | selectedTicker = s }, fetchCharts s )
 
         ChartsFetched (Ok s) ->
             let
@@ -281,25 +234,10 @@ update msg model =
 
 
 drawChartInfo : ChartInfo -> Cmd Msg
-drawChartInfo cix =
-    case cix of
-        C.EmptyChartInfo ->
-            Cmd.none
-
-        C.ChartInfo2 ci ->
-            Cmd.none
-
-        C.ChartInfo1 ci ->
-            let
-                spots =
-                    Maybe.withDefault [] ci.spots
-
-                itrend20 =
-                    Maybe.withDefault [] ci.itrend20
-            in
-                Debug.log (toString ci)
-                    drawCanvas
-                    ( [ spots, itrend20 ], ci.base.xAxis, [ "#000000", "#ff0000" ] )
+drawChartInfo ci =
+    Debug.log (toString ci)
+        drawCanvas
+        ( ci.lines, ci.xAxis, [ "#000000", "#ff0000" ] )
 
 
 
@@ -320,14 +258,13 @@ fetchCharts : String -> Cmd Msg
 fetchCharts ticker =
     let
         myDecoder =
-            JP.decode chartInfo1
+            JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "max-dx" stringToDateDecoder
                 |> JP.optional "min-val" Json.float 0.0
                 |> JP.optional "max-val" Json.float 0.0
                 |> JP.required "x-axis" (Json.list Json.float)
-                |> JP.required "spots" (Json.nullable (Json.list Json.float))
-                |> JP.required "itrend-20" (Json.nullable (Json.list Json.float))
+                |> JP.required "lines" (Json.list (Json.list Json.float))
 
         url =
             mainUrl ++ "/ticker?oid=" ++ ticker
@@ -335,32 +272,32 @@ fetchCharts ticker =
         Http.send ChartsFetched <| Http.get url myDecoder
 
 
-fetchCharts2 : String -> Cmd Msg
-fetchCharts2 ticker =
-    let
-        candlestickDecoder =
-            Json.map4 Candlestick
-                (Json.field "o" Json.float)
-                (Json.field "h" Json.float)
-                (Json.field "l" Json.float)
-                (Json.field "c" Json.float)
 
-        myDecoder =
-            JP.decode chartInfo2
-                |> JP.required "min-dx" stringToDateDecoder
-                |> JP.required "max-dx" stringToDateDecoder
-                |> JP.optional "min-val" Json.float 0.0
-                |> JP.optional "max-val" Json.float 0.0
-                |> JP.required "x-axis" (Json.list Json.float)
-                |> JP.required "cndl" (Json.list candlestickDecoder)
+{-
+   fetchCharts2 : String -> Cmd Msg
+   fetchCharts2 ticker =
+       let
+           candlestickDecoder =
+               Json.map4 Candlestick
+                   (Json.field "o" Json.float)
+                   (Json.field "h" Json.float)
+                   (Json.field "l" Json.float)
+                   (Json.field "c" Json.float)
 
-        url =
-            mainUrl ++ "/tickercndl?oid=" ++ ticker
-    in
-        Http.send ChartsFetched <| Http.get url myDecoder
+           myDecoder =
+               JP.decode chartInfo2
+                   |> JP.required "min-dx" stringToDateDecoder
+                   |> JP.required "max-dx" stringToDateDecoder
+                   |> JP.optional "min-val" Json.float 0.0
+                   |> JP.optional "max-val" Json.float 0.0
+                   |> JP.required "x-axis" (Json.list Json.float)
+                   |> JP.required "cndl" (Json.list candlestickDecoder)
 
-
-
+           url =
+               mainUrl ++ "/tickercndl?oid=" ++ ticker
+       in
+           Http.send ChartsFetched <| Http.get url myDecoder
+-}
 ---------------- SUBSCRIPTIONS ----------------
 
 

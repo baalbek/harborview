@@ -103,9 +103,10 @@
         max-dx (last dx)
         hr (hruler min-dx)]
     (U/json-response
-      {:spots (reverse spots)
+      {;:spots (reverse spots)
+       ;:itrend-20 (reverse (map double->decimal itrend-20))
+       :lines [(reverse spots) (reverse (map double->decimal itrend-20))]
        :x-axis (reverse (map hr dx))
-       :itrend-20 (reverse (map double->decimal itrend-20))
        :min-dx (ld->str min-dx)
        :max-dx (ld->str max-dx)})))
 

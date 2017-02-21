@@ -20,91 +20,79 @@ maybeLen v =
             List.length v_
 
 
-minMax : ChartValues -> ( Float, Float )
+minMax : List Float -> ( Float, Float )
 minMax v =
-    case v of
-        Nothing ->
-            ( 0, 0 )
-
-        Just v_ ->
-            let
-                minVal =
-                    List.minimum v_ |> Maybe.withDefault 0
-
-                maxVal =
-                    List.maximum v_ |> Maybe.withDefault 0
-            in
-                ( minVal, maxVal )
-
-
-minMaxCndl : List Candlestick -> ( Float, Float )
-minMaxCndl cndl =
     let
-        lows =
-            List.map .l cndl
+        minVal =
+            List.minimum v |> Maybe.withDefault 0
 
-        his =
-            List.map .h cndl
+        maxVal =
+            List.maximum v |> Maybe.withDefault 0
     in
-        ( List.minimum lows, List.maximum his )
+        ( minVal, maxVal )
 
 
 
+{-
+   minMaxCndl : List Candlestick -> ( Float, Float )
+   minMaxCndl cndl =
+       let
+           lows =
+               List.map .l cndl
+
+           his =
+               List.map .h cndl
+       in
+           ( List.minimum lows, List.maximum his )
+
+-}
 -- List.drop 90 dci.xAxis |> List.take 90 |> dateRangeOf dci
 
 
 lines : Float -> Float -> ChartInfo -> List (S.Svg a)
-lines w h cix =
-    case cix of
-        C.EmptyChartInfo ->
-            []
+lines w h ci =
+    let
+        valueSpan =
+            ci.maxVal - ci.minVal
 
-        C.ChartInfo2 ci ->
-            []
+        ppy =
+            h / valueSpan
 
-        C.ChartInfo1 ci ->
+        step =
+            ppy * (valueSpan / 10.0)
+
+        x2s =
+            toString w
+
+        range =
+            List.range 1 10
+
+        valFn y =
             let
-                valueSpan =
-                    ci.base.maxVal - ci.base.minVal
-
-                ppy =
-                    h / valueSpan
-
-                step =
-                    ppy * (valueSpan / 10.0)
-
-                x2s =
-                    toString w
-
-                range =
-                    List.range 1 10
-
-                valFn y =
-                    let
-                        convY =
-                            ci.base.maxVal - (y / ppy)
-                    in
-                        toDecimal convY 10
-
-                lineFn x =
-                    let
-                        curY =
-                            step * (toFloat x)
-
-                        curYl =
-                            toString curY
-
-                        curYs =
-                            toString (curY - 5)
-
-                        valY =
-                            toString (valFn curY)
-                    in
-                        [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, SA.stroke "#023963" ] []
-                        , S.text_ [ SA.x "5", SA.y curYs, SA.fill "red", SA.style "font: 20px/normal Helvetica, Arial;" ] [ S.text valY ]
-                        ]
+                convY =
+                    ci.maxVal - (y / ppy)
             in
-                List.concat <| List.map lineFn range
+                toDecimal convY 10
+
+        lineFn x =
+            let
+                curY =
+                    step * (toFloat x)
+
+                curYl =
+                    toString curY
+
+                curYs =
+                    toString (curY - 5)
+
+                valY =
+                    toString (valFn curY)
+            in
+                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, SA.stroke "#023963" ] []
+                , S.text_ [ SA.x "5", SA.y curYs, SA.fill "red", SA.style "font: 20px/normal Helvetica, Arial;" ] [ S.text valY ]
+                ]
+    in
+        List.concat <| List.map lineFn range
 
 
 vruler : ( Float, Float ) -> Float -> Float -> Float
@@ -123,8 +111,3 @@ vruler valueRange chartHeight yValue =
             chartHeight / valueSpan
     in
         (max_ - yValue) * ppy
-
-
-vrulerCndl : ( Float, Float ) -> Float -> Candlestick -> Float
-vrulerCndl valueRange chartHeight cndl =
-    3
