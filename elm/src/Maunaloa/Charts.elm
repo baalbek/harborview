@@ -190,13 +190,16 @@ chartWindow ci model =
 
         vr =
             VR.vruler valueRange model.chartHeight
+
+        vrLines_ =
+            List.map (List.map vr) lines_
     in
         C.ChartInfo minDx_
             maxDx_
             (TUP.first valueRange)
             (TUP.second valueRange)
             (List.map hr xAxis_)
-            lines_
+            vrLines_
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
