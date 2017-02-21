@@ -123,3 +123,8 @@ vruler valueRange chartHeight yValue =
             chartHeight / valueSpan
     in
         (max_ - yValue) * ppy
+
+
+vrulerCndl : ( Float, Float ) -> Float -> Candlestick -> Float
+vrulerCndl valueRange chartHeight cndl =
+    3

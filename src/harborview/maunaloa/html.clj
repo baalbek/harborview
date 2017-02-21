@@ -130,10 +130,10 @@
 
 (defn tickers []
   (U/json-response
-    ;(map (fn [s] {"t" (.getTicker s) "v" (.getOid s)})
-    ;  (DBX/fetch-tickers))))
-    (map (fn [x] (let [[v t] x] {"t" t "v" v}))
-      [["2" "STL"] ["1" "NHY"] ["3" "YAR"]])))
+    (map (fn [s] {"t" (.getTicker s) "v" (str (.getOid s))})
+      (DBX/fetch-tickers))))
+    ;(map (fn [x] (let [[v t] x] {"t" t "v" v}))
+    ;  [["2" "STL"] ["1" "NHY"] ["3" "YAR"]])))
 
 (defn init []
   (P/render-file "templates/maunaloa/charts.html" {}))

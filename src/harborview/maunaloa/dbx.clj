@@ -6,7 +6,9 @@
     [harborview.service.db :as DB]))
 
 
-(defn fetch-tickers []
+;(defn fetch-tickers []
+(CU/defn-memo fetch-tickers []
+  (println "fetch-tickers")
   (DB/with-session :ranoraraku StockMapper
     (.selectStocks it)))
 
