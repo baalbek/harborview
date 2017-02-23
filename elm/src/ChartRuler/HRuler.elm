@@ -4,7 +4,7 @@ import Svg as S
 import Svg.Attributes as SA
 import Time exposing (Time)
 import Common.DateUtil as DU
-import ChartCommon as C exposing (Point, ChartValues, ChartInfo)
+import ChartCommon as C exposing (ChartInfo)
 import Date exposing (Date, fromTime)
 import Common.Miscellaneous exposing (lastElem)
 
@@ -15,8 +15,8 @@ import Common.Miscellaneous exposing (lastElem)
        { minDx = DU.toDate "2016-7-1"
        , maxDx = DU.toDate "2016-8-1"
        , xAxis = List.reverse <| List.map toFloat <| List.range 0 400
-       , spots = Just <| List.reverse <| List.map toFloat <| List.range 100 500
-       , itrend20 = Nothing
+       , lines = [List.reverse <| List.map toFloat <| List.range 100 500]
+       , candlesticks = Nothing
        }
 -}
 
@@ -40,7 +40,54 @@ dateRangeOf dx lx =
 
 lines : Float -> Float -> ChartInfo -> List (S.Svg a)
 lines w h ci =
-    []
+    let
+        valueSpan =
+            DU.diffDays ci.minDx ci.maxDx
+
+        ppx =
+            w / valueSpan
+
+        step =
+            w / 10.0
+
+        range =
+            List.range 1 9
+
+        h2s =
+            toString h
+
+        txtYs =
+            toString (h - 5)
+
+        valFn x =
+            let
+                days =
+                    x / ppx
+
+                xDate =
+                    DU.addDays ci.minDx days
+            in
+                (toString <| Date.month xDate) ++ "." ++ (toString <| Date.year xDate)
+
+        lineFn x =
+            let
+                curX =
+                    step * (toFloat x)
+
+                curXl =
+                    toString curX
+
+                curXs =
+                    toString (curX + 5)
+
+                valX =
+                    valFn curX
+            in
+                [ S.line [ SA.x1 curXl, SA.y1 "0", SA.x2 curXl, SA.y2 h2s, C.myStroke ] []
+                , S.text_ [ SA.x curXs, SA.y txtYs, SA.fill "red", C.myStyle ] [ S.text valX ]
+                ]
+    in
+        List.concat <| List.map lineFn range
 
 
 hruler : Date -> Date -> List Float -> Float -> Float -> Float

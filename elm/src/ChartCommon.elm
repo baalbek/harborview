@@ -1,5 +1,6 @@
 module ChartCommon exposing (..)
 
+import Svg.Attributes as SA
 import String
 import Date exposing (Date)
 
@@ -28,6 +29,14 @@ type alias ChartValues =
        = Candlesticks (List Candlestick)
        | ChartPoints (List (List Float))
 -}
+
+
+myStyle =
+    SA.style "font: 10px/normal Helvetica, Arial;"
+
+
+myStroke =
+    SA.stroke "#cccccc"
 
 
 type alias ChartInfo =

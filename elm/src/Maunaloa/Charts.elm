@@ -77,7 +77,7 @@ type alias Model =
     , takeItems : Int
     , chartWidth : Float
     , chartHeight : Float
-    , isCandlesticks : Bool
+    , isWeekly : Bool
     }
 
 
@@ -91,7 +91,7 @@ initModel =
     , takeItems = 900
     , chartWidth = 1300
     , chartHeight = 600
-    , isCandlesticks = False
+    , isWeekly = False
     }
 
 
@@ -104,7 +104,7 @@ type Msg
     = TickersFetched (Result Http.Error SelectItems)
     | FetchCharts String
     | ChartsFetched (Result Http.Error ChartInfo)
-    | ToggleCandlestics
+    | ToggleWeekly
 
 
 
@@ -150,7 +150,7 @@ view model =
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
-                [ checkbox ToggleCandlestics "Candlesticks"
+                [ checkbox ToggleWeekly "Weekly"
                 , makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
                 ]
             , H.div [ A.style [ ( "position", "absolute" ), ( "top", "200px" ), ( "left", "200px" ) ] ]
@@ -240,8 +240,8 @@ chartWindow ci model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ToggleCandlestics ->
-            ( { model | isCandlesticks = not model.isCandlesticks }, Cmd.none )
+        ToggleWeekly ->
+            ( { model | isWeekly = not model.isWeekly }, Cmd.none )
 
         TickersFetched (Ok s) ->
             Debug.log "TickersFetched"
@@ -275,7 +275,7 @@ drawChartInfo : ChartInfo -> Cmd Msg
 drawChartInfo ci =
     let
         strokes =
-            [ "#000000", "#ff0000" ]
+            [ "#000000", "#ff0000", "#aa00ff" ]
 
         infoJs =
             ChartInfoJs ci.xAxis ci.lines ci.candlesticks strokes
@@ -326,31 +326,6 @@ fetchCharts ticker =
 
 
 
-{-
-   fetchCharts2 : String -> Cmd Msg
-   fetchCharts2 ticker =
-       let
-           candlestickDecoder =
-               Json.map4 Candlestick
-                    (Json.field "o" Json.float)
-                   (Json.field "h" Json.float)
-                   (Json.field "l" Json.float)
-                   (Json.field "c" Json.float)
-
-           myDecoder =
-               JP.decode chartInfo2
-                   |> JP.required "min-dx" stringToDateDecoder
-                   |> JP.required "max-dx" stringToDateDecoder
-                   |> JP.optional "min-val" Json.float 0.0
-                   |> JP.optional "max-val" Json.float 0.0
-                   |> JP.required "x-axis" (Json.list Json.float)
-                   |> JP.required "cndl" (Json.list candlestickDecoder)
-
-           url =
-               mainUrl ++ "/tickercndl?oid=" ++ ticker
-       in
-           Http.send ChartsFetched <| Http.get url myDecoder
--}
 ---------------- SUBSCRIPTIONS ----------------
 
 

@@ -4,7 +4,7 @@ import Svg as S
 import Svg.Attributes as SA
 import Time exposing (Time)
 import Common.DateUtil as DU
-import ChartCommon as C exposing (Candlestick, ChartValues, ChartInfo)
+import ChartCommon as C exposing (ChartInfo)
 import Date exposing (Date, fromTime)
 import Common.Miscellaneous exposing (lastElem, toDecimal)
 import Tuple exposing (first, second)
@@ -59,7 +59,7 @@ lines w h ci =
             h / valueSpan
 
         step =
-            ppy * (valueSpan / 10.0)
+            h / 10.0
 
         x2s =
             toString w
@@ -74,19 +74,13 @@ lines w h ci =
             in
                 toDecimal convY 10
 
-        myStyle =
-            SA.style "font: 20px/normal Helvetica, Arial;"
-
-        myStroke =
-            SA.stroke "#023963"
-
         line0 =
             let
                 curYl =
                     "0"
             in
-                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, myStroke ] []
-                , S.text_ [ SA.x "5", SA.y "20", SA.fill "red", myStyle ] [ S.text (toString ci.maxVal) ]
+                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, C.myStroke ] []
+                , S.text_ [ SA.x "5", SA.y "20", SA.fill "red", C.myStyle ] [ S.text (toString ci.maxVal) ]
                 ]
 
         lineFn x =
@@ -103,8 +97,8 @@ lines w h ci =
                 valY =
                     toString (valFn curY)
             in
-                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, myStroke ] []
-                , S.text_ [ SA.x "5", SA.y curYs, SA.fill "red", myStyle ] [ S.text valY ]
+                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, C.myStroke ] []
+                , S.text_ [ SA.x "5", SA.y curYs, SA.fill "red", C.myStyle ] [ S.text valY ]
                 ]
     in
         line0 ++ (List.concat <| List.map lineFn range)
