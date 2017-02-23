@@ -26,7 +26,7 @@ import Common.ComboBox
         , makeSelect
         )
 import ChartRuler.VRuler as VR
-import ChartCommon as C exposing (Candlestick, ChartInfo)
+import ChartCommon as C exposing (Candlestick, ChartInfo, ChartInfoJs)
 
 
 mainUrl =
@@ -45,9 +45,10 @@ main =
 
 
 -------------------- PORTS ---------------------
+-- port drawCanvas : ( List (List Float), List Float, List String ) -> Cmd msg
 
 
-port drawCanvas : ( List (List Float), List Float, List String ) -> Cmd msg
+port drawCanvas : ChartInfoJs -> Cmd msg
 
 
 
@@ -272,7 +273,14 @@ update msg model =
 
 drawChartInfo : ChartInfo -> Cmd Msg
 drawChartInfo ci =
-    drawCanvas ( ci.lines, ci.xAxis, [ "#000000", "#ff0000" ] )
+    let
+        strokes =
+            [ "#000000", "#ff0000" ]
+
+        infoJs =
+            ChartInfoJs ci.xAxis ci.lines ci.candlesticks strokes
+    in
+        drawCanvas infoJs
 
 
 

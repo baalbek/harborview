@@ -39,3 +39,11 @@ type alias ChartInfo =
     , lines : List (List Float)
     , candlesticks : Maybe (List Candlestick)
     }
+
+
+type alias ChartInfoJs =
+    { xAxis : List Float
+    , lines : List (List Float)
+    , candlesticks : Maybe (List Candlestick)
+    , strokes : List String
+    }
