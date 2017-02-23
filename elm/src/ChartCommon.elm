@@ -32,7 +32,7 @@ type alias ChartValues =
 
 
 myStyle =
-    SA.style "font: 10px/normal Helvetica, Arial;"
+    SA.style "font: 12px/normal Helvetica, Arial;"
 
 
 myStroke =

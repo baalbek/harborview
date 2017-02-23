@@ -67,7 +67,11 @@ lines w h ci =
                 xDate =
                     DU.addDays ci.minDx days
             in
-                (toString <| Date.month xDate) ++ "." ++ (toString <| Date.year xDate)
+                (toString <| Date.day xDate)
+                    ++ "."
+                    ++ (toString <| Date.month xDate)
+                    ++ "."
+                    ++ (toString <| Date.year xDate)
 
         lineFn x =
             let

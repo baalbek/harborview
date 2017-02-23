@@ -36,7 +36,9 @@
               drawGraph(ctx,chartInfo.xaxis,ys,curStroke);
           }
           if (chartInfo.candlesticks != null) {
-            console.log (chartInfo.candlesticks);
+              for (var i = 0; i < chartInfo.candlesticks.length; ++i) {
+                drawCandlestick(ctx,chartInfo.xaxis,chartInfo.candlesticks[i]);
+              }
           }
         }
         app.ports.drawCanvas.subscribe(drawCanvas);
@@ -54,6 +56,9 @@
             ctx.lineTo(x,y);
           }
           ctx.stroke();
+        }
+        var drawCandlestick = function(ctx,xs,candleStick) {
+
         }
     </script>
 </body>

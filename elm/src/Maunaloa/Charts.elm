@@ -244,27 +244,24 @@ update msg model =
             ( { model | isWeekly = not model.isWeekly }, Cmd.none )
 
         TickersFetched (Ok s) ->
-            Debug.log "TickersFetched"
-                ( { model
-                    | tickers = Just s
-                  }
-                , Cmd.none
-                )
+            ( { model
+                | tickers = Just s
+              }
+            , Cmd.none
+            )
 
         TickersFetched (Err s) ->
             Debug.log "TickersFetched Error" ( model, Cmd.none )
 
         FetchCharts s ->
-            Debug.log "FetchCharts"
-                ( { model | selectedTicker = s }, fetchCharts s )
+            ( { model | selectedTicker = s }, fetchCharts s )
 
         ChartsFetched (Ok s) ->
             let
                 ciWin =
                     chartWindow s model
             in
-                Debug.log "ChartsFetched "
-                    ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, drawChartInfo ciWin )
+                ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, drawChartInfo ciWin )
 
         ChartsFetched (Err _) ->
             Debug.log "ChartsFetched err"
