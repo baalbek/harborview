@@ -11,17 +11,28 @@
 </head>
 <body>
     <div class="logo"></div>
+    <ul class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#chart1">Home</a></li>
+      <li><a data-toggle="tab" href="#chart2">Menu 1</a></li>
+    </ul>
+
     <div class="container">
-        <div id="my-app"></div>
+      <div class="tab-content">
+        <div id="chart1" class="tab-pane active">
+          <h3>Daily Chart</h3>
+          <div class="container">
+            <div id="my-app"></div>
+          </div>
+          <div style="position: absolute; top:200px; left:200px;">
+            <canvas id="my-canvas" width="1300" height="600"></canvas>
+          </div>
+        </div>
+        <div id="chart2" class="tab-pane">
+          <h3>Weekly Chart</h3>
+          <p>HI!</p>
+        </div>
+      </div>
     </div>
-    <div style="position: absolute; top:200px; left:200px;">
-        <canvas id="my-canvas" width="1300" height="600"></canvas>
-    </div>
-    <!--
-    <div id="buttons">
-        <input type="button" id="clear" value="Clear">
-    </div>
-    -->
     <script type="text/javascript">
         var node = document.getElementById('my-app');
         var app = Elm.Maunaloa.Charts.embed(node);
