@@ -38,6 +38,11 @@ dateRangeOf dx lx =
         ( dxOf dx offsetLow, dxOf dx offsetHi )
 
 
+lines : Float -> Float -> ChartInfo -> List (S.Svg a)
+lines w h ci =
+    []
+
+
 hruler : Date -> Date -> List Float -> Float -> Float -> Float
 hruler newStartDate newEndDate newRange chartWidth rangeIndex =
     let

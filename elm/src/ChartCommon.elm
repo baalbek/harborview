@@ -42,7 +42,7 @@ type alias ChartInfo =
 
 
 type alias ChartInfoJs =
-    { xAxis : List Float
+    { xaxis : List Float
     , lines : List (List Float)
     , candlesticks : Maybe (List Candlestick)
     , strokes : List String

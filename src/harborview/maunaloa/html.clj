@@ -147,5 +147,4 @@
 (defroutes my-routes
   (GET "/" request (init))
   (GET "/tickers" request (tickers))
-  (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
-  (GET "/tickercndl" [oid] (ticker-candlesticks-chart (U/rs oid))))
+  (GET "/ticker" [oid] (ticker-chart (U/rs oid))))

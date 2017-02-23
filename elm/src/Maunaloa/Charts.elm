@@ -138,7 +138,7 @@ view model =
                     []
 
                 Just ci ->
-                    []
+                    HR.lines w model.chartHeight ci
 
         vruler =
             case model.chartInfoWin of

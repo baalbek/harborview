@@ -74,6 +74,21 @@ lines w h ci =
             in
                 toDecimal convY 10
 
+        myStyle =
+            SA.style "font: 20px/normal Helvetica, Arial;"
+
+        myStroke =
+            SA.stroke "#023963"
+
+        line0 =
+            let
+                curYl =
+                    "0"
+            in
+                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, myStroke ] []
+                , S.text_ [ SA.x "5", SA.y "20", SA.fill "red", myStyle ] [ S.text (toString ci.maxVal) ]
+                ]
+
         lineFn x =
             let
                 curY =
@@ -88,11 +103,11 @@ lines w h ci =
                 valY =
                     toString (valFn curY)
             in
-                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, SA.stroke "#023963" ] []
-                , S.text_ [ SA.x "5", SA.y curYs, SA.fill "red", SA.style "font: 20px/normal Helvetica, Arial;" ] [ S.text valY ]
+                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, myStroke ] []
+                , S.text_ [ SA.x "5", SA.y curYs, SA.fill "red", myStyle ] [ S.text valY ]
                 ]
     in
-        List.concat <| List.map lineFn range
+        line0 ++ (List.concat <| List.map lineFn range)
 
 
 vruler : ( Float, Float ) -> Float -> Float -> Float
