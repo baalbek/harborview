@@ -153,7 +153,7 @@ view model =
                 [ checkbox ToggleWeekly "Weekly"
                 , makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
                 ]
-            , H.div [ A.style [ ( "position", "absolute" ), ( "top", "400px" ), ( "left", "200px" ) ] ]
+            , H.div [ A.style [ ( "position", "absolute" ), ( "top", "300px" ), ( "left", "200px" ) ] ]
                 [ S.svg [ SA.width (ws ++ "px"), SA.height (hs ++ "px") ]
                     (List.append
                         svgBaseLines
