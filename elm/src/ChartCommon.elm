@@ -55,5 +55,4 @@ type alias ChartInfoJs =
     , lines : List (List Float)
     , candlesticks : Maybe (List Candlestick)
     , strokes : List String
-    , canvasId : String
     }

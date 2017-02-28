@@ -32,7 +32,11 @@ import ChartCommon as C exposing (Candlestick, ChartInfo, ChartInfoJs)
 mainUrl =
     "/maunaloa"
 
+type alias Flags =
+  { isWeekly : Bool
+   }
 
+{-
 main : Program Never Model Msg
 main =
     H.program
@@ -42,11 +46,18 @@ main =
         , subscriptions = subscriptions
         }
 
+-}
+main : Program Flags Model Msg
+main =
+    H.programWithFlags
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
 
 
 -------------------- PORTS ---------------------
--- port drawCanvas : ( List (List Float), List Float, List String ) -> Cmd msg
-
 
 port drawCanvas : ChartInfoJs -> Cmd msg
 
@@ -55,18 +66,17 @@ port drawCanvas : ChartInfoJs -> Cmd msg
 -------------------- INIT ---------------------
 
 
+{-
 init : ( Model, Cmd Msg )
 init =
     ( initModel, fetchTickers )
-
-
-
-------------------- MODEL ---------------------
-{-
-   , spots : Maybe (List Float)
-   , candlesticks : Maybe (List Candlestick)
 -}
 
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    ( initModel flags , fetchTickers )
+
+------------------- MODEL ---------------------
 
 type alias Model =
     { tickers : Maybe SelectItems
@@ -77,12 +87,12 @@ type alias Model =
     , takeItems : Int
     , chartWidth : Float
     , chartHeight : Float
-    , canvasId : String  
+    , flags : Flags
     }
 
 
-initModel : Model
-initModel =
+initModel : Flags -> Model
+initModel flags =
     { tickers = Nothing
     , selectedTicker = "-1"
     , chartInfo = Nothing
@@ -91,7 +101,7 @@ initModel =
     , takeItems = 90
     , chartWidth = 1300
     , chartHeight = 600
-    , canvasId = "canvas1"
+    , flags = flags
     }
 
 
@@ -104,7 +114,6 @@ type Msg
     = TickersFetched (Result Http.Error SelectItems)
     | FetchCharts String
     | ChartsFetched (Result Http.Error ChartInfo)
-    -- | ToggleWeekly
 
 
 
@@ -275,7 +284,7 @@ drawChartInfo ci model =
             [ "#000000", "#ff0000", "#aa00ff" ]
 
         infoJs =
-            ChartInfoJs ci.xAxis ci.lines ci.candlesticks strokes model.canvasId
+            ChartInfoJs ci.xAxis ci.lines ci.candlesticks strokes 
     in
         drawCanvas infoJs
 

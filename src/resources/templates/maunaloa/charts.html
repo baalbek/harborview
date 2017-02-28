@@ -44,13 +44,23 @@
         });
         */
         var node = document.getElementById('my-app');
-        var app = Elm.Maunaloa.Charts.embed(node);
+        var app = Elm.Maunaloa.Charts.embed(node, {
+            isWeekly : false
+        });
 
         var node2 = document.getElementById('my-app2');
-        var app2 = Elm.Maunaloa.Charts.embed(node2);
-        var drawCanvas = function (chartInfo) {
-          //var canvas = document.getElementById('my-canvas');
-          var canvas = document.getElementById(chartInfo.canvasId);
+        var app2 = Elm.Maunaloa.Charts.embed(node2, {
+            isWeekly : true 
+        });
+        var drawCanvas1 = function (chartInfo) {
+            drawCanvas(chartInfo,'canvas1');
+        }
+        var drawCanvas2 = function (chartInfo) {
+            drawCanvas(chartInfo,'canvas2');
+        }
+        var drawCanvas = function (chartInfo,canvasId) {
+          var canvas = document.getElementById(canvasId);
+          //var canvas = document.getElementById(chartInfo.canvasId);
           var ctx = canvas.getContext("2d");
           ctx.clearRect(0,0,canvas.width,canvas.height);
           for (var i = 0; i < chartInfo.lines.length; ++i) {
@@ -68,7 +78,8 @@
               }
           }
         }
-        app.ports.drawCanvas.subscribe(drawCanvas);
+        app.ports.drawCanvas.subscribe(drawCanvas1);
+        app2.ports.drawCanvas.subscribe(drawCanvas2);
         var drawGraph = function (ctx,xs,ys,strokeStyle) {
           /*
           if (xs.length !== ys.length) {
