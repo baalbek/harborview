@@ -77,7 +77,7 @@ type alias Model =
     , takeItems : Int
     , chartWidth : Float
     , chartHeight : Float
-    , isWeekly : Bool
+    , canvasId : String  
     }
 
 
@@ -91,7 +91,7 @@ initModel =
     , takeItems = 90
     , chartWidth = 1300
     , chartHeight = 600
-    , isWeekly = False
+    , canvasId = "canvas1"
     }
 
 
@@ -104,7 +104,7 @@ type Msg
     = TickersFetched (Result Http.Error SelectItems)
     | FetchCharts String
     | ChartsFetched (Result Http.Error ChartInfo)
-    | ToggleWeekly
+    -- | ToggleWeekly
 
 
 
@@ -150,8 +150,8 @@ view model =
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
-                [ checkbox ToggleWeekly "Weekly"
-                , makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
+                [ -- checkbox ToggleWeekly "Weekly"
+                    makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
                 ]
             , H.div [ A.style [ ( "position", "absolute" ), ( "top", "300px" ), ( "left", "200px" ) ] ]
                 [ S.svg [ SA.width (ws ++ "px"), SA.height (hs ++ "px") ]
@@ -240,8 +240,8 @@ chartWindow ci model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ToggleWeekly ->
-            ( { model | isWeekly = not model.isWeekly }, Cmd.none )
+        -- ToggleWeekly ->
+        -- ( { model | isWeekly = not model.isWeekly }, Cmd.none )
 
         TickersFetched (Ok s) ->
             ( { model
@@ -261,21 +261,21 @@ update msg model =
                 ciWin =
                     chartWindow s model
             in
-                ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, drawChartInfo ciWin )
+                ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, drawChartInfo ciWin model )
 
         ChartsFetched (Err _) ->
             Debug.log "ChartsFetched err"
                 ( model, Cmd.none )
 
 
-drawChartInfo : ChartInfo -> Cmd Msg
-drawChartInfo ci =
+drawChartInfo : ChartInfo -> Model -> Cmd Msg
+drawChartInfo ci model =
     let
         strokes =
             [ "#000000", "#ff0000", "#aa00ff" ]
 
         infoJs =
-            ChartInfoJs ci.xAxis ci.lines ci.candlesticks strokes
+            ChartInfoJs ci.xAxis ci.lines ci.candlesticks strokes model.canvasId
     in
         drawCanvas infoJs
 
