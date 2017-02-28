@@ -32,21 +32,26 @@ import ChartCommon as C exposing (Candlestick, ChartInfo, ChartInfoJs)
 mainUrl =
     "/maunaloa"
 
+
 type alias Flags =
-  { isWeekly : Bool
-   }
+    { isWeekly : Bool
+    }
+
+
 
 {-
-main : Program Never Model Msg
-main =
-    H.program
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        }
+   main : Program Never Model Msg
+   main =
+       H.program
+           { init = init
+           , view = view
+           , update = update
+           , subscriptions = subscriptions
+           }
 
 -}
+
+
 main : Program Flags Model Msg
 main =
     H.programWithFlags
@@ -57,26 +62,30 @@ main =
         }
 
 
+
 -------------------- PORTS ---------------------
+
 
 port drawCanvas : ChartInfoJs -> Cmd msg
 
 
 
 -------------------- INIT ---------------------
-
-
 {-
-init : ( Model, Cmd Msg )
-init =
-    ( initModel, fetchTickers )
+   init : ( Model, Cmd Msg )
+   init =
+       ( initModel, fetchTickers )
 -}
+
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( initModel flags , fetchTickers )
+    ( initModel flags, fetchTickers )
+
+
 
 ------------------- MODEL ---------------------
+
 
 type alias Model =
     { tickers : Maybe SelectItems
@@ -160,7 +169,7 @@ view model =
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
                 [ -- checkbox ToggleWeekly "Weekly"
-                    makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
+                  makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
                 ]
             , H.div [ A.style [ ( "position", "absolute" ), ( "top", "300px" ), ( "left", "200px" ) ] ]
                 [ S.svg [ SA.width (ws ++ "px"), SA.height (hs ++ "px") ]
@@ -251,7 +260,6 @@ update msg model =
     case msg of
         -- ToggleWeekly ->
         -- ( { model | isWeekly = not model.isWeekly }, Cmd.none )
-
         TickersFetched (Ok s) ->
             ( { model
                 | tickers = Just s
@@ -284,7 +292,7 @@ drawChartInfo ci model =
             [ "#000000", "#ff0000", "#aa00ff" ]
 
         infoJs =
-            ChartInfoJs ci.xAxis ci.lines ci.candlesticks strokes 
+            ChartInfoJs ci.xAxis ci.lines ci.candlesticks strokes
     in
         drawCanvas infoJs
 
@@ -326,12 +334,10 @@ fetchCharts ticker model =
                 |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))
 
         url =
-            if 
-                model.flags.isWeekly == True 
-            then 
-                mainUrl ++ "/ticker?oid=" ++ ticker
-            else 
+            if model.flags.isWeekly == True then
                 mainUrl ++ "/tickerweek?oid=" ++ ticker
+            else
+                mainUrl ++ "/ticker?oid=" ++ ticker
     in
         Http.send ChartsFetched <| Http.get url myDecoder
 

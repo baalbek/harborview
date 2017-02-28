@@ -11,12 +11,14 @@
     [harborview.service.db :as DB]
     [harborview.service.htmlutils :as U]))
 
-(def pdx (Date/valueOf (LocalDate/of 2014 1 1)))
+(def pdx (Date/valueOf (LocalDate/of 2012 1 1)))
 
 (defn fp []
   (MAUX/fetch-prices 3 pdx))
 
-(def nel VIN/insert-element)
+(defn weeks []
+  (let [bx (MAUX/fetch-prices-m 3 pdx)]
+    (MAUX/candlestick-weeks-m 3 bx)))
 
 (comment
   (def jr U/json-response)
