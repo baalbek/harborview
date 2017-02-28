@@ -263,7 +263,7 @@ update msg model =
             Debug.log "TickersFetched Error" ( model, Cmd.none )
 
         FetchCharts s ->
-            ( { model | selectedTicker = s }, fetchCharts s )
+            ( { model | selectedTicker = s }, fetchCharts s model )
 
         ChartsFetched (Ok s) ->
             let
@@ -312,8 +312,8 @@ candlestickDecoder =
         (Json.field "c" Json.float)
 
 
-fetchCharts : String -> Cmd Msg
-fetchCharts ticker =
+fetchCharts : String -> Model -> Cmd Msg
+fetchCharts ticker model =
     let
         myDecoder =
             JP.decode ChartInfo
@@ -326,7 +326,12 @@ fetchCharts ticker =
                 |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))
 
         url =
-            mainUrl ++ "/ticker?oid=" ++ ticker
+            if 
+                model.flags.isWeekly == True 
+            then 
+                mainUrl ++ "/ticker?oid=" ++ ticker
+            else 
+                mainUrl ++ "/tickerweek?oid=" ++ ticker
     in
         Http.send ChartsFetched <| Http.get url myDecoder
 

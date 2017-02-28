@@ -119,6 +119,7 @@
        :max-dx (ld->str max-dx)
        :cndl (reverse (map #(bean->candlestick %) spot-objs))})))
 
+(defn ticker-chart-week [oid])
 
 
 (comment ticker-candlesticks-chart [oid]
@@ -150,4 +151,5 @@
 (defroutes my-routes
   (GET "/" request (init))
   (GET "/tickers" request (tickers))
-  (GET "/ticker" [oid] (ticker-chart (U/rs oid))))
+  (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
+  (GET "/tickerweek" [oid] (ticker-chart-week (U/rs oid))))
