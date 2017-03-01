@@ -25,6 +25,12 @@
           <div style="position: absolute; top:300px; left:200px;">
             <canvas id="canvas1" width="1310" height="600"></canvas>
           </div>
+          <div style="position: absolute; top:300px; left:200px;">
+            <canvas id="canvas1" width="1310" height="600"></canvas>
+          </div>
+          <div style="position: absolute; top:950px; left:200px;">
+            <canvas id="canvas1b" width="1310" height="600"></canvas>
+          </div>
         </div>
         <div id="chart2" class="tab-pane">
           <div class="container">
@@ -63,7 +69,6 @@
         }
         var drawCanvas = function (chartInfo,canvasId) {
           var canvas = document.getElementById(canvasId);
-          //var canvas = document.getElementById(chartInfo.canvasId);
           var ctx = canvas.getContext("2d");
           ctx.clearRect(0,0,canvas.width,canvas.height);
           for (var i = 0; i < chartInfo.lines.length; ++i) {
@@ -119,10 +124,6 @@
               // Bullish
 
           }
-          /*
-          ctx.moveTo(x,candleStick.o);
-          ctx.lineTo(x,candleStick.c);
-          */
           ctx.stroke();
         }
     </script>
