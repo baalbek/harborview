@@ -143,8 +143,8 @@ view model =
         hs =
             toString model.chartHeight
 
-        hs2 = 
-            toString model.chartHeight2 
+        hs2 =
+            toString model.chartHeight2
 
         stroke =
             "#023963"
@@ -157,7 +157,7 @@ view model =
 
         svgBaseLines2 =
             [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 hs2, SA.stroke stroke ] []
-            -- , S.line [ SA.x1 "0", SA.y1 hs2, SA.x2 ws, SA.y2 hs2, SA.stroke stroke ] []
+              -- , S.line [ SA.x1 "0", SA.y1 hs2, SA.x2 ws, SA.y2 hs2, SA.stroke stroke ] []
             ]
 
         hruler =
@@ -174,7 +174,15 @@ view model =
                     []
 
                 Just ci ->
-                    VR.lines w model.chartHeight ci
+                    VR.lines w model.chartHeight 10 ci
+
+        hruler2 =
+            case model.chartInfoWin of
+                Nothing ->
+                    []
+
+                Just ci ->
+                    HR.lines w model.chartHeight2 ci
 
         vruler2 =
             case model.chartInfoWin of
@@ -182,7 +190,7 @@ view model =
                     []
 
                 Just ci ->
-                    VR.lines w model.chartHeight2 ci
+                    VR.lines w model.chartHeight2 5 ci
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
@@ -198,7 +206,9 @@ view model =
                 ]
             , H.div [ A.style [ ( "position", "absolute" ), ( "top", "950px" ), ( "left", "200px" ) ] ]
                 [ S.svg [ SA.width (ws ++ "px"), SA.height (hs2 ++ "px") ]
-                        (List.append svgBaseLines2 vruler2)
+                    (List.append svgBaseLines2
+                        (List.append hruler2 vruler2)
+                    )
                 ]
             ]
 

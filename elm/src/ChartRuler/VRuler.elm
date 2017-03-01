@@ -49,7 +49,7 @@ minMax v =
 -- List.drop 90 dci.xAxis |> List.take 90 |> dateRangeOf dci
 
 
-lines : Float -> Float -> Float -> ChartInfo -> List (S.Svg a)
+lines : Float -> Float -> Int -> ChartInfo -> List (S.Svg a)
 lines w h numDivisions ci =
     let
         valueSpan =
@@ -59,13 +59,13 @@ lines w h numDivisions ci =
             h / valueSpan
 
         step =
-            h / numDivisions 
+            h / (toFloat numDivisions)
 
         x2s =
             toString w
 
         range =
-            List.range 1 10
+            List.range 1 numDivisions
 
         valFn y =
             let

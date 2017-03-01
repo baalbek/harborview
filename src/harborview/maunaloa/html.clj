@@ -61,9 +61,10 @@
         hr (hruler w min-dx max-dx)]
     dx))
 
+(def min-dx (LocalDate/of 2012 1 1))
 
-(defn ticker-chart-static [oid w h]
-  (let [min-dx (LocalDate/of 2012 1 1)
+(comment ticker-chart-static [oid w h]
+  (let [
         spot-objs (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
         spots (map #(.getCls %) spot-objs)
         itrend-20 (calc-itrend spots 10)
@@ -100,7 +101,8 @@
    :l (.getLo b)
    :c (.getCls b)})
 
-(defn ticker-chart_ [spot-objs min-dx]
+
+(defn ticker-chart_ [spot-objs]
   (let [spots (map #(.getCls %) spot-objs)
         itrend-50 (calc-itrend spots 50)
         itrend-200 (calc-itrend spots 200)
@@ -118,28 +120,14 @@
        :cndl (reverse (map #(bean->candlestick %) spot-objs))})))
 
 (defn ticker-chart [oid]
-  (let [min-dx (LocalDate/of 2012 1 1)
-        spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))]
+  (let [spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))]
     (ticker-chart_ spot-objs min-dx)))
 
 (defn ticker-chart-week [oid]
   (let [oidi (U/rs oid)
-        min-dx (LocalDate/of 2012 1 1)
         spot-objs (DBX/fetch-prices-m oidi (Date/valueOf min-dx))
         weeks (DBX/candlestick-weeks-m oidi spot-objs)]
     (ticker-chart_ weeks min-dx)))
-
-(comment ticker-candlesticks-chart [oid]
-  (let [min-dx (LocalDate/of 2012 1 1)
-        spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))
-        dx (map #(.toLocalDate (.getDx %)) spot-objs)
-        max-dx (last dx)
-        hr (hruler min-dx)]
-    (U/json-response
-       {:x-axis (reverse (map hr dx))
-        :min-dx (ld->str min-dx)
-        :max-dx (ld->str max-dx)
-        :cndl (map #(bean->candlestick %) spot-objs)})))
 
 (comment tickers []
   (U/json-response
