@@ -47,6 +47,7 @@ type alias ChartInfo =
     , xAxis : List Float
     , lines : List (List Float)
     , candlesticks : Maybe (List Candlestick)
+    , lines2 : Maybe (List (List Float))
     }
 
 
@@ -54,5 +55,6 @@ type alias ChartInfoJs =
     { xaxis : List Float
     , lines : List (List Float)
     , candlesticks : Maybe (List Candlestick)
+    , lines2 : Maybe (List (List Float))
     , strokes : List String
     }

@@ -114,6 +114,7 @@
        :lines [(reverse spots)
                (reverse (map double->decimal itrend-50))
                (reverse (map double->decimal itrend-200))]
+       :lines2 nil
        :x-axis (reverse (map hr dx))
        :min-dx (ld->str min-dx)
        :max-dx (ld->str max-dx)
