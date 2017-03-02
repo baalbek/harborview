@@ -121,13 +121,13 @@
 
 (defn ticker-chart [oid]
   (let [spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))]
-    (ticker-chart_ spot-objs min-dx)))
+    (ticker-chart_ spot-objs)))
 
 (defn ticker-chart-week [oid]
   (let [oidi (U/rs oid)
         spot-objs (DBX/fetch-prices-m oidi (Date/valueOf min-dx))
         weeks (DBX/candlestick-weeks-m oidi spot-objs)]
-    (ticker-chart_ weeks min-dx)))
+    (ticker-chart_ weeks)))
 
 (comment tickers []
   (U/json-response
