@@ -234,9 +234,10 @@ scaledCandlestick vruler cndl =
     in
         Candlestick opn hi lo cls
 
+
 chartWindowLines : (a -> List Float) -> List a -> Float -> List (List Float)
 chartWindowLines valueFn lines chartHeight =
-    let 
+    let
         lines_ =
             List.map valueFn lines
 
@@ -245,9 +246,9 @@ chartWindowLines valueFn lines chartHeight =
 
         vr =
             VR.vruler valueRange chartHeight
-
     in
         List.map (List.map vr) lines_
+
 
 chartWindow : ChartInfo -> Model -> ChartInfo
 chartWindow ci model =
@@ -265,18 +266,19 @@ chartWindow ci model =
         hr =
             HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
 
-        vrLines_ =
-            chartWindowLines valueFn ci.lines model.chartHeight
-
-        vrLines2_ =
-            case ci.lines2 of
-                Nothing ->
-                    Nothing
-
-                Just lx2 ->
-                    Just (chartWindowLines valueFn lx2 model.chartHeight2)
-
         {-
+           vrLines_ =
+               chartWindowLines valueFn ci.lines model.chartHeight
+
+           vrLines2_ =
+               case ci.lines2 of
+                   Nothing ->
+                       Nothing
+
+                   Just lx2 ->
+                       Just (chartWindowLines valueFn lx2 model.chartHeight2)
+
+        -}
         lines_ =
             List.map valueFn ci.lines
 
@@ -288,7 +290,6 @@ chartWindow ci model =
 
         vrLines_ =
             List.map (List.map vr) lines_
-        -}
 
         cndl_ =
             case ci.candlesticks of
@@ -312,7 +313,7 @@ chartWindow ci model =
             (List.map hr xAxis_)
             vrLines_
             cndl_
-            vrLines2_
+            Nothing
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -393,8 +394,8 @@ fetchCharts ticker model =
                 |> JP.required "lines" (Json.list (Json.list Json.float))
                 |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))
                 |> JP.required "lines2" (Json.nullable (Json.list (Json.list Json.float)))
-                -- |> JP.hardcoded Nothing
 
+        -- |> JP.hardcoded Nothing
         url =
             if model.flags.isWeekly == True then
                 mainUrl ++ "/tickerweek?oid=" ++ ticker
