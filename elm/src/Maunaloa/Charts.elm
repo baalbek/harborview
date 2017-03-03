@@ -339,13 +339,14 @@ update msg model =
                 ciWin =
                     chartWindow s model
             in
-                ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, drawChartInfo ciWin model )
+                ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, Cmd.none ) -- drawChartInfo ciWin model )
 
         ChartsFetched (Err _) ->
             Debug.log "ChartsFetched err"
                 ( model, Cmd.none )
 
 
+{-
 drawChartInfo : ChartInfo -> Model -> Cmd Msg
 drawChartInfo ci model =
     let
@@ -356,6 +357,7 @@ drawChartInfo ci model =
             ChartInfoJs ci.xAxis ci.lines ci.candlesticks Nothing strokes
     in
         drawCanvas infoJs
+-}
 
 
 

@@ -51,10 +51,16 @@ type alias ChartInfo =
     }
 
 
+type alias ChartLines = 
+    { minVal : Float
+    , maxVal : Float
+    , lines : List (List Float)
+    }
+
 type alias ChartInfoJs =
     { xaxis : List Float
-    , lines : List (List Float)
+    , lines : ChartLines
     , candlesticks : Maybe (List Candlestick)
-    , lines2 : Maybe (List (List Float))
+    , lines2 : Maybe ChartLines
     , strokes : List String
     }
