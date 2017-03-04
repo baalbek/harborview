@@ -164,24 +164,6 @@ view model =
               -- , S.line [ SA.x1 "0", SA.y1 hs2, SA.x2 ws, SA.y2 hs2, SA.stroke stroke ] []
             ]
 
-        {-
-           hruler =
-               case model.chartInfoWin of
-                   Nothing ->
-                       []
-
-                   Just ci ->
-                       []
-
-           -- HR.lines w model.chartHeight ci
-           vruler =
-               case model.chartInfoWin of
-                   Nothing ->
-                       []
-
-                   Just ci ->
-                       VR.lines w model.chartHeight 10 ci.chartLines
-        -}
         ( vruler, hruler, hruler2, vruler2 ) =
             case model.chartInfoWin of
                 Nothing ->
@@ -196,30 +178,6 @@ view model =
                             HR.lines w model.chartHeight model.minDx model.maxDx
                     in
                         ( vruler_, hruler_, [], [] )
-
-        {-
-           case model.chartInfoWin of
-                   Nothing ->
-                       []
-
-                   Just ci ->
-                       []
-
-           -- HR.lines w model.chartHeight2 ci
-           vruler2 =
-               case model.chartInfoWin of
-                   Nothing ->
-                       []
-
-                   Just ci ->
-                       let
-                           cl2 =
-                               ci.chartLines2
-                       in
-                           VR.lines w model.chartHeight2 5 cl2
-
-           -- VR.lines w model.chartHeight2 5 ci
-        -}
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
@@ -344,7 +302,25 @@ chartWindow ci model =
         )
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+httpErr2str : Http.Error -> String
+httpErr2str err =
+    case err of
+        Http.Timeout ->
+            "Timeout"
+
+        Http.NetworkError ->
+            "NetworkError"
+
+        Http.BadUrl s ->
+            "BadUrl: " ++ s
+
+        Http.BadStatus r ->
+            "BadStatus: "
+
+        Http.BadPayload s r ->
+            "BadPayload: " ++ s
+
+
 update msg model =
     case msg of
         -- ToggleWeekly ->
@@ -357,7 +333,7 @@ update msg model =
             )
 
         TickersFetched (Err s) ->
-            Debug.log "TickersFetched Error" ( model, Cmd.none )
+            Debug.log ("TickersFetched Error: " ++ (httpErr2str s)) ( model, Cmd.none )
 
         FetchCharts s ->
             ( { model | selectedTicker = s }, fetchCharts s model )
