@@ -41,7 +41,6 @@ myStroke =
 
 type alias ChartInfo =
     { minDx : Date
-    , maxDx : Date
     , xAxis : List Float
     , lines : List (List Float)
     , candlesticks : Maybe (List Candlestick)

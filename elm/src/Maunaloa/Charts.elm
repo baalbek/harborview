@@ -250,7 +250,7 @@ chartWindow ci model =
             List.take model.takeItems <| List.drop model.dropItems vals
 
         xAxis_ =
-            List.take model.takeItems <| List.drop model.dropItems ci.xAxis
+            valueFn ci.xAxis
 
         ( minDx_, maxDx_ ) =
             HR.dateRangeOf ci.minDx xAxis_
@@ -352,8 +352,8 @@ update msg model =
                 , drawCanvas ciWin
                 )
 
-        ChartsFetched (Err _) ->
-            Debug.log "ChartsFetched err"
+        ChartsFetched (Err s) ->
+            Debug.log ("ChartsFetched Error: " ++ (httpErr2str s))
                 ( model, Cmd.none )
 
 
@@ -386,7 +386,6 @@ fetchCharts ticker model =
         myDecoder =
             JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
-                |> JP.required "max-dx" stringToDateDecoder
                 |> JP.required "x-axis" (Json.list Json.float)
                 |> JP.required "lines" (Json.list (Json.list Json.float))
                 |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))

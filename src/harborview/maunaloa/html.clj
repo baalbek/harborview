@@ -107,7 +107,6 @@
         itrend-50 (calc-itrend spots 50)
         itrend-200 (calc-itrend spots 200)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
-        max-dx (last dx)
         hr (hruler min-dx)]
     (U/json-response
       {
@@ -117,7 +116,6 @@
        :lines2 nil
        :x-axis (reverse (map hr dx))
        :min-dx (ld->str min-dx)
-       :max-dx (ld->str max-dx)
        :cndl (reverse (map #(bean->candlestick %) spot-objs))})))
 
 (defn ticker-chart [oid]
