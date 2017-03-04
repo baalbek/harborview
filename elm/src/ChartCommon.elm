@@ -58,8 +58,8 @@ type alias ChartLines =
 
 type alias ChartInfoJs =
     { xaxis : List Float
-    , lines : ChartLines
+    , chartLines : ChartLines
     , candlesticks : Maybe (List Candlestick)
-    , lines2 : Maybe ChartLines
+    , chartLines2 : Maybe ChartLines
     , strokes : List String
     }

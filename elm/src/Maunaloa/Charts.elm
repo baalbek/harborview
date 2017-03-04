@@ -90,8 +90,10 @@ init flags =
 type alias Model =
     { tickers : Maybe SelectItems
     , selectedTicker : String
+    , minDx : Date
+    , maxDx : Date
     , chartInfo : Maybe ChartInfo
-    , chartInfoWin : Maybe ChartInfo
+    , chartInfoWin : Maybe ChartInfoJs
     , dropItems : Int
     , takeItems : Int
     , chartWidth : Float
@@ -105,6 +107,8 @@ initModel : Flags -> Model
 initModel flags =
     { tickers = Nothing
     , selectedTicker = "-1"
+    , minDx = Date.fromTime 0
+    , maxDx = Date.fromTime 0
     , chartInfo = Nothing
     , chartInfoWin = Nothing
     , dropItems = 0
@@ -160,42 +164,62 @@ view model =
               -- , S.line [ SA.x1 "0", SA.y1 hs2, SA.x2 ws, SA.y2 hs2, SA.stroke stroke ] []
             ]
 
-        hruler =
+        {-
+           hruler =
+               case model.chartInfoWin of
+                   Nothing ->
+                       []
+
+                   Just ci ->
+                       []
+
+           -- HR.lines w model.chartHeight ci
+           vruler =
+               case model.chartInfoWin of
+                   Nothing ->
+                       []
+
+                   Just ci ->
+                       VR.lines w model.chartHeight 10 ci.chartLines
+        -}
+        ( vruler, hruler, hruler2, vruler2 ) =
             case model.chartInfoWin of
                 Nothing ->
-                    []
+                    ( [], [], [], [] )
 
                 Just ci ->
-                    []
+                    let
+                        vruler_ =
+                            VR.lines w model.chartHeight 10 ci.chartLines
 
-        -- HR.lines w model.chartHeight ci
-        vruler =
-            case model.chartInfoWin of
-                Nothing ->
-                    []
+                        hruler_ =
+                            HR.lines w model.chartHeight model.minDx model.maxDx
+                    in
+                        ( vruler_, hruler_, [], [] )
 
-                Just ci ->
-                    []
+        {-
+           case model.chartInfoWin of
+                   Nothing ->
+                       []
 
-        --VR.lines w model.chartHeight 10 ci
-        hruler2 =
-            case model.chartInfoWin of
-                Nothing ->
-                    []
+                   Just ci ->
+                       []
 
-                Just ci ->
-                    []
+           -- HR.lines w model.chartHeight2 ci
+           vruler2 =
+               case model.chartInfoWin of
+                   Nothing ->
+                       []
 
-        -- HR.lines w model.chartHeight2 ci
-        vruler2 =
-            case model.chartInfoWin of
-                Nothing ->
-                    []
+                   Just ci ->
+                       let
+                           cl2 =
+                               ci.chartLines2
+                       in
+                           VR.lines w model.chartHeight2 5 cl2
 
-                Just ci ->
-                    []
-
-        -- VR.lines w model.chartHeight2 5 ci
+           -- VR.lines w model.chartHeight2 5 ci
+        -}
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
@@ -260,7 +284,7 @@ chartWindowLines valueFn lines chartHeight =
         )
 
 
-chartWindow : ChartInfo -> Model -> ChartInfoJs
+chartWindow : ChartInfo -> Model -> ( ChartInfoJs, Date, Date )
 chartWindow ci model =
     let
         valueFn : List a -> List a
@@ -276,23 +300,21 @@ chartWindow ci model =
         hr =
             HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
 
-        ( lines1, vr1 ) =
+        ( lines1_, vr1 ) =
             chartWindowLines valueFn ci.lines model.chartHeight
 
-        {-
-           lines_ =
-               List.map valueFn ci.lines
+        lines2_ =
+            case ci.lines2 of
+                Nothing ->
+                    Nothing
 
-           valueRange =
-               List.map VR.minMax lines_ |> M.minMaxTuples
+                Just lx2 ->
+                    let
+                        ( lx2_, _ ) =
+                            chartWindowLines valueFn lx2 model.chartHeight2
+                    in
+                        Just lx2_
 
-           vr =
-               VR.vruler valueRange model.chartHeight
-
-           vrLines_ =
-               List.map (List.map vr) lines_
-
-        -}
         cndl_ =
             case ci.candlesticks of
                 Nothing ->
@@ -311,12 +333,15 @@ chartWindow ci model =
         strokes =
             [ "#000000", "#ff0000", "#aa00ff" ]
     in
-        C.ChartInfoJs
+        ( C.ChartInfoJs
             (List.map hr xAxis_)
-            lines1
+            lines1_
             cndl_
-            Nothing
+            lines2_
             strokes
+        , minDx_
+        , maxDx_
+        )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -338,34 +363,25 @@ update msg model =
             ( { model | selectedTicker = s }, fetchCharts s model )
 
         ChartsFetched (Ok s) ->
-            {-
-               let
-                   ciWin =
-                       chartWindow s model
-               in
-                   ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, Cmd.none )
-            -}
-            ( model, Cmd.none )
+            let
+                ( ciWin, minDx, maxDx ) =
+                    chartWindow s model
+            in
+                ( { model
+                    | chartInfo = Just s
+                    , chartInfoWin = Just ciWin
+                    , minDx = minDx
+                    , maxDx = maxDx
+                  }
+                , drawCanvas ciWin
+                )
 
-        -- drawChartInfo ciWin model )
         ChartsFetched (Err _) ->
             Debug.log "ChartsFetched err"
                 ( model, Cmd.none )
 
 
 
-{-
-   drawChartInfo : ChartInfo -> Model -> Cmd Msg
-   drawChartInfo ci model =
-       let
-           strokes =
-               [ "#000000", "#ff0000", "#aa00ff" ]
-
-           infoJs =
-               ChartInfoJs ci.xAxis ci.lines ci.candlesticks Nothing strokes
-       in
-           drawCanvas infoJs
--}
 ------------------ COMMANDS -------------------
 
 

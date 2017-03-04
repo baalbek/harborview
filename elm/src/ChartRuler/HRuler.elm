@@ -4,7 +4,7 @@ import Svg as S
 import Svg.Attributes as SA
 import Time exposing (Time)
 import Common.DateUtil as DU
-import ChartCommon as C exposing (ChartInfo)
+import ChartCommon as C exposing (ChartInfoJs)
 import Date exposing (Date, fromTime)
 import Common.Miscellaneous exposing (lastElem)
 
@@ -38,11 +38,11 @@ dateRangeOf dx lx =
         ( dxOf dx offsetLow, dxOf dx offsetHi )
 
 
-lines : Float -> Float -> ChartInfo -> List (S.Svg a)
-lines w h ci =
+lines : Float -> Float -> Date -> Date -> List (S.Svg a)
+lines w h minDx maxDx =
     let
         valueSpan =
-            DU.diffDays ci.minDx ci.maxDx
+            DU.diffDays minDx maxDx
 
         ppx =
             w / valueSpan
@@ -65,7 +65,7 @@ lines w h ci =
                     x / ppx
 
                 xDate =
-                    DU.addDays ci.minDx days
+                    DU.addDays minDx days
             in
                 (toString <| Date.day xDate)
                     ++ "."
