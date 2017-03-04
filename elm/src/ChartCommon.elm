@@ -42,8 +42,6 @@ myStroke =
 type alias ChartInfo =
     { minDx : Date
     , maxDx : Date
-    , minVal : Float
-    , maxVal : Float
     , xAxis : List Float
     , lines : List (List Float)
     , candlesticks : Maybe (List Candlestick)
@@ -51,11 +49,12 @@ type alias ChartInfo =
     }
 
 
-type alias ChartLines = 
+type alias ChartLines =
     { minVal : Float
     , maxVal : Float
     , lines : List (List Float)
     }
+
 
 type alias ChartInfoJs =
     { xaxis : List Float

@@ -4,7 +4,7 @@ import Svg as S
 import Svg.Attributes as SA
 import Time exposing (Time)
 import Common.DateUtil as DU
-import ChartCommon as C exposing (ChartInfo)
+import ChartCommon as C exposing (ChartLines)
 import Date exposing (Date, fromTime)
 import Common.Miscellaneous exposing (lastElem, toDecimal)
 import Tuple exposing (first, second)
@@ -49,7 +49,7 @@ minMax v =
 -- List.drop 90 dci.xAxis |> List.take 90 |> dateRangeOf dci
 
 
-lines : Float -> Float -> Int -> ChartInfo -> List (S.Svg a)
+lines : Float -> Float -> Int -> ChartLines -> List (S.Svg a)
 lines w h numDivisions ci =
     let
         valueSpan =

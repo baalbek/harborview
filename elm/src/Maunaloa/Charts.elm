@@ -26,7 +26,7 @@ import Common.ComboBox
         , makeSelect
         )
 import ChartRuler.VRuler as VR
-import ChartCommon as C exposing (Candlestick, ChartInfo, ChartInfoJs)
+import ChartCommon as C exposing (Candlestick, ChartInfo, ChartLines, ChartInfoJs)
 
 
 mainUrl =
@@ -166,31 +166,36 @@ view model =
                     []
 
                 Just ci ->
-                    HR.lines w model.chartHeight ci
+                    []
 
+        -- HR.lines w model.chartHeight ci
         vruler =
             case model.chartInfoWin of
                 Nothing ->
                     []
 
                 Just ci ->
-                    VR.lines w model.chartHeight 10 ci
+                    []
 
+        --VR.lines w model.chartHeight 10 ci
         hruler2 =
             case model.chartInfoWin of
                 Nothing ->
                     []
 
                 Just ci ->
-                    HR.lines w model.chartHeight2 ci
+                    []
 
+        -- HR.lines w model.chartHeight2 ci
         vruler2 =
             case model.chartInfoWin of
                 Nothing ->
                     []
 
                 Just ci ->
-                    VR.lines w model.chartHeight2 5 ci
+                    []
+
+        -- VR.lines w model.chartHeight2 5 ci
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
@@ -235,7 +240,7 @@ scaledCandlestick vruler cndl =
         Candlestick opn hi lo cls
 
 
-chartWindowLines : (a -> List Float) -> List a -> Float -> List (List Float)
+chartWindowLines : (a -> List Float) -> List a -> Float -> ( ChartLines, Float -> Float )
 chartWindowLines valueFn lines chartHeight =
     let
         lines_ =
@@ -247,10 +252,15 @@ chartWindowLines valueFn lines chartHeight =
         vr =
             VR.vruler valueRange chartHeight
     in
-        List.map (List.map vr) lines_
+        ( ChartLines
+            (TUP.first valueRange)
+            (TUP.second valueRange)
+            (List.map (List.map vr) lines_)
+        , vr
+        )
 
 
-chartWindow : ChartInfo -> Model -> ChartInfo
+chartWindow : ChartInfo -> Model -> ChartInfoJs
 chartWindow ci model =
     let
         valueFn : List a -> List a
@@ -266,31 +276,23 @@ chartWindow ci model =
         hr =
             HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
 
+        ( lines1, vr1 ) =
+            chartWindowLines valueFn ci.lines model.chartHeight
+
         {-
+           lines_ =
+               List.map valueFn ci.lines
+
+           valueRange =
+               List.map VR.minMax lines_ |> M.minMaxTuples
+
+           vr =
+               VR.vruler valueRange model.chartHeight
+
            vrLines_ =
-               chartWindowLines valueFn ci.lines model.chartHeight
-
-           vrLines2_ =
-               case ci.lines2 of
-                   Nothing ->
-                       Nothing
-
-                   Just lx2 ->
-                       Just (chartWindowLines valueFn lx2 model.chartHeight2)
+               List.map (List.map vr) lines_
 
         -}
-        lines_ =
-            List.map valueFn ci.lines
-
-        valueRange =
-            List.map VR.minMax lines_ |> M.minMaxTuples
-
-        vr =
-            VR.vruler valueRange model.chartHeight
-
-        vrLines_ =
-            List.map (List.map vr) lines_
-
         cndl_ =
             case ci.candlesticks of
                 Nothing ->
@@ -299,21 +301,22 @@ chartWindow ci model =
                 Just cs ->
                     let
                         vr_cndl =
-                            scaledCandlestick vr
+                            scaledCandlestick vr1
 
                         my_cndls =
                             valueFn cs
                     in
                         Just (List.map vr_cndl my_cndls)
+
+        strokes =
+            [ "#000000", "#ff0000", "#aa00ff" ]
     in
-        C.ChartInfo minDx_
-            maxDx_
-            (TUP.first valueRange)
-            (TUP.second valueRange)
+        C.ChartInfoJs
             (List.map hr xAxis_)
-            vrLines_
+            lines1
             cndl_
             Nothing
+            strokes
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -335,32 +338,34 @@ update msg model =
             ( { model | selectedTicker = s }, fetchCharts s model )
 
         ChartsFetched (Ok s) ->
-            let
-                ciWin =
-                    chartWindow s model
-            in
-                ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, Cmd.none ) -- drawChartInfo ciWin model )
+            {-
+               let
+                   ciWin =
+                       chartWindow s model
+               in
+                   ( { model | chartInfo = Just s, chartInfoWin = Just ciWin }, Cmd.none )
+            -}
+            ( model, Cmd.none )
 
+        -- drawChartInfo ciWin model )
         ChartsFetched (Err _) ->
             Debug.log "ChartsFetched err"
                 ( model, Cmd.none )
 
 
+
 {-
-drawChartInfo : ChartInfo -> Model -> Cmd Msg
-drawChartInfo ci model =
-    let
-        strokes =
-            [ "#000000", "#ff0000", "#aa00ff" ]
+   drawChartInfo : ChartInfo -> Model -> Cmd Msg
+   drawChartInfo ci model =
+       let
+           strokes =
+               [ "#000000", "#ff0000", "#aa00ff" ]
 
-        infoJs =
-            ChartInfoJs ci.xAxis ci.lines ci.candlesticks Nothing strokes
-    in
-        drawCanvas infoJs
+           infoJs =
+               ChartInfoJs ci.xAxis ci.lines ci.candlesticks Nothing strokes
+       in
+           drawCanvas infoJs
 -}
-
-
-
 ------------------ COMMANDS -------------------
 
 
@@ -390,8 +395,6 @@ fetchCharts ticker model =
             JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "max-dx" stringToDateDecoder
-                |> JP.optional "min-val" Json.float 0.0
-                |> JP.optional "max-val" Json.float 0.0
                 |> JP.required "x-axis" (Json.list Json.float)
                 |> JP.required "lines" (Json.list (Json.list Json.float))
                 |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))
