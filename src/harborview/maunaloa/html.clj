@@ -106,6 +106,7 @@
   (let [spots (map #(.getCls %) spot-objs)
         itrend-50 (calc-itrend spots 50)
         itrend-200 (calc-itrend spots 200)
+        cc-50 (calc-cc spots 50)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
         hr (hruler min-dx)]
     (U/json-response
@@ -113,7 +114,7 @@
        :lines [(reverse spots)
                (reverse (map double->decimal itrend-50))
                (reverse (map double->decimal itrend-200))]
-       :lines2 nil
+       :lines2 [(reverse (map double->decimal cc-50))]
        :x-axis (reverse (map hr dx))
        :min-dx (ld->str min-dx)
        :cndl (reverse (map #(bean->candlestick %) spot-objs))})))

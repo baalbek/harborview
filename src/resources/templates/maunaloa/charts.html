@@ -64,17 +64,30 @@
         var drawCanvas2 = function (chartInfo) {
             drawCanvas(chartInfo,'canvas2','canvas2b');
         }
+        var drawLines = function (ctx,chartInfo,curLines) {
+          var strokes = chartInfo.strokes;
+          for (var i = 0; i < curLines.length; ++i) {
+              ctx.beginPath();
+              var curStroke = strokes[i] === undefined ? "#000000" : strokes[i];
+              var ys = curLines[i];
+              drawGraph(ctx,chartInfo.xaxis,ys,curStroke);
+          }
+        }
+
         var drawCanvas = function (chartInfo,canvasId,canvasId2) {
           var canvas = document.getElementById(canvasId);
           var ctx = canvas.getContext("2d");
           ctx.clearRect(0,0,canvas.width,canvas.height);
           var curLines = chartInfo.chartLines.lines;
-          for (var i = 0; i < curLines.length; ++i) {
-              ctx.beginPath();
-              var curStroke = chartInfo.strokes[i] === undefined ? "#000000" : chartInfo.strokes[i];
-              var ys = curLines[i];
-              drawGraph(ctx,chartInfo.xaxis,ys,curStroke);
+          drawLines(ctx,chartInfo,curLines);
+          if (chartInfo.chartLines2 != null) {
+            var canvas2 = document.getElementById(canvasId2);
+            var ctx2 = canvas2.getContext("2d");
+            ctx2.clearRect(0,0,canvas2.width,canvas2.height);
+            var curLines2 = chartInfo.chartLines2.lines;
+            drawLines(ctx2,chartInfo,curLines2);
           }
+
           if (chartInfo.candlesticks != null) {
               ctx.strokeStyle = "#000000";
               ctx.fillStyle = "#ffaa00";

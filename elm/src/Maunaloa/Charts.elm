@@ -176,8 +176,23 @@ view model =
 
                         hruler_ =
                             HR.lines w model.chartHeight model.minDx model.maxDx
+
+                        vruler2_ =    
+                            case ci.chartLines2 of 
+                                Nothing -> 
+                                    []
+
+                                Just cl2_ -> 
+                                    VR.lines w model.chartHeight2 5 cl2_
+                        hruler2_ =    
+                            case ci.chartLines2 of 
+                                Nothing -> 
+                                    []
+
+                                Just cl2_ -> 
+                                    HR.lines w model.chartHeight2 model.minDx model.maxDx
                     in
-                        ( vruler_, hruler_, [], [] )
+                        ( vruler_, hruler_, vruler2_, hruler2_ )
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
