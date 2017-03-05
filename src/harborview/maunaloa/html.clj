@@ -22,16 +22,17 @@
 (defn double->decimal [v]
   (/ (Math/round (* v 10)) 10.0))
 
-(defn vruler-static [h min-val max-val]
+(defn diff-days [d1 d2]
+  (.between ChronoUnit/DAYS d1 d2))
+
+(comment vruler-static [h min-val max-val]
   (let [pix-pr-v (/ h (- max-val min-val))]
     (fn [v]
       (let [diff (- max-val v)]
         (double->decimal (double (* pix-pr-v diff)))))))
 
-(defn diff-days [d1 d2]
-  (.between ChronoUnit/DAYS d1 d2))
 
-(defn hruler-static [w min-dx max-dx]
+(comment hruler-static [w min-dx max-dx]
   (let [days (diff-days min-dx max-dx)
         pix-pr-h (/ w days)]
     (fn [dx]
@@ -48,18 +49,6 @@
         m (.getMonthValue v)
         d (.getDayOfMonth v)]
     (str y "-" m "-" d)))
-
-
-(comment ticker-chart [oid w h]
-  (let [min-dx (LocalDate/of 2014 7 1)
-        spot-objs (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
-        spots (map #(.getCls %) spot-objs)
-        dx (map #(.toLocalDate (.getDx %)) spot-objs)
-        max-dx (last dx)
-        min-val (apply min spots)
-        max-val (apply max spots)
-        hr (hruler w min-dx max-dx)]
-    dx))
 
 (def min-dx (LocalDate/of 2012 1 1))
 
@@ -107,6 +96,7 @@
         itrend-50 (calc-itrend spots 50)
         itrend-200 (calc-itrend spots 200)
         cc-50 (calc-cc spots 50)
+        cc-200 (calc-cc spots 200)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
         hr (hruler min-dx)]
     (U/json-response
@@ -114,7 +104,9 @@
        :lines [(reverse spots)
                (reverse (map double->decimal itrend-50))
                (reverse (map double->decimal itrend-200))]
-       :lines2 [(reverse (map double->decimal cc-50))]
+       :lines2 [
+                (reverse (map double->decimal cc-50))
+                (reverse (map double->decimal cc-200))]
        :x-axis (reverse (map hr dx))
        :min-dx (ld->str min-dx)
        :cndl (reverse (map #(bean->candlestick %) spot-objs))})))

@@ -74,18 +74,21 @@
           }
         }
 
-        var drawCanvas = function (chartInfo,canvasId,canvasId2) {
+        var drawCanvasContext = function (chartInfo,lines,canvasId) {
           var canvas = document.getElementById(canvasId);
           var ctx = canvas.getContext("2d");
           ctx.clearRect(0,0,canvas.width,canvas.height);
+          drawLines(ctx,chartInfo,lines);
+          return ctx;
+        }
+
+        var drawCanvas = function (chartInfo,canvasId,canvasId2) {
           var curLines = chartInfo.chartLines.lines;
-          drawLines(ctx,chartInfo,curLines);
+          var ctx = drawCanvasContext(chartInfo,curLines,canvasId);
+
           if (chartInfo.chartLines2 != null) {
-            var canvas2 = document.getElementById(canvasId2);
-            var ctx2 = canvas2.getContext("2d");
-            ctx2.clearRect(0,0,canvas2.width,canvas2.height);
             var curLines2 = chartInfo.chartLines2.lines;
-            drawLines(ctx2,chartInfo,curLines2);
+            drawCanvasContext(chartInfo,curLines2,canvasId2);
           }
 
           if (chartInfo.candlesticks != null) {
@@ -99,12 +102,8 @@
         }
         app.ports.drawCanvas.subscribe(drawCanvas1);
         app2.ports.drawCanvas.subscribe(drawCanvas2);
+
         var drawGraph = function (ctx,xs,ys,strokeStyle) {
-          /*
-          if (xs.length !== ys.length) {
-            return;
-          }
-          */
           ctx.lineWidth = 0.5;
           // ctx.setLineDash([5,10]);
           ctx.strokeStyle = strokeStyle; // "#FF0000";
@@ -116,24 +115,41 @@
           }
           ctx.stroke();
         }
+
         var drawCandlestick = function(ctx,x,candleStick) {
           var x0 = x - 4;
-          var x1 = x + 5;
           ctx.beginPath();
+
           if (candleStick.c > candleStick.o) {
               // Bearish
-              var cndlHeight = candleStick.c - candleStick.o;
               ctx.moveTo(x,candleStick.h);
               ctx.lineTo(x,candleStick.o);
               ctx.moveTo(x,candleStick.c);
               ctx.lineTo(x,candleStick.l);
+              var cndlHeight = candleStick.c - candleStick.o;
               ctx.rect(x0,candleStick.o,8,cndlHeight);
               ctx.fillRect(x0,candleStick.o,8,cndlHeight);
-
           }
           else {
               // Bullish
+              var cndlHeight = candleStick.o - candleStick.c;
 
+              // If doji
+              if (cndlHeight === 0.0) {
+                cndlHeight = 1.0;
+                var x1 = x + 4;
+                ctx.moveTo(x,candleStick.h);
+                ctx.lineTo(x,candleStick.l);
+                ctx.moveTo(x0,candleStick.c);
+                ctx.lineTo(x1,candleStick.c);
+              }
+              else {
+                ctx.moveTo(x,candleStick.h);
+                ctx.lineTo(x,candleStick.c);
+                ctx.moveTo(x,candleStick.o);
+                ctx.lineTo(x,candleStick.l);
+                ctx.rect(x0,candleStick.c,8,cndlHeight);
+              }
           }
           ctx.stroke();
         }
