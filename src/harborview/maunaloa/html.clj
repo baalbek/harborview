@@ -101,7 +101,7 @@
         hr (hruler min-dx)]
     (U/json-response
       {
-       :lines [(reverse spots)
+       :lines [;(reverse spots)
                (reverse (map double->decimal itrend-50))
                (reverse (map double->decimal itrend-200))]
        :lines2 [
