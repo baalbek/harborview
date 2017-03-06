@@ -237,9 +237,13 @@ scaledCandlestick vruler cndl =
         Candlestick opn hi lo cls
 
 
-chartWindowLines : (a -> List Float) -> List a -> Float -> ( ChartLines, Float -> Float )
-chartWindowLines valueFn lines chartHeight =
+chartWindowLines : Model -> List (List Float) -> Maybe (List Candlestick) -> Float -> ( ChartLines, Maybe (List Candlestick))
+chartWindowLines model lines candlesticks chartHeight =
     let
+        valueFn : List a -> List a
+        valueFn vals =
+            List.take model.takeItems <| List.drop model.dropItems vals
+
         lines_ =
             List.map valueFn lines
 
@@ -248,24 +252,37 @@ chartWindowLines valueFn lines chartHeight =
 
         vr =
             VR.vruler valueRange chartHeight
+
+        
+        cndl_ = 
+            case candlesticks of
+                Nothing ->
+                    Nothing
+
+                Just cs ->
+                    let
+                        vr_cndl =
+                            scaledCandlestick vr
+
+                        my_cndls =
+                            valueFn cs
+                    in
+                        Just (List.map vr_cndl my_cndls)
     in
         ( ChartLines
             (TUP.first valueRange)
             (TUP.second valueRange)
             (List.map (List.map vr) lines_)
-        , vr
+        , cndl_ 
         )
 
 
 chartWindow : ChartInfo -> Model -> ( ChartInfoJs, Date, Date )
 chartWindow ci model =
     let
-        valueFn : List a -> List a
-        valueFn vals =
-            List.take model.takeItems <| List.drop model.dropItems vals
-
         xAxis_ =
-            valueFn ci.xAxis
+            List.take model.takeItems <| List.drop model.dropItems ci.xAxis
+            
 
         ( minDx_, maxDx_ ) =
             HR.dateRangeOf ci.minDx xAxis_
@@ -273,8 +290,8 @@ chartWindow ci model =
         hr =
             HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
 
-        ( lines1_, vr1 ) =
-            chartWindowLines valueFn ci.lines model.chartHeight
+        ( lines1_, cndl_ ) =
+            chartWindowLines model ci.lines ci.candlesticks model.chartHeight
 
         lines2_ =
             case ci.lines2 of
@@ -284,24 +301,9 @@ chartWindow ci model =
                 Just lx2 ->
                     let
                         ( lx2_, _ ) =
-                            chartWindowLines valueFn lx2 model.chartHeight2
+                            chartWindowLines model lx2 Nothing model.chartHeight2
                     in
                         Just lx2_
-
-        cndl_ =
-            case ci.candlesticks of
-                Nothing ->
-                    Nothing
-
-                Just cs ->
-                    let
-                        vr_cndl =
-                            scaledCandlestick vr1
-
-                        my_cndls =
-                            valueFn cs
-                    in
-                        Just (List.map vr_cndl my_cndls)
 
         strokes =
             [ "#000000", "#ff0000", "#aa00ff" ]
