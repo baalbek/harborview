@@ -247,15 +247,28 @@ chartWindowLines model lines candlesticks chartHeight =
         lines_ =
             List.map valueFn lines
 
+        cndl_window =
+            case candlesticks of
+                Nothing -> 
+                    Nothing
+
+                Just candlesticks_ ->
+                    Just (valueFn candlesticks_)
+
         valueRange =
-            List.map VR.minMax lines_ |> M.minMaxTuples
+            case cndl_window  of
+                Nothing -> 
+                    List.map VR.minMax lines_ |> M.minMaxTuples
+
+                Just candlesticks_ ->
+                    VR.minMaxCndl candlesticks_ :: (List.map VR.minMax lines_) |> M.minMaxTuples
 
         vr =
             VR.vruler valueRange chartHeight
 
         
         cndl_ = 
-            case candlesticks of
+            case cndl_window of
                 Nothing ->
                     Nothing
 
