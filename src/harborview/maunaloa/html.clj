@@ -103,13 +103,13 @@
         hr (hruler min-dx)]
     (U/json-response
       {
-        :chart [ 
-                {:token "line" :data (reverse (map double->decimal itrend-50))}
-                ]
+        :chart {:line [(reverse (map double->decimal itrend-50))]
+                :cndl nil
+                :bar nil}
         :x-axis (reverse (map hr dx))
-        :min-dx (ld->str min-dx)
-       }
-      )))
+        :min-dx (ld->str min-dx)})
+
+
 
     (comment
       {
@@ -121,9 +121,9 @@
                 (reverse (map double->decimal cc-10))]
        :x-axis (reverse (map hr dx))
        :min-dx (ld->str min-dx)
-       :cndl (reverse (map #(bean->candlestick %) spot-objs))}
-      )
-    
+       :cndl (reverse (map #(bean->candlestick %) spot-objs))})))
+
+
 
 (defn ticker-chart [oid]
   (let [spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))]

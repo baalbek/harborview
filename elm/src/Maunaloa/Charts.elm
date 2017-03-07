@@ -177,19 +177,20 @@ view model =
                         hruler_ =
                             HR.lines w model.chartHeight model.minDx model.maxDx
 
-                        vruler2_ =    
-                            case ci.chartLines2 of 
-                                Nothing -> 
+                        vruler2_ =
+                            case ci.chartLines2 of
+                                Nothing ->
                                     []
 
-                                Just cl2_ -> 
+                                Just cl2_ ->
                                     VR.lines w model.chartHeight2 5 cl2_
-                        hruler2_ =    
-                            case ci.chartLines2 of 
-                                Nothing -> 
+
+                        hruler2_ =
+                            case ci.chartLines2 of
+                                Nothing ->
                                     []
 
-                                Just cl2_ -> 
+                                Just cl2_ ->
                                     HR.lines w model.chartHeight2 model.minDx model.maxDx
                     in
                         ( vruler_, hruler_, vruler2_, hruler2_ )
@@ -237,7 +238,7 @@ scaledCandlestick vruler cndl =
         Candlestick opn hi lo cls
 
 
-chartWindowLines : Model -> List (List Float) -> Maybe (List Candlestick) -> Float -> ( ChartLines, Maybe (List Candlestick))
+chartWindowLines : Model -> List (List Float) -> Maybe (List Candlestick) -> Float -> ( ChartLines, Maybe (List Candlestick) )
 chartWindowLines model lines candlesticks chartHeight =
     let
         valueFn : List a -> List a
@@ -249,15 +250,15 @@ chartWindowLines model lines candlesticks chartHeight =
 
         cndl_window =
             case candlesticks of
-                Nothing -> 
+                Nothing ->
                     Nothing
 
                 Just candlesticks_ ->
                     Just (valueFn candlesticks_)
 
         valueRange =
-            case cndl_window  of
-                Nothing -> 
+            case cndl_window of
+                Nothing ->
                     List.map VR.minMax lines_ |> M.minMaxTuples
 
                 Just candlesticks_ ->
@@ -266,8 +267,7 @@ chartWindowLines model lines candlesticks chartHeight =
         vr =
             VR.vruler valueRange chartHeight
 
-        
-        cndl_ = 
+        cndl_ =
             case cndl_window of
                 Nothing ->
                     Nothing
@@ -286,50 +286,52 @@ chartWindowLines model lines candlesticks chartHeight =
             (TUP.first valueRange)
             (TUP.second valueRange)
             (List.map (List.map vr) lines_)
-        , cndl_ 
+        , cndl_
         )
 
 
-chartWindow : ChartInfo -> Model -> ( ChartInfoJs, Date, Date )
-chartWindow ci model =
-    let
-        xAxis_ =
-            List.take model.takeItems <| List.drop model.dropItems ci.xAxis
-            
 
-        ( minDx_, maxDx_ ) =
-            HR.dateRangeOf ci.minDx xAxis_
+{-
+   chartWindow : ChartInfo -> Model -> ( ChartInfoJs, Date, Date )
+   chartWindow ci model =
+       let
+           xAxis_ =
+               List.take model.takeItems <| List.drop model.dropItems ci.xAxis
 
-        hr =
-            HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
+           ( minDx_, maxDx_ ) =
+               HR.dateRangeOf ci.minDx xAxis_
 
-        ( lines1_, cndl_ ) =
-            chartWindowLines model ci.lines ci.candlesticks model.chartHeight
+           hr =
+               HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
 
-        lines2_ =
-            case ci.lines2 of
-                Nothing ->
-                    Nothing
+           ( lines1_, cndl_ ) =
+               chartWindowLines model ci.lines ci.candlesticks model.chartHeight
 
-                Just lx2 ->
-                    let
-                        ( lx2_, _ ) =
-                            chartWindowLines model lx2 Nothing model.chartHeight2
-                    in
-                        Just lx2_
+           lines2_ =
+               case ci.lines2 of
+                   Nothing ->
+                       Nothing
 
-        strokes =
-            [ "#000000", "#ff0000", "#aa00ff" ]
-    in
-        ( C.ChartInfoJs
-            (List.map hr xAxis_)
-            lines1_
-            cndl_
-            lines2_
-            strokes
-        , minDx_
-        , maxDx_
-        )
+                   Just lx2 ->
+                       let
+                           ( lx2_, _ ) =
+                               chartWindowLines model lx2 Nothing model.chartHeight2
+                       in
+                           Just lx2_
+
+           strokes =
+               [ "#000000", "#ff0000", "#aa00ff" ]
+       in
+           ( C.ChartInfoJs
+               (List.map hr xAxis_)
+               lines1_
+               cndl_
+               lines2_
+               strokes
+           , minDx_
+           , maxDx_
+           )
+-}
 
 
 httpErr2str : Http.Error -> String
@@ -369,19 +371,22 @@ update msg model =
             ( { model | selectedTicker = s }, fetchCharts s model )
 
         ChartsFetched (Ok s) ->
-            let
-                ( ciWin, minDx, maxDx ) =
-                    chartWindow s model
-            in
-                ( { model
-                    | chartInfo = Just s
-                    , chartInfoWin = Just ciWin
-                    , minDx = minDx
-                    , maxDx = maxDx
-                  }
-                , drawCanvas ciWin
-                )
+            ( model, Cmd.none )
 
+        {-
+           let
+               ( ciWin, minDx, maxDx ) =
+                   chartWindow s model
+           in
+               ( { model
+                   | chartInfo = Just s
+                   , chartInfoWin = Just ciWin
+                   , minDx = minDx
+                   , maxDx = maxDx
+                 }
+               , drawCanvas ciWin
+               )
+        -}
         ChartsFetched (Err s) ->
             Debug.log ("ChartsFetched Error: " ++ (httpErr2str s))
                 ( model, Cmd.none )
@@ -417,9 +422,6 @@ fetchCharts ticker model =
             JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "x-axis" (Json.list Json.float)
-                |> JP.required "lines" (Json.list (Json.list Json.float))
-                |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))
-                |> JP.required "lines2" (Json.nullable (Json.list (Json.list Json.float)))
 
         -- |> JP.hardcoded Nothing
         url =
