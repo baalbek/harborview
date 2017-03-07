@@ -104,7 +104,7 @@
     (U/json-response
       {
         :chart [ 
-                {:line (reverse (map double->decimal itrend-50))}
+                {:token "line" :data (reverse (map double->decimal itrend-50))}
                 ]
         :x-axis (reverse (map hr dx))
         :min-dx (ld->str min-dx)
