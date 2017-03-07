@@ -39,15 +39,17 @@ myStroke =
     SA.stroke "#cccccc"
 
 
-type Graph
-    = Line (List Float)
-    | Candlesticks
-    | Bar
+type alias Graph =
+    { lines : Maybe (List (List Float))
+    , bars : Maybe (List (List Float))
+    , candlesticks : Maybe (List Candlestick)
+    }
 
 
 type alias ChartInfo =
     { minDx : Date
     , xAxis : List Float
+    , chart : Graph
     }
 
 

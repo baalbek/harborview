@@ -415,6 +415,14 @@ candlestickDecoder =
         (Json.field "c" Json.float)
 
 
+chartDecoder : Json.Decoder C.Graph
+chartDecoder =
+    JP.decode C.Graph
+        |> JP.required "lines" (Json.nullable (Json.list Json.float))
+        |> JP.required "bars" (Json.nullable (Json.list Json.float))
+        |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))
+
+
 fetchCharts : String -> Model -> Cmd Msg
 fetchCharts ticker model =
     let
@@ -422,6 +430,7 @@ fetchCharts ticker model =
             JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "x-axis" (Json.list Json.float)
+                |> JP.required "chart" chartDecoder
 
         -- |> JP.hardcoded Nothing
         url =

@@ -103,9 +103,9 @@
         hr (hruler min-dx)]
     (U/json-response
       {
-        :chart {:line [(reverse (map double->decimal itrend-50))]
-                :cndl nil
-                :bar nil}
+        :chart {:lines [(reverse (map double->decimal itrend-50))]
+                :bars nil
+                :cndl nil}
         :x-axis (reverse (map hr dx))
         :min-dx (ld->str min-dx)})
 
