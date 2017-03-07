@@ -371,7 +371,8 @@ update msg model =
             ( { model | selectedTicker = s }, fetchCharts s model )
 
         ChartsFetched (Ok s) ->
-            ( model, Cmd.none )
+            Debug.log (toString s)
+                ( model, Cmd.none )
 
         {-
            let
@@ -417,10 +418,17 @@ candlestickDecoder =
 
 chartDecoder : Json.Decoder C.Graph
 chartDecoder =
-    JP.decode C.Graph
-        |> JP.required "lines" (Json.nullable (Json.list Json.float))
-        |> JP.required "bars" (Json.nullable (Json.list Json.float))
-        |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))
+    Json.map C.Graph
+        (Json.field "lines" (Json.maybe (Json.list (Json.list Json.float))))
+
+
+
+{-
+   JP.decode C.Graph
+       |> JP.required "lines" (Json.nullable (Json.list Json.float))
+       |> JP.required "bars" (Json.nullable (Json.list Json.float))
+       |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))
+-}
 
 
 fetchCharts : String -> Model -> Cmd Msg

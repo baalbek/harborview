@@ -103,25 +103,11 @@
         hr (hruler min-dx)]
     (U/json-response
       {
-        :chart {:lines [(reverse (map double->decimal itrend-50))]
+        :chart {:lines nil ;[(reverse (map double->decimal itrend-50))]
                 :bars nil
                 :cndl nil}
         :x-axis (reverse (map hr dx))
-        :min-dx (ld->str min-dx)})
-
-
-
-    (comment
-      {
-       :lines [;(reverse spots)
-               (reverse (map double->decimal itrend-50))
-               (reverse (map double->decimal itrend-10))]
-       :lines2 [
-                (reverse (map double->decimal cc-50))
-                (reverse (map double->decimal cc-10))]
-       :x-axis (reverse (map hr dx))
-       :min-dx (ld->str min-dx)
-       :cndl (reverse (map #(bean->candlestick %) spot-objs))})))
+        :min-dx (ld->str min-dx)})))
 
 
 
