@@ -416,7 +416,7 @@ candlestickDecoder =
         (Json.field "c" Json.float)
 
 
-chartDecoder : Json.Decoder C.Graph
+chartDecoder : Json.Decoder C.Graphx
 chartDecoder =
     let
         lines =

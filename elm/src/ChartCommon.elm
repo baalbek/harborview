@@ -39,12 +39,12 @@ myStroke =
     SA.stroke "#cccccc"
 
 
-type Graphx
+type Graph
     = Line (List Float)
     | Bar (List Float)
 
 
-type alias Graph =
+type alias Graphx =
     { lines : Maybe (List (List Float))
     , bars : Maybe (List (List Float))
     , candlesticks : Maybe (List Candlestick)
