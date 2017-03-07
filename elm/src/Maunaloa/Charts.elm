@@ -418,11 +418,21 @@ candlestickDecoder =
 
 chartDecoder : Json.Decoder C.Graph
 chartDecoder =
-    Json.map C.Graph
-        (Json.field "lines" (Json.maybe (Json.list (Json.list Json.float))))
+    let
+        lines =
+            (Json.field "lines" (Json.maybe (Json.list (Json.list Json.float))))
+
+        bars =
+            (Json.field "bars" (Json.maybe (Json.list (Json.list Json.float))))
+
+        candlesticks =
+            (Json.field "cndl" (Json.maybe (Json.list candlestickDecoder)))
+    in
+        Json.map3 C.Graph lines bars candlesticks
 
 
 
+--(Json.field "lines" (Json.maybe (Json.list (Json.list Json.float))))
 {-
    JP.decode C.Graph
        |> JP.required "lines" (Json.nullable (Json.list Json.float))
