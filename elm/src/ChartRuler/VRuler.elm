@@ -4,7 +4,7 @@ import Svg as S
 import Svg.Attributes as SA
 import Time exposing (Time)
 import Common.DateUtil as DU
-import ChartCommon as C exposing (ChartLines,Candlestick)
+import ChartCommon as C exposing (Candlestick)
 import Date exposing (Date, fromTime)
 import Common.Miscellaneous exposing (lastElem, toDecimal)
 import Tuple exposing (first, second)
@@ -32,7 +32,6 @@ minMax v =
         ( minVal, maxVal )
 
 
-
 minMaxCndl : List Candlestick -> ( Float, Float )
 minMaxCndl cndl =
     let
@@ -42,70 +41,71 @@ minMaxCndl cndl =
         his =
             List.map .h cndl
 
-        minVal = 
+        minVal =
             List.minimum lows |> Maybe.withDefault 0
 
-        maxVal = 
+        maxVal =
             List.maximum his |> Maybe.withDefault 0
     in
-        ( minVal, maxVal  )
-
--- List.drop 90 dci.xAxis |> List.take 90 |> dateRangeOf dci
+        ( minVal, maxVal )
 
 
-lines : Float -> Float -> Int -> ChartLines -> List (S.Svg a)
-lines w h numDivisions ci =
-    let
-        valueSpan =
-            ci.maxVal - ci.minVal
 
-        ppy =
-            h / valueSpan
+{-
+   lines : Float -> Float -> Int -> ChartLines -> List (S.Svg a)
+   lines w h numDivisions ci =
+       let
+           valueSpan =
+               ci.maxVal - ci.minVal
 
-        step =
-            h / (toFloat numDivisions)
+           ppy =
+               h / valueSpan
 
-        x2s =
-            toString w
+           step =
+               h / (toFloat numDivisions)
 
-        range =
-            List.range 1 numDivisions
+           x2s =
+               toString w
 
-        valFn y =
-            let
-                convY =
-                    ci.maxVal - (y / ppy)
-            in
-                toDecimal convY 10
+           range =
+               List.range 1 numDivisions
 
-        line0 =
-            let
-                curYl =
-                    "0"
-            in
-                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, C.myStroke ] []
-                , S.text_ [ SA.x "5", SA.y "20", SA.fill "red", C.myStyle ] [ S.text (toString ci.maxVal) ]
-                ]
+           valFn y =
+               let
+                   convY =
+                       ci.maxVal - (y / ppy)
+               in
+                   toDecimal convY 10
 
-        lineFn x =
-            let
-                curY =
-                    step * (toFloat x)
+           line0 =
+               let
+                   curYl =
+                       "0"
+               in
+                   [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, C.myStroke ] []
+                   , S.text_ [ SA.x "5", SA.y "20", SA.fill "red", C.myStyle ] [ S.text (toString ci.maxVal) ]
+                   ]
 
-                curYl =
-                    toString curY
+           lineFn x =
+               let
+                   curY =
+                       step * (toFloat x)
 
-                curYs =
-                    toString (curY - 5)
+                   curYl =
+                       toString curY
 
-                valY =
-                    toString (valFn curY)
-            in
-                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, C.myStroke ] []
-                , S.text_ [ SA.x "5", SA.y curYs, SA.fill "red", C.myStyle ] [ S.text valY ]
-                ]
-    in
-        line0 ++ (List.concat <| List.map lineFn range)
+                   curYs =
+                       toString (curY - 5)
+
+                   valY =
+                       toString (valFn curY)
+               in
+                   [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, C.myStroke ] []
+                   , S.text_ [ SA.x "5", SA.y curYs, SA.fill "red", C.myStyle ] [ S.text valY ]
+                   ]
+       in
+           line0 ++ (List.concat <| List.map lineFn range)
+-}
 
 
 vruler : ( Float, Float ) -> Float -> Float -> Float

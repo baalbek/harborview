@@ -26,7 +26,7 @@ import Common.ComboBox
         , makeSelect
         )
 import ChartRuler.VRuler as VR
-import ChartCommon as C exposing (Candlestick, ChartInfo, ChartLines, ChartInfoJs)
+import ChartCommon as C exposing (Candlestick, ChartInfo, ChartInfoJs, Chart)
 
 
 mainUrl =
@@ -170,30 +170,34 @@ view model =
                     ( [], [], [], [] )
 
                 Just ci ->
-                    let
-                        vruler_ =
-                            VR.lines w model.chartHeight 10 ci.chartLines
+                    ( [], [], [], [] )
 
-                        hruler_ =
-                            HR.lines w model.chartHeight model.minDx model.maxDx
+        {-
+           let
+               vruler_ =
+                   VR.lines w model.chartHeight 10 ci.chartLines
 
-                        vruler2_ =
-                            case ci.chartLines2 of
-                                Nothing ->
-                                    []
+               hruler_ =
+                   HR.lines w model.chartHeight model.minDx model.maxDx
 
-                                Just cl2_ ->
-                                    VR.lines w model.chartHeight2 5 cl2_
+               vruler2_ =
+                   case ci.chartLines2 of
+                       Nothing ->
+                           []
 
-                        hruler2_ =
-                            case ci.chartLines2 of
-                                Nothing ->
-                                    []
+                       Just cl2_ ->
+                           VR.lines w model.chartHeight2 5 cl2_
 
-                                Just cl2_ ->
-                                    HR.lines w model.chartHeight2 model.minDx model.maxDx
-                    in
-                        ( vruler_, hruler_, vruler2_, hruler2_ )
+               hruler2_ =
+                   case ci.chartLines2 of
+                       Nothing ->
+                           []
+
+                       Just cl2_ ->
+                           HR.lines w model.chartHeight2 model.minDx model.maxDx
+           in
+               ( vruler_, hruler_, vruler2_, hruler2_ )
+        -}
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
@@ -238,59 +242,59 @@ scaledCandlestick vruler cndl =
         Candlestick opn hi lo cls
 
 
-chartWindowLines : Model -> List (List Float) -> Maybe (List Candlestick) -> Float -> ( ChartLines, Maybe (List Candlestick) )
-chartWindowLines model lines candlesticks chartHeight =
-    let
-        valueFn : List a -> List a
-        valueFn vals =
-            List.take model.takeItems <| List.drop model.dropItems vals
 
-        lines_ =
-            List.map valueFn lines
+{-
+   chartWindowLines : Model -> List (List Float) -> Maybe (List Candlestick) -> Float -> ( ChartLines, Maybe (List Candlestick) )
+   chartWindowLines model lines candlesticks chartHeight =
+       let
+           valueFn : List a -> List a
+           valueFn vals =
+               List.take model.takeItems <| List.drop model.dropItems vals
 
-        cndl_window =
-            case candlesticks of
-                Nothing ->
-                    Nothing
+           lines_ =
+               List.map valueFn lines
 
-                Just candlesticks_ ->
-                    Just (valueFn candlesticks_)
+           cndl_window =
+               case candlesticks of
+                   Nothing ->
+                       Nothing
 
-        valueRange =
-            case cndl_window of
-                Nothing ->
-                    List.map VR.minMax lines_ |> M.minMaxTuples
+                   Just candlesticks_ ->
+                       Just (valueFn candlesticks_)
 
-                Just candlesticks_ ->
-                    VR.minMaxCndl candlesticks_ :: (List.map VR.minMax lines_) |> M.minMaxTuples
+           valueRange =
+               case cndl_window of
+                   Nothing ->
+                       List.map VR.minMax lines_ |> M.minMaxTuples
 
-        vr =
-            VR.vruler valueRange chartHeight
+                   Just candlesticks_ ->
+                       VR.minMaxCndl candlesticks_ :: (List.map VR.minMax lines_) |> M.minMaxTuples
 
-        cndl_ =
-            case cndl_window of
-                Nothing ->
-                    Nothing
+           vr =
+               VR.vruler valueRange chartHeight
 
-                Just cs ->
-                    let
-                        vr_cndl =
-                            scaledCandlestick vr
+           cndl_ =
+               case cndl_window of
+                   Nothing ->
+                       Nothing
 
-                        my_cndls =
-                            valueFn cs
-                    in
-                        Just (List.map vr_cndl my_cndls)
-    in
-        ( ChartLines
-            (TUP.first valueRange)
-            (TUP.second valueRange)
-            (List.map (List.map vr) lines_)
-        , cndl_
-        )
+                   Just cs ->
+                       let
+                           vr_cndl =
+                               scaledCandlestick vr
 
-
-
+                           my_cndls =
+                               valueFn cs
+                       in
+                           Just (List.map vr_cndl my_cndls)
+       in
+           ( ChartLines
+               (TUP.first valueRange)
+               (TUP.second valueRange)
+               (List.map (List.map vr) lines_)
+           , cndl_
+           )
+-}
 {-
    chartWindow : ChartInfo -> Model -> ( ChartInfoJs, Date, Date )
    chartWindow ci model =
@@ -322,7 +326,7 @@ chartWindowLines model lines candlesticks chartHeight =
            strokes =
                [ "#000000", "#ff0000", "#aa00ff" ]
        in
-           ( C.ChartInfoJs
+           ( ChartInfoJs
                (List.map hr xAxis_)
                lines1_
                cndl_
@@ -416,7 +420,7 @@ candlestickDecoder =
         (Json.field "c" Json.float)
 
 
-chartDecoder : Json.Decoder C.Graphx
+chartDecoder : Json.Decoder C.Chart
 chartDecoder =
     let
         lines =
@@ -428,17 +432,7 @@ chartDecoder =
         candlesticks =
             (Json.field "cndl" (Json.maybe (Json.list candlestickDecoder)))
     in
-        Json.map3 C.Graph lines bars candlesticks
-
-
-
---(Json.field "lines" (Json.maybe (Json.list (Json.list Json.float))))
-{-
-   JP.decode C.Graph
-       |> JP.required "lines" (Json.nullable (Json.list Json.float))
-       |> JP.required "bars" (Json.nullable (Json.list Json.float))
-       |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))
--}
+        Json.map3 C.Chart lines bars candlesticks
 
 
 fetchCharts : String -> Model -> Cmd Msg
