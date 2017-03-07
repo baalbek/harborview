@@ -93,23 +93,37 @@
 
 (defn ticker-chart_ [spot-objs]
   (let [spots (map #(.getCls %) spot-objs)
+        itrend-10 (calc-itrend spots 10)
         itrend-50 (calc-itrend spots 50)
-        itrend-200 (calc-itrend spots 200)
+        ;itrend-200 (calc-itrend spots 200)
+        cc-10 (calc-cc spots 10)
         cc-50 (calc-cc spots 50)
-        cc-200 (calc-cc spots 200)
+        ;cc-200 (calc-cc spots 200)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
         hr (hruler min-dx)]
     (U/json-response
       {
+        :chart [ 
+                {:line (reverse (map double->decimal itrend-50))}
+                ]
+        :x-axis (reverse (map hr dx))
+        :min-dx (ld->str min-dx)
+       }
+      )))
+
+    (comment
+      {
        :lines [;(reverse spots)
                (reverse (map double->decimal itrend-50))
-               (reverse (map double->decimal itrend-200))]
+               (reverse (map double->decimal itrend-10))]
        :lines2 [
                 (reverse (map double->decimal cc-50))
-                (reverse (map double->decimal cc-200))]
+                (reverse (map double->decimal cc-10))]
        :x-axis (reverse (map hr dx))
        :min-dx (ld->str min-dx)
-       :cndl (reverse (map #(bean->candlestick %) spot-objs))})))
+       :cndl (reverse (map #(bean->candlestick %) spot-objs))}
+      )
+    
 
 (defn ticker-chart [oid]
   (let [spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))]
