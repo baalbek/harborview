@@ -338,6 +338,70 @@ scaledCandlestick vruler cndl =
 -}
 
 
+slice : Model -> List a -> List a
+slice model vals =
+    List.take model.takeItems <| List.drop model.dropItems vals
+
+
+chartWindow : Model -> Chart -> Chart
+chartWindow model c =
+    let
+        sliceFn =
+            slice model
+
+        lines_ =
+            case c.lines of
+                Nothing ->
+                    Nothing
+
+                Just l ->
+                    Just (List.map sliceFn l)
+
+        bars_ =
+            case c.bars of
+                Nothing ->
+                    Nothing
+
+                Just b ->
+                    Just (List.map sliceFn b)
+
+        cndl_ =
+            case c.candlesticks of
+                Nothing ->
+                    Nothing
+
+                Just cndl ->
+                    Just (sliceFn cndl)
+    in
+        Chart lines_ bars_ cndl_
+
+
+chartInfoWindow : ChartInfo -> Model -> ( ChartInfoJs, Date, Date )
+chartInfoWindow ci model =
+    let
+        xAxis_ =
+            slice model ci.xAxis
+
+        ( minDx_, maxDx_ ) =
+            HR.dateRangeOf ci.minDx xAxis_
+
+        hr =
+            HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
+
+        strokes =
+            [ "#000000", "#ff0000", "#aa00ff" ]
+
+        chw =
+            chartWindow model ci.chart
+    in
+        ( ChartInfoJs
+            (List.map hr xAxis_)
+            strokes
+        , minDx_
+        , maxDx_
+        )
+
+
 httpErr2str : Http.Error -> String
 httpErr2str err =
     case err of
@@ -420,7 +484,7 @@ candlestickDecoder =
         (Json.field "c" Json.float)
 
 
-chartDecoder : Json.Decoder C.Chart
+chartDecoder : Json.Decoder Chart
 chartDecoder =
     let
         lines =
@@ -432,7 +496,7 @@ chartDecoder =
         candlesticks =
             (Json.field "cndl" (Json.maybe (Json.list candlestickDecoder)))
     in
-        Json.map3 C.Chart lines bars candlesticks
+        Json.map3 Chart lines bars candlesticks
 
 
 fetchCharts : String -> Model -> Cmd Msg

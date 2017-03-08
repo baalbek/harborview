@@ -23,14 +23,6 @@ type alias ChartValues =
     Maybe (List Float)
 
 
-
-{-
-   type ChartValues
-       = Candlesticks (List Candlestick)
-       | ChartPoints (List (List Float))
--}
-
-
 myStyle =
     SA.style "font: 12px/normal Helvetica, Arial;"
 
@@ -50,7 +42,9 @@ myStroke =
 type alias Chart =
     { lines : Maybe (List (List Float))
     , bars : Maybe (List (List Float))
-    , candlesticks : Maybe (List Candlestick)
+    , candlesticks :
+        Maybe (List Candlestick)
+        --,  strokes ?
     }
 
 
@@ -80,9 +74,13 @@ type alias ChartInfo =
 type alias ChartInfoJs =
     { xaxis :
         List Float
-        -- , chartLines : ChartLines
-    , candlesticks :
-        Maybe (List Candlestick)
-        -- , chartLines2 : Maybe ChartLines
+        -- , chart : Chart
     , strokes : List String
     }
+
+
+
+-- , chartLines : ChartLines
+-- , candlesticks : Maybe (List Candlestick)
+-- , chartLines2 : Maybe ChartLines
+-- , strokes : List String
