@@ -4,7 +4,7 @@ import Svg as S
 import Svg.Attributes as SA
 import Time exposing (Time)
 import Common.DateUtil as DU
-import ChartCommon as C exposing (Candlestick,Chart)
+import ChartCommon as C exposing (Candlestick, Chart)
 import Date exposing (Date, fromTime)
 import Common.Miscellaneous exposing (lastElem, toDecimal)
 import Tuple exposing (first, second)
@@ -50,9 +50,62 @@ minMaxCndl cndl =
         ( minVal, maxVal )
 
 
-
 lines : Float -> Int -> Chart -> List (S.Svg a)
-lines chartWidth numDivisions chart =  []
+lines chartWidth numDivisions chart =
+    let
+        ( minVal, maxVal ) =
+            chart.valueRange
+
+        ppy =
+            chart.height / (maxVal - minVal)
+
+        step =
+            chart.height / (toFloat numDivisions)
+
+        x2s =
+            toString chartWidth
+
+        range =
+            List.range 1 numDivisions
+
+        valFn y =
+            let
+                convY =
+                    maxVal - (y / ppy)
+            in
+                toDecimal convY 10
+
+        line0 =
+            let
+                curYl =
+                    "0"
+            in
+                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, C.myStroke ] []
+                , S.text_ [ SA.x "5", SA.y "20", SA.fill "red", C.myStyle ] [ S.text (toString maxVal) ]
+                ]
+
+        lineFn x =
+            let
+                curY =
+                    step * (toFloat x)
+
+                curYl =
+                    toString curY
+
+                curYs =
+                    toString (curY - 5)
+
+                valY =
+                    toString (valFn curY)
+            in
+                [ S.line [ SA.x1 "0", SA.y1 curYl, SA.x2 x2s, SA.y2 curYl, C.myStroke ] []
+                , S.text_ [ SA.x "5", SA.y curYs, SA.fill "red", C.myStyle ] [ S.text valY ]
+                ]
+    in
+        line0 ++ (List.concat <| List.map lineFn range)
+
+
+
 {-
    lines : Float -> Float -> Int -> ChartLines -> List (S.Svg a)
    lines w h numDivisions ci =
