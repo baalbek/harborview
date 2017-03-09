@@ -4,7 +4,7 @@ import Svg as S
 import Svg.Attributes as SA
 import Time exposing (Time)
 import Common.DateUtil as DU
-import ChartCommon as C exposing (Candlestick)
+import ChartCommon as C exposing (Candlestick,Chart)
 import Date exposing (Date, fromTime)
 import Common.Miscellaneous exposing (lastElem, toDecimal)
 import Tuple exposing (first, second)
@@ -51,6 +51,8 @@ minMaxCndl cndl =
 
 
 
+lines : Float -> Int -> Chart -> List (S.Svg a)
+lines chartWidth numDivisions chart =  []
 {-
    lines : Float -> Float -> Int -> ChartLines -> List (S.Svg a)
    lines w h numDivisions ci =

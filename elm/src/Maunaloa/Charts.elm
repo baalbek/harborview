@@ -170,8 +170,11 @@ view model =
                     ( [], [], [], [] )
 
                 Just ci ->
-                    ( [], [], [], [] )
-
+                    let
+                        vruler_ =
+                            VR.lines w 10 ci
+                    in
+                        ( [], [], [], [] )
         {-
            let
                vruler_ =
@@ -395,10 +398,10 @@ chartWindow model c =
 
 
         vr =
-            VR.vruler valueRange 100 -- chartHeight
+            VR.vruler valueRange c.height -- chartHeight
 
     in
-        Chart lines_ bars_ cndl_ 
+        Chart lines_ bars_ cndl_ c.height
 
 
 chartInfoWindow : ChartInfo -> Model -> ( ChartInfoJs, Date, Date )
@@ -464,13 +467,9 @@ update msg model =
             ( { model | selectedTicker = s }, fetchCharts s model )
 
         ChartsFetched (Ok s) ->
-            Debug.log (toString s)
-                ( model, Cmd.none )
-
-        {-
            let
                ( ciWin, minDx, maxDx ) =
-                   chartWindow s model
+                   chartInfoWindow s model
            in
                ( { model
                    | chartInfo = Just s
@@ -478,9 +477,9 @@ update msg model =
                    , minDx = minDx
                    , maxDx = maxDx
                  }
-               , drawCanvas ciWin
+               , Cmd.none -- drawCanvas ciWin
                )
-        -}
+
         ChartsFetched (Err s) ->
             Debug.log ("ChartsFetched Error: " ++ (httpErr2str s))
                 ( model, Cmd.none )
@@ -521,16 +520,7 @@ chartDecoder chartHeight =
         candlesticks =
             (Json.field "cndl" (Json.maybe (Json.list candlestickDecoder)))
     in
-        Json.map3 Chart lines bars candlesticks 
-
-{-
-    JP.decode Chart
-        |> JP.required "lines" (Json.nullable (Json.list Json.float))
-        |> JP.required "bars" (Json.nullable (Json.list Json.float))
-        |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))
-        |> JP.hardcoded chartHeight 
--}
-    
+        Json.map4 Chart lines bars candlesticks (Json.succeed chartHeight)
 
 fetchCharts : String -> Model -> Cmd Msg
 fetchCharts ticker model =
@@ -539,7 +529,7 @@ fetchCharts ticker model =
             JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "x-axis" (Json.list Json.float)
-                |> JP.required "chart" (chartDecoder 100)
+                |> JP.required "chart" (chartDecoder model.chartHeight)
 
         -- |> JP.hardcoded Nothing
         url =

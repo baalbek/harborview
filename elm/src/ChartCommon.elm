@@ -43,7 +43,7 @@ type alias Chart =
     { lines : Maybe (List (List Float))
     , bars : Maybe (List (List Float))
     , candlesticks : Maybe (List Candlestick)
-    -- , height : Float
+    , height : Float
         --,  strokes ?
     }
 
@@ -72,9 +72,8 @@ type alias ChartInfo =
 
 
 type alias ChartInfoJs =
-    { xaxis :
-        List Float
-        -- , chart : Chart
+    { xaxis  List Float
+    , chart : Chart
     , strokes : List String
     }
 
