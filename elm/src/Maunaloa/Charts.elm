@@ -172,9 +172,13 @@ view model =
                 Just ci ->
                     let
                         vruler_ =
-                            VR.lines w 10 ci
+                            VR.lines w 10 ci.chart
+
+                        hruler_ =
+                            HR.lines w model.chartHeight model.minDx model.maxDx
                     in
-                        ( [], [], [], [] )
+                        ( vruler_, hruler_, [], [] )
+
         {-
            let
                vruler_ =
@@ -347,22 +351,27 @@ slice model vals =
 
 
 chartValueRange : Chart -> ( Float, Float )
-chartValueRange c = (2,3) 
+chartValueRange c =
+    ( 2, 3 )
+
+
+
 {-
-    let
-        lr =
-            case c.lines of 
-                Nothing -> (
-            List.map VR.minMax lines_ |> M.minMaxTuples
-            
+   let
+       lr =
+           case c.lines of
+               Nothing -> (
+           List.map VR.minMax lines_ |> M.minMaxTuples
 
-            case c.candlesticks of
-                Nothing ->
-                    List.map VR.minMax lines_ |> M.minMaxTuples
 
-                Just candlesticks_ ->
-                    VR.minMaxCndl candlesticks_ :: (List.map VR.minMax lines_) |> M.minMaxTuples
+           case c.candlesticks of
+               Nothing ->
+                   List.map VR.minMax lines_ |> M.minMaxTuples
+
+               Just candlesticks_ ->
+                   VR.minMaxCndl candlesticks_ :: (List.map VR.minMax lines_) |> M.minMaxTuples
 -}
+
 
 chartWindow : Model -> Chart -> Chart
 chartWindow model c =
@@ -394,14 +403,13 @@ chartWindow model c =
                 Just cndl ->
                     Just (sliceFn cndl)
 
-        valueRange = chartValueRange c
-
+        valueRange =
+            chartValueRange c
 
         vr =
-            VR.vruler valueRange c.height -- chartHeight
-
+            VR.vruler valueRange c.height
     in
-        Chart lines_ bars_ cndl_ c.height
+        Chart lines_ bars_ cndl_ c.height valueRange
 
 
 chartInfoWindow : ChartInfo -> Model -> ( ChartInfoJs, Date, Date )
@@ -424,6 +432,7 @@ chartInfoWindow ci model =
     in
         ( ChartInfoJs
             (List.map hr xAxis_)
+            chw
             strokes
         , minDx_
         , maxDx_
@@ -467,18 +476,19 @@ update msg model =
             ( { model | selectedTicker = s }, fetchCharts s model )
 
         ChartsFetched (Ok s) ->
-           let
-               ( ciWin, minDx, maxDx ) =
-                   chartInfoWindow s model
-           in
-               ( { model
-                   | chartInfo = Just s
-                   , chartInfoWin = Just ciWin
-                   , minDx = minDx
-                   , maxDx = maxDx
-                 }
-               , Cmd.none -- drawCanvas ciWin
-               )
+            let
+                ( ciWin, minDx, maxDx ) =
+                    chartInfoWindow s model
+            in
+                ( { model
+                    | chartInfo = Just s
+                    , chartInfoWin = Just ciWin
+                    , minDx = minDx
+                    , maxDx = maxDx
+                  }
+                , Cmd.none
+                  -- drawCanvas ciWin
+                )
 
         ChartsFetched (Err s) ->
             Debug.log ("ChartsFetched Error: " ++ (httpErr2str s))
@@ -520,7 +530,8 @@ chartDecoder chartHeight =
         candlesticks =
             (Json.field "cndl" (Json.maybe (Json.list candlestickDecoder)))
     in
-        Json.map4 Chart lines bars candlesticks (Json.succeed chartHeight)
+        Json.map5 Chart lines bars candlesticks (Json.succeed chartHeight) (Json.succeed ( 0, 0 ))
+
 
 fetchCharts : String -> Model -> Cmd Msg
 fetchCharts ticker model =
