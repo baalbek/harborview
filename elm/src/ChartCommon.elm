@@ -42,8 +42,8 @@ myStroke =
 type alias Chart =
     { lines : Maybe (List (List Float))
     , bars : Maybe (List (List Float))
-    , candlesticks :
-        Maybe (List Candlestick)
+    , candlesticks : Maybe (List Candlestick)
+    -- , height : Float
         --,  strokes ?
     }
 

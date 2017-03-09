@@ -343,6 +343,24 @@ slice model vals =
     List.take model.takeItems <| List.drop model.dropItems vals
 
 
+chartValueRange : Chart -> ( Float, Float )
+chartValueRange c = (2,3) 
+{-
+    let
+        lr =
+            case c.lines of 
+                Nothing -> (
+            List.map VR.minMax lines_ |> M.minMaxTuples
+            
+
+            case c.candlesticks of
+                Nothing ->
+                    List.map VR.minMax lines_ |> M.minMaxTuples
+
+                Just candlesticks_ ->
+                    VR.minMaxCndl candlesticks_ :: (List.map VR.minMax lines_) |> M.minMaxTuples
+-}
+
 chartWindow : Model -> Chart -> Chart
 chartWindow model c =
     let
@@ -372,8 +390,15 @@ chartWindow model c =
 
                 Just cndl ->
                     Just (sliceFn cndl)
+
+        valueRange = chartValueRange c
+
+
+        vr =
+            VR.vruler valueRange 100 -- chartHeight
+
     in
-        Chart lines_ bars_ cndl_
+        Chart lines_ bars_ cndl_ 
 
 
 chartInfoWindow : ChartInfo -> Model -> ( ChartInfoJs, Date, Date )
@@ -484,8 +509,8 @@ candlestickDecoder =
         (Json.field "c" Json.float)
 
 
-chartDecoder : Json.Decoder Chart
-chartDecoder =
+chartDecoder : Float -> Json.Decoder Chart
+chartDecoder chartHeight =
     let
         lines =
             (Json.field "lines" (Json.maybe (Json.list (Json.list Json.float))))
@@ -496,8 +521,16 @@ chartDecoder =
         candlesticks =
             (Json.field "cndl" (Json.maybe (Json.list candlestickDecoder)))
     in
-        Json.map3 Chart lines bars candlesticks
+        Json.map3 Chart lines bars candlesticks 
 
+{-
+    JP.decode Chart
+        |> JP.required "lines" (Json.nullable (Json.list Json.float))
+        |> JP.required "bars" (Json.nullable (Json.list Json.float))
+        |> JP.required "cndl" (Json.nullable (Json.list candlestickDecoder))
+        |> JP.hardcoded chartHeight 
+-}
+    
 
 fetchCharts : String -> Model -> Cmd Msg
 fetchCharts ticker model =
@@ -506,7 +539,7 @@ fetchCharts ticker model =
             JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "x-axis" (Json.list Json.float)
-                |> JP.required "chart" chartDecoder
+                |> JP.required "chart" (chartDecoder 100)
 
         -- |> JP.hardcoded Nothing
         url =
