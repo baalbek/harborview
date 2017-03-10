@@ -343,6 +343,26 @@ scaledCandlestick vruler cndl =
            , maxDx_
            )
 -}
+{-
+   testChart : Chart
+   testChart =
+       let
+           lines =
+               Just
+                   [ [ 23, 24, 21, 23, 11, 12 ] ]
+
+           bars =
+               Just
+                   [ [ 23, 24, 21, 23, 11, 12 ]
+                   , [ 232, 24, 21, 23, 11, 12 ]
+                   , [ -23, 24, 21, 23, 11, 12 ]
+                   ]
+
+           candlesticks =
+               Just [ Candlestick 100 1202 90 97 ]
+       in
+           Chart lines bars candlesticks 1000 ( 0, 0 )
+-}
 
 
 slice : Model -> List a -> List a
@@ -350,36 +370,26 @@ slice model vals =
     List.take model.takeItems <| List.drop model.dropItems vals
 
 
-chartValueRange : Chart -> ( Float, Float )
-chartValueRange c =
-    let 
-       minMaxLines = VR.maybeMinMax c.lines
+chartValueRange :
+    Maybe (List (List Float))
+    -> Maybe (List (List Float))
+    -> Maybe (List Candlestick)
+    -> ( Float, Float )
+chartValueRange lines bars candlesticks =
+    let
+        minMaxLines =
+            VR.maybeMinMax lines
 
-       minMaxBars = VR.maybeMinMax c.bars
-       
-       minMaxCndl = VR.minMaxCndl c.candlesticks
-       
-       result = minMaxCndl :: (minMaxLines ++ minMaxBars)
+        minMaxBars =
+            VR.maybeMinMax bars
+
+        minMaxCndl =
+            VR.minMaxCndl candlesticks
+
+        result =
+            minMaxCndl :: (minMaxLines ++ minMaxBars)
     in
         M.minMaxTuples result
-
-
-
-{-
-   let
-       lr =
-           case c.lines of
-               Nothing -> (
-           List.map VR.minMax lines_ |> M.minMaxTuples
-
-
-           case c.candlesticks of
-               Nothing ->
-                   List.map VR.minMax lines_ |> M.minMaxTuples
-
-               Just candlesticks_ ->
-                   VR.minMaxCndl candlesticks_ :: (List.map VR.minMax lines_) |> M.minMaxTuples
--}
 
 
 chartWindow : Model -> Chart -> Chart
@@ -413,7 +423,7 @@ chartWindow model c =
                     Just (sliceFn cndl)
 
         valueRange =
-            chartValueRange c
+            chartValueRange lines_ bars_ cndl_
 
         vr =
             VR.vruler valueRange c.height

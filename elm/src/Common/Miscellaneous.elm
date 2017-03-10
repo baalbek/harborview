@@ -27,38 +27,49 @@ maybeMap fn lx =
         Just lx_ ->
             Just (List.map fn lx_)
 
-minMaxListMaybe  : List (Maybe Float) -> Maybe Float 
-minMaxListMaybe l = Just 3
+
+minMaxListMaybe : List (Maybe Float) -> Maybe Float
+minMaxListMaybe l =
+    Just 3
+
 
 mfunc : (number -> number -> number) -> Maybe number -> Maybe number -> Maybe number
-mfunc fn a b =  
-    let 
-        ax = Maybe.withDefault 0 a 
+mfunc fn a b =
+    let
+        ax =
+            Maybe.withDefault 0 a
 
-        bx = Maybe.withDefault 0 b
+        bx =
+            Maybe.withDefault 0 b
     in
         Just (fn ax bx)
 
+
+
 --mplus : Maybe number -> Maybe number -> Maybe number
 --mplus a b = mfunc (+) a b
-        
+
+
 mmin : Maybe number -> Maybe number -> Maybe number
-mmin a b = mfunc (min) a b
+mmin =
+    mfunc (min)
+
 
 mmax : Maybe number -> Maybe number -> Maybe number
-mmax a b = mfunc (max) a b
+mmax =
+    mfunc (max)
+
 
 minMaxTuples : List ( Maybe Float, Maybe Float ) -> ( Float, Float )
 minMaxTuples tuples =
     let
         min_ =
-            List.map first tuples |> List.foldr mmin Nothing |>  Maybe.withDefault 0
+            List.map first tuples |> List.foldr mmin Nothing |> Maybe.withDefault 0
 
         max_ =
-            List.map first tuples |> List.foldr mmax Nothing |>  Maybe.withDefault 0
-
+            List.map second tuples |> List.foldr mmax Nothing |> Maybe.withDefault 0
     in
-        (min_, max_)
+        ( min_, max_ )
 
 
 customDecoder : JD.Decoder a -> (a -> Result String b) -> JD.Decoder b
