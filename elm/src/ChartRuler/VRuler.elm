@@ -20,19 +20,28 @@ maybeLen v =
             List.length v_
 
 
-minMax : List Float -> ( Float, Float )
+minMax : List Float -> ( Maybe Float, Maybe Float )
 minMax v =
     let
         minVal =
-            List.minimum v |> Maybe.withDefault 0
+            List.minimum v -- |> Maybe.withDefault 0
 
         maxVal =
-            List.maximum v |> Maybe.withDefault 0
+            List.maximum v -- |> Maybe.withDefault 0
     in
         ( minVal, maxVal )
 
 
-minMaxCndl : List Candlestick -> ( Float, Float )
+minMaxList : Maybe (List (List Float)) -> List (Maybe Float, Maybe Float)
+minMaxList l = 
+    case l of
+        Nothing -> 
+            [(Nothing,Nothing)]
+
+        Just l_ -> 
+            List.map minMax l_
+
+minMaxCndl : List Candlestick -> ( Maybe Float, Maybe Float )
 minMaxCndl cndl =
     let
         lows =
@@ -42,10 +51,10 @@ minMaxCndl cndl =
             List.map .h cndl
 
         minVal =
-            List.minimum lows |> Maybe.withDefault 0
+            List.minimum lows -- |> Maybe.withDefault 0
 
         maxVal =
-            List.maximum his |> Maybe.withDefault 0
+            List.maximum his -- |> Maybe.withDefault 0
     in
         ( minVal, maxVal )
 
