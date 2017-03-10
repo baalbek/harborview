@@ -32,8 +32,8 @@ minMax v =
         ( minVal, maxVal )
 
 
-minMaxList : Maybe (List (List Float)) -> List (Maybe Float, Maybe Float)
-minMaxList l = 
+maybeMinMax : Maybe (List (List Float)) -> List (Maybe Float, Maybe Float)
+maybeMinMax l = 
     case l of
         Nothing -> 
             [(Nothing,Nothing)]
@@ -41,22 +41,26 @@ minMaxList l =
         Just l_ -> 
             List.map minMax l_
 
-minMaxCndl : List Candlestick -> ( Maybe Float, Maybe Float )
+minMaxCndl : Maybe (List Candlestick) -> ( Maybe Float, Maybe Float )
 minMaxCndl cndl =
-    let
-        lows =
-            List.map .l cndl
+    case cndl of
+        Nothing -> 
+            (Nothing,Nothing)
+        Just cndl_ ->
+            let
+                lows =
+                    List.map .l cndl_
 
-        his =
-            List.map .h cndl
+                his =
+                    List.map .h cndl_
 
-        minVal =
-            List.minimum lows -- |> Maybe.withDefault 0
+                minVal =
+                    List.minimum lows -- |> Maybe.withDefault 0
 
-        maxVal =
-            List.maximum his -- |> Maybe.withDefault 0
-    in
-        ( minVal, maxVal )
+                maxVal =
+                    List.maximum his -- |> Maybe.withDefault 0
+            in
+                ( minVal, maxVal )
 
 
 lines : Float -> Int -> Chart -> List (S.Svg a)

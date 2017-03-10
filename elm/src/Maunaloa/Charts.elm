@@ -352,7 +352,16 @@ slice model vals =
 
 chartValueRange : Chart -> ( Float, Float )
 chartValueRange c =
-    ( 2, 3 )
+    let 
+       minMaxLines = VR.maybeMinMax c.lines
+
+       minMaxBars = VR.maybeMinMax c.bars
+       
+       minMaxCndl = VR.minMaxCndl c.candlesticks
+       
+       result = minMaxCndl :: (minMaxLines ++ minMaxBars)
+    in
+        M.minMaxTuples result
 
 
 
