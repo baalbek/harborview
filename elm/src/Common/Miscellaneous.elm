@@ -35,14 +35,17 @@ minMaxListMaybe l =
 
 mfunc : (number -> number -> number) -> Maybe number -> Maybe number -> Maybe number
 mfunc fn a b =
-    let
-        ax =
-            Maybe.withDefault 0 a
+    case a of
+        Nothing ->
+            b
 
-        bx =
-            Maybe.withDefault 0 b
-    in
-        Just (fn ax bx)
+        Just ax ->
+            case b of
+                Nothing ->
+                    a
+
+                Just bx ->
+                    Just (fn ax bx)
 
 
 

@@ -10,42 +10,46 @@ import Common.Miscellaneous exposing (lastElem, toDecimal)
 import Tuple exposing (first, second)
 
 
-maybeLen : Maybe (List a) -> Int
-maybeLen v =
-    case v of
-        Nothing ->
-            0
+{-
+   maybeLen : Maybe (List a) -> Int
+   maybeLen v =
+       case v of
+           Nothing ->
+               0
 
-        Just v_ ->
-            List.length v_
+           Just v_ ->
+               List.length v_
+-}
 
 
 minMax : List Float -> ( Maybe Float, Maybe Float )
 minMax v =
     let
         minVal =
-            List.minimum v -- |> Maybe.withDefault 0
+            List.minimum v
 
         maxVal =
-            List.maximum v -- |> Maybe.withDefault 0
+            List.maximum v
     in
         ( minVal, maxVal )
 
 
-maybeMinMax : Maybe (List (List Float)) -> List (Maybe Float, Maybe Float)
-maybeMinMax l = 
+maybeMinMax : Maybe (List (List Float)) -> List ( Maybe Float, Maybe Float )
+maybeMinMax l =
     case l of
-        Nothing -> 
-            [(Nothing,Nothing)]
+        Nothing ->
+            [ ( Nothing, Nothing ) ]
 
-        Just l_ -> 
+        Just l_ ->
             List.map minMax l_
+
 
 minMaxCndl : Maybe (List Candlestick) -> ( Maybe Float, Maybe Float )
 minMaxCndl cndl =
     case cndl of
-        Nothing -> 
-            (Nothing,Nothing)
+        Nothing ->
+            ( Nothing, Nothing )
+
         Just cndl_ ->
             let
                 lows =
@@ -55,10 +59,13 @@ minMaxCndl cndl =
                     List.map .h cndl_
 
                 minVal =
-                    List.minimum lows -- |> Maybe.withDefault 0
+                    List.minimum lows
 
+                -- |> Maybe.withDefault 0
                 maxVal =
-                    List.maximum his -- |> Maybe.withDefault 0
+                    List.maximum his
+
+                -- |> Maybe.withDefault 0
             in
                 ( minVal, maxVal )
 

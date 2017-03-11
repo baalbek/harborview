@@ -251,99 +251,6 @@ scaledCandlestick vruler cndl =
 
 
 {-
-   chartWindowLines : Model -> List (List Float) -> Maybe (List Candlestick) -> Float -> ( ChartLines, Maybe (List Candlestick) )
-   chartWindowLines model lines candlesticks chartHeight =
-       let
-           valueFn : List a -> List a
-           valueFn vals =
-               List.take model.takeItems <| List.drop model.dropItems vals
-
-           lines_ =
-               List.map valueFn lines
-
-           cndl_window =
-               case candlesticks of
-                   Nothing ->
-                       Nothing
-
-                   Just candlesticks_ ->
-                       Just (valueFn candlesticks_)
-
-           valueRange =
-               case cndl_window of
-                   Nothing ->
-                       List.map VR.minMax lines_ |> M.minMaxTuples
-
-                   Just candlesticks_ ->
-                       VR.minMaxCndl candlesticks_ :: (List.map VR.minMax lines_) |> M.minMaxTuples
-
-           vr =
-               VR.vruler valueRange chartHeight
-
-           cndl_ =
-               case cndl_window of
-                   Nothing ->
-                       Nothing
-
-                   Just cs ->
-                       let
-                           vr_cndl =
-                               scaledCandlestick vr
-
-                           my_cndls =
-                               valueFn cs
-                       in
-                           Just (List.map vr_cndl my_cndls)
-       in
-           ( ChartLines
-               (TUP.first valueRange)
-               (TUP.second valueRange)
-               (List.map (List.map vr) lines_)
-           , cndl_
-           )
--}
-{-
-   chartWindow : ChartInfo -> Model -> ( ChartInfoJs, Date, Date )
-   chartWindow ci model =
-       let
-           xAxis_ =
-               List.take model.takeItems <| List.drop model.dropItems ci.xAxis
-
-           ( minDx_, maxDx_ ) =
-               HR.dateRangeOf ci.minDx xAxis_
-
-           hr =
-               HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
-
-           ( lines1_, cndl_ ) =
-               chartWindowLines model ci.lines ci.candlesticks model.chartHeight
-
-           lines2_ =
-               case ci.lines2 of
-                   Nothing ->
-                       Nothing
-
-                   Just lx2 ->
-                       let
-                           ( lx2_, _ ) =
-                               chartWindowLines model lx2 Nothing model.chartHeight2
-                       in
-                           Just lx2_
-
-           strokes =
-               [ "#000000", "#ff0000", "#aa00ff" ]
-       in
-           ( ChartInfoJs
-               (List.map hr xAxis_)
-               lines1_
-               cndl_
-               lines2_
-               strokes
-           , minDx_
-           , maxDx_
-           )
--}
-{-
    testChart : Chart
    testChart =
        let
@@ -427,8 +334,16 @@ chartWindow model c =
 
         vr =
             VR.vruler valueRange c.height
+
+        vr_cndl =
+            scaledCandlestick vr
     in
-        Chart lines_ bars_ cndl_ c.height valueRange
+        Chart
+            (M.maybeMap (List.map vr) lines_)
+            (M.maybeMap (List.map vr) bars_)
+            (M.maybeMap vr_cndl cndl_)
+            c.height
+            valueRange
 
 
 chartInfoWindow : ChartInfo -> Model -> ( ChartInfoJs, Date, Date )
@@ -499,15 +414,15 @@ update msg model =
                 ( ciWin, minDx, maxDx ) =
                     chartInfoWindow s model
             in
-                ( { model
-                    | chartInfo = Just s
-                    , chartInfoWin = Just ciWin
-                    , minDx = minDx
-                    , maxDx = maxDx
-                  }
-                , Cmd.none
-                  -- drawCanvas ciWin
-                )
+                Debug.log "ChartsFetched"
+                    ( { model
+                        | chartInfo = Just s
+                        , chartInfoWin = Just ciWin
+                        , minDx = minDx
+                        , maxDx = maxDx
+                      }
+                    , drawCanvas ciWin
+                    )
 
         ChartsFetched (Err s) ->
             Debug.log ("ChartsFetched Error: " ++ (httpErr2str s))

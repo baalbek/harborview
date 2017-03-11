@@ -64,41 +64,37 @@
         var drawCanvas2 = function (chartInfo) {
             drawCanvas(chartInfo,'canvas2','canvas2b');
         }
-        var drawLines = function (ctx,chartInfo,curLines) {
-          var strokes = chartInfo.strokes;
+        var drawLines = function (ctx,xaxis,curLines,strokes) {
           for (var i = 0; i < curLines.length; ++i) {
               ctx.beginPath();
               var curStroke = strokes[i] === undefined ? "#000000" : strokes[i];
               var ys = curLines[i];
-              drawGraph(ctx,chartInfo.xaxis,ys,curStroke);
+              drawGraph(ctx,xaxis,ys,curStroke);
           }
         }
 
-        var drawCanvasContext = function (chartInfo,lines,canvasId) {
-          var canvas = document.getElementById(canvasId);
-          var ctx = canvas.getContext("2d");
-          ctx.clearRect(0,0,canvas.width,canvas.height);
-          drawLines(ctx,chartInfo,lines);
-          return ctx;
-        }
+
+        var drawChart = function(canvasId,xaxis,chart,strokes) {
+            var canvas = document.getElementById(canvasId);
+            var ctx = canvas.getContext("2d");
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            if (chart.lines != null) {
+              drawLines(ctx,xaxis,chart.lines,strokes);
+            }
+            if (chart.candlesticks != null) {
+                ctx.strokeStyle = "#000000";
+                ctx.fillStyle = "#ffaa00";
+                ctx.lineWidth = 0.5;
+                var numCandlesticks = chart.candlesticks.length;
+                for (var i = 0; i < numCandlesticks; ++i) {
+                  drawCandlestick(ctx,xaxis[i],chart.candlesticks[i]);
+                }
+            }
+         }
 
         var drawCanvas = function (chartInfo,canvasId,canvasId2) {
-          var curLines = chartInfo.chartLines.lines;
-          var ctx = drawCanvasContext(chartInfo,curLines,canvasId);
-
-          if (chartInfo.chartLines2 != null) {
-            var curLines2 = chartInfo.chartLines2.lines;
-            drawCanvasContext(chartInfo,curLines2,canvasId2);
-          }
-
-          if (chartInfo.candlesticks != null) {
-              ctx.strokeStyle = "#000000";
-              ctx.fillStyle = "#ffaa00";
-              ctx.lineWidth = 0.5;
-              for (var i = 0; i < chartInfo.candlesticks.length; ++i) {
-                drawCandlestick(ctx,chartInfo.xaxis[i],chartInfo.candlesticks[i]);
-              }
-          }
+          drawChart(canvasId,chartInfo.xaxis,chartInfo.chart,chartInfo.strokes);
+          // drawChart(canvasId2,chartInfo.xAxis,chartInfo.chart2,chartInfo.strokes);
         }
         app.ports.drawCanvas.subscribe(drawCanvas1);
         app2.ports.drawCanvas.subscribe(drawCanvas2);
