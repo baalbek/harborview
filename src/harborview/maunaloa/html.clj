@@ -108,6 +108,11 @@
                         (reverse (map double->decimal itrend-50))]
                 :bars nil
                 :cndl (reverse (map #(bean->candlestick %) spot-objs))}
+        :chart2 {:lines [
+                          (reverse (map double->decimal cc-10))
+                          (reverse (map double->decimal cc-50))]
+                 :bars nil
+                 :cndl nil}
         :x-axis (reverse (map hr dx))
         :min-dx (ld->str min-dx)})))
 

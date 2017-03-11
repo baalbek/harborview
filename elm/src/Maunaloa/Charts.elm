@@ -176,8 +176,24 @@ view model =
 
                         hruler_ =
                             HR.lines w model.chartHeight model.minDx model.maxDx
+
+                        vruler2_ =
+                            case ci.chart2 of
+                                Nothing ->
+                                    []
+
+                                Just chart2 ->
+                                    VR.lines w 5 chart2
+
+                        hruler2_ =
+                            case ci.chart2 of
+                                Nothing ->
+                                    []
+
+                                Just chart2 ->
+                                    HR.lines w model.chartHeight2 model.minDx model.maxDx
                     in
-                        ( vruler_, hruler_, [], [] )
+                        ( vruler_, hruler_, vruler2_, hruler2_ )
 
         {-
            let
@@ -363,10 +379,19 @@ chartInfoWindow ci model =
 
         chw =
             chartWindow model ci.chart
+
+        chw2 =
+            case ci.chart2 of
+                Nothing ->
+                    Nothing
+
+                Just c2 ->
+                    Just (chartWindow model c2)
     in
         ( ChartInfoJs
             (List.map hr xAxis_)
             chw
+            chw2
             strokes
         , minDx_
         , maxDx_
@@ -475,6 +500,7 @@ fetchCharts ticker model =
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "x-axis" (Json.list Json.float)
                 |> JP.required "chart" (chartDecoder model.chartHeight)
+                |> JP.required "chart2" (Json.nullable (chartDecoder model.chartHeight2))
 
         -- |> JP.hardcoded Nothing
         url =

@@ -52,6 +52,7 @@ type alias ChartInfo =
     { minDx : Date
     , xAxis : List Float
     , chart : Chart
+    , chart2 : Maybe Chart
     }
 
 
@@ -74,6 +75,7 @@ type alias ChartInfo =
 type alias ChartInfoJs =
     { xaxis : List Float
     , chart : Chart
+    , chart2 : Maybe Chart
     , strokes : List String
     }
 

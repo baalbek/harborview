@@ -94,7 +94,9 @@
 
         var drawCanvas = function (chartInfo,canvasId,canvasId2) {
           drawChart(canvasId,chartInfo.xaxis,chartInfo.chart,chartInfo.strokes);
-          // drawChart(canvasId2,chartInfo.xAxis,chartInfo.chart2,chartInfo.strokes);
+          if (chartInfo.chart2 != null) {
+            drawChart(canvasId2,chartInfo.xaxis,chartInfo.chart2,chartInfo.strokes);
+          }
         }
         app.ports.drawCanvas.subscribe(drawCanvas1);
         app2.ports.drawCanvas.subscribe(drawCanvas2);
