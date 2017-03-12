@@ -128,6 +128,15 @@
         weeks (DBX/candlestick-weeks-m oidi spot-objs)]
     (ticker-chart_ weeks)))
 
+(defn test-hruler [oid]
+  (let [spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))
+        dx (map #(.toLocalDate (.getDx %)) spot-objs)
+        hr (hruler min-dx)]
+    (U/json-response
+        {
+          :dx (reverse (map ld->str dx))
+          :x-axis (reverse (map hr dx))})))
+
 (comment tickers []
   (U/json-response
     (map (fn [s] {"t" (.getTicker s) "v" (str (.getOid s))})
@@ -145,5 +154,6 @@
 (defroutes my-routes
   (GET "/" request (init))
   (GET "/tickers" request (tickers))
+  (GET "/th" [oid] (test-hruler (U/rs oid)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
   (GET "/tickerweek" [oid] (ticker-chart-week (U/rs oid))))

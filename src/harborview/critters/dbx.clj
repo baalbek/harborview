@@ -52,8 +52,8 @@
          r1 (RuleTypeBean.)
          r2 (RuleTypeBean.)
          r3 (RuleTypeBean.)
-         result (java.util.ArrayList.)
-        ]
+         result (java.util.ArrayList.)]
+
     (doto r1 (.setDesc "Diff from bought") (.setOid 7))
     (doto r2 (.setDesc "Diff from bought 2") (.setOid 8))
     (doto r3 (.setDesc "Diff from bought 3") (.setOid 9))
@@ -94,7 +94,7 @@
     (DB/with-session :ranoraraku CritterMapper
       (.insertAcceptRule it result))
     result))
-  
+
 (defn insert-denyrule [accid value rtyp hasmem]
   (let [result (DenyRuleBean.)]
     (doto result
@@ -119,5 +119,3 @@
     (if (= is-acc true)
       (.toggleAcceptRule it oid value)
       (.toggleDenyRule it oid value))))
-
-

@@ -16,6 +16,9 @@
 (defn fp []
   (MAUX/fetch-prices 3 pdx))
 
+(defn dx [oid]
+  (MAU/test-hruler oid))
+
 (defn weeks []
   (let [bx (MAUX/fetch-prices-m 3 pdx)]
     (MAUX/candlestick-weeks-m 3 bx)))

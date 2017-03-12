@@ -36,8 +36,8 @@
       :opid opid
       :price (.getPrice p)
       :buy (.getBuyAtPurchase p)
-      :spot (.getSpotAtPurchase p)
-     }))
+      :spot (.getSpotAtPurchase p)}))
+
 
 (defn critter->map [^CritterBean c]
   (if (nil? c)
@@ -45,37 +45,37 @@
      :sell_vol nil
      :status nil}
     {
-    :oid (.getOid c)
-    :sell_vol (.getSellVolume c)
-    :status (.getStatus c)}))
+     :oid (.getOid c)
+     :sell_vol (.getSellVolume c)
+     :status (.getStatus c)}))
 
 (defn acc->map [^AcceptRuleBean acc]
   (if (nil? acc)
     {:aoid nil
-    :artyp nil
-    :adesc nil
-    :aval nil
-    :aact nil}
+     :artyp nil
+     :adesc nil
+     :aval nil
+     :aact nil}
     {:aoid (.getOid acc)
-    :artyp (.getRtyp acc)
-    :adesc (.getRtypDesc acc)
-    :aval (.getAccValue acc)
-    :aact (if (.equals (.getActive acc) "y") 1 0)}))
+     :artyp (.getRtyp acc)
+     :adesc (.getRtypDesc acc)
+     :aval (.getAccValue acc)
+     :aact (if (.equals (.getActive acc) "y") 1 0)}))
 
 (defn deny->map [^DenyRuleBean dny]
   (if (nil? dny)
     {:doid nil
-    :drtyp nil
-    :ddesc nil
-    :dval nil
-    :dact nil
-    :mem nil}
+     :drtyp nil
+     :ddesc nil
+     :dval nil
+     :dact nil
+     :mem nil}
     {:doid (.getOid dny)
-    :drtyp (.getRtyp dny)
-    :ddesc (.getRtypDesc dny)
-    :dval (.getDenyValue dny)
-    :dact (if (.equals (.getActive dny) "y") 1 0)
-    :mem (.getMemory dny)}))
+     :drtyp (.getRtyp dny)
+     :ddesc (.getRtypDesc dny)
+     :dval (.getDenyValue dny)
+     :dact (if (.equals (.getActive dny) "y") 1 0)
+     :mem (.getMemory dny)}))
 
 
 (defn critter-only [^CritterBean c]
@@ -136,8 +136,8 @@
                  (= ptype 3) "Money Critters"
                  (= ptype 4) "Test Critters"
                  (= ptype 11) "Paper Critters")]
-  (P/render-file "templates/critters/overlook.html"
-    {:ptname ptname :purchases (map purchase-area purchases)})))
+   (P/render-file "templates/critters/overlook.html"
+     {:ptname ptname :purchases (map purchase-area purchases)})))
 
 (defroutes my-routes
   (GET "/overlook/:id" [id] (overlook id))
@@ -147,7 +147,7 @@
   (GET "/purchases" [ptyp] (U/json-response (map purchase->select (DBX/active-purchases (U/rs ptyp)))))
   (GET "/rtyp" [] (U/json-response (map ruletype->select (DBX/rule-types))))
   (PUT "/togglerule" [oid isactive isaccrule]
-       (let [xoid (U/rs oid) 
+       (let [xoid (U/rs oid)
              xisaccrule (U/str->bool isaccrule)]
         (println "oid: " xoid  ", isaccrule " xisaccrule ", isactive"  isactive)
         (DBX/toggle-rule xoid isactive xisaccrule)
