@@ -11,7 +11,12 @@
     [harborview.service.db :as DB]
     [harborview.service.htmlutils :as U]))
 
-(def pdx (Date/valueOf (LocalDate/of 2012 1 1)))
+(def min-dx (LocalDate/of 2012 1 1))
+(def max-dx (LocalDate/of 2014 10 21))
+
+(def dd MAU/diff-days)
+
+(def pdx (Date/valueOf min-dx))
 
 (defn fp []
   (MAUX/fetch-prices 3 pdx))

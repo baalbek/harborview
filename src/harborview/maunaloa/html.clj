@@ -134,6 +134,7 @@
         hr (hruler min-dx)]
     (U/json-response
         {
+          :min-dx (ld->str min-dx)
           :dx (reverse (map ld->str dx))
           :x-axis (reverse (map hr dx))})))
 
