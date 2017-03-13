@@ -73,6 +73,30 @@
           }
         }
 
+        var vruler = function(ctx,chart,canvas) {
+          ctx.fillStyle = "black";
+          ctx.font = "16px Arial";
+          ctx.strokeStyle = "#000000";
+          ctx.lineWidth = 0.25;
+          minVal = chart.valueRange[0];
+          maxVal = chart.valueRange[1];
+          var ppy = chart.height / (maxVal - minVal);
+          var step = chart.height / 10.0;
+          for (var i=0; i<11; ++i) {
+              var curStep = step * i;
+              var curVal = maxVal - (curStep / ppy);
+              ctx.beginPath();
+              ctx.moveTo(0,curStep);
+              ctx.lineTo(canvas.width,curStep);
+              if (i===0) {
+                ctx.fillText(curVal,10,curStep+18);
+              }
+              else {
+                ctx.fillText(curVal,10,curStep-5);
+              }
+              ctx.stroke();
+          }
+        }
 
         var drawChart = function(canvasId,xaxis,chart,strokes) {
             var canvas = document.getElementById(canvasId);
@@ -90,6 +114,7 @@
                   drawCandlestick(ctx,xaxis[i],chart.candlesticks[i]);
                 }
             }
+            vruler(ctx,chart,canvas);
          }
 
         var drawCanvas = function (chartInfo,canvasId,canvasId2) {

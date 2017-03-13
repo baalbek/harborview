@@ -137,87 +137,94 @@ type Msg
 
 view : Model -> H.Html Msg
 view model =
-    let
-        w =
-            model.chartWidth
-
-        -- + 100
-        ws =
-            toString w
-
-        hs =
-            toString model.chartHeight
-
-        hs2 =
-            toString model.chartHeight2
-
-        stroke =
-            "#023963"
-
-        svgBaseLines =
-            [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 hs, SA.stroke stroke ] []
-              --, S.line [ SA.x1 "0", SA.y1 hs, SA.x2 ws, SA.y2 hs, SA.stroke stroke ] []
-              -- , S.line [ SA.x2 "0", SA.y1 "0", SA.x2 ws, SA.y2 "0", SA.stroke stroke ] []
+    H.div [ A.class "container" ]
+        [ H.div [ A.class "row" ]
+            [ makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
             ]
-
-        svgBaseLines2 =
-            [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 hs2, SA.stroke stroke ] []
-              -- , S.line [ SA.x1 "0", SA.y1 hs2, SA.x2 ws, SA.y2 hs2, SA.stroke stroke ] []
-            ]
-
-        ( vruler, hruler, hruler2, vruler2 ) =
-            case model.chartInfoWin of
-                Nothing ->
-                    ( [], [], [], [] )
-
-                Just ci ->
-                    let
-                        vruler_ =
-                            VR.lines w 10 ci.chart
-
-                        hruler_ =
-                            HR.lines w model.chartHeight model.minDx model.maxDx
-
-                        vruler2_ =
-                            case ci.chart2 of
-                                Nothing ->
-                                    []
-
-                                Just chart2 ->
-                                    VR.lines w 5 chart2
-
-                        hruler2_ =
-                            case ci.chart2 of
-                                Nothing ->
-                                    []
-
-                                Just chart2 ->
-                                    HR.lines w model.chartHeight2 model.minDx model.maxDx
-                    in
-                        ( vruler_, hruler_, vruler2_, hruler2_ )
-    in
-        H.div [ A.class "container" ]
-            [ H.div [ A.class "row" ]
-                [ -- checkbox ToggleWeekly "Weekly"
-                  makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
-                ]
-            , H.div [ A.style [ ( "position", "absolute" ), ( "top", "300px" ), ( "left", "200px" ) ] ]
-                [ S.svg [ SA.width (ws ++ "px"), SA.height (hs ++ "px") ]
-                    (List.append
-                        svgBaseLines
-                        (List.append hruler vruler)
-                    )
-                ]
-            , H.div [ A.style [ ( "position", "absolute" ), ( "top", "950px" ), ( "left", "200px" ) ] ]
-                [ S.svg [ SA.width (ws ++ "px"), SA.height (hs2 ++ "px") ]
-                    (List.append svgBaseLines2
-                        (List.append hruler2 vruler2)
-                    )
-                ]
-            ]
+        ]
 
 
 
+{-
+   view : Model -> H.Html Msg
+   view model =
+       let
+           w =
+               model.chartWidth
+
+           ws =
+               toString w
+
+           hs =
+               toString model.chartHeight
+
+           hs2 =
+               toString model.chartHeight2
+
+           stroke =
+               "#023963"
+
+           svgBaseLines =
+               [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 hs, SA.stroke stroke ] []
+                 --, S.line [ SA.x1 "0", SA.y1 hs, SA.x2 ws, SA.y2 hs, SA.stroke stroke ] []
+                 -- , S.line [ SA.x2 "0", SA.y1 "0", SA.x2 ws, SA.y2 "0", SA.stroke stroke ] []
+               ]
+
+           svgBaseLines2 =
+               [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 hs2, SA.stroke stroke ] []
+                 -- , S.line [ SA.x1 "0", SA.y1 hs2, SA.x2 ws, SA.y2 hs2, SA.stroke stroke ] []
+               ]
+
+           ( vruler, hruler, hruler2, vruler2 ) =
+               case model.chartInfoWin of
+                   Nothing ->
+                       ( [], [], [], [] )
+
+                   Just ci ->
+                       let
+                           vruler_ =
+                               VR.lines w 10 ci.chart
+
+                           hruler_ =
+                               HR.lines w model.chartHeight model.minDx model.maxDx
+
+                           vruler2_ =
+                               case ci.chart2 of
+                                   Nothing ->
+                                       []
+
+                                   Just chart2 ->
+                                       VR.lines w 5 chart2
+
+                           hruler2_ =
+                               case ci.chart2 of
+                                   Nothing ->
+                                       []
+
+                                   Just chart2 ->
+                                       HR.lines w model.chartHeight2 model.minDx model.maxDx
+                       in
+                           ( vruler_, hruler_, vruler2_, hruler2_ )
+       in
+           H.div [ A.class "container" ]
+               [ H.div [ A.class "row" ]
+                   [ makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
+                   ]
+               , H.div [ A.style [ ( "position", "absolute" ), ( "top", "300px" ), ( "left", "200px" ) ] ]
+                   [ S.svg [ SA.width (ws ++ "px"), SA.height (hs ++ "px") ]
+                       (List.append
+                           svgBaseLines
+                           (List.append hruler vruler)
+                       )
+                   ]
+               , H.div [ A.style [ ( "position", "absolute" ), ( "top", "950px" ), ( "left", "200px" ) ] ]
+                   [ S.svg [ SA.width (ws ++ "px"), SA.height (hs2 ++ "px") ]
+                       (List.append svgBaseLines2
+                           (List.append hruler2 vruler2)
+                       )
+                   ]
+               ]
+-}
 ------------------- UPDATE --------------------
 
 
