@@ -56,20 +56,11 @@ type alias ChartInfo =
     }
 
 
-
-{-
-      , lines : List (List Float)
-      , candlesticks : Maybe (List Candlestick)
-      , lines2 : Maybe (List (List Float))
-
-
-   type alias ChartLines =
-       { minVal : Float
-       , maxVal : Float
-       , lines : List (List Float)
-       }
-
--}
+type alias DateJs =
+    { year : Int
+    , month : Int
+    , day : Int
+    }
 
 
 type alias ChartInfoJs =
@@ -77,6 +68,8 @@ type alias ChartInfoJs =
     , chart : Chart
     , chart2 : Maybe Chart
     , strokes : List String
+    , startDate : DateJs
+    , endDate : DateJs
     }
 
 

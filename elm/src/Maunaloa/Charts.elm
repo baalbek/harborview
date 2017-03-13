@@ -26,7 +26,7 @@ import Common.ComboBox
         , makeSelect
         )
 import ChartRuler.VRuler as VR
-import ChartCommon as C exposing (Candlestick, ChartInfo, ChartInfoJs, Chart)
+import ChartCommon as C exposing (Candlestick, ChartInfo, ChartInfoJs, Chart, DateJs)
 
 
 mainUrl =
@@ -374,6 +374,8 @@ chartInfoWindow ci model =
             chw
             chw2
             strokes
+            (DateJs 2014 1 1)
+            (DateJs 2014 3 1)
         , minDx_
         , maxDx_
         )
