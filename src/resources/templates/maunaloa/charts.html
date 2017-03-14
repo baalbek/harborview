@@ -72,7 +72,34 @@
               drawGraph(ctx,xaxis,ys,curStroke);
           }
         }
-
+        var day_millis =86400000;
+        var incMonth = function(origDate,numMonths) {
+            return new Date(origDate.getYear()+1900,origDate.getMonth()+numMonths,1);
+        }
+        var diffDays = function(d0,d1) {
+            return (d1 - d0) / day_millis;
+        }
+        var hruler = function(ctx,chart,canvas) {
+            var d0 = new Date(2016,4,1);
+            var d1 = new Date(2016,8,1);
+            ctx.fillStyle = "black";
+            ctx.font = "16px Arial";
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 0.25;
+            var ppx = canvas.width / diffDays(d0,d1); 
+            var d0x = incMonth(d0,1);
+            while (d0x < d1) {
+                var days = diffDays(d0, d0x);
+                console.log(days);
+                var curX = ppx *days;
+                ctx.beginPath();
+                ctx.moveTo(curX,0);
+                ctx.lineTo(curX,canvas.height);
+                ctx.stroke();
+                d0x = incMonth(d0x,1);
+                //console.log(curX);
+            }
+        }
         var vruler = function(ctx,chart,canvas) {
           ctx.fillStyle = "black";
           ctx.font = "16px Arial";
@@ -115,6 +142,7 @@
                 }
             }
             vruler(ctx,chart,canvas);
+            hruler(ctx,chart,canvas);
          }
 
         var drawCanvas = function (chartInfo,canvasId,canvasId2) {
