@@ -13,6 +13,7 @@ import Common.DateUtil as DU
 import ChartRuler.HRuler as HR
 import ChartRuler.VRuler as VR
 import Tuple as TUP
+import Date exposing (toTime)
 
 
 -- import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
@@ -26,7 +27,7 @@ import Common.ComboBox
         , makeSelect
         )
 import ChartRuler.VRuler as VR
-import ChartCommon as C exposing (Candlestick, ChartInfo, ChartInfoJs, Chart, DateJs)
+import ChartCommon as C exposing (Candlestick, ChartInfo, ChartInfoJs, Chart)
 
 
 mainUrl =
@@ -374,8 +375,8 @@ chartInfoWindow ci model =
             chw
             chw2
             strokes
-            (DateJs 2014 1 1)
-            (DateJs 2014 3 1)
+            (C.dateToDateJs minDx_)
+            (C.dateToDateJs maxDx_)
         , minDx_
         , maxDx_
         )

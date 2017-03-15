@@ -2,7 +2,9 @@ module ChartCommon exposing (..)
 
 import Svg.Attributes as SA
 import String
-import Date exposing (Date)
+import Date exposing (Date, year, month, day)
+import Time exposing (Time)
+import Common.DateUtil as D
 
 
 type alias Point =
@@ -63,13 +65,18 @@ type alias DateJs =
     }
 
 
+dateToDateJs : Date -> DateJs
+dateToDateJs d =
+    DateJs (year d) (D.monthToInt <| month d) (day d)
+
+
 type alias ChartInfoJs =
     { xaxis : List Float
     , chart : Chart
     , chart2 : Maybe Chart
     , strokes : List String
-    , startDate : DateJs
-    , endDate : DateJs
+    , startdate : DateJs
+    , enddate : DateJs
     }
 
 

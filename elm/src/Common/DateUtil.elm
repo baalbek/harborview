@@ -1,6 +1,13 @@
 module Common.DateUtil exposing (..)
 
-import Date exposing (Date, fromString, toTime, fromTime)
+import Date
+    exposing
+        ( Date
+        , fromString
+        , toTime
+        , fromTime
+        , Month(..)
+        )
 import Time exposing (Time)
 
 
@@ -62,6 +69,46 @@ diffDays d0 d1 =
             toTime d1
     in
         (t1 - t0) / day_
+
+
+monthToInt : Month -> Int
+monthToInt month =
+    case month of
+        Jan ->
+            0
+
+        Feb ->
+            1
+
+        Mar ->
+            2
+
+        Apr ->
+            3
+
+        May ->
+            4
+
+        Jun ->
+            5
+
+        Jul ->
+            6
+
+        Aug ->
+            7
+
+        Sep ->
+            8
+
+        Oct ->
+            9
+
+        Nov ->
+            10
+
+        Dec ->
+            11
 
 
 

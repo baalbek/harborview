@@ -42,60 +42,63 @@ dateRangeOf dx lx =
         ( dxOf dx offsetLow, dxOf dx offsetHi )
 
 
-lines : Float -> Float -> Date -> Date -> List (S.Svg a)
-lines w h minDx maxDx =
-    let
-        valueSpan =
-            DU.diffDays minDx maxDx
 
-        ppx =
-            w / valueSpan
+{-
+   lines : Float -> Float -> Date -> Date -> List (S.Svg a)
+   lines w h minDx maxDx =
+       let
+           valueSpan =
+               DU.diffDays minDx maxDx
 
-        step =
-            w / 10.0
+           ppx =
+               w / valueSpan
 
-        range =
-            List.range 1 9
+           step =
+               w / 10.0
 
-        h2s =
-            toString h
+           range =
+               List.range 1 9
 
-        txtYs =
-            toString (h - 5)
+           h2s =
+               toString h
 
-        valFn x =
-            let
-                days =
-                    x / ppx
+           txtYs =
+               toString (h - 5)
 
-                xDate =
-                    DU.addDays minDx days
-            in
-                (toString <| Date.day xDate)
-                    ++ "."
-                    ++ (toString <| Date.month xDate)
-                    ++ "."
-                    ++ (toString <| Date.year xDate)
+           valFn x =
+               let
+                   days =
+                       x / ppx
 
-        lineFn x =
-            let
-                curX =
-                    step * (toFloat x)
+                   xDate =
+                       DU.addDays minDx days
+               in
+                   (toString <| Date.day xDate)
+                       ++ "."
+                       ++ (toString <| Date.month xDate)
+                       ++ "."
+                       ++ (toString <| Date.year xDate)
 
-                curXl =
-                    toString curX
+           lineFn x =
+               let
+                   curX =
+                       step * (toFloat x)
 
-                curXs =
-                    toString (curX + 5)
+                   curXl =
+                       toString curX
 
-                valX =
-                    valFn curX
-            in
-                [ S.line [ SA.x1 curXl, SA.y1 "0", SA.x2 curXl, SA.y2 h2s, C.myStroke ] []
-                , S.text_ [ SA.x curXs, SA.y txtYs, SA.fill "red", C.myStyle ] [ S.text valX ]
-                ]
-    in
-        List.concat <| List.map lineFn range
+                   curXs =
+                       toString (curX + 5)
+
+                   valX =
+                       valFn curX
+               in
+                   [ S.line [ SA.x1 curXl, SA.y1 "0", SA.x2 curXl, SA.y2 h2s, C.myStroke ] []
+                   , S.text_ [ SA.x curXs, SA.y txtYs, SA.fill "red", C.myStyle ] [ S.text valX ]
+                   ]
+       in
+           List.concat <| List.map lineFn range
+-}
 
 
 hruler : Date -> Date -> List Float -> Float -> Float -> Float
