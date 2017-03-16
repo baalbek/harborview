@@ -73,7 +73,7 @@
           }
         }
         var day_millis =86400000;
-        var incMonth = function(origDate,numMonths) {
+        var incMonths = function(origDate,numMonths) {
             return new Date(origDate.getFullYear(),origDate.getMonth()+numMonths,1);
         }
         var diffDays = function(d0,d1) {
@@ -82,11 +82,8 @@
         var date2string = function(d) {
             return (d.getMonth()+1) + "." + d.getFullYear();
         }
+        /*
         var hruler = function(ctx,startDate,endDate,canvas) {
-            /*
-            var d0 = new Date(startDate.year,startDate.month,startDate.day);
-            var d1 = new Date(endDate.year,endDate.month,endDate.day);
-            */
             var d0 = new Date(2014,5,17);
             var d1 = new Date(2014,9,21);
             ctx.fillStyle = "black";
@@ -95,7 +92,7 @@
             ctx.lineWidth = 0.25;
             var ppx = canvas.width / diffDays(d0,d1);
             console.log("Ppx: " + ppx);
-            var d0x = incMonth(d0,1);
+            var d0x = incMonths(d0,1);
             var txtY = canvas.height - 5;
             while (d0x < d1) {
                 var days = diffDays(d0, d0x);
@@ -107,9 +104,9 @@
                 ctx.stroke();
                 ctx.fillText(date2string(d0x),curX+5,txtY);
                 d0x = incMonth(d0x,1);
-                //console.log(curX);
             }
         }
+        */
         var vruler = function(ctx,chart,canvas) {
           ctx.fillStyle = "black";
           ctx.font = "16px Arial";
@@ -135,10 +132,12 @@
           }
         }
 
-        var drawChart = function(canvasId,xaxis,startDate,endDate,chart,strokes) {
+        var drawChart = function(canvasId,chartInfo,chart) {
             var canvas = document.getElementById(canvasId);
             var ctx = canvas.getContext("2d");
             ctx.clearRect(0,0,canvas.width,canvas.height);
+            var xaxis = chartInfo.xaxis;
+            var strokes = chartInfo.strokes;
             if (chart.lines != null) {
               drawLines(ctx,xaxis,chart.lines,strokes);
             }
@@ -152,11 +151,11 @@
                 }
             }
             vruler(ctx,chart,canvas);
-            hruler(ctx,startDate,endDate,canvas);
+            // hruler(ctx,startDate,endDate,canvas);
          }
 
         var drawCanvas = function (chartInfo,canvasId,canvasId2) {
-          drawChart(canvasId,chartInfo.xaxis,chartInfo.startdate,chartInfo.enddate,chartInfo.chart,chartInfo.strokes);
+          drawChart(canvasId,chartInfoxaxis,chartInfo.startdate,chartInfo.chart,chartInfo.strokes);
           if (chartInfo.chart2 != null) {
             drawChart(canvasId2,chartInfo.xaxis,chartInfo.startdate,chartInfo.enddate,chartInfo.chart2,chartInfo.strokes);
           }

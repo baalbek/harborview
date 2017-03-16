@@ -371,7 +371,7 @@ chartInfoWindow ci model =
                     Just (chartWindow model c2)
     in
         ( ChartInfoJs
-            (List.map hr xAxis_)
+            xAxis_
             chw
             chw2
             strokes
