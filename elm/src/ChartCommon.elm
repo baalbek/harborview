@@ -58,25 +58,20 @@ type alias ChartInfo =
     }
 
 
-type alias DateJs =
-    { year : Int
-    , month : Int
-    , day : Int
-    }
 
-
-dateToDateJs : Date -> DateJs
-dateToDateJs d =
-    DateJs (year d) (D.monthToInt <| month d) (day d)
+{-
+   dateToDateJs : Date -> DateJs
+   dateToDateJs d =
+       DateJs (year d) (D.monthToInt <| month d) (day d)
+-}
 
 
 type alias ChartInfoJs =
-    { xaxis : List Float
+    { startdate : Time
+    , xaxis : List Float
     , chart : Chart
     , chart2 : Maybe Chart
     , strokes : List String
-    , startdate : DateJs
-    , enddate : DateJs
     }
 
 

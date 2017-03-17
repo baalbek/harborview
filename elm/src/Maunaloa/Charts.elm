@@ -91,13 +91,10 @@ init flags =
 type alias Model =
     { tickers : Maybe SelectItems
     , selectedTicker : String
-    , minDx : Date
-    , maxDx : Date
     , chartInfo : Maybe ChartInfo
     , chartInfoWin : Maybe ChartInfoJs
     , dropItems : Int
     , takeItems : Int
-    , chartWidth : Float
     , chartHeight : Float
     , chartHeight2 : Float
     , flags : Flags
@@ -108,13 +105,10 @@ initModel : Flags -> Model
 initModel flags =
     { tickers = Nothing
     , selectedTicker = "-1"
-    , minDx = Date.fromTime 0
-    , maxDx = Date.fromTime 0
     , chartInfo = Nothing
     , chartInfoWin = Nothing
     , dropItems = 0
     , takeItems = 90
-    , chartWidth = 1300
     , chartHeight = 600
     , chartHeight2 = 300
     , flags = flags
@@ -344,7 +338,7 @@ chartWindow model c =
             valueRange
 
 
-chartInfoWindow : ChartInfo -> Model -> ( ChartInfoJs, Date, Date )
+chartInfoWindow : ChartInfo -> Model -> ChartInfoJs
 chartInfoWindow ci model =
     let
         xAxis_ =
@@ -353,9 +347,11 @@ chartInfoWindow ci model =
         ( minDx_, maxDx_ ) =
             HR.dateRangeOf ci.minDx xAxis_
 
-        hr =
-            HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
+        {-
+           hr =
+               HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
 
+        -}
         strokes =
             [ "#000000", "#ff0000", "#aa00ff" ]
 
@@ -370,16 +366,12 @@ chartInfoWindow ci model =
                 Just c2 ->
                     Just (chartWindow model c2)
     in
-        ( ChartInfoJs
+        ChartInfoJs
+            (toTime minDx_)
             xAxis_
             chw
             chw2
             strokes
-            (C.dateToDateJs minDx_)
-            (C.dateToDateJs maxDx_)
-        , minDx_
-        , maxDx_
-        )
 
 
 httpErr2str : Http.Error -> String
@@ -420,15 +412,13 @@ update msg model =
 
         ChartsFetched (Ok s) ->
             let
-                ( ciWin, minDx, maxDx ) =
+                ciWin =
                     chartInfoWindow s model
             in
                 Debug.log "ChartsFetched"
                     ( { model
                         | chartInfo = Just s
                         , chartInfoWin = Just ciWin
-                        , minDx = minDx
-                        , maxDx = maxDx
                       }
                     , drawCanvas ciWin
                     )
