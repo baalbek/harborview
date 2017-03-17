@@ -82,16 +82,13 @@
         var date2string = function(d) {
             return (d.getMonth()+1) + "." + d.getFullYear();
         }
-        /*
-        var hruler = function(ctx,startDate,endDate,canvas) {
+        var hrulerLines = function(ctx,startDate,canvas) {
             var d0 = new Date(2014,5,17);
             var d1 = new Date(2014,9,21);
             ctx.fillStyle = "black";
             ctx.font = "16px Arial";
             ctx.strokeStyle = "#000000";
             ctx.lineWidth = 0.25;
-            var ppx = canvas.width / diffDays(d0,d1);
-            console.log("Ppx: " + ppx);
             var d0x = incMonths(d0,1);
             var txtY = canvas.height - 5;
             while (d0x < d1) {
@@ -106,8 +103,8 @@
                 d0x = incMonth(d0x,1);
             }
         }
-        */
-        var vruler = function(ctx,chart,canvas) {
+
+        var vrulerLines = function(ctx,chart,canvas) {
           ctx.fillStyle = "black";
           ctx.font = "16px Arial";
           ctx.strokeStyle = "#000000";
@@ -132,11 +129,10 @@
           }
         }
 
-        var drawChart = function(canvasId,chartInfo,chart) {
+        var drawChart = function(canvasId,chartInfo,xaxis,chart) {
             var canvas = document.getElementById(canvasId);
             var ctx = canvas.getContext("2d");
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            var xaxis = chartInfo.xaxis;
             var strokes = chartInfo.strokes;
             if (chart.lines != null) {
               drawLines(ctx,xaxis,chart.lines,strokes);
@@ -150,15 +146,50 @@
                   drawCandlestick(ctx,xaxis[i],chart.candlesticks[i]);
                 }
             }
-            vruler(ctx,chart,canvas);
+
+            vrulerLines(ctx,chart,canvas);
             // hruler(ctx,startDate,endDate,canvas);
          }
 
+        var hruler = function(canvasId,offsets,startDate) {
+            var canvas = document.getElementById(canvasId);
+            var x0 = offsets[offsets.length-1];
+            var x1 = offsets[0] + 10;
+            var diffDays = x1 - x0;
+            var ppx = canvas.width / diffDays;
+
+            var calcPix = function(x) {
+              var curDiffDays = x-x0;
+              return ppx * curDiffDays;
+            }
+            var dateToPix = function(d) {
+              //var curDiffDays = ;
+              return 120;
+            }
+            var offsetsToPix = function(offsets) {
+              var result = [];
+              for (var i=0;i<offsets.length;++i)  {
+                  result[i] = this.calcPix(offsets[i]);
+              }
+              return result;
+            }
+            return {
+              calcPix : calcPix ,
+              dateToPix : dateToPix,
+              offsetsToPix : offsetsToPix
+            }
+        }
+
         var drawCanvas = function (chartInfo,canvasId,canvasId2) {
-          drawChart(canvasId,chartInfoxaxis,chartInfo.startdate,chartInfo.chart,chartInfo.strokes);
+          var offsets = chartInfo.xaxis;
+          var myHruler = hruler(canvasId,offsets);
+          var xaxis = myHruler.offsetsToPix(offsets);
+          drawChart(canvasId,chartInfo,xaxis,chartInfo.chart);
+          /*
           if (chartInfo.chart2 != null) {
             drawChart(canvasId2,chartInfo.xaxis,chartInfo.startdate,chartInfo.enddate,chartInfo.chart2,chartInfo.strokes);
           }
+          */
         }
         app.ports.drawCanvas.subscribe(drawCanvas1);
         app2.ports.drawCanvas.subscribe(drawCanvas2);
