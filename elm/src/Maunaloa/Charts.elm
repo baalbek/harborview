@@ -415,13 +415,12 @@ update msg model =
                 ciWin =
                     chartInfoWindow s model
             in
-                Debug.log "ChartsFetched"
-                    ( { model
-                        | chartInfo = Just s
-                        , chartInfoWin = Just ciWin
-                      }
-                    , drawCanvas ciWin
-                    )
+                ( { model
+                    | chartInfo = Just s
+                    , chartInfoWin = Just ciWin
+                  }
+                , drawCanvas ciWin
+                )
 
         ChartsFetched (Err s) ->
             Debug.log ("ChartsFetched Error: " ++ (httpErr2str s))
