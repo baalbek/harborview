@@ -1,5 +1,6 @@
 module Common.DateUtil exposing (..)
 
+import Common.Miscellaneous as M
 import Date
     exposing
         ( Date
@@ -69,6 +70,23 @@ diffDays d0 d1 =
             toTime d1
     in
         (t1 - t0) / day_
+
+
+dxOf : Date -> Float -> Date
+dxOf dx offset =
+    addDays dx offset
+
+
+dateRangeOf : Date -> List Float -> ( Date, Date )
+dateRangeOf dx lx =
+    let
+        offsetHi =
+            List.head lx |> Maybe.withDefault 0
+
+        offsetLow =
+            M.lastElem lx |> Maybe.withDefault 0
+    in
+        ( dxOf dx offsetLow, dxOf dx offsetHi )
 
 
 monthToInt : Month -> Int

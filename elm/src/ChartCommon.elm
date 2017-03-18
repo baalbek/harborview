@@ -47,6 +47,7 @@ type alias Chart =
     , candlesticks : Maybe (List Candlestick)
     , height : Float
     , valueRange : ( Float, Float )
+    , numVlines : Int
     }
 
 
@@ -72,6 +73,7 @@ type alias ChartInfoJs =
     , chart : Chart
     , chart2 : Maybe Chart
     , strokes : List String
+    , numIncMonths : Int
     }
 
 

@@ -82,28 +82,31 @@
         var date2string = function(d) {
             return (d.getMonth()+1) + "." + d.getFullYear();
         }
-        var hrulerLines = function(ctx,hruler,canvas) {
+        var hrulerLines = function(ctx,hruler,canvas,numIncMonths) {
             var d0 = hruler.startDate;
             ctx.fillStyle = "black";
             ctx.font = "16px Arial";
             ctx.strokeStyle = "#bbb";
             ctx.lineWidth = 0.25;
-            var d0x = incMonths(d0,1);
+            var d0x = incMonths(d0,numIncMonths);
             var txtY = canvas.height - 5;
             var curX = 0;
             while (curX < canvas.width) {
-                //var days = diffDays(d0, d0x);
                 curX = hruler.dateToPix(d0x); //ppx * days;
-                console.log("Canvas width: " + canvas.width + ", curX: " + curX);
+                // console.log("Canvas width: " + canvas.width + ", curX: " + curX);
                 ctx.beginPath();
                 ctx.moveTo(curX,0);
                 ctx.lineTo(curX,canvas.height);
                 ctx.stroke();
                 ctx.fillText(date2string(d0x),curX+5,txtY);
-                d0x = incMonths(d0x,1);
+                d0x = incMonths(d0x,numIncMonths);
             }
         }
 
+        var double2decimal = function(x,roundingFactor) {
+            var rf = roundingFactor || 100;
+            return (Math.round(x*rf))/rf;
+        }
         var vrulerLines = function(ctx,chart,canvas) {
           ctx.fillStyle = "black";
           ctx.font = "16px Arial";
@@ -112,10 +115,11 @@
           minVal = chart.valueRange[0];
           maxVal = chart.valueRange[1];
           var ppy = chart.height / (maxVal - minVal);
-          var step = chart.height / 10.0;
-          for (var i=0; i<11; ++i) {
+          var step = chart.height / (chart.numVlines - 1);
+          var ix = chart.numVlines;
+          for (var i=0; i<ix; ++i) {
               var curStep = step * i;
-              var curVal = maxVal - (curStep / ppy);
+              var curVal = double2decimal(maxVal - (curStep / ppy));
               ctx.beginPath();
               ctx.moveTo(0,curStep);
               ctx.lineTo(canvas.width,curStep);
@@ -147,32 +151,31 @@
             }
 
             vrulerLines(ctx,chart,canvas);
-            hrulerLines(ctx,hruler,canvas);
+            hrulerLines(ctx,hruler,canvas,chartInfo.numIncMonths);
          }
 
-        var createHruler = function(canvasId,startDateAsMillis,offsets) {
-            var canvas = document.getElementById(canvasId);
+        var createHruler = function(width,startDateAsMillis,offsets) {
             var x0 = offsets[offsets.length-1];
-            var x1 = offsets[0] + 10;
+            var x1 = offsets[0] + 5;
             var diffDays = x1 - x0;
-            var ppx = canvas.width / diffDays;
+            var ppx = width / diffDays;
 
-            console.log("startDateAsMillis: " + startDateAsMillis);
+            //console.log("startDateAsMillis: " + startDateAsMillis);
             var startDate = new Date(startDateAsMillis);
 
             var calcPix = function(x) {
               var curDiffDays = x-x0;
-              console.log("x0: " + x0 + ", x: " + x + ", curDiffDays: " + curDiffDays);
+              //console.log("x0: " + x0 + ", x: " + x + ", curDiffDays: " + curDiffDays);
               return ppx * curDiffDays;
             }
             var dateToPix = function(d) {
-              console.log("d: " + d + ", startDate: " + startDate);
-              var curOffset = x0 + (d - startDate) / day_millis;
-              console.log("curOffset: " + curOffset);
+              //console.log("d: " + d + ", startDate: " + startDate);
+              var curOffset = x0 + ((d - startDate) / day_millis);
+              //console.log("curOffset: " + curOffset);
               return calcPix(curOffset);
             }
             var offsetsToPix = function() {
-              console.log("Calculating offsetsToPix...");
+              //console.log("Calculating offsetsToPix...");
               var result = [];
               for (var i=0;i<offsets.length;++i)  {
                   result[i] = calcPix(offsets[i]);
@@ -181,24 +184,19 @@
             }
             var xaxis = offsetsToPix();
             return {
-              calcPix : calcPix ,
               dateToPix : dateToPix,
               xaxis : xaxis,
               startDate : startDate
-              //offsetsToPix : offsetsToPix
             }
         }
 
         var drawCanvas = function (chartInfo,canvasId,canvasId2) {
           var offsets = chartInfo.xaxis;
-          var myHruler = createHruler(canvasId,chartInfo.startdate,offsets);
-          //var xaxis = myHruler.offsetsToPix(offsets);
+          var myHruler = createHruler(1300,chartInfo.startdate,offsets);
           drawChart(canvasId,chartInfo,myHruler,chartInfo.chart);
-          /*
           if (chartInfo.chart2 != null) {
-            drawChart(canvasId2,chartInfo.xaxis,chartInfo.startdate,chartInfo.enddate,chartInfo.chart2,chartInfo.strokes);
+            drawChart(canvasId2,chartInfo,myHruler,chartInfo.chart2);
           }
-          */
         }
         app.ports.drawCanvas.subscribe(drawCanvas1);
         app2.ports.drawCanvas.subscribe(drawCanvas2);

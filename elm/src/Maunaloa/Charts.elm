@@ -10,7 +10,6 @@ import Json.Decode as Json
 import Json.Decode.Pipeline as JP
 import Common.Miscellaneous as M
 import Common.DateUtil as DU
-import ChartRuler.HRuler as HR
 import ChartRuler.VRuler as VR
 import Tuple as TUP
 import Date exposing (toTime)
@@ -140,86 +139,6 @@ view model =
 
 
 
-{-
-   view : Model -> H.Html Msg
-   view model =
-       let
-           w =
-               model.chartWidth
-
-           ws =
-               toString w
-
-           hs =
-               toString model.chartHeight
-
-           hs2 =
-               toString model.chartHeight2
-
-           stroke =
-               "#023963"
-
-           svgBaseLines =
-               [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 hs, SA.stroke stroke ] []
-                 --, S.line [ SA.x1 "0", SA.y1 hs, SA.x2 ws, SA.y2 hs, SA.stroke stroke ] []
-                 -- , S.line [ SA.x2 "0", SA.y1 "0", SA.x2 ws, SA.y2 "0", SA.stroke stroke ] []
-               ]
-
-           svgBaseLines2 =
-               [ S.line [ SA.x1 "0", SA.y1 "0", SA.x2 "0", SA.y2 hs2, SA.stroke stroke ] []
-                 -- , S.line [ SA.x1 "0", SA.y1 hs2, SA.x2 ws, SA.y2 hs2, SA.stroke stroke ] []
-               ]
-
-           ( vruler, hruler, hruler2, vruler2 ) =
-               case model.chartInfoWin of
-                   Nothing ->
-                       ( [], [], [], [] )
-
-                   Just ci ->
-                       let
-                           vruler_ =
-                               VR.lines w 10 ci.chart
-
-                           hruler_ =
-                               HR.lines w model.chartHeight model.minDx model.maxDx
-
-                           vruler2_ =
-                               case ci.chart2 of
-                                   Nothing ->
-                                       []
-
-                                   Just chart2 ->
-                                       VR.lines w 5 chart2
-
-                           hruler2_ =
-                               case ci.chart2 of
-                                   Nothing ->
-                                       []
-
-                                   Just chart2 ->
-                                       HR.lines w model.chartHeight2 model.minDx model.maxDx
-                       in
-                           ( vruler_, hruler_, vruler2_, hruler2_ )
-       in
-           H.div [ A.class "container" ]
-               [ H.div [ A.class "row" ]
-                   [ makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
-                   ]
-               , H.div [ A.style [ ( "position", "absolute" ), ( "top", "300px" ), ( "left", "200px" ) ] ]
-                   [ S.svg [ SA.width (ws ++ "px"), SA.height (hs ++ "px") ]
-                       (List.append
-                           svgBaseLines
-                           (List.append hruler vruler)
-                       )
-                   ]
-               , H.div [ A.style [ ( "position", "absolute" ), ( "top", "950px" ), ( "left", "200px" ) ] ]
-                   [ S.svg [ SA.width (ws ++ "px"), SA.height (hs2 ++ "px") ]
-                       (List.append svgBaseLines2
-                           (List.append hruler2 vruler2)
-                       )
-                   ]
-               ]
--}
 ------------------- UPDATE --------------------
 
 
@@ -239,29 +158,6 @@ scaledCandlestick vruler cndl =
             vruler cndl.c
     in
         Candlestick opn hi lo cls
-
-
-
-{-
-   testChart : Chart
-   testChart =
-       let
-           lines =
-               Just
-                   [ [ 23, 24, 21, 23, 11, 12 ] ]
-
-           bars =
-               Just
-                   [ [ 23, 24, 21, 23, 11, 12 ]
-                   , [ 232, 24, 21, 23, 11, 12 ]
-                   , [ -23, 24, 21, 23, 11, 12 ]
-                   ]
-
-           candlesticks =
-               Just [ Candlestick 100 1202 90 97 ]
-       in
-           Chart lines bars candlesticks 1000 ( 0, 0 )
--}
 
 
 slice : Model -> List a -> List a
@@ -336,22 +232,26 @@ chartWindow model c =
             (M.maybeMap vr_cndl cndl_)
             c.height
             valueRange
+            c.numVlines
 
 
 chartInfoWindow : ChartInfo -> Model -> ChartInfoJs
 chartInfoWindow ci model =
     let
+        incMonths =
+            case model.flags.isWeekly of
+                True ->
+                    3
+
+                False ->
+                    1
+
         xAxis_ =
             slice model ci.xAxis
 
         ( minDx_, maxDx_ ) =
-            HR.dateRangeOf ci.minDx xAxis_
+            DU.dateRangeOf ci.minDx xAxis_
 
-        {-
-           hr =
-               HR.hruler minDx_ maxDx_ xAxis_ model.chartWidth
-
-        -}
         strokes =
             [ "#000000", "#ff0000", "#aa00ff" ]
 
@@ -372,6 +272,7 @@ chartInfoWindow ci model =
             chw
             chw2
             strokes
+            incMonths
 
 
 httpErr2str : Http.Error -> String
@@ -450,8 +351,8 @@ candlestickDecoder =
         (Json.field "c" Json.float)
 
 
-chartDecoder : Float -> Json.Decoder Chart
-chartDecoder chartHeight =
+chartDecoder : Float -> Int -> Json.Decoder Chart
+chartDecoder chartHeight numVlines =
     let
         lines =
             (Json.field "lines" (Json.maybe (Json.list (Json.list Json.float))))
@@ -462,7 +363,7 @@ chartDecoder chartHeight =
         candlesticks =
             (Json.field "cndl" (Json.maybe (Json.list candlestickDecoder)))
     in
-        Json.map5 Chart lines bars candlesticks (Json.succeed chartHeight) (Json.succeed ( 0, 0 ))
+        Json.map6 Chart lines bars candlesticks (Json.succeed chartHeight) (Json.succeed ( 0, 0 )) (Json.succeed numVlines)
 
 
 fetchCharts : String -> Model -> Cmd Msg
@@ -472,8 +373,8 @@ fetchCharts ticker model =
             JP.decode ChartInfo
                 |> JP.required "min-dx" stringToDateDecoder
                 |> JP.required "x-axis" (Json.list Json.float)
-                |> JP.required "chart" (chartDecoder model.chartHeight)
-                |> JP.required "chart2" (Json.nullable (chartDecoder model.chartHeight2))
+                |> JP.required "chart" (chartDecoder model.chartHeight 10)
+                |> JP.required "chart2" (Json.nullable (chartDecoder model.chartHeight2 5))
 
         -- |> JP.hardcoded Nothing
         url =
