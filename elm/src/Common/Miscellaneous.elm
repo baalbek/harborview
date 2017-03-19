@@ -2,11 +2,31 @@ module Common.Miscellaneous exposing (..)
 
 import Json.Decode as JD
 import VirtualDom as VD
+import Http
 import Html as H
 import Html.Attributes as A
 import Html.Events as E
 import Date exposing (Date, fromString)
 import Tuple exposing (first, second)
+
+
+httpErr2str : Http.Error -> String
+httpErr2str err =
+    case err of
+        Http.Timeout ->
+            "Timeout"
+
+        Http.NetworkError ->
+            "NetworkError"
+
+        Http.BadUrl s ->
+            "BadUrl: " ++ s
+
+        Http.BadStatus r ->
+            "BadStatus: "
+
+        Http.BadPayload s r ->
+            "BadPayload: " ++ s
 
 
 toDecimal : Float -> Float -> Float

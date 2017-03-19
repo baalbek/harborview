@@ -1,6 +1,7 @@
 module Maunaloa.Options exposing (..)
 
 import Html as H
+import Common.Miscellaneous as MISC
 
 
 main : Program Never Model Msg

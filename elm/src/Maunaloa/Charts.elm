@@ -275,25 +275,6 @@ chartInfoWindow ci model =
             incMonths
 
 
-httpErr2str : Http.Error -> String
-httpErr2str err =
-    case err of
-        Http.Timeout ->
-            "Timeout"
-
-        Http.NetworkError ->
-            "NetworkError"
-
-        Http.BadUrl s ->
-            "BadUrl: " ++ s
-
-        Http.BadStatus r ->
-            "BadStatus: "
-
-        Http.BadPayload s r ->
-            "BadPayload: " ++ s
-
-
 update msg model =
     case msg of
         -- ToggleWeekly ->
@@ -306,7 +287,7 @@ update msg model =
             )
 
         TickersFetched (Err s) ->
-            Debug.log ("TickersFetched Error: " ++ (httpErr2str s)) ( model, Cmd.none )
+            Debug.log ("TickersFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
         FetchCharts s ->
             ( { model | selectedTicker = s }, fetchCharts s model )
@@ -324,7 +305,7 @@ update msg model =
                 )
 
         ChartsFetched (Err s) ->
-            Debug.log ("ChartsFetched Error: " ++ (httpErr2str s))
+            Debug.log ("ChartsFetched Error: " ++ (M.httpErr2str s))
                 ( model, Cmd.none )
 
 
