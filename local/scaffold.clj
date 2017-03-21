@@ -16,6 +16,9 @@
     (fn []
       (ClassPathXmlApplicationContext. "harborview.xml"))))
 
+(defn etrade []
+  (.getBean (factory) "etrade"))
+
 (comment
   (def min-dx (LocalDate/of 2012 1 1))
   (def max-dx (LocalDate/of 2014 10 21))
