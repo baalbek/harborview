@@ -22,6 +22,7 @@
     </bean>
 
     <bean id="repos" class="ranoraraku.models.impl.StockMarketReposImpl">
+        <property name="mybatisConfigFile" value="ranoraraku-mybatis.conf.xml" />
     </bean>
 
     <bean id="etrade" class="netfondsrepos.repos.DefaultEtradeRepository">
