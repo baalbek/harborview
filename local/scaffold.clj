@@ -1,34 +1,39 @@
 (ns scaffold
   (:import
     [java.time LocalDate]
-    [java.sql Date])
-  (:require
-   ;[selmer.parser :as P]
-    [harborview.vinapu.dbx :as VIN]
-    [harborview.vinapu.html :as VH]
-    [harborview.maunaloa.html :as MAU]
-    [harborview.maunaloa.dbx :as MAUX]
-    [harborview.service.db :as DB]
-    [harborview.service.htmlutils :as U]))
+    [java.sql Date]
+    [org.springframework.context.support ClassPathXmlApplicationContext]))
+  ;(:require))
+    ;[harborview.vinapu.dbx :as VIN]
+    ;[harborview.vinapu.html :as VH]
+    ;[harborview.maunaloa.html :as MAU]
+    ;[harborview.maunaloa.dbx :as MAUX]
+    ;[harborview.service.db :as DB]
+    ;[harborview.service.htmlutils :as U]))
 
-(def min-dx (LocalDate/of 2012 1 1))
-(def max-dx (LocalDate/of 2014 10 21))
-
-(def dd MAU/diff-days)
-
-(def pdx (Date/valueOf min-dx))
-
-(defn fp []
-  (MAUX/fetch-prices 3 pdx))
-
-(defn dx [oid]
-  (MAU/test-hruler oid))
-
-(defn weeks []
-  (let [bx (MAUX/fetch-prices-m 3 pdx)]
-    (MAUX/candlestick-weeks-m 3 bx)))
+(def factory
+  (memoize
+    (fn []
+      (ClassPathXmlApplicationContext. "harborview.xml"))))
 
 (comment
+  (def min-dx (LocalDate/of 2012 1 1))
+  (def max-dx (LocalDate/of 2014 10 21))
+
+  (def dd MAU/diff-days)
+
+  (def pdx (Date/valueOf min-dx))
+
+  (defn fp []
+    (MAUX/fetch-prices 3 pdx))
+
+  (defn dx [oid]
+    (MAU/test-hruler oid))
+
+  (defn weeks []
+    (let [bx (MAUX/fetch-prices-m 3 pdx)]
+      (MAUX/candlestick-weeks-m 3 bx)))
+
   (def jr U/json-response)
   (def bj U/bean->json)
 

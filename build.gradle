@@ -19,6 +19,7 @@ repositories {
 
 dependencies {
     compile project(':stearnswharf-repos')
+    compile project(':netfonds-repos')
     compile project(':koteriku')
     compile project(':oahu')
     compile project(':ranoraraku')
@@ -38,12 +39,21 @@ dependencies {
     runtime "org.clojure:clojure:$clojureVersion"
     //--------------- END Clojure clj jars --------------
 
+    //------------------- Colt -------------------
+    runtime "colt:colt:$coltVersion"
+
     compile "commons-codec:commons-codec:1.10"
+    compile "commons-logging:commons-logging:1.2"
+
+    //------------------- Database -------------------
     runtime "org.mybatis:mybatis:$mybatisVersion"
     runtime "org.postgresql:postgresql:$postgresVersion"
+
     runtime "log4j:log4j:$log4jVersion"
-    compile "commons-logging:commons-logging:1.2"
     runtime "jline:jline:0.9.94"
+    //------------------- spring -------------------
+    runtime "org.springframework:spring-core:$springVersion"
+    runtime "org.springframework:spring-context:$springVersion"
 }
 
 task copydeps(type: Copy) {
