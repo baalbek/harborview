@@ -17,6 +17,31 @@ repositories {
     }
 }
 
+configurations {
+    aspectjTask
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "src/java"
+        }
+        resources {
+            srcDir "src/resources"
+        }
+        output.classesDir = 'build/classes'
+    }
+    test {
+        java {
+            srcDir "test/java"
+        }
+        resources {
+            srcDir "test/resources"
+        }
+    }
+}
+
+
 dependencies {
     compile project(':stearnswharf-repos')
     compile project(':netfonds-repos')
@@ -68,38 +93,6 @@ task setupDist << {
     ant.symlink(resource: "../src/clojure/harborview", link: "dist/harborview")
     ant.symlink(resource: "../src/resources/koteriku-dbcp.properties", link: "dist/koteriku-dbcp.properties")
     ant.symlink(resource: "../src/resources/koteriku-mybatis.conf.xml", link: "dist/koteriku-mybatis.conf.xml")
-    ant.symlink(resource: "/home/rcs/.gradle/caches/modules-2/files-2.1", link: "libs")
-}
-
-def javaJarDeps() {
-    def result = []
-    configurations.compile.each { f ->  
-        if (f =~ /enlive/) return
-        if (f =~ /compojure/) return
-        if (f =~ /ring/) return
-        //if (f =~ /clj-json/) return
-        if (f =~ /clout/) return
-        if (f =~ /numeric-tower/) return
-        if (f =~ /clj-time/) return
-        if (f =~ /medley/) return
-        if (f =~ /instaparse/) return
-        if (f =~ /crypto/) return
-        if (f =~ /tools.macro/) return
-        result.add(f)
-    }
-    result
-}
-
-task printJavaDeps << {
-    javaJarDeps().each { f ->
-        println f
-    }
-}
-
-task coypJavaDeps(type: Copy) {
-    javaJarDeps().each { f -> 
-        into 'dist' from f
-    }
 }
 
 buildscript {
