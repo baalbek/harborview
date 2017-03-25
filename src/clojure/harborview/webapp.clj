@@ -1,4 +1,5 @@
 (ns harborview.webapp
+  (:gen-class)
   (:require
    [selmer.parser :as P]
    [compojure.route :as R]
@@ -41,6 +42,6 @@
     api
     wrap-params))
 
-(def server (run-jetty #'webapp {:port 8082 :join? false}))
-
-;(def server (run-jetty #'webapp {:port 8443 :join? false :ssl? true :keystore "keystore" :key-password "q2uebec9"}))
+(defn -main[args]
+    (def server (run-jetty #'webapp {:port 8082 :join? false})))
+    ;(def server (run-jetty #'webapp {:port 8443 :join? false :ssl? true :keystore "../local/harborview.ssl" :key-password "VhCHeUJ4"}))

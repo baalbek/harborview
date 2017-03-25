@@ -6,9 +6,11 @@ group = 'rcstadheim'
 archivesBaseName = 'harborview'
 version = '2.0'
 
+
 ext.major = '5'
 ext.minor = '3'
 ext.parentDist = '/home/rcs/opt/java/harborview/dist'
+ext.myLibName = "harborview-${version}"
 
 repositories {
     mavenCentral()
@@ -95,6 +97,34 @@ task setupDist << {
     ant.symlink(resource: "../src/resources/koteriku-mybatis.conf.xml", link: "dist/koteriku-mybatis.conf.xml")
 }
 
+
+String clazzPath() {
+    def runt = configurations.runtime.files.collect { f ->
+        f.name
+    }
+    def aopt = configurations.aspectjTask.files.collect { f ->
+        f.name
+    }
+    runt.remove(myLibName)
+
+    aopt.each {
+        runt.add(it)
+    }
+    runt.add(".")
+    runt.join(" ")
+}
+
+task printClazzPath << {
+    println clazzPath()
+}
+jar {
+    manifest {
+        attributes 'Main-Class': "harborview.webapp"
+        attributes 'Class-Path': clazzPath()
+    }
+    from ("target/classes") include "**/*.class"
+}
+
 buildscript {
     repositories {
         mavenLocal()
@@ -107,8 +137,3 @@ buildscript {
 
 apply plugin: 'rcstadheim.palenque'
 
-jar {
-    from ("target/classes") 
-    include "**/*.class"
-    exclude "harborview/**/*.class"
-}
