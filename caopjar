@@ -1,0 +1,13 @@
+#!/bin/bash
+
+gradle compileJava
+
+lein compile
+
+gradle compileAop
+
+gradle jar
+
+cp build/libs/harborview*.jar dist/
+
+exit 0

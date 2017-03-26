@@ -10,6 +10,7 @@
     [clj-json.core :as json]
     [selmer.parser :as P]
     [harborview.maunaloa.dbx :as DBX]
+    [harborview.maunaloa.options :as OPX]
     [harborview.service.htmlutils :as U]))
 
 (def calc-itrend (Itrend.))

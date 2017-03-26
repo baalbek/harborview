@@ -10,7 +10,8 @@ version = '2.0'
 ext.major = '5'
 ext.minor = '3'
 ext.parentDist = '/home/rcs/opt/java/harborview/dist'
-ext.myLibName = "harborview-${version}"
+ext.myName = "harborview"
+ext.myLibName = "${myName}-${version}"
 
 repositories {
     mavenCentral()
@@ -81,6 +82,11 @@ dependencies {
     //------------------- spring -------------------
     runtime "org.springframework:spring-core:$springVersion"
     runtime "org.springframework:spring-context:$springVersion"
+
+    //------------------- Aspectj -------------------
+    compile "org.aspectj:aspectjrt:$aspectjVersion"
+    aspectjTask "org.aspectj:aspectjweaver:$aspectjVersion"
+    aspectjTask "org.aspectj:aspectjtools:$aspectjVersion"
 }
 
 task copydeps(type: Copy) {
@@ -124,6 +130,27 @@ jar {
     }
     from ("target/classes") include "**/*.class"
 }
+
+ext.top = '/home/rcs/opt/java'
+ext.myHome = "$top/$myName"
+ext.classesHome = "$myHome/build/classes"
+ext.targetClassesHome = "$myHome/target/classes"
+ext.aspectHome = "$myHome/src/aspects"
+
+//compileJava.deleteAllActions()
+
+task compileAop << {
+    def aopcp = configurations.compile.asPath << ":" << configurations.aspectjTask.asPath
+    ant.taskdef(resource: 'org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties',
+            classpath: configurations.aspectjTask.asPath)
+    ant.iajc(inpath: classesHome,
+            source: '1.8',
+            target: '1.8',
+            destDir: targetClassesHome,
+            sourceRoots: aspectHome,
+            classpath: aopcp)
+}
+
 
 buildscript {
     repositories {

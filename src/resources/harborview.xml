@@ -52,15 +52,13 @@
     -->
 
     <!-- Cache -->
-    <!--
-    <bean id="cachekey" class="netfondsjanitor.cache.CacheIdKeyFactory">
+    <bean id="cachekey" class="harborview.cache.CacheIdKeyFactory">
     </bean>
 
-    <bean id="cache" class="netfondsjanitor.aspects.cache.CacheAspect"
+    <bean id="cache" class="harborview.aspects.CacheAspect"
           factory-method="aspectOf">
         <property name="cacheKeyFactory" ref="cachekey" />
     </bean>
-    -->
 </beans>
 
 

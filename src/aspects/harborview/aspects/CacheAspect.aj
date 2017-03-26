@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 import oahu.aspects.cache.Cacheable;
 import oahu.annotations.Cache;
 import java.util.function.Function;
-import oahu.aspects.cache.CacheIdKeyFactory;
 
 
 public privileged aspect CacheAspect implements Cacheable {
@@ -58,7 +57,7 @@ public privileged aspect CacheAspect implements Cacheable {
         cachedThisObj.remove(thisObj);
     }
 
-    static Function<JoinPoint,String> cacheKeyFactory = new CacheIdKeyFactory();
+    static Function<JoinPoint,String> cacheKeyFactory;
 
     public static void setCacheKeyFactory(Function<JoinPoint,String> value) {
         cacheKeyFactory  = value;

@@ -24,5 +24,6 @@ src/resources/templates/vinapu/elementload.html
 src/resources/public/js/elm/
 *.swo
 One.elm
+*.log
 
 
