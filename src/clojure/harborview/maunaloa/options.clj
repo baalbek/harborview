@@ -9,5 +9,5 @@
   (ClassPathXmlApplicationContext. "harborview.xml"))
 
 
-(defn get-bean  [bn]
+(defn get-bean [bn]
   (.getBean (spring-context) bn))

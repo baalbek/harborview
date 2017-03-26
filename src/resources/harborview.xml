@@ -52,6 +52,7 @@
     -->
 
     <!-- Cache -->
+    <!--
     <bean id="cachekey" class="harborview.cache.CacheIdKeyFactory">
     </bean>
 
@@ -59,6 +60,7 @@
           factory-method="aspectOf">
         <property name="cacheKeyFactory" ref="cachekey" />
     </bean>
+    -->
 </beans>
 
 

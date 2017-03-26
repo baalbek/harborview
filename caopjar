@@ -4,7 +4,7 @@ gradle compileJava
 
 lein compile
 
-gradle compileAop
+# gradle compileAop
 
 gradle jar
 
