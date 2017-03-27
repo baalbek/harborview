@@ -22,6 +22,7 @@
 		[jline/jline "0.9.94"]
 		[org.springframework/spring-core "4.2.3.RELEASE"]
 		[org.springframework/spring-context "4.2.3.RELEASE"]
+		[org.aspectj/aspectjrt "1.8.9"]
 
     ]
   ;:main ^:skip-aot harborview.webapp
