@@ -19,9 +19,9 @@
 (defn etrade []
   (.getBean (factory) "etrade"))
 
-(defn calls []
+(defn calls [ticker]
   (let [e (etrade)]
-    (.calls e "YAR")))
+    (.calls e ticker)))
 
 (comment
   (def min-dx (LocalDate/of 2012 1 1))

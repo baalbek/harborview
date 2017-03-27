@@ -84,9 +84,9 @@ dependencies {
     runtime "org.springframework:spring-context:$springVersion"
 
     //------------------- Aspectj -------------------
-    compile "org.aspectj:aspectjrt:$aspectjVersion"
-    aspectjTask "org.aspectj:aspectjweaver:$aspectjVersion"
-    aspectjTask "org.aspectj:aspectjtools:$aspectjVersion"
+    //compile "org.aspectj:aspectjrt:$aspectjVersion"
+    //aspectjTask "org.aspectj:aspectjweaver:$aspectjVersion"
+    //aspectjTask "org.aspectj:aspectjtools:$aspectjVersion"
 }
 
 task copydeps(type: Copy) {
@@ -136,8 +136,6 @@ ext.myHome = "$top/$myName"
 ext.classesHome = "$myHome/build/classes"
 ext.targetClassesHome = "$myHome/target/classes"
 ext.aspectHome = "$myHome/src/aspects"
-
-//compileJava.deleteAllActions()
 
 task compileAop << {
     def aopcp = configurations.compile.asPath << ":" << configurations.aspectjTask.asPath
