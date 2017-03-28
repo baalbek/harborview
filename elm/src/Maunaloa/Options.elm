@@ -1,8 +1,13 @@
 module Maunaloa.Options exposing (..)
 
+import Http
 import Html as H
+import Html.Attributes as A
 import Common.Miscellaneous as MISC
+import Common.ComboBox as CMB
 
+mainUrl =
+    "/maunaloa"
 
 main : Program Never Model Msg
 main =
@@ -21,7 +26,7 @@ main =
 
 init : ( Model, Cmd Msg )
 init =
-    ( initModel, Cmd.none )
+    ( initModel, fetchTickers )
 
 
 
@@ -29,12 +34,16 @@ init =
 
 
 type alias Model =
-    {}
+    { tickers : Maybe CMB.SelectItems
+    , selectedTicker : String
+    }
 
 
 initModel : Model
 initModel =
-    {}
+    { tickers = Nothing
+    , selectedTicker = "-1"
+    }
 
 
 
@@ -42,7 +51,8 @@ initModel =
 
 
 type Msg
-    = Noop
+    = TickersFetched (Result Http.Error CMB.SelectItems)
+    | FetchOptions String
 
 
 
@@ -52,7 +62,10 @@ type Msg
 view : Model -> H.Html Msg
 view model =
     H.div [ A.class "container" ]
-        []
+        [ H.div [ A.class "row" ]
+            [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
+            ]
+        ]
 
 
 
@@ -61,12 +74,32 @@ view model =
 
 update msg model =
     case msg of
-        Noop ->
+        TickersFetched (Ok s) ->
+            ( { model
+                | tickers = Just s
+              }
+            , Cmd.none
+            )
+
+        TickersFetched (Err s) ->
+            Debug.log ("TickersFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
+
+        FetchOptions s ->
             ( model, Cmd.none )
 
 
 
------------------- COMMANDS -------------------
+------------------ COMMANDS ---------------------
+
+fetchTickers : Cmd Msg
+fetchTickers =
+    let
+        url =
+            mainUrl ++ "/tickers"
+    in
+        Http.send TickersFetched <|
+            Http.get url CMB.comboBoxItemListDecoder
+
 ---------------- SUBSCRIPTIONS ----------------
 
 

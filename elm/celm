@@ -15,6 +15,11 @@ case "$1" in
        JS="elm-charts.js" 
        TODIR="maunaloa"
         ;;
+
+    3) ELM="src/Maunaloa/Options.elm"
+       JS="elm-options.js" 
+       TODIR="maunaloa"
+        ;;
 esac
 
 docker run -it --rm -v "$(pwd):/code" -w "/code" -e "HOME=/tmp" -u $UID:$GID -p 8000:8000 codesimple/elm:$ELM_VERSION make $ELM --output $JS
