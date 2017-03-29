@@ -6,8 +6,10 @@ import Html.Attributes as A
 import Common.Miscellaneous as MISC
 import Common.ComboBox as CMB
 
+
 mainUrl =
     "/maunaloa"
+
 
 main : Program Never Model Msg
 main =
@@ -91,6 +93,7 @@ update msg model =
 
 ------------------ COMMANDS ---------------------
 
+
 fetchTickers : Cmd Msg
 fetchTickers =
     let
@@ -99,6 +102,8 @@ fetchTickers =
     in
         Http.send TickersFetched <|
             Http.get url CMB.comboBoxItemListDecoder
+
+
 
 ---------------- SUBSCRIPTIONS ----------------
 

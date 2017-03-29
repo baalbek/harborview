@@ -5,9 +5,11 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [
 ;palenque
-    ]
+                ] 
+
   ;:main ^:skip-aot harborview.webapp
-  ;:compile 
+  ;:compile
+  :global-vars {*warn-on-reflection* true}
   :target-path "target"
   :source-paths ["src/clojure"]
   :test-paths ["test/clojure" "dist" "test/resources"]
@@ -17,5 +19,5 @@
   ;:test {:resource-paths ["test/resources" "dist"]}
   :resource-paths [
 ;palenque
-                   ]
+                  ]
   :profiles {:uberjar {:aot :all}})

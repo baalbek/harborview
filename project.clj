@@ -23,10 +23,11 @@
 		[org.springframework/spring-core "4.2.3.RELEASE"]
 		[org.springframework/spring-context "4.2.3.RELEASE"]
 		[org.aspectj/aspectjrt "1.8.9"]
+                ] 
 
-    ]
   ;:main ^:skip-aot harborview.webapp
-  ;:compile 
+  ;:compile
+  :global-vars {*warn-on-reflection* true}
   :target-path "target"
   :source-paths ["src/clojure"]
   :test-paths ["test/clojure" "dist" "test/resources"]
@@ -35,12 +36,11 @@
   :aot :all
   ;:test {:resource-paths ["test/resources" "dist"]}
   :resource-paths [
-		"/home/rcs/opt/java/koteriku/build/libs/koteriku-5.3.1.jar"
+		"/home/rcs/opt/java/koteriku/build/libs/koteriku-1.0.jar"
 		"/home/rcs/opt/java/netfonds-repos/build/libs/netfondsrepos-1.0.jar"
-		"/home/rcs/opt/java/oahu/build/libs/oahu-5.3.1.jar"
-		"/home/rcs/opt/java/ranoraraku/build/libs/ranoraraku-5.3.5.jar"
+		"/home/rcs/opt/java/oahu/build/libs/oahu-1.0.jar"
+		"/home/rcs/opt/java/ranoraraku/build/libs/ranoraraku-1.0.jar"
 		"/home/rcs/opt/java/stearnswharf-repos/build/libs/stearnswharf-1.0.jar"
-		"/home/rcs/opt/java/vega/build/libs/vega-5.3.0.jar"
-
-                   ]
+		"/home/rcs/opt/java/vega/build/libs/vega-1.0.jar"
+                  ]
   :profiles {:uberjar {:aot :all}})

@@ -23,6 +23,10 @@
   (let [e (etrade)]
     (.calls e ticker)))
 
+(defn htmlx [ticker]
+  (let [e (etrade)]
+    (.parseHtmlFor e ticker nil)))
+
 (comment
   (def min-dx (LocalDate/of 2012 1 1))
   (def max-dx (LocalDate/of 2014 10 21))
