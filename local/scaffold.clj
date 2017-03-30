@@ -2,7 +2,10 @@
   (:import
     [java.time LocalDate]
     [java.sql Date]
-    [org.springframework.context.support ClassPathXmlApplicationContext]))
+    [org.springframework.context.support ClassPathXmlApplicationContext])
+  (:require
+    [harborview.maunaloa.options :as OPX]))
+
   ;(:require))
     ;[harborview.vinapu.dbx :as VIN]
     ;[harborview.vinapu.html :as VH]
@@ -19,9 +22,13 @@
 (defn etrade []
   (.getBean (factory) "etrade"))
 
-(defn calls [ticker]
-  (let [e (etrade)]
-    (.calls e ticker)))
+(def calls OPX/calls)
+(def puts OPX/puts)
+(def json OPX/option->json)
+
+;(defn calls [ticker]
+;  (let [e (etrade)]
+;    (.calls e ticker)))
 
 (defn htmlx [ticker]
   (let [e (etrade)]

@@ -23,8 +23,28 @@
   (let [^EtradeRepository e (get-bean "etrade")]
     (.parseHtmlFor e ticker nil)))
 
-(defn valid? [o]
-  true)
+(defn check-implied-vol [ox]
+  (try 
+    (if (> (.getIvBuy ox) 0)
+      (if (> (.getIvSell ox) 0)
+        true
+        (do 
+          (println "Iv sell <= 0 for: " (-> ox .getDerivative .getTicker)) 
+          false))
+      (do 
+        (println "Iv buy <= 0 for: " (-> ox .getDerivative .getTicker)) 
+        false))
+    (catch Exception ex
+        (println "Iv sell fail for: " (-> ox .getDerivative .getTicker)) 
+        false)))
+
+
+(defn valid? [ox]
+  (if (> (.getBuy ox) 0)
+    (if (> (.getSell ox) 0)
+      (check-implied-vol ox)
+      false)
+    false))
 
 
 (defn option->json [^DerivativePrice o]
@@ -53,8 +73,8 @@
 
 (defn calls [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]
-    (.second parsed)))
+    (filter valid? (.second parsed))))
 
 (defn puts [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]
-    (.third parsed)))
+    (filter valid? (.third parsed))))
