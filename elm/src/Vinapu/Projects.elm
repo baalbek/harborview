@@ -88,6 +88,8 @@ type alias Model =
     , selectedLocation : String
     , selectedSystem : String
     , elementDesc : String
+    , elementTypes : SelectItems
+    , elementType : String
     , plw : String
     , plateWidth : String
     , plateWidth2 : Maybe String
@@ -123,6 +125,11 @@ initModel =
     , selectedLocation = "-1"
     , selectedSystem = "-1"
     , elementDesc = ""
+    , elementTypes =
+        [ ComboBoxItem "1" "Plate Element"
+        , ComboBoxItem "3" "Trapezoid Plate Element"
+        ]
+    , elementType = "1"
     , plw = "0.5"
     , plateWidth = "5.0"
     , plateWidth2 = Nothing
@@ -171,6 +178,7 @@ type Msg
     | ElementLoadOpen
     | ElementLoadOk
     | ElementLoadCancel
+    | ElementTypeSelected String
     | PlwChange String
     | PlateWidthChange String
     | PlateWidth2Change String
@@ -366,6 +374,10 @@ update msg model =
         ElementLoadCancel ->
             ( model, Cmd.none )
 
+        ElementTypeSelected s ->
+            Debug.log "ElementTypeSelected"
+                ( { model | elementType = s }, Cmd.none )
+
         Load1Selected s ->
             Debug.log "Load1Selected"
                 ( { model | load1 = s }, Cmd.none )
@@ -490,7 +502,8 @@ view model =
                     ]
                 , H.div [ A.class "tab-content" ]
                     [ H.div [ A.id "geo1", A.class "tab-pane in active" ]
-                        [ makeFGRInput ElementDescChange "id1" "Element desc:" "text" CM.CX39 model.elementDesc
+                        [ makeFGRSelect "id6" "Element type:" CM.CX39 (Just model.elementTypes) (Just ElementTypeSelected)
+                        , makeFGRInput ElementDescChange "id1" "Element desc:" "text" CM.CX39 model.elementDesc
                         , makeFGRSelect "id2" "Node 1:" CM.CX39 model.nodes (Just Node1Selected)
                         , makeFGRSelect "id3" "Node 2:" CM.CX39 model.nodes (Just Node2Selected)
                         , makeFGRInput PlwChange "id4" "Load distribution factor:" "number" CM.CX66 model.plw
