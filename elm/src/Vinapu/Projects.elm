@@ -90,6 +90,7 @@ type alias Model =
     , elementDesc : String
     , plw : String
     , plateWidth : String
+    , plateWidth2 : Maybe String
     , load1 : String
     , loadFactor1 : String
     , formFactor1 : String
@@ -124,6 +125,7 @@ initModel =
     , elementDesc = ""
     , plw = "0.5"
     , plateWidth = "5.0"
+    , plateWidth2 = Nothing
     , load1 = "-1"
     , loadFactor1 = "1.2"
     , formFactor1 = "1.0"
@@ -171,6 +173,7 @@ type Msg
     | ElementLoadCancel
     | PlwChange String
     | PlateWidthChange String
+    | PlateWidth2Change String
     | Load1Selected String
     | LoadFactor1Change String
     | FormFactor1Change String
@@ -350,6 +353,10 @@ update msg model =
             Debug.log "PlateWidthChange"
                 ( { model | plateWidth = s }, Cmd.none )
 
+        PlateWidth2Change s ->
+            Debug.log "PlateWidthChange"
+                ( { model | plateWidth2 = Just s }, Cmd.none )
+
         ElementLoadOpen ->
             ( model, Cmd.none )
 
@@ -423,6 +430,14 @@ view model =
 
                 Just elementLoadsContent ->
                     H.div [ A.class "col-sm-12", A.property "innerHTML" (JE.string elementLoadsContent) ] []
+
+        plateWidth2Item =
+            case model.plateWidth2 of
+                Nothing ->
+                    makeFGRInput PlateWidth2Change "id6" "Plate width 2:" "number" CM.CX66 ""
+
+                Just pw2 ->
+                    makeFGRInput PlateWidth2Change "id6" "Plate width 2:" "number" CM.CX66 pw2
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
@@ -480,6 +495,7 @@ view model =
                         , makeFGRSelect "id3" "Node 2:" CM.CX39 model.nodes (Just Node2Selected)
                         , makeFGRInput PlwChange "id4" "Load distribution factor:" "number" CM.CX66 model.plw
                         , makeFGRInput PlateWidthChange "id5" "Plate width:" "number" CM.CX66 model.plateWidth
+                        , plateWidth2Item
                         ]
                     , H.div [ A.id "loads1", A.class "tab-pane" ]
                         [ makeFGRSelect "id6" "Dead load:" CM.CX39 model.deadloads (Just Load1Selected)
@@ -521,6 +537,7 @@ addNewElement m =
                 , ( "n2", JE.string m.node2 )
                 , ( "plw", JE.string m.plw )
                 , ( "w", JE.string m.plateWidth )
+                , ( "w2", JE.string m.plateWidth2 )
                 , ( "l1", JE.string m.load1 )
                 , ( "lf1", JE.string m.loadFactor1 )
                 , ( "ff1", JE.string m.formFactor1 )
