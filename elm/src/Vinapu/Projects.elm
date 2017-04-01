@@ -126,8 +126,8 @@ initModel =
     , selectedSystem = "-1"
     , elementDesc = ""
     , elementTypes =
-        [ ComboBoxItem "1" "Plate Element"
-        , ComboBoxItem "3" "Trapezoid Plate Element"
+        [ ComboBoxItem "1" "[1] Plate Element"
+        , ComboBoxItem "3" "[3] Trapezoid Plate Element"
         ]
     , elementType = "1"
     , plw = "0.5"
@@ -542,15 +542,24 @@ addNewElement m =
         url =
             mainUrl ++ "/newelement"
 
+        w2_ =
+            case m.plateWidth2 of
+                Nothing ->
+                    JE.null
+
+                Just w2 ->
+                    JE.string w2
+
         jbody =
             asHttpBody
                 [ ( "sysid", JE.string m.selectedSystem )
                 , ( "el", JE.string m.elementDesc )
+                , ( "elt", JE.string m.elementType )
                 , ( "n1", JE.string m.node1 )
                 , ( "n2", JE.string m.node2 )
                 , ( "plw", JE.string m.plw )
                 , ( "w", JE.string m.plateWidth )
-                , ( "w2", JE.string m.plateWidth2 )
+                , ( "w2", w2_ )
                 , ( "l1", JE.string m.load1 )
                 , ( "lf1", JE.string m.loadFactor1 )
                 , ( "ff1", JE.string m.formFactor1 )
