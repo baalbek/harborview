@@ -41,14 +41,17 @@
      (.insertSystem it result))
    result))
 
-(defn insert-element [sys-id dsc n1 n2 plw w1]
+(defn insert-element [sys-id dsc elt n1 n2 plw w1 w2]
   (let [result (ElementLoadBean.)]
     (.setSystemId result sys-id)
     (.setDsc result dsc)
+    (.setElementType result elt)
     (.setN1 result n1)
     (.setN2 result n2)
     (.setPlw result plw)
     (.setW1 result w1)
+    (if (= elt 3)
+      (.setW2 result w2))
     (DB/with-session :stearnswharf ElementsMapper
      (.insertElement it result))
     result))
