@@ -8,6 +8,7 @@
   (:use
     [harborview.service.commonutils :only (defn-memo)])
   (:require
+    [harborview.service.commonutils :as CU]
     [harborview.service.htmlutils :as U]))
 
 (defn-memo spring-context []
@@ -24,18 +25,18 @@
     (.parseHtmlFor e ticker nil)))
 
 (defn check-implied-vol [ox]
-  (try 
+  (try
     (if (> (.getIvBuy ox) 0)
       (if (> (.getIvSell ox) 0)
         true
-        (do 
-          (println "Iv sell <= 0 for: " (-> ox .getDerivative .getTicker)) 
+        (do
+          (println "Iv sell <= 0 for: " (-> ox .getDerivative .getTicker))
           false))
-      (do 
-        (println "Iv buy <= 0 for: " (-> ox .getDerivative .getTicker)) 
+      (do
+        (println "Iv buy <= 0 for: " (-> ox .getDerivative .getTicker))
         false))
     (catch Exception ex
-        (println "Iv sell fail for: " (-> ox .getDerivative .getTicker)) 
+        (println "Iv sell fail for: " (-> ox .getDerivative .getTicker))
         false)))
 
 
@@ -46,26 +47,17 @@
       false)
     false))
 
-
 (defn option->json [^DerivativePrice o]
   (let [d (.getDerivative o)
-        ivb (try
-             (.getIvBuy o)
-             (catch Exception e
-               -1))
-        ivs (if (< ivb 0)
-              -1
-              (try
-                (.getIvSell o)
-                (catch Exception e
-                  -1)))]
+        sp (.getStockPrice o)]
     ;(U/json-response
-    {:ticker (-> o .getDerivative .getTicker)
+    {:dx (CU/ld->str (.getLocalDx sp))
+     :ticker (-> o .getDerivative .getTicker)
      :days (.getDays o)
      :buy (.getBuy o)
      :sell (.getSell o)
-     :iv-buy ivb
-     :iv-sell ivs}))
+     :iv-buy (.getIvBuy o)
+     :iv-sell (.getIvSell o)}))
 
 (defn stock [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]

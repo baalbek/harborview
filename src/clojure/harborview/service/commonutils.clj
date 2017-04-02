@@ -12,3 +12,9 @@
           (let [ret (apply f args)]
             (swap! mem assoc arg0 ret)
             ret))))))
+
+(defn ld->str [v]
+  (let [y (.getYear v)
+        m (.getMonthValue v)
+        d (.getDayOfMonth v)]
+    (str y "-" m "-" d)))

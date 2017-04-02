@@ -11,7 +11,8 @@
     [selmer.parser :as P]
     [harborview.maunaloa.dbx :as DBX]
     [harborview.maunaloa.options :as OPX]
-    [harborview.service.htmlutils :as U]))
+    [harborview.service.htmlutils :as U]
+    [harborview.service.commonutils :as CU]))
 
 (def calc-itrend (Itrend.))
 
@@ -45,11 +46,6 @@
     (let [cur-diff (diff-days min-dx dx)]
       cur-diff)))
 
-(defn ld->str [v]
-  (let [y (.getYear v)
-        m (.getMonthValue v)
-        d (.getDayOfMonth v)]
-    (str y "-" m "-" d)))
 
 (def min-dx (LocalDate/of 2012 1 1))
 
@@ -82,8 +78,8 @@
        :x-axis (map hr dx) ; [0 50 100 150 200]
        :min-val min-val
        :max-val max-val
-       :min-dx (ld->str min-dx)
-       :max-dx (ld->str max-dx)})))
+       :min-dx (CU/ld->str min-dx)
+       :max-dx (CU/ld->str max-dx)})))
 
 (defn bean->candlestick [b]
   {:o (.getOpn b)
@@ -115,7 +111,7 @@
                  :bars nil
                  :cndl nil}
         :x-axis (reverse (map hr dx))
-        :min-dx (ld->str min-dx)})))
+        :min-dx (CU/ld->str min-dx)})))
 
 
 
@@ -135,8 +131,8 @@
         hr (hruler min-dx)]
     (U/json-response
         {
-          :min-dx (ld->str min-dx)
-          :dx (reverse (map ld->str dx))
+          :min-dx (CU/ld->str min-dx)
+          :dx (reverse (map CU/ld->str dx))
           :x-axis (reverse (map hr dx))})))
 
 (comment tickers []
