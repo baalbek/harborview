@@ -589,7 +589,7 @@ addNewProject m =
             mainUrl ++ "/newproject"
 
         params =
-            [ ( "pn", JE.string m.selectedProject ) ]
+            [ ( "pn", JE.string m.projName ) ]
     in
         addNewDbItem url params OnNewProject
 

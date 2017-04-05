@@ -49,8 +49,11 @@
 
   (POST "/newproject" request
     (let [jr (U/json-req-parse request)
-          ^ProjectBean result (DBX/insert-project (jr "pn"))]
-         (U/json-response (.getOid result))))
+          pn (jr "pn")
+          ^ProjectBean result (DBX/insert-project pn)
+          oid (.getOid result)]
+         (println "Oid: " (str oid) ", new project name: " pn)
+         (U/json-response oid)))
 
   (POST "/newlocation" request
     (let [jr (U/json-req-parse request)
@@ -81,8 +84,6 @@
           l2 (U/rs (jr "l2"))
           dsc (jr "el")
           ^ElementLoadBean new-element (DBX/insert-element sysid dsc elt n1 n2 plw w w2)]
-      (if (> l1 0)
-        (insert-load new-element (jr "l1") (jr "lf1") (jr "ff1")))
       (if (> l1 0)
         (insert-load new-element (jr "l1") (jr "lf1") (jr "ff1")))
       (if (> l2 0)
