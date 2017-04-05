@@ -1,6 +1,8 @@
 (ns harborview.vinapu.html
   (:import
-    [stearnswharf.vinapu.elements ElementLoadBean])
+    [stearnswharf.vinapu.elements ElementLoadBean]
+    [stearnswharf.geometry
+      ProjectBean LocationBean SystemBean])
   (:use
     [compojure.core :only (GET POST defroutes)])
   (:require
@@ -47,38 +49,40 @@
 
   (POST "/newproject" request
     (let [jr (U/json-req-parse request)
-          result (DBX/insert-project (jr "pn"))]
+          ^ProjectBean result (DBX/insert-project (jr "pn"))]
          (U/json-response (.getOid result))))
 
   (POST "/newlocation" request
     (let [jr (U/json-req-parse request)
-          result (DBX/insert-location (jr "pid") (jr "loc"))]
+          ^LocationBean result (DBX/insert-location (jr "pid") (jr "loc"))]
          (U/json-response (.getOid result))))
 
   (POST "/newsystem" request
     (let [jr (U/json-req-parse request)
-          result (DBX/insert-system (jr "loc") (jr "sys"))]
+          ^SystemBean result (DBX/insert-system (jr "loc") (jr "sys"))]
          (U/json-response (.getOid result))))
 
   (POST "/newelement" request
-    (let [insert-load (fn [new-el load-id load-factor form-factor])
-                      (DBX/insert-element-load
-                       (.getOid new-el)
-                       (U/rs load-id)
-                       (U/rs load-factor)
-                       (U/rs form-factor))]
-        jr (U/json-req-parse request)
-        sysid (U/rs (jr "sysid"))
-        elt (U/rs (jr "elt"))
-        n1 (U/rs (jr "n1"))
-        n2 (U/rs (jr "n2"))
-        plw (U/rs (jr "plw"))
-        w (U/rs (jr "w"))
-        w2 (U/rs (jr "w2"))
-        l1 (U/rs (jr "l1"))
-        l2 (U/rs (jr "l2"))
-        dsc (jr "el")
-        new-element (DBX/insert-element sysid dsc elt n1 n2 plw w w2)
+    (let [insert-load (fn [new-el load-id load-factor form-factor]
+                        (DBX/insert-element-load
+                           (.getOid ^ElementLoadBean new-el)
+                           (U/rs load-id)
+                           (U/rs load-factor)
+                           (U/rs form-factor)))
+          jr (U/json-req-parse request)
+          sysid (U/rs (jr "sysid"))
+          elt (U/rs (jr "elt"))
+          n1 (U/rs (jr "n1"))
+          n2 (U/rs (jr "n2"))
+          plw (U/rs (jr "plw"))
+          w (U/rs (jr "w"))
+          w2 (U/rs (jr "w2"))
+          l1 (U/rs (jr "l1"))
+          l2 (U/rs (jr "l2"))
+          dsc (jr "el")
+          ^ElementLoadBean new-element (DBX/insert-element sysid dsc elt n1 n2 plw w w2)]
+      (if (> l1 0)
+        (insert-load new-element (jr "l1") (jr "lf1") (jr "ff1")))
       (if (> l1 0)
         (insert-load new-element (jr "l1") (jr "lf1") (jr "ff1")))
       (if (> l2 0)

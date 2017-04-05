@@ -1,4 +1,7 @@
-(ns harborview.service.commonutils)
+(ns harborview.service.commonutils
+  (:import
+    [java.time LocalDate]))
+
 
 (defmacro defn-memo [name & body]
   `(def ~name (memoize (fn ~body))))
@@ -13,7 +16,7 @@
             (swap! mem assoc arg0 ret)
             ret))))))
 
-(defn ld->str [v]
+(defn ld->str [^LocalDate v]
   (let [y (.getYear v)
         m (.getMonthValue v)
         d (.getDayOfMonth v)]
