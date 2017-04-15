@@ -4,20 +4,20 @@
 
 ELM_VERSION="0.18"
 
-case "$1" in 
-    
+case "$1" in
+
     1) ELM="src/Vinapu/Projects.elm"
-       JS="elm-projects.js" 
-       TODIR="vinapu" 
+       JS="elm-projects.js"
+       TODIR="vinapu"
         ;;
 
     2) ELM="src/Maunaloa/Charts.elm"
-       JS="elm-charts.js" 
+       JS="elm-charts.js"
        TODIR="maunaloa"
         ;;
 
-    3) ELM="src/Maunaloa/Options.elm"
-       JS="elm-options.js" 
+    3) ELM="src/Maunaloa/Options/Main.elm"
+       JS="elm-options.js"
        TODIR="maunaloa"
         ;;
 esac

@@ -61,13 +61,15 @@ updateTix : MS.TickersMsg -> M.Model -> ( M.Model, Cmd MS.Msg )
 updateTix msg model =
     case msg of
         MS.TickersFetched (Ok s) ->
-            ( model, Cmd.none )
+            Debug.log "TickersFetched"
+                ( model, Cmd.none )
 
         MS.TickersFetched (Err s) ->
             ( model, Cmd.none )
 
         MS.FetchOptions s ->
-            ( model, Cmd.none )
+            Debug.log "FetchOptions"
+                ( model, Cmd.none )
 
 
 subscriptions : M.Model -> Sub MS.Msg
