@@ -13,6 +13,10 @@ import Maunaloa.Options.Msg as MS
 -- exposing (Msg(..))
 
 
+mainUrl =
+    "/maunaloa"
+
+
 main : Program Never M.Model MS.Msg
 main =
     H.program
@@ -25,12 +29,7 @@ main =
 
 init : ( M.Model, Cmd MS.Msg )
 init =
-    ( { tickerModel = { tickers = Nothing, selectedTicker = "-1" } }, Cmd.none )
-
-
-fx : String -> MS.Msg
-fx s =
-    MS.MsgForTickers (MS.FetchOptions s)
+    ( { tickerModel = { tickers = Nothing, selectedTicker = "-1" } }, fetchTickers )
 
 
 view : M.Model -> H.Html MS.Msg
@@ -47,6 +46,10 @@ view model =
         ]
 
 
+
+------------------- UPDATE --------------------
+
+
 update : MS.Msg -> M.Model -> ( M.Model, Cmd MS.Msg )
 update msg model =
     case msg of
@@ -61,15 +64,50 @@ updateTix : MS.TickersMsg -> M.Model -> ( M.Model, Cmd MS.Msg )
 updateTix msg model =
     case msg of
         MS.TickersFetched (Ok s) ->
-            Debug.log "TickersFetched"
-                ( model, Cmd.none )
+            let
+                tixM =
+                    model.tickerModel
+
+                tixMx =
+                    { tixM | tickers = Just s }
+            in
+                Debug.log "TickersFetched"
+                    ( { model
+                        | tickerModel = tixMx
+                      }
+                    , Cmd.none
+                    )
 
         MS.TickersFetched (Err s) ->
-            ( model, Cmd.none )
+            Debug.log ("TickersFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
 
         MS.FetchOptions s ->
             Debug.log "FetchOptions"
                 ( model, Cmd.none )
+
+
+
+------------------ COMMANDS ---------------------
+
+
+fetchTickers : Cmd MS.Msg
+fetchTickers =
+    let
+        url =
+            mainUrl ++ "/tickers"
+
+        result =
+            Http.get url CMB.comboBoxItemListDecoder
+
+        tixm =
+            Http.send (\x -> MS.MsgForTickers (MS.TickersFetched x)) <| result
+    in
+        tixm
+
+
+
+--Http.send MS.TickersFetched <| result
+---------------- SUBSCRIPTIONS ----------------
 
 
 subscriptions : M.Model -> Sub MS.Msg
