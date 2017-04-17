@@ -48,25 +48,28 @@
     false))
 
 (defn option->json [^DerivativePrice o]
-  (let [d (.getDerivative o)
-        sp (.getStockPrice o)]
+  (let [d (.getDerivative o)]
+        ;sp (.getStockPrice o)]
     ;(U/json-response
-    {:dx (CU/ld->str (.getLocalDx sp))
+    {;:dx (CU/ld->str (.getLocalDx sp))
      :ticker (-> o .getDerivative .getTicker)
      :days (.getDays o)
      :buy (.getBuy o)
      :sell (.getSell o)
-     :iv-buy (.getIvBuy o)
-     :iv-sell (.getIvSell o)}))
+     :iv-buy (CU/double->decimal (.getIvBuy o) 1000.0)
+     :iv-sell (CU/double->decimal (.getIvSell o) 1000.0)}))
+
+(defn stock->json [^StockPrice sp]
+  {:dx (CU/ld->str (.getLocalDx sp))})
 
 (defn stock [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]
     (.first parsed)))
 
-(defn calls [ticker]
+(defn-memo calls [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]
     (filter valid? (.second parsed))))
 
-(defn puts [ticker]
+(defn-memo puts [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]
     (filter valid? (.third parsed))))

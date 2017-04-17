@@ -21,8 +21,6 @@
 (defn create-freqs [f data-values freqs]
   (map #(f data-values %) freqs))
 
-(defn double->decimal [v]
-  (/ (Math/round (* v 10)) 10.0))
 
 (defn diff-days [d1 d2]
   (.between ChronoUnit/DAYS d1 d2))
@@ -31,7 +29,7 @@
   (let [pix-pr-v (/ h (- max-val min-val))]
     (fn [v]
       (let [diff (- max-val v)]
-        (double->decimal (double (* pix-pr-v diff)))))))
+        (CU/double->decimal (double (* pix-pr-v diff)))))))
 
 
 (comment hruler-static [w min-dx max-dx]
@@ -39,7 +37,7 @@
         pix-pr-h (/ w days)]
     (fn [dx]
       (let [cur-diff (diff-days min-dx dx)]
-        (double->decimal (double (* pix-pr-h cur-diff)))))))
+        (CU/double->decimal (double (* pix-pr-h cur-diff)))))))
 
 (defn hruler [min-dx]
   (fn [dx]
@@ -101,13 +99,13 @@
     (U/json-response
       {
         :chart {:lines [
-                        (reverse (map double->decimal itrend-10))
-                        (reverse (map double->decimal itrend-50))]
+                        (reverse (map CU/double->decimal itrend-10))
+                        (reverse (map CU/double->decimal itrend-50))]
                 :bars nil
                 :cndl (reverse (map #(bean->candlestick %) spot-objs))}
         :chart2 {:lines [
-                          (reverse (map double->decimal cc-10))
-                          (reverse (map double->decimal cc-50))]
+                          (reverse (map CU/double->decimal cc-10))
+                          (reverse (map CU/double->decimal cc-50))]
                  :bars nil
                  :cndl nil}
         :x-axis (reverse (map hr dx))

@@ -3,6 +3,8 @@ module Maunaloa.Options exposing (..)
 import Http
 import Html as H
 import Html.Attributes as A
+import Json.Decode.Pipeline as JP
+import Json.Decode as Json
 import Common.Miscellaneous as MISC
 import Common.ComboBox as CMB
 
@@ -33,11 +35,34 @@ init =
 
 
 ------------------- MODEL ---------------------
+-- {:dx "2017-3-31", :ticker "YAR7U240", :days 174.0, :buy 1.4, :sell 2.0, :iv-buy 0.313, :iv-sell 0.338}
+
+
+type alias Option =
+    { ticker : String
+    , days : Float
+    , buy : Float
+    , sell : Float
+    , ivBuy : Float
+    , ivSell : Float
+    }
+
+
+type alias Stock =
+    { dx : String
+    }
+
+
+type alias StockWithOptions =
+    { stock : Stock
+    , options : List Option
+    }
 
 
 type alias Model =
     { tickers : Maybe CMB.SelectItems
     , selectedTicker : String
+    , stockWithOptions : Maybe StockWithOptions
     }
 
 
@@ -45,6 +70,7 @@ initModel : Model
 initModel =
     { tickers = Nothing
     , selectedTicker = "-1"
+    , stockWithOptions = Nothing
     }
 
 
@@ -87,11 +113,35 @@ update msg model =
             Debug.log ("TickersFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
 
         FetchOptions s ->
-            ( model, Cmd.none )
+            ( { model | selectedTicker = s }, fetchOptions s )
 
 
 
 ------------------ COMMANDS ---------------------
+
+
+fetchOptions : String -> Cmd Msg
+fetchOptions s =
+    let
+        stockDecoder =
+            JP.decode Stock
+                |> JP.required "dx" Json.string
+
+        optionDecoder =
+            JP.decode Option
+                |> JP.required "ticker" Json.string
+                |> JP.required "days" Json.float
+                |> JP.required "buy" Json.float
+                |> JP.required "sell" Json.float
+                |> JP.required "iv-buy" Json.float
+                |> JP.required "iv-sell" Json.float
+
+        myDecoder =
+            JP.decode StockWithOptions
+                |> JP.required "stock" stockDecoder
+                |> JP.required "options" (Json.list optionDecoder)
+    in
+        Cmd.none
 
 
 fetchTickers : Cmd Msg
