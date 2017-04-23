@@ -4,6 +4,7 @@
     [java.sql Date]
     [org.springframework.context.support ClassPathXmlApplicationContext])
   (:require
+    [harborview.service.commonutils :as CU]
     [harborview.maunaloa.options :as OPX]))
 
   ;(:require))
@@ -22,6 +23,8 @@
 (defn etrade []
   (.getBean (factory) "etrade"))
 
+(def dd CU/double->decimal)
+(def dd2 CU/double->decimal2)
 (def calls OPX/calls)
 (def puts OPX/puts)
 (def json OPX/option->json)
