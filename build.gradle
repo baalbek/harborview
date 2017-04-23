@@ -94,13 +94,17 @@ task copydeps(type: Copy) {
 }
 
 task setupDist << {
-    //ant.symlink(resource: "/usr/local/java/jline-0.9.94.jar", link: "dist/jline-0.9.94.jar")
     ant.symlink(resource: "../src/resources/log4j.xml", link: "dist/log4j.xml")
     ant.symlink(resource: "../src/resources/public", link: "dist/public")
     ant.symlink(resource: "../src/resources/templates", link: "dist/templates")
-    ant.symlink(resource: "../src/clojure/harborview", link: "dist/harborview")
+    ant.symlink(resource: "../src/resources/harborview.xml", link: "dist/harborview.xml")
+    //ant.symlink(resource: "../src/clojure/harborview", link: "dist/harborview")
+    ant.symlink(resource: "../src/resources/dbcp.properties", link: "dist/dbcp.properties")
+    ant.symlink(resource: "../src/resources/mybatis.conf.xml", link: "dist/mybatis.conf.xml")
     ant.symlink(resource: "../src/resources/koteriku-dbcp.properties", link: "dist/koteriku-dbcp.properties")
     ant.symlink(resource: "../src/resources/koteriku-mybatis.conf.xml", link: "dist/koteriku-mybatis.conf.xml")
+    ant.symlink(resource: "../src/resources/ranoraraku-dbcp.properties", link: "dist/ranoraraku-dbcp.properties")
+    ant.symlink(resource: "../src/resources/ranoraraku-mybatis.conf.xml", link: "dist/ranoraraku-mybatis.conf.xml")
 }
 
 
