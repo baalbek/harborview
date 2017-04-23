@@ -36,13 +36,15 @@ view : M.Model -> H.Html MS.Msg
 view model =
     H.div [ A.class "container" ]
         [ H.div [ A.class "row" ]
-            [ --CMB.makeSelect "Tickers: " MS.FetchOptions model.tickerModel.tickers model.tickerModel.selectedTicker
-              H.select
-                [ E.onInput (\x -> MS.MsgForTickers (MS.FetchOptions x))
-                , A.class "form-control"
-                ]
-                []
+            [ CMB.makeSelect "Tickers: " (\x -> MS.MsgForTickers (MS.FetchOptions x)) model.tickerModel.tickers model.tickerModel.selectedTicker
             ]
+          {-
+             H.select
+               [ E.onInput (\x -> MS.MsgForTickers (MS.FetchOptions x))
+               , A.class "form-control"
+               ]
+               []
+          -}
         ]
 
 
@@ -82,7 +84,7 @@ updateTix msg model =
             Debug.log ("TickersFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
 
         MS.FetchOptions s ->
-            Debug.log "FetchOptions"
+            Debug.log ("FetchOptions" ++ s)
                 ( model, Cmd.none )
 
 
