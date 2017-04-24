@@ -15,8 +15,8 @@
 (defn fetch-group-sums [invoice]
   (DB/with-session :koteriku HourlistGroupMapper
     (let [result (.selectGroupBySpec it (U/rs invoice))
-          sumTotalBean (HourlistGroupBean.)
-          ]
+          sumTotalBean (HourlistGroupBean.)]
+
       (doto sumTotalBean
         (.setDescription "Sum total:")
         (.setSumHours (reduce + (map #(.getSumHours %) result))))
@@ -56,7 +56,7 @@
     (DB/with-session :koteriku HourlistMapper
       (if (nil? oid)
         (.insertHourlist it hb)
-        (do 
+        (do
           (.setOid hb (U/rs oid))
           (.updateHourlist it hb))))))
 
@@ -78,5 +78,3 @@
       (.setToTime to_time)
       (.setHours (Double. hours)))
     (.insertHourlist f hb)))
-
-

@@ -40,7 +40,7 @@
                              :opid opid})]
     (D/with-session :ranoraraku CritterMapper
       (.insertPurchase it opx))
-  opx))
+   opx))
 
 (defmacro derivatives [ticker-id javafn from-dx]
   `(let [session# ^SqlSession (.openSession (D/get-factory :ranoraraku))

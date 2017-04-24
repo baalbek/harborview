@@ -64,14 +64,14 @@
                   (= mva 2711) (* mva_25 amount)
                   (= mva 2713) (* mva_15 amount)
                   (= mva 2714) (* mva_08 amount))
-       gj-bean (GeneralJournalBean. bilag curdate credit debit desc (- amount calc-mva))
-       mva-bean (if (> calc-mva 0.0)
-                  (GeneralJournalBean. bilag curdate credit mva desc calc-mva)
-                  nil)]
+        gj-bean (GeneralJournalBean. bilag curdate credit debit desc (- amount calc-mva))
+        mva-bean (if (> calc-mva 0.0)
+                   (GeneralJournalBean. bilag curdate credit mva desc calc-mva)
+                   nil)]
     (LOG/info (str "Bilag: " bilag ", credit: " credit ", debit: " debit
                 ", amount: " amount ", mva: " mva ", mvaamt: " mvaamt
-                ", curdate: " curdate ", calc-mva: " calc-mva
-                ))
+                ", curdate: " curdate ", calc-mva: " calc-mva))
+
     (insert-generaljournal gj-bean mva-bean)
     gj-bean))
 
@@ -81,17 +81,12 @@
         amount  (U/rs amount)
         income (/ amount 1.25)
         mva (- amount income)
-             invoicenumx (U/rs invoicenum)
+            invoicenumx (U/rs invoicenum)
              ;descx (if (nil? desc) (str "Fakturanr " invoicenumx))
              desc (str "Fakturanr " invoicenumx)
              gj-bean-inc (GeneralJournalBean. bilag curdate 3700 1500 desc income)
              gj-bean-mva (GeneralJournalBean. bilag curdate 2700 1500 desc mva)]
-         (LOG/info (str "Invoice num: " invoicenum))
-         (insert-generaljournal gj-bean-inc gj-bean-mva)
-         (update-voucher bilag invoicenumx)
+       (LOG/info (str "Invoice num: " invoicenum))
+       (insert-generaljournal gj-bean-inc gj-bean-mva)
+       (update-voucher bilag invoicenumx)
      gj-bean-inc))
-
-
-
-
-
