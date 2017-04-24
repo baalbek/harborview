@@ -35,13 +35,13 @@
     {:items
      (map (fn [^HourlistBean x]
             {:oid (str (.getOid x))
-            :group (.getGroupId x)
+             :group (.getGroupId x)
              :desc (.getDescription x)
-            :fnr (str (.getInvoiceNr x))
-            :date (U/date->str (.getLocalDate x))
-            :hours (str (.getHours x))
-            :fromtime (.getFromTime x)
-            :totime (.getToTime x)})
+             :fnr (str (.getInvoiceNr x))
+             :date (U/date->str (.getLocalDate x))
+             :hours (str (.getHours x))
+             :fromtime (.getFromTime x)
+             :totime (.getToTime x)})
       (select-fn fnr))}))
 
 
@@ -56,7 +56,7 @@
     {:hourlistsums
       (map (fn [^HourlistGroupBean x]
                {:desc (.getDescription x)
-               :sum (str (.getSumHours x))})
+                :sum (str (.getSumHours x))})
         (DBX/fetch-group-sums fnr))}))
 
 (defroutes my-routes
@@ -79,5 +79,3 @@
     (do
       (DBX/update-hourlist fnr group curdate from_time to_time hours oid)
       (overview fnr DBX/fetch-all))))
-
-;(U/json-response {"
