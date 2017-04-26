@@ -48,21 +48,31 @@ type alias Option =
     }
 
 
-type alias Stock =
-    { dx : String
+type alias Options =
+    { puts : List Option
+    , calls : List Option
     }
 
 
-type alias StockWithOptions =
-    { stock : Stock
-    , options : List Option
-    }
+
+{-
+   type alias Stock =
+       { dx : String
+       }
+
+
+   type alias StockWithOptions =
+       { stock : Stock
+       , options : List Option
+       }
+
+-}
 
 
 type alias Model =
     { tickers : Maybe CMB.SelectItems
     , selectedTicker : String
-    , stockWithOptions : Maybe StockWithOptions
+    , options : Maybe Options
     }
 
 
@@ -70,7 +80,7 @@ initModel : Model
 initModel =
     { tickers = Nothing
     , selectedTicker = "-1"
-    , stockWithOptions = Nothing
+    , options = Nothing
     }
 
 
@@ -81,7 +91,7 @@ initModel =
 type Msg
     = TickersFetched (Result Http.Error CMB.SelectItems)
     | FetchOptions String
-    | OptionsFetched (Result Http.Error StockWithOptions)
+    | OptionsFetched (Result Http.Error Options)
 
 
 
@@ -117,7 +127,7 @@ update msg model =
             ( { model | selectedTicker = s }, fetchOptions s )
 
         OptionsFetched (Ok s) ->
-            ( { model | stockWithOptions = Just s }, Cmd.none )
+            ( { model | options = Just s }, Cmd.none )
 
         OptionsFetched (Err s) ->
             Debug.log ("OptionsFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
@@ -133,10 +143,6 @@ fetchOptions s =
         url =
             mainUrl ++ "/optionsticker?ticker=" ++ s
 
-        stockDecoder =
-            JP.decode Stock
-                |> JP.required "dx" Json.string
-
         optionDecoder =
             JP.decode Option
                 |> JP.required "ticker" Json.string
@@ -147,9 +153,9 @@ fetchOptions s =
                 |> JP.required "iv-sell" Json.float
 
         myDecoder =
-            JP.decode StockWithOptions
-                |> JP.required "stock" stockDecoder
-                |> JP.required "options" (Json.list optionDecoder)
+            JP.decode Options
+                |> JP.required "puts" (Json.list optionDecoder)
+                |> JP.required "calls" (Json.list optionDecoder)
     in
         Http.send OptionsFetched <|
             Http.get url myDecoder

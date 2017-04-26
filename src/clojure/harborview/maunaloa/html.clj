@@ -143,6 +143,11 @@
     (map (fn [x] (let [[v t] x] {"t" t "v" v}))
       [["2" "STL"] ["1" "NHY"] ["3" "YAR"]])))
 
+(defn options-ticker [ticker]
+  (U/json-response
+    {:puts (map OPX/option->json (OPX/puts ticker))
+     :calls (map OPX/option->json (OPX/calls ticker))}))
+
 (defn init-charts []
   (P/render-file "templates/maunaloa/charts.html" {}))
 
@@ -152,7 +157,7 @@
 (defroutes my-routes
   (GET "/charts" request (init-charts))
   (GET "/options" request (init-options))
-  (GET "/options" [ticker] (init-options))
+  (GET "/optionsticker" [ticker] (options-ticker ticker))
   (GET "/tickers" request (tickers))
   ;(GET "/th" [oid] (test-hruler (U/rs oid)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
