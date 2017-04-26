@@ -81,6 +81,7 @@ initModel =
 type Msg
     = TickersFetched (Result Http.Error CMB.SelectItems)
     | FetchOptions String
+    | OptionsFetched (Result Http.Error StockWithOptions)
 
 
 
@@ -115,6 +116,12 @@ update msg model =
         FetchOptions s ->
             ( { model | selectedTicker = s }, fetchOptions s )
 
+        OptionsFetched (Ok s) ->
+            ( { model | stockWithOptions = Just s }, Cmd.none )
+
+        OptionsFetched (Err s) ->
+            Debug.log ("OptionsFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
+
 
 
 ------------------ COMMANDS ---------------------
@@ -123,6 +130,9 @@ update msg model =
 fetchOptions : String -> Cmd Msg
 fetchOptions s =
     let
+        url =
+            mainUrl ++ "/optionsticker?ticker=" ++ s
+
         stockDecoder =
             JP.decode Stock
                 |> JP.required "dx" Json.string
@@ -141,7 +151,8 @@ fetchOptions s =
                 |> JP.required "stock" stockDecoder
                 |> JP.required "options" (Json.list optionDecoder)
     in
-        Cmd.none
+        Http.send OptionsFetched <|
+            Http.get url myDecoder
 
 
 fetchTickers : Cmd Msg

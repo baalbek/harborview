@@ -152,6 +152,7 @@
 (defroutes my-routes
   (GET "/charts" request (init-charts))
   (GET "/options" request (init-options))
+  (GET "/options" [ticker] (init-options))
   (GET "/tickers" request (tickers))
   ;(GET "/th" [oid] (test-hruler (U/rs oid)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
