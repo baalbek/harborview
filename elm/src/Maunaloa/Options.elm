@@ -48,7 +48,9 @@ type alias Option =
     }
 
 
-type alias Options =
+type alias Options = List Option
+
+type alias PutsCalls =
     { puts : List Option
     , calls : List Option
     }
@@ -72,7 +74,7 @@ type alias Options =
 type alias Model =
     { tickers : Maybe CMB.SelectItems
     , selectedTicker : String
-    , options : Maybe Options
+    , calls : Maybe Options
     }
 
 
@@ -80,7 +82,7 @@ initModel : Model
 initModel =
     { tickers = Nothing
     , selectedTicker = "-1"
-    , options = Nothing
+    , calls = Nothing
     }
 
 
@@ -90,21 +92,29 @@ initModel =
 
 type Msg
     = TickersFetched (Result Http.Error CMB.SelectItems)
-    | FetchOptions String
-    | OptionsFetched (Result Http.Error Options)
+    | FetchCalls String
+    | CallsFetched (Result Http.Error Options)
 
 
 
 -------------------- VIEW ---------------------
 
+optionToHtml : Option -> H.Html Msg 
+optionToHtml opt =
+    H.div [ A.class "container" ]
+    []
+    
 
 view : Model -> H.Html Msg
 view model =
-    H.div [ A.class "container" ]
-        [ H.div [ A.class "row" ]
-            [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
+    let
+        calls = Nothing
+    in
+        H.div [ A.class "container" ]
+            [ H.div [ A.class "row" ]
+                [ CMB.makeSelect "Tickers: " FetchCalls model.tickers model.selectedTicker
+                ]
             ]
-        ]
 
 
 
@@ -123,42 +133,58 @@ update msg model =
         TickersFetched (Err s) ->
             Debug.log ("TickersFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
 
-        FetchOptions s ->
-            ( { model | selectedTicker = s }, fetchOptions s )
+        FetchCalls s ->
+            ( { model | selectedTicker = s }, fetchCalls s )
 
-        OptionsFetched (Ok s) ->
-            ( { model | options = Just s }, Cmd.none )
+        CallsFetched (Ok s) ->
+            ( { model | calls = Just s }, Cmd.none )
 
-        OptionsFetched (Err s) ->
-            Debug.log ("OptionsFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
+        CallsFetched (Err s) ->
+            Debug.log ("CallsFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
 
 
 
 ------------------ COMMANDS ---------------------
 
+optionDecoder : Json.Decoder Option
+optionDecoder =
+    JP.decode Option
+        |> JP.required "ticker" Json.string
+        |> JP.required "days" Json.float
+        |> JP.required "buy" Json.float
+        |> JP.required "sell" Json.float
+        |> JP.required "iv-buy" Json.float
+        |> JP.required "iv-sell" Json.float
 
+fetchCalls : String -> Cmd Msg
+fetchCalls s = 
+    let
+        url =
+            mainUrl ++ "/calls?ticker=" ++ s
+
+        myDecoder = Json.list optionDecoder
+        --    JP.decode Options 
+        --        |> JP.required "calls" (Json.list optionDecoder)
+    in
+        Http.send CallsFetched <|
+            Http.get url myDecoder
+
+{-
 fetchOptions : String -> Cmd Msg
 fetchOptions s =
     let
         url =
             mainUrl ++ "/optionsticker?ticker=" ++ s
 
-        optionDecoder =
-            JP.decode Option
-                |> JP.required "ticker" Json.string
-                |> JP.required "days" Json.float
-                |> JP.required "buy" Json.float
-                |> JP.required "sell" Json.float
-                |> JP.required "iv-buy" Json.float
-                |> JP.required "iv-sell" Json.float
 
         myDecoder =
-            JP.decode Options
+            JP.decode PutsCalls 
                 |> JP.required "puts" (Json.list optionDecoder)
                 |> JP.required "calls" (Json.list optionDecoder)
     in
         Http.send OptionsFetched <|
             Http.get url myDecoder
+-}
 
 
 fetchTickers : Cmd Msg
