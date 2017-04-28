@@ -48,3 +48,5 @@
 (defn -main[args]
     (def server (run-jetty #'webapp {:port 8082 :join? false})))
     ;(def server (run-jetty #'webapp {:port 8443 :join? false :ssl? true :keystore "../local/harborview.ssl" :key-password "VhCHeUJ4"}))
+
+(-main 1)

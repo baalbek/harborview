@@ -150,11 +150,11 @@
 
 (defn puts [ticker]
   (U/json-response
-    {:puts (map OPX/option->json (OPX/puts ticker))}))
+    (puts (map OPX/option->json (OPX/puts ticker)))))
 
 (defn calls [ticker]
   (U/json-response
-    {:calls (map OPX/option->json (OPX/calls ticker))}))
+    (map OPX/option->json (OPX/calls "YAR"))))
 
 (defn init-charts []
   (P/render-file "templates/maunaloa/charts.html" {}))

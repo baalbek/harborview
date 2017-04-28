@@ -48,7 +48,9 @@ type alias Option =
     }
 
 
-type alias Options = List Option
+type alias Options =
+    List Option
+
 
 type alias PutsCalls =
     { puts : List Option
@@ -99,20 +101,63 @@ type Msg
 
 -------------------- VIEW ---------------------
 
-optionToHtml : Option -> H.Html Msg 
+
+optionToHtml : Option -> H.Html Msg
 optionToHtml opt =
-    H.div [ A.class "container" ]
-    []
-    
+    H.tr []
+        [ H.td []
+            [ H.text opt.ticker ]
+        , H.td []
+            [ H.text (toString opt.days) ]
+        , H.td []
+            [ H.text (toString opt.buy) ]
+        , H.td []
+            [ H.text (toString opt.sell) ]
+        , H.td []
+            [ H.text (toString opt.ivBuy) ]
+        , H.td []
+            [ H.text (toString opt.ivSell) ]
+        ]
+
+
+optionThead : H.Html Msg
+optionThead =
+    H.thead []
+        [ H.tr []
+            [ H.th []
+                [ H.text "Ticker" ]
+            , H.th []
+                [ H.text "Days" ]
+            , H.th []
+                [ H.text "Buy" ]
+            , H.th []
+                [ H.text "Sell" ]
+            , H.th []
+                [ H.text "Iv. buy" ]
+            , H.th []
+                [ H.text "Iv. sell" ]
+            ]
+        ]
+
 
 view : Model -> H.Html Msg
 view model =
     let
-        calls = Nothing
+        calls =
+            case model.calls of
+                Nothing ->
+                    [ optionThead ]
+
+                Just callx ->
+                    optionThead :: (List.map optionToHtml callx)
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
                 [ CMB.makeSelect "Tickers: " FetchCalls model.tickers model.selectedTicker
+                ]
+            , H.div [ A.class "row" ]
+                [ H.table [ A.class "table" ]
+                    calls
                 ]
             ]
 
@@ -137,6 +182,7 @@ update msg model =
             ( { model | selectedTicker = s }, fetchCalls s )
 
         CallsFetched (Ok s) ->
+            -- Debug.log "CallsFetched"
             ( { model | calls = Just s }, Cmd.none )
 
         CallsFetched (Err s) ->
@@ -145,6 +191,7 @@ update msg model =
 
 
 ------------------ COMMANDS ---------------------
+
 
 optionDecoder : Json.Decoder Option
 optionDecoder =
@@ -156,34 +203,39 @@ optionDecoder =
         |> JP.required "iv-buy" Json.float
         |> JP.required "iv-sell" Json.float
 
+
 fetchCalls : String -> Cmd Msg
-fetchCalls s = 
+fetchCalls s =
     let
         url =
             mainUrl ++ "/calls?ticker=" ++ s
 
-        myDecoder = Json.list optionDecoder
-        --    JP.decode Options 
+        myDecoder =
+            Json.list optionDecoder
+
+        --    JP.decode Options
         --        |> JP.required "calls" (Json.list optionDecoder)
     in
         Http.send CallsFetched <|
             Http.get url myDecoder
 
+
+
 {-
-fetchOptions : String -> Cmd Msg
-fetchOptions s =
-    let
-        url =
-            mainUrl ++ "/optionsticker?ticker=" ++ s
+   fetchOptions : String -> Cmd Msg
+   fetchOptions s =
+       let
+           url =
+               mainUrl ++ "/optionsticker?ticker=" ++ s
 
 
-        myDecoder =
-            JP.decode PutsCalls 
-                |> JP.required "puts" (Json.list optionDecoder)
-                |> JP.required "calls" (Json.list optionDecoder)
-    in
-        Http.send OptionsFetched <|
-            Http.get url myDecoder
+           myDecoder =
+               JP.decode PutsCalls
+                   |> JP.required "puts" (Json.list optionDecoder)
+                   |> JP.required "calls" (Json.list optionDecoder)
+       in
+           Http.send OptionsFetched <|
+               Http.get url myDecoder
 -}
 
 
