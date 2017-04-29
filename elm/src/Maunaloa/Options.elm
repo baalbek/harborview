@@ -13,9 +13,14 @@ mainUrl =
     "/maunaloa"
 
 
-main : Program Never Model Msg
+type alias Flags =
+    { isCalls : Bool
+    }
+
+
+main : Program Flags Model Msg
 main =
-    H.program
+    H.programWithFlags
         { init = init
         , view = view
         , update = update
@@ -28,9 +33,9 @@ main =
 -------------------- INIT ---------------------
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( initModel, fetchTickers )
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    ( initModel flags, fetchTickers )
 
 
 
@@ -77,14 +82,18 @@ type alias Model =
     { tickers : Maybe CMB.SelectItems
     , selectedTicker : String
     , calls : Maybe Options
+    , puts : Maybe Options
+    , flags : Flags
     }
 
 
-initModel : Model
-initModel =
+initModel : Flags -> Model
+initModel flags =
     { tickers = Nothing
     , selectedTicker = "-1"
     , calls = Nothing
+    , puts = Nothing
+    , flags = flags
     }
 
 
@@ -94,8 +103,8 @@ initModel =
 
 type Msg
     = TickersFetched (Result Http.Error CMB.SelectItems)
-    | FetchCalls String
-    | CallsFetched (Result Http.Error Options)
+    | FetchOptions String
+    | OptionsFetched (Result Http.Error Options)
 
 
 
@@ -143,8 +152,16 @@ optionThead =
 view : Model -> H.Html Msg
 view model =
     let
-        calls =
-            case model.calls of
+        derivativesFn =
+            case model.flags.isCalls of
+                True ->
+                    model.calls
+
+                False ->
+                    model.puts
+
+        derivatives =
+            case derivativesFn of
                 Nothing ->
                     [ optionThead ]
 
@@ -153,11 +170,11 @@ view model =
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
-                [ CMB.makeSelect "Tickers: " FetchCalls model.tickers model.selectedTicker
+                [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
                 ]
             , H.div [ A.class "row" ]
                 [ H.table [ A.class "table" ]
-                    calls
+                    derivatives
                 ]
             ]
 
@@ -178,15 +195,20 @@ update msg model =
         TickersFetched (Err s) ->
             Debug.log ("TickersFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
 
-        FetchCalls s ->
-            ( { model | selectedTicker = s }, fetchCalls s )
+        FetchOptions s ->
+            ( { model | selectedTicker = s }, fetchOptions model s )
 
-        CallsFetched (Ok s) ->
+        OptionsFetched (Ok s) ->
             -- Debug.log "CallsFetched"
-            ( { model | calls = Just s }, Cmd.none )
+            case model.flags.isCalls of
+                True ->
+                    ( { model | calls = Just s }, Cmd.none )
 
-        CallsFetched (Err s) ->
-            Debug.log ("CallsFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
+                False ->
+                    ( { model | puts = Just s }, Cmd.none )
+
+        OptionsFetched (Err s) ->
+            Debug.log ("OptionsFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
 
 
 
@@ -204,11 +226,16 @@ optionDecoder =
         |> JP.required "iv-sell" Json.float
 
 
-fetchCalls : String -> Cmd Msg
-fetchCalls s =
+fetchOptions : Model -> String -> Cmd Msg
+fetchOptions model s =
     let
         url =
-            mainUrl ++ "/calls?ticker=" ++ s
+            case model.flags.isCalls of
+                True ->
+                    mainUrl ++ "/calls?ticker=" ++ s
+
+                False ->
+                    mainUrl ++ "/puts?ticker=" ++ s
 
         myDecoder =
             Json.list optionDecoder
@@ -216,7 +243,7 @@ fetchCalls s =
         --    JP.decode Options
         --        |> JP.required "calls" (Json.list optionDecoder)
     in
-        Http.send CallsFetched <|
+        Http.send OptionsFetched <|
             Http.get url myDecoder
 
 
