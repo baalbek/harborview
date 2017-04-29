@@ -123,25 +123,23 @@
         weeks (DBX/candlestick-weeks-m oidi spot-objs)]
     (ticker-chart_ weeks)))
 
-(comment test-hruler [oid]
-  (let [spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))
-        dx (map #(.toLocalDate (.getDx %)) spot-objs)
-        hr (hruler min-dx)]
-    (U/json-response
-        {
-          :min-dx (CU/ld->str min-dx)
-          :dx (reverse (map CU/ld->str dx))
-          :x-axis (reverse (map hr dx))})))
+(CU/defn-memo tix->map []
+  (let [tix (DBX/fetch-tickers)]
+    (loop [result {} t tix]
+      (if (nil? t)
+        result
+        (let [tf (first t)
+              oid (.getOid tf)
+              ticker (.getTicker tf)]
+          (recur (assoc result (str oid) ticker) (next t)))))))
 
-(comment tickers []
-  (U/json-response
-    (map (fn [s] {"t" (.getTicker s) "v" (str (.getOid s))})
-      (DBX/fetch-tickers))))
+(comment db-tix []
+  (map (fn [s] {"t" (.getTicker s) "v" (str (.getOid s))})
+    (DBX/fetch-tickers)))
 
-(defn tickers []
+(CU/defn-memo tickers []
   (U/json-response
-    (map (fn [x] (let [[v t] x] {"t" t "v" v}))
-      [["2" "STL"] ["1" "NHY"] ["3" "YAR"]])))
+    (for [[oid ticker] (tix->map)] {"v" oid "t" ticker})))
 
 (defn putscalls [ticker]
   (U/json-response
@@ -150,11 +148,11 @@
 
 (defn puts [ticker]
   (U/json-response
-    (puts (map OPX/option->json (OPX/puts ticker)))))
+    (map OPX/option->json (OPX/puts ((tix->map) ticker)))))
 
 (defn calls [ticker]
   (U/json-response
-    (map OPX/option->json (OPX/calls "YAR"))))
+    (map OPX/option->json (OPX/calls ((tix->map) ticker)))))
 
 (defn init-charts []
   (P/render-file "templates/maunaloa/charts.html" {}))
