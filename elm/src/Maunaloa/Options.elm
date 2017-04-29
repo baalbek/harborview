@@ -57,12 +57,6 @@ type alias Options =
     List Option
 
 
-type alias PutsCalls =
-    { puts : List Option
-    , calls : List Option
-    }
-
-
 
 {-
    type alias Stock =
@@ -81,8 +75,7 @@ type alias PutsCalls =
 type alias Model =
     { tickers : Maybe CMB.SelectItems
     , selectedTicker : String
-    , calls : Maybe Options
-    , puts : Maybe Options
+    , options : Maybe Options
     , flags : Flags
     }
 
@@ -91,8 +84,7 @@ initModel : Flags -> Model
 initModel flags =
     { tickers = Nothing
     , selectedTicker = "-1"
-    , calls = Nothing
-    , puts = Nothing
+    , options = Nothing
     , flags = flags
     }
 
@@ -152,16 +144,8 @@ optionThead =
 view : Model -> H.Html Msg
 view model =
     let
-        derivativesFn =
-            case model.flags.isCalls of
-                True ->
-                    model.calls
-
-                False ->
-                    model.puts
-
         derivatives =
-            case derivativesFn of
+            case model.options of
                 Nothing ->
                     [ optionThead ]
 
@@ -200,12 +184,7 @@ update msg model =
 
         OptionsFetched (Ok s) ->
             -- Debug.log "CallsFetched"
-            case model.flags.isCalls of
-                True ->
-                    ( { model | calls = Just s }, Cmd.none )
-
-                False ->
-                    ( { model | puts = Just s }, Cmd.none )
+            ( { model | options = Just s }, Cmd.none )
 
         OptionsFetched (Err s) ->
             Debug.log ("OptionsFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
