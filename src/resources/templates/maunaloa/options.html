@@ -20,6 +20,29 @@
           <div class="container">
             <div id="my-app"></div>
           </div>
+          <!--
+          <table class="table" id="table-tmp">
+              <thead>
+                <tr>
+                    <th>Oid</th>
+                    <th>Status</th>
+                </tr>
+              </thead>
+              <tr>
+                <td>1</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>20</td>
+              </tr>
+            </table>
+        -->
+
         </div>
         <div id="puts" class="tab-pane">
           <div class="container">
@@ -35,8 +58,22 @@
         });
         var node2 = document.getElementById('my-app2');
         var app2 = Elm.Maunaloa.Options.embed(node2, {
-            isCalls : false 
+            isCalls : false
         });
+        var setDataTable = function (tableid) {
+          //$(tableid).DataTable();
+          $("#table-calls").DataTable();
+          $("#table-puts").DataTable();
+        };
+        var removeDataTable = function (tableid) {
+          var callsThead = $("#table-calls > thead");
+          var callsTbody = $("#table-calls > tbody");
+          callsThead.remove();
+          callsTbody.remove();
+        }
+        app1.ports.setDataTable.subscribe(setDataTable);
+        app2.ports.setDataTable.subscribe(setDataTable);
+
     </script>
 </body>
 </html>

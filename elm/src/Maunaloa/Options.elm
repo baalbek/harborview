@@ -1,10 +1,11 @@
-module Maunaloa.Options exposing (..)
+port module Maunaloa.Options exposing (..)
 
 import Http
 import Html as H
 import Html.Attributes as A
 import Json.Decode.Pipeline as JP
 import Json.Decode as Json
+import Html.Events as E
 import Common.Miscellaneous as MISC
 import Common.ComboBox as CMB
 
@@ -30,6 +31,20 @@ main =
 
 
 -------------------- PORTS ---------------------
+
+
+type alias DataTableInfo =
+    { tableid : String
+    }
+
+
+port setDataTable : DataTableInfo -> Cmd msg
+
+
+port removeDataTable : DataTableInfo -> Cmd msg
+
+
+
 -------------------- INIT ---------------------
 
 
@@ -97,6 +112,7 @@ type Msg
     = TickersFetched (Result Http.Error CMB.SelectItems)
     | FetchOptions String
     | OptionsFetched (Result Http.Error Options)
+    | DataTable
 
 
 
@@ -150,14 +166,26 @@ view model =
                     [ optionThead ]
 
                 Just callx ->
-                    optionThead :: (List.map optionToHtml callx)
+                    -- optionThead :: (List.map optionToHtml callx)
+                    [ optionThead, H.tbody [] (List.map optionToHtml callx) ]
+
+        tableId =
+            case model.flags.isCalls of
+                True ->
+                    "table-calls"
+
+                False ->
+                    "table-puts"
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
+                [ H.button [ A.class "btn btn-default", E.onClick DataTable ] [ H.text "DataTable" ]
+                ]
+            , H.div [ A.class "row" ]
                 [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
                 ]
             , H.div [ A.class "row" ]
-                [ H.table [ A.class "table" ]
+                [ H.table [ A.class "table", A.id tableId ]
                     derivatives
                 ]
             ]
@@ -165,6 +193,20 @@ view model =
 
 
 ------------------- UPDATE --------------------
+
+
+tableInfo : Model -> DataTableInfo
+tableInfo model =
+    let
+        tableId =
+            case model.flags.isCalls of
+                True ->
+                    "#table-calls"
+
+                False ->
+                    "#table-puts"
+    in
+        DataTableInfo tableId
 
 
 update msg model =
@@ -184,10 +226,13 @@ update msg model =
 
         OptionsFetched (Ok s) ->
             -- Debug.log "CallsFetched"
-            ( { model | options = Just s }, Cmd.none )
+            ( { model | options = Just s }, removeDataTable (tableInfo model) )
 
         OptionsFetched (Err s) ->
             Debug.log ("OptionsFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
+
+        DataTable ->
+            ( model, setDataTable (tableInfo model) )
 
 
 
