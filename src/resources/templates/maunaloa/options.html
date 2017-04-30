@@ -60,19 +60,6 @@
         var app2 = Elm.Maunaloa.Options.embed(node2, {
             isCalls : false
         });
-        var setDataTable = function (tableid) {
-          //$(tableid).DataTable();
-          $("#table-calls").DataTable();
-          $("#table-puts").DataTable();
-        };
-        var removeDataTable = function (tableid) {
-          var callsThead = $("#table-calls > thead");
-          var callsTbody = $("#table-calls > tbody");
-          callsThead.remove();
-          callsTbody.remove();
-        }
-        app1.ports.setDataTable.subscribe(setDataTable);
-        app2.ports.setDataTable.subscribe(setDataTable);
 
     </script>
 </body>

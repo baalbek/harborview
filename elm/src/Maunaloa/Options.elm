@@ -1,4 +1,4 @@
-port module Maunaloa.Options exposing (..)
+module Maunaloa.Options exposing (..)
 
 import Http
 import Html as H
@@ -31,20 +31,6 @@ main =
 
 
 -------------------- PORTS ---------------------
-
-
-type alias DataTableInfo =
-    { tableid : String
-    }
-
-
-port setDataTable : DataTableInfo -> Cmd msg
-
-
-port removeDataTable : DataTableInfo -> Cmd msg
-
-
-
 -------------------- INIT ---------------------
 
 
@@ -112,7 +98,6 @@ type Msg
     = TickersFetched (Result Http.Error CMB.SelectItems)
     | FetchOptions String
     | OptionsFetched (Result Http.Error Options)
-    | DataTable
 
 
 
@@ -166,7 +151,6 @@ view model =
                     [ optionThead ]
 
                 Just callx ->
-                    -- optionThead :: (List.map optionToHtml callx)
                     [ optionThead, H.tbody [] (List.map optionToHtml callx) ]
 
         tableId =
@@ -179,9 +163,6 @@ view model =
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
-                [ H.button [ A.class "btn btn-default", E.onClick DataTable ] [ H.text "DataTable" ]
-                ]
-            , H.div [ A.class "row" ]
                 [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
                 ]
             , H.div [ A.class "row" ]
@@ -193,20 +174,6 @@ view model =
 
 
 ------------------- UPDATE --------------------
-
-
-tableInfo : Model -> DataTableInfo
-tableInfo model =
-    let
-        tableId =
-            case model.flags.isCalls of
-                True ->
-                    "#table-calls"
-
-                False ->
-                    "#table-puts"
-    in
-        DataTableInfo tableId
 
 
 update msg model =
@@ -226,13 +193,10 @@ update msg model =
 
         OptionsFetched (Ok s) ->
             -- Debug.log "CallsFetched"
-            ( { model | options = Just s }, removeDataTable (tableInfo model) )
+            ( { model | options = Just s }, Cmd.none )
 
         OptionsFetched (Err s) ->
             Debug.log ("OptionsFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
-
-        DataTable ->
-            ( model, setDataTable (tableInfo model) )
 
 
 
