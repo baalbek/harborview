@@ -6,6 +6,7 @@ import Html.Attributes as A
 import Json.Decode.Pipeline as JP
 import Json.Decode as Json
 import Html.Events as E
+import Material.Table as Table
 import Common.Miscellaneous as MISC
 import Common.ComboBox as CMB
 
@@ -106,37 +107,37 @@ type Msg
 
 optionToHtml : Option -> H.Html Msg
 optionToHtml opt =
-    H.tr []
-        [ H.td []
+    Table.tr []
+        [ Table.td []
             [ H.text opt.ticker ]
-        , H.td []
+        , Table.td []
             [ H.text (toString opt.days) ]
-        , H.td []
+        , Table.td []
             [ H.text (toString opt.buy) ]
-        , H.td []
+        , Table.td []
             [ H.text (toString opt.sell) ]
-        , H.td []
+        , Table.td []
             [ H.text (toString opt.ivBuy) ]
-        , H.td []
+        , Table.td []
             [ H.text (toString opt.ivSell) ]
         ]
 
 
 optionThead : H.Html Msg
 optionThead =
-    H.thead []
-        [ H.tr []
-            [ H.th []
+    Table.thead []
+        [ Table.tr []
+            [ Table.th []
                 [ H.text "Ticker" ]
-            , H.th []
+            , Table.th []
                 [ H.text "Days" ]
-            , H.th []
+            , Table.th []
                 [ H.text "Buy" ]
-            , H.th []
+            , Table.th []
                 [ H.text "Sell" ]
-            , H.th []
+            , Table.th []
                 [ H.text "Iv. buy" ]
-            , H.th []
+            , Table.th []
                 [ H.text "Iv. sell" ]
             ]
         ]
@@ -151,7 +152,7 @@ view model =
                     [ optionThead ]
 
                 Just callx ->
-                    [ optionThead, H.tbody [] (List.map optionToHtml callx) ]
+                    [ optionThead, Table.tbody [] (List.map optionToHtml callx) ]
 
         tableId =
             case model.flags.isCalls of
@@ -166,7 +167,7 @@ view model =
                 [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
                 ]
             , H.div [ A.class "row" ]
-                [ H.table [ A.class "table", A.id tableId ]
+                [ Table.table []
                     derivatives
                 ]
             ]
