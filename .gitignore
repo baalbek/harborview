@@ -25,5 +25,6 @@ src/resources/public/js/elm/
 *.swo
 One.elm
 *.log
+reflection_warning
 
 
