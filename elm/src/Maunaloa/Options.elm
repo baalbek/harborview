@@ -6,6 +6,7 @@ import Html.Attributes as A
 import Json.Decode.Pipeline as JP
 import Json.Decode as Json
 import Html.Events as E
+import Table exposing (defaultCustomizations)
 import Common.Miscellaneous as MISC
 import Common.ComboBox as CMB
 
@@ -78,6 +79,7 @@ type alias Model =
     , selectedTicker : String
     , options : Maybe Options
     , flags : Flags
+    , tableState : Table.State
     }
 
 
@@ -87,6 +89,7 @@ initModel flags =
     , selectedTicker = "-1"
     , options = Nothing
     , flags = flags
+    , tableState = Table.initialSort "Year"
     }
 
 

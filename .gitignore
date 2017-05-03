@@ -26,5 +26,5 @@ src/resources/public/js/elm/
 One.elm
 *.log
 reflection_warning
-
+elm/elm-stuff.mdl_table/
 
