@@ -89,11 +89,38 @@ initModel flags =
     , selectedTicker = "-1"
     , options = Nothing
     , flags = flags
-    , tableState = Table.initialSort "Year"
+    , tableState = Table.initialSort "ivBuy"
     }
 
 
+------------------- TABLE CONFIGURATION ---------------------
 
+config : Table.Config Option Msg
+config =
+  Table.customConfig
+    { toId = .ticker
+    , toMsg = SetTableState
+    , columns =
+        [ 
+         Table.stringColumn "Ticker" .ticker
+        , Table.floatColumn "Days" .days
+        , Table.floatColumn "Buy" .buy
+        , Table.floatColumn "Sell" .sell
+        , Table.floatColumn "IvBuy" .ivBuy
+        , Table.floatColumn "IvSell" .ivSell
+        ]
+    , customizations =
+         defaultCustomizations 
+        -- { defaultCustomizations | rowAttrs = toRowAttrs }
+    }
+
+{-
+toRowAttrs : Option -> List (Attribute Msg)
+toRowAttrs opt =
+  [ onClick (ToggleSelected opt.ticker)
+  , style [ ("background", if sight.selected then "#CEFAF8" else "white") ]
+  ]
+-}
 ------------------- TYPES ---------------------
 
 
@@ -101,6 +128,7 @@ type Msg
     = TickersFetched (Result Http.Error CMB.SelectItems)
     | FetchOptions String
     | OptionsFetched (Result Http.Error Options)
+    | SetTableState Table.State
 
 
 
@@ -201,6 +229,10 @@ update msg model =
         OptionsFetched (Err s) ->
             Debug.log ("OptionsFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
 
+        SetTableState newState ->
+            ( { model | tableState = newState }
+            , Cmd.none
+            )
 
 
 ------------------ COMMANDS ---------------------
