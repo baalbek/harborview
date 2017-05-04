@@ -139,85 +139,19 @@ type Msg
 -------------------- VIEW ---------------------
 
 
-optionToHtml : Option -> H.Html Msg
-optionToHtml opt =
-    H.tr []
-        [ H.td []
-            [ H.text opt.ticker ]
-        , H.td []
-            [ H.text (toString opt.days) ]
-        , H.td []
-            [ H.text (toString opt.buy) ]
-        , H.td []
-            [ H.text (toString opt.sell) ]
-        , H.td []
-            [ H.text (toString opt.ivBuy) ]
-        , H.td []
-            [ H.text (toString opt.ivSell) ]
-        ]
-
-
-optionThead : H.Html Msg
-optionThead =
-    H.thead []
-        [ H.tr []
-            [ H.th []
-                [ H.text "Ticker" ]
-            , H.th []
-                [ H.text "Days" ]
-            , H.th []
-                [ H.text "Buy" ]
-            , H.th []
-                [ H.text "Sell" ]
-            , H.th []
-                [ H.text "Iv. buy" ]
-            , H.th []
-                [ H.text "Iv. sell" ]
-            ]
-        ]
-
-
 view : Model -> H.Html Msg
 view model =
     let
-        {-
-           derivatives =
-               case model.options of
-                   Nothing ->
-                       [ optionThead ]
-
-                   Just callx ->
-                       [ optionThead, H.tbody [] (List.map optionToHtml callx) ]
-
-           tableId =
-               case model.flags.isCalls of
-                   True ->
-                       "table-calls"
-
-                   False ->
-                       "table-puts"
-        -}
-        derivatives =
-            case model.options of
-                Nothing ->
-                    []
-
-                Just opx ->
-                    opx
+        opx =
+            Maybe.withDefault [] model.options
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
                 [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
                 ]
             , H.div [ A.class "row" ]
-                [ Table.view config model.tableState derivatives
+                [ Table.view config model.tableState opx
                 ]
-
-            {-
-               [ H.table [ A.class "table", A.id tableId ]
-                   derivatives
-               ]
-            -}
             ]
 
 
@@ -287,25 +221,6 @@ fetchOptions model s =
     in
         Http.send OptionsFetched <|
             Http.get url myDecoder
-
-
-
-{-
-   fetchOptions : String -> Cmd Msg
-   fetchOptions s =
-       let
-           url =
-               mainUrl ++ "/optionsticker?ticker=" ++ s
-
-
-           myDecoder =
-               JP.decode PutsCalls
-                   |> JP.required "puts" (Json.list optionDecoder)
-                   |> JP.required "calls" (Json.list optionDecoder)
-       in
-           Http.send OptionsFetched <|
-               Http.get url myDecoder
--}
 
 
 fetchTickers : Cmd Msg
