@@ -89,37 +89,41 @@ initModel flags =
     , selectedTicker = "-1"
     , options = Nothing
     , flags = flags
-    , tableState = Table.initialSort "ivBuy"
+    , tableState = Table.initialSort "Ticker"
     }
+
 
 
 ------------------- TABLE CONFIGURATION ---------------------
 
+
 config : Table.Config Option Msg
 config =
-  Table.customConfig
-    { toId = .ticker
-    , toMsg = SetTableState
-    , columns =
-        [ 
-         Table.stringColumn "Ticker" .ticker
-        , Table.floatColumn "Days" .days
-        , Table.floatColumn "Buy" .buy
-        , Table.floatColumn "Sell" .sell
-        , Table.floatColumn "IvBuy" .ivBuy
-        , Table.floatColumn "IvSell" .ivSell
-        ]
-    , customizations =
-         defaultCustomizations 
+    Table.customConfig
+        { toId = .ticker
+        , toMsg = SetTableState
+        , columns =
+            [ Table.stringColumn "Ticker" .ticker
+            , Table.floatColumn "Days" .days
+            , Table.floatColumn "Buy" .buy
+            , Table.floatColumn "Sell" .sell
+            , Table.floatColumn "IvBuy" .ivBuy
+            , Table.floatColumn "IvSell" .ivSell
+            ]
+        , customizations =
+            defaultCustomizations
+
         -- { defaultCustomizations | rowAttrs = toRowAttrs }
-    }
+        }
+
+
 
 {-
-toRowAttrs : Option -> List (Attribute Msg)
-toRowAttrs opt =
-  [ onClick (ToggleSelected opt.ticker)
-  , style [ ("background", if sight.selected then "#CEFAF8" else "white") ]
-  ]
+   toRowAttrs : Option -> List (Attribute Msg)
+   toRowAttrs opt =
+     [ onClick (ToggleSelected opt.ticker)
+     , style [ ("background", if sight.selected then "#CEFAF8" else "white") ]
+     ]
 -}
 ------------------- TYPES ---------------------
 
@@ -176,30 +180,44 @@ optionThead =
 view : Model -> H.Html Msg
 view model =
     let
+        {-
+           derivatives =
+               case model.options of
+                   Nothing ->
+                       [ optionThead ]
+
+                   Just callx ->
+                       [ optionThead, H.tbody [] (List.map optionToHtml callx) ]
+
+           tableId =
+               case model.flags.isCalls of
+                   True ->
+                       "table-calls"
+
+                   False ->
+                       "table-puts"
+        -}
         derivatives =
             case model.options of
                 Nothing ->
-                    [ optionThead ]
+                    []
 
-                Just callx ->
-                    [ optionThead, H.tbody [] (List.map optionToHtml callx) ]
-
-        tableId =
-            case model.flags.isCalls of
-                True ->
-                    "table-calls"
-
-                False ->
-                    "table-puts"
+                Just opx ->
+                    opx
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
                 [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
                 ]
             , H.div [ A.class "row" ]
-                [ H.table [ A.class "table", A.id tableId ]
-                    derivatives
+                [ Table.view config model.tableState derivatives
                 ]
+
+            {-
+               [ H.table [ A.class "table", A.id tableId ]
+                   derivatives
+               ]
+            -}
             ]
 
 
@@ -233,6 +251,7 @@ update msg model =
             ( { model | tableState = newState }
             , Cmd.none
             )
+
 
 
 ------------------ COMMANDS ---------------------
