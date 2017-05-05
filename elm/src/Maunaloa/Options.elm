@@ -9,6 +9,7 @@ import Html.Events as E
 import Table exposing (defaultCustomizations)
 import Common.Miscellaneous as MISC
 import Common.ComboBox as CMB
+import Common.Buttons as BTN
 
 
 mainUrl =
@@ -133,11 +134,14 @@ type Msg
     | FetchOptions String
     | OptionsFetched (Result Http.Error Options)
     | SetTableState Table.State
+    | ResetCache
 
 
 
 -------------------- VIEW ---------------------
 
+button_ =
+    BTN.button "col-sm-3"
 
 view : Model -> H.Html Msg
 view model =
@@ -147,7 +151,9 @@ view model =
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
-                [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
+                [ 
+                 button_ "Reset Cache" ResetCache
+                 , CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
                 ]
             , H.div [ A.class "row" ]
                 [ Table.view config model.tableState opx
@@ -185,6 +191,8 @@ update msg model =
             ( { model | tableState = newState }
             , Cmd.none
             )
+
+        ResetCache -> ( model, Cmd.none)
 
 
 

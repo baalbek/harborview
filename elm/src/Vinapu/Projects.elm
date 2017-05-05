@@ -12,7 +12,7 @@ import VirtualDom as VD
 import Task
 import String
 import Common.Miscellaneous as CM exposing (makeLabel, makeInput, onChange, makeFGRInput)
-import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
+import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeButton, modalDialog)
 import Common.ComboBox
     exposing
         ( ComboBoxItem
@@ -47,7 +47,7 @@ mainUrl =
 
 
 makeOpenDlgButton_ =
-    makeOpenDlgButton "col-sm-3"
+    button "col-sm-3"
 
 
 

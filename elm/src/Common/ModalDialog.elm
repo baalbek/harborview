@@ -4,7 +4,6 @@ module Common.ModalDialog
         , dlgOpen
         , dlgClose
         , modalDialog
-        , makeOpenDlgButton
         )
 
 import VirtualDom as VD
@@ -61,12 +60,3 @@ modalDialog title md ok cancel content =
             ]
 
 
-makeOpenDlgButton :
-    String
-    -> String
-    -> a
-    -> VD.Node a
-makeOpenDlgButton clazz caption clickEvent =
-    H.div [ A.class clazz ]
-        [ H.button [ A.class "btn btn-default", E.onClick clickEvent ] [ H.text caption ]
-        ]
