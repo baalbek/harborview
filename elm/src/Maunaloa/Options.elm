@@ -53,6 +53,7 @@ type alias Option =
     , sell : Float
     , ivBuy : Float
     , ivSell : Float
+    , selected : Bool
     }
 
 
@@ -104,7 +105,8 @@ config =
         { toId = .ticker
         , toMsg = SetTableState
         , columns =
-            [ Table.stringColumn "Ticker" .ticker
+            [ checkboxColumn
+            , Table.stringColumn "Ticker" .ticker
             , Table.floatColumn "Days" .days
             , Table.floatColumn "Buy" .buy
             , Table.floatColumn "Sell" .sell
@@ -112,20 +114,41 @@ config =
             , Table.floatColumn "IvSell" .ivSell
             ]
         , customizations =
-            defaultCustomizations
-
-        -- { defaultCustomizations | rowAttrs = toRowAttrs }
+            { defaultCustomizations | rowAttrs = toRowAttrs }
         }
 
 
+toRowAttrs : Option -> List (H.Attribute Msg)
+toRowAttrs opt =
+    [ E.onClick (ToggleSelected opt.ticker)
+    , A.style
+        [ ( "background"
+          , if opt.selected then
+                "#CEFAF8"
+            else
+                "white"
+          )
+        ]
+    ]
 
-{-
-   toRowAttrs : Option -> List (Attribute Msg)
-   toRowAttrs opt =
-     [ onClick (ToggleSelected opt.ticker)
-     , style [ ("background", if sight.selected then "#CEFAF8" else "white") ]
-     ]
--}
+
+checkboxColumn : Table.Column Option Msg
+checkboxColumn =
+    Table.veryCustomColumn
+        { name = ""
+        , viewData = viewCheckbox
+        , sorter = Table.unsortable
+        }
+
+
+viewCheckbox : Option -> Table.HtmlDetails Msg
+viewCheckbox { selected } =
+    Table.HtmlDetails []
+        [ H.input [ A.type_ "checkbox", A.checked selected ] []
+        ]
+
+
+
 ------------------- TYPES ---------------------
 
 
@@ -135,6 +158,7 @@ type Msg
     | OptionsFetched (Result Http.Error Options)
     | SetTableState Table.State
     | ResetCache
+    | ToggleSelected String
 
 
 
@@ -196,6 +220,24 @@ update msg model =
         ResetCache ->
             ( model, Cmd.none )
 
+        ToggleSelected ticker ->
+            case model.options of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just optionx ->
+                    ( { model | options = Just (List.map (toggle ticker) optionx) }
+                    , Cmd.none
+                    )
+
+
+toggle : String -> Option -> Option
+toggle ticker opt =
+    if opt.ticker == ticker then
+        { opt | selected = not opt.selected }
+    else
+        opt
+
 
 
 ------------------ COMMANDS ---------------------
@@ -210,6 +252,7 @@ optionDecoder =
         |> JP.required "sell" Json.float
         |> JP.required "iv-buy" Json.float
         |> JP.required "iv-sell" Json.float
+        |> JP.hardcoded False
 
 
 fetchOptions : Model -> String -> Cmd Msg
