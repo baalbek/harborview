@@ -1,10 +1,13 @@
 (ns harborview.maunaloa.options
   (:import
+    [java.io IOException File FileOutputStream FileNotFoundException]
+    [java.time LocalTime LocalDate]
     [org.springframework.beans.factory BeanFactory]
     [org.springframework.context.support ClassPathXmlApplicationContext]
     [oahu.dto Tuple3]
     [oahu.financial Derivative DerivativePrice StockPrice]
-    [oahu.financial.repository EtradeRepository])
+    [oahu.financial.repository EtradeRepository]
+    [oahu.financial.html EtradeDownloader])
   (:use
     [harborview.service.commonutils :only (defn-memo)])
   (:require
@@ -20,9 +23,44 @@
   (let [^BeanFactory factory (spring-context)]
     (.getBean factory bn)))
 
+(defn today-feed [feed]
+  (let [dx (LocalDate/now)
+        y (.getYear dx)
+        m (-> dx .getMonth .getValue)
+        d (.getDayOfMonth dx)]
+    (str feed "/" y "/" m "/" d)))
+
+(defn check-file [feed t]
+  (let [t-now (LocalTime/now)
+        cur-file (str (today-feed feed) "/" t "-" (.getHour t-now) "." (.getMinute t-now) ".html")
+        out (File. cur-file)
+        pout (.getParentFile out)]
+    (if (= (.exists pout) false)
+      (.mkdirs pout))
+    (if (= (.exists out) false)
+      (.createNewFile out))
+    out))
+
+(defn-memo save-page [ticker]
+  (let [my-feed "../feed"
+        ^EtradeDownloader dl (get-bean "downloader")
+        page (.downloadDerivatives dl ticker)
+        out (check-file my-feed ticker)]
+    (try
+      (let [contentInBytes (-> page .getWebResponse .getContentAsString .getBytes)
+            fop (FileOutputStream. out)]
+        (.write fop contentInBytes)
+        (doto fop
+          .flush
+          .close))
+      (catch IOException e
+        (println (str "Could not save: " out ", " (.getMessage e)))))
+    out))
+
 (defn-memo parse-html [ticker]
-  (let [^EtradeRepository e (get-bean "etrade")]
-    (.parseHtmlFor e ticker nil)))
+  (let [^EtradeRepository e (get-bean "etrade")
+        page (save-page ticker)]
+    (.parseHtmlFor e ticker page)))
 
 (defn check-implied-vol [ox]
   (try
@@ -36,7 +74,7 @@
         (println "Iv buy <= 0 for: " (-> ox .getDerivative .getTicker))
         false))
     (catch Exception ex
-        (println "Iv sell fail for: " (-> ox .getDerivative .getTicker))
+        (println "Iv sell fail for: " (-> ox .getDerivative .getTicker) ", " (.getMessage ex))
         false)))
 
 

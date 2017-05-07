@@ -140,8 +140,10 @@ type Msg
 
 -------------------- VIEW ---------------------
 
+
 button_ =
     BTN.button "col-sm-3"
+
 
 view : Model -> H.Html Msg
 view model =
@@ -151,9 +153,8 @@ view model =
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
-                [ 
-                 button_ "Reset Cache" ResetCache
-                 , CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
+                [ button_ "Reset Cache" ResetCache
+                , CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
                 ]
             , H.div [ A.class "row" ]
                 [ Table.view config model.tableState opx
@@ -181,7 +182,7 @@ update msg model =
             ( { model | selectedTicker = s }, fetchOptions model s )
 
         OptionsFetched (Ok s) ->
-            -- Debug.log "CallsFetched"
+            --Debug.log "OptionsFetched"
             ( { model | options = Just s }, Cmd.none )
 
         OptionsFetched (Err s) ->
@@ -192,7 +193,8 @@ update msg model =
             , Cmd.none
             )
 
-        ResetCache -> ( model, Cmd.none)
+        ResetCache ->
+            ( model, Cmd.none )
 
 
 
