@@ -525,15 +525,15 @@ view model =
 
 
 -- COMMANDS
-
-
-asHttpBody : List ( String, JE.Value ) -> Http.Body
-asHttpBody lx =
-    let
-        x =
-            JE.object lx
-    in
-        Http.stringBody "application/json" (JE.encode 0 x)
+{-
+   asHttpBody : List ( String, JE.Value ) -> Http.Body
+   asHttpBody lx =
+       let
+           x =
+               JE.object lx
+       in
+           Http.stringBody "application/json" (JE.encode 0 x)
+-}
 
 
 addNewElement : Model -> Cmd Msg
@@ -551,7 +551,7 @@ addNewElement m =
                     JE.string w2
 
         jbody =
-            asHttpBody
+            CM.asHttpBody
                 [ ( "sysid", JE.string m.selectedSystem )
                 , ( "el", JE.string m.elementDesc )
                 , ( "elt", JE.string m.elementType )
@@ -576,7 +576,7 @@ addNewDbItem : String -> List ( String, JE.Value ) -> (Result Http.Error Int -> 
 addNewDbItem url params msg =
     let
         jbody =
-            asHttpBody params
+            CM.asHttpBody params
     in
         Http.send msg <|
             Http.post url jbody Json.int

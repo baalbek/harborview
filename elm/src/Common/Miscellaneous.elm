@@ -1,6 +1,7 @@
 module Common.Miscellaneous exposing (..)
 
 import Json.Decode as JD
+import Json.Encode as JE
 import VirtualDom as VD
 import Http
 import Html as H
@@ -8,6 +9,15 @@ import Html.Attributes as A
 import Html.Events as E
 import Date exposing (Date, fromString)
 import Tuple exposing (first, second)
+
+
+asHttpBody : List ( String, JE.Value ) -> Http.Body
+asHttpBody lx =
+    let
+        x =
+            JE.object lx
+    in
+        Http.stringBody "application/json" (JE.encode 0 x)
 
 
 httpErr2str : Http.Error -> String

@@ -95,7 +95,8 @@
      :buy (.getBuy o)
      :sell (.getSell o)
      :iv-buy (CU/double->decimal (.getIvBuy o) 1000.0)
-     :iv-sell (CU/double->decimal (.getIvSell o) 1000.0)}))
+     :iv-sell (CU/double->decimal (.getIvSell o) 1000.0)
+     :br-even (CU/double->decimal (.getBreakEven o) 1000.0)}))
 
 (defn stock->json [^StockPrice sp]
   {:dx (CU/ld->str (.getLocalDx sp))})

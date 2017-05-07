@@ -53,6 +53,7 @@ type alias Option =
     , sell : Float
     , ivBuy : Float
     , ivSell : Float
+    , breakEven : Float
     , selected : Bool
     }
 
@@ -112,6 +113,8 @@ config =
             , Table.floatColumn "Sell" .sell
             , Table.floatColumn "IvBuy" .ivBuy
             , Table.floatColumn "IvSell" .ivSell
+            , Table.floatColumn "Break-Even" .breakEven
+            , Table.floatColumn "Risc" (\x -> 0.0)
             ]
         , customizations =
             { defaultCustomizations | rowAttrs = toRowAttrs }
@@ -158,6 +161,7 @@ type Msg
     | OptionsFetched (Result Http.Error Options)
     | SetTableState Table.State
     | ResetCache
+    | CalcRisc
     | ToggleSelected String
 
 
@@ -177,8 +181,10 @@ view model =
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
-                [ button_ "Reset Cache" ResetCache
-                , CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker
+                [ button_ "Calc Risc" CalcRisc
+                , button_ "Reset Cache" ResetCache
+                , H.div [ A.class "col-sm-3" ]
+                    [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker ]
                 ]
             , H.div [ A.class "row" ]
                 [ Table.view config model.tableState opx
@@ -220,6 +226,9 @@ update msg model =
         ResetCache ->
             ( model, Cmd.none )
 
+        CalcRisc ->
+            ( model, Cmd.none )
+
         ToggleSelected ticker ->
             case model.options of
                 Nothing ->
@@ -243,6 +252,18 @@ toggle ticker opt =
 ------------------ COMMANDS ---------------------
 
 
+calcRisc : Model -> Cmd Msg
+calcRisc model =
+    let
+        opx =
+            Maybe.withDefault [] model.options
+
+        checked =
+            List.filter (\x -> x.selected == True) opx
+    in
+        Cmd.none
+
+
 optionDecoder : Json.Decoder Option
 optionDecoder =
     JP.decode Option
@@ -252,6 +273,7 @@ optionDecoder =
         |> JP.required "sell" Json.float
         |> JP.required "iv-buy" Json.float
         |> JP.required "iv-sell" Json.float
+        |> JP.required "br-even" Json.float
         |> JP.hardcoded False
 
 
