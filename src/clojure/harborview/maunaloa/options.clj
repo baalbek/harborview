@@ -41,7 +41,7 @@
       (.createNewFile out))
     out))
 
-(defn-memo save-page [ticker]
+(defn save-page [ticker]
   (let [my-feed "../feed"
         ^EtradeDownloader dl (get-bean "downloader")
         page (.downloadDerivatives dl ticker)
