@@ -45,6 +45,14 @@ init flags =
 ------------------- MODEL ---------------------
 -- {:dx "2017-3-31", :ticker "YAR7U240", :days 174.0, :buy 1.4, :sell 2.0, :iv-buy 0.313, :iv-sell 0.338}
 
+type alias Stock = 
+    { opn : Float 
+    , hi : Float 
+    , lo : Float 
+    , spot : Float 
+    , date : String
+    , time : String
+    }
 
 type alias Option =
     { ticker : String
@@ -62,6 +70,10 @@ type alias Options =
     List Option
 
 
+type alias StockAndOptions
+    { stock : Stock
+    , opx : Options
+    }
 
 {-
    type alias Stock =
@@ -80,6 +92,7 @@ type alias Options =
 type alias Model =
     { tickers : Maybe CMB.SelectItems
     , selectedTicker : String
+    , stock : Maybe Stock
     , options : Maybe Options
     , flags : Flags
     , tableState : Table.State
@@ -90,6 +103,7 @@ initModel : Flags -> Model
 initModel flags =
     { tickers = Nothing
     , selectedTicker = "-1"
+    , stock = Nothing
     , options = Nothing
     , flags = flags
     , tableState = Table.initialSort "Ticker"
@@ -277,6 +291,16 @@ optionDecoder =
         |> JP.hardcoded False
 
 
+stockDecoder : Json.Decoder Stock 
+stockDecoder = 
+    JP.decode Stock
+        |> JP.required "opn" Json.float
+        |> JP.required "hi" Json.float
+        |> JP.required "lo" Json.float
+        |> JP.required "spot" Json.float
+        |> JP.required "dx" Json.string
+        |> JP.required "tm" Json.string
+
 fetchOptions : Model -> String -> Bool -> Cmd Msg
 fetchOptions model s resetCache =
     let
@@ -299,10 +323,11 @@ fetchOptions model s resetCache =
                             mainUrl ++ "/puts?ticker=" ++ s
 
         myDecoder =
-            Json.list optionDecoder
+            -- Json.list optionDecoder
 
-        --    JP.decode Options
-        --        |> JP.required "calls" (Json.list optionDecoder)
+            JP.decode StockAndOptions
+                |> JP.required "stock" stockDecoder
+                |> JP.required "options" (Json.list optionDecoder)
     in
         Http.send OptionsFetched <|
             Http.get url myDecoder

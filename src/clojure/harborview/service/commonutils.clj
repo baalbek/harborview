@@ -3,8 +3,6 @@
     [java.time LocalDate]))
 
 
-(defmacro defn-memo [name & body]
-  `(def ~name (memoize (fn ~body))))
 
 (def ^:dynamic *reset-cache* false)
 
@@ -12,6 +10,7 @@
   (let [mem (atom {})]
     (fn [& args]
       (let [arg0 (first args)]
+        (println "arg0 " arg0)
         (if-let [e (find @mem arg0)]
           (val e)
           (let [ret (apply f args)]
@@ -31,6 +30,12 @@
           (let [ret (apply f args)]
             (swap! mem assoc arg0 ret)
             ret))))))
+
+(defmacro defn-memb [name & body]
+  `(def ~name (mem-binding (fn ~body))))
+
+(defmacro defn-memo [name & body]
+  `(def ~name (memoize (fn ~body))))
 
 (defn ld->str [^LocalDate v]
   (let [y (.getYear v)
