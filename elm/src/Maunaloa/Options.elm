@@ -209,7 +209,7 @@ update msg model =
             Debug.log ("TickersFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
 
         FetchOptions s ->
-            ( { model | selectedTicker = s }, fetchOptions model s )
+            ( { model | selectedTicker = s }, fetchOptions model s False )
 
         OptionsFetched (Ok s) ->
             --Debug.log "OptionsFetched"
@@ -224,7 +224,7 @@ update msg model =
             )
 
         ResetCache ->
-            ( model, Cmd.none )
+            ( model , fetchOptions model model.selectedTicker True)
 
         CalcRisc ->
             ( model, Cmd.none )
@@ -277,16 +277,26 @@ optionDecoder =
         |> JP.hardcoded False
 
 
-fetchOptions : Model -> String -> Cmd Msg
-fetchOptions model s =
+fetchOptions : Model -> String -> Bool -> Cmd Msg
+fetchOptions model s resetCache =
     let
         url =
             case model.flags.isCalls of
                 True ->
-                    mainUrl ++ "/calls?ticker=" ++ s
+                    case resetCache of 
+                        True ->
+                            mainUrl ++ "/resetcalls?ticker=" ++ s
+
+                        False ->
+                            mainUrl ++ "/calls?ticker=" ++ s
 
                 False ->
-                    mainUrl ++ "/puts?ticker=" ++ s
+                    case resetCache of 
+                        True ->
+                            mainUrl ++ "/resetputs?ticker=" ++ s
+
+                        False ->
+                            mainUrl ++ "/puts?ticker=" ++ s
 
         myDecoder =
             Json.list optionDecoder

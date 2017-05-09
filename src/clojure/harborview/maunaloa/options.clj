@@ -9,7 +9,7 @@
     [oahu.financial.repository EtradeRepository]
     [oahu.financial.html EtradeDownloader])
   (:use
-    [harborview.service.commonutils :only (defn-memo)])
+    [harborview.service.commonutils :only (defn-memo,mem-binding,*reset-cache*)])
   (:require
     [harborview.service.commonutils :as CU]
     [harborview.service.htmlutils :as U]))
@@ -57,10 +57,10 @@
         (println (str "Could not save: " out ", " (.getMessage e)))))
     out))
 
-(defn-memo parse-html [ticker]
+(def parse-html (mem-binding (fn [ticker]
   (let [^EtradeRepository e (get-bean "etrade")
         page (save-page ticker)]
-    (.parseHtmlFor e ticker page)))
+    (.parseHtmlFor e ticker page)))))
 
 (defn check-implied-vol [ox]
   (try
@@ -105,10 +105,10 @@
   (let [^Tuple3 parsed (parse-html ticker)]
     (.first parsed)))
 
-(defn-memo calls [ticker]
+(def calls (mem-binding (fn [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]
-    (filter valid? (.second parsed))))
+    (filter valid? (.second parsed))))))
 
-(defn-memo puts [ticker]
+(def puts (mem-binding ( fn [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]
-    (filter valid? (.third parsed))))
+    (filter valid? (.third parsed))))))

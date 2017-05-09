@@ -167,6 +167,8 @@
   (GET "/optiontickers" request (init-options))
   (GET "/puts" [ticker] (puts ticker))
   (GET "/calls" [ticker] (calls ticker))
+  (GET "/resetcalls" [ticker] (binding [CU/*reset-cache* true] (calls ticker)))
+  (GET "/resetputs" [ticker] (binding [CU/*reset-cache* true] (puts ticker)))
   (GET "/tickers" request (tickers))
   ;(GET "/th" [oid] (test-hruler (U/rs oid)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
