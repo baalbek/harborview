@@ -45,14 +45,16 @@ init flags =
 ------------------- MODEL ---------------------
 -- {:dx "2017-3-31", :ticker "YAR7U240", :days 174.0, :buy 1.4, :sell 2.0, :iv-buy 0.313, :iv-sell 0.338}
 
-type alias Stock = 
-    { opn : Float 
-    , hi : Float 
-    , lo : Float 
-    , spot : Float 
-    , date : String
+
+type alias Stock =
+    { date : String
     , time : String
+    , opn : Float
+    , hi : Float
+    , lo : Float
+    , spot : Float
     }
+
 
 type alias Option =
     { ticker : String
@@ -70,10 +72,12 @@ type alias Options =
     List Option
 
 
-type alias StockAndOptions
+type alias StockAndOptions =
     { stock : Stock
     , opx : Options
     }
+
+
 
 {-
    type alias Stock =
@@ -92,8 +96,9 @@ type alias StockAndOptions
 type alias Model =
     { tickers : Maybe CMB.SelectItems
     , selectedTicker : String
-    , stock : Maybe Stock
-    , options : Maybe Options
+    , stockOptions : Maybe StockAndOptions
+
+    -- , options : Maybe Options
     , flags : Flags
     , tableState : Table.State
     }
@@ -103,11 +108,22 @@ initModel : Flags -> Model
 initModel flags =
     { tickers = Nothing
     , selectedTicker = "-1"
-    , stock = Nothing
-    , options = Nothing
+    , stockOptions = Nothing
+
+    -- , options = Nothing
     , flags = flags
     , tableState = Table.initialSort "Ticker"
     }
+
+
+currentOptions : Model -> Options
+currentOptions model =
+    case model.stockOptions of
+        Nothing ->
+            []
+
+        Just sao ->
+            sao.opx
 
 
 
@@ -172,7 +188,7 @@ viewCheckbox { selected } =
 type Msg
     = TickersFetched (Result Http.Error CMB.SelectItems)
     | FetchOptions String
-    | OptionsFetched (Result Http.Error Options)
+    | OptionsFetched (Result Http.Error StockAndOptions)
     | SetTableState Table.State
     | ResetCache
     | CalcRisc
@@ -189,21 +205,17 @@ button_ =
 
 view : Model -> H.Html Msg
 view model =
-    let
-        opx =
-            Maybe.withDefault [] model.options
-    in
-        H.div [ A.class "container" ]
-            [ H.div [ A.class "row" ]
-                [ button_ "Calc Risc" CalcRisc
-                , button_ "Reset Cache" ResetCache
-                , H.div [ A.class "col-sm-3" ]
-                    [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker ]
-                ]
-            , H.div [ A.class "row" ]
-                [ Table.view config model.tableState opx
-                ]
+    H.div [ A.class "container" ]
+        [ H.div [ A.class "row" ]
+            [ button_ "Calc Risc" CalcRisc
+            , button_ "Reset Cache" ResetCache
+            , H.div [ A.class "col-sm-3" ]
+                [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker ]
             ]
+        , H.div [ A.class "row" ]
+            [ Table.view config model.tableState (currentOptions model)
+            ]
+        ]
 
 
 
@@ -227,7 +239,7 @@ update msg model =
 
         OptionsFetched (Ok s) ->
             --Debug.log "OptionsFetched"
-            ( { model | options = Just s }, Cmd.none )
+            ( { model | stockOptions = Just s }, Cmd.none )
 
         OptionsFetched (Err s) ->
             Debug.log ("OptionsFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
@@ -238,20 +250,26 @@ update msg model =
             )
 
         ResetCache ->
-            ( model , fetchOptions model model.selectedTicker True)
+            ( model, fetchOptions model model.selectedTicker True )
 
         CalcRisc ->
             ( model, Cmd.none )
 
         ToggleSelected ticker ->
-            case model.options of
+            case model.stockOptions of
                 Nothing ->
                     ( model, Cmd.none )
 
                 Just optionx ->
-                    ( { model | options = Just (List.map (toggle ticker) optionx) }
-                    , Cmd.none
-                    )
+                    ( model, Cmd.none )
+
+
+
+{-
+   ( { model | options = Just (List.map (toggle ticker) optionx) }
+   , Cmd.none
+   )
+-}
 
 
 toggle : String -> Option -> Option
@@ -269,11 +287,8 @@ toggle ticker opt =
 calcRisc : Model -> Cmd Msg
 calcRisc model =
     let
-        opx =
-            Maybe.withDefault [] model.options
-
         checked =
-            List.filter (\x -> x.selected == True) opx
+            List.filter (\x -> x.selected == True) (currentOptions model)
     in
         Cmd.none
 
@@ -291,15 +306,16 @@ optionDecoder =
         |> JP.hardcoded False
 
 
-stockDecoder : Json.Decoder Stock 
-stockDecoder = 
+stockDecoder : Json.Decoder Stock
+stockDecoder =
     JP.decode Stock
+        |> JP.required "dx" Json.string
+        |> JP.required "tm" Json.string
         |> JP.required "opn" Json.float
         |> JP.required "hi" Json.float
         |> JP.required "lo" Json.float
         |> JP.required "spot" Json.float
-        |> JP.required "dx" Json.string
-        |> JP.required "tm" Json.string
+
 
 fetchOptions : Model -> String -> Bool -> Cmd Msg
 fetchOptions model s resetCache =
@@ -307,7 +323,7 @@ fetchOptions model s resetCache =
         url =
             case model.flags.isCalls of
                 True ->
-                    case resetCache of 
+                    case resetCache of
                         True ->
                             mainUrl ++ "/resetcalls?ticker=" ++ s
 
@@ -315,7 +331,7 @@ fetchOptions model s resetCache =
                             mainUrl ++ "/calls?ticker=" ++ s
 
                 False ->
-                    case resetCache of 
+                    case resetCache of
                         True ->
                             mainUrl ++ "/resetputs?ticker=" ++ s
 
@@ -324,7 +340,6 @@ fetchOptions model s resetCache =
 
         myDecoder =
             -- Json.list optionDecoder
-
             JP.decode StockAndOptions
                 |> JP.required "stock" stockDecoder
                 |> JP.required "options" (Json.list optionDecoder)

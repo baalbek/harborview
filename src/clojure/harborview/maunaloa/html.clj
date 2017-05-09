@@ -147,14 +147,19 @@
      :calls (map OPX/option->json (OPX/calls ticker))}))
 
 (defn puts [ticker]
-  (U/json-response
-    {:options 
-      (map OPX/option->json (OPX/puts ((tix->map) ticker)))}))
+  (let [tick-str ((tix->map) ticker)]
+    (U/json-response
+      {:stock
+        (OPX/stock->json (.get (OPX/stock tick-str)))
+       :options
+        (map OPX/option->json (OPX/puts  tick-str))})))
 
 (defn calls [ticker]
   (let [tick-str ((tix->map) ticker)]
     (U/json-response
-      {:options 
+      {:stock
+        (OPX/stock->json (.get (OPX/stock tick-str)))
+       :options
         (map OPX/option->json (OPX/calls tick-str))})))
 
 (defn init-charts []

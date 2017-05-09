@@ -99,8 +99,13 @@
      :iv-sell (CU/double->decimal (.getIvSell o) 1000.0)
      :br-even (CU/double->decimal (.getBreakEven o) 1000.0)}))
 
-(defn stock->json [^StockPrice sp]
-  {:dx (CU/ld->str (.getLocalDx sp))})
+(defn stock->json [^StockPrice s]
+  {:dx (CU/ld->str (.getLocalDx s))
+   :tm (CU/tm->str (.getTm s))
+   :opn (.getOpn s)
+   :hi (.getHi s)
+   :lo (.getLo s)
+   :spot (.getCls s)})
 
 (defn stock [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]

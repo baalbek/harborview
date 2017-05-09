@@ -1,6 +1,6 @@
 (ns harborview.service.commonutils
   (:import
-    [java.time LocalDate]))
+    [java.time LocalDate LocalTime]))
 
 
 
@@ -36,6 +36,11 @@
 
 (defmacro defn-memo [name & body]
   `(def ~name (memoize (fn ~body))))
+
+(defn tm->str [^LocalTime t]
+  (let [h (.getHour t)
+        m (.getMinute t)]
+    (str h ":" m)))
 
 (defn ld->str [^LocalDate v]
   (let [y (.getYear v)
