@@ -98,6 +98,7 @@ type alias Model =
     , selectedTicker : String
     , stock : Maybe Stock
     , options : Maybe Options
+    , risc : String
     , flags : Flags
     , tableState : Table.State
     }
@@ -109,6 +110,7 @@ initModel flags =
     , selectedTicker = "-1"
     , stock = Nothing
     , options = Nothing
+    , risc = "0.0"
     , flags = flags
     , tableState = Table.initialSort "Ticker"
     }
@@ -180,6 +182,7 @@ type Msg
     | SetTableState Table.State
     | ResetCache
     | CalcRisc
+    | RiscChange String
     | ToggleSelected String
 
 
@@ -188,7 +191,7 @@ type Msg
 
 
 button_ =
-    BTN.button "col-sm-3"
+    BTN.button "col-sm-2"
 
 
 view : Model -> H.Html Msg
@@ -196,10 +199,23 @@ view model =
     let
         opx =
             Maybe.withDefault [] model.options
+
+        stockInfo =
+            case model.stock of
+                Nothing ->
+                    ""
+
+                Just sx ->
+                    -- "Spot: " ++ (toString sx.spot)
+                    toString sx
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
-                [ button_ "Calc Risc" CalcRisc
+                [ H.div [ A.class "col-sm-3" ]
+                    [ H.text stockInfo ]
+                , button_ "Calc Risc" CalcRisc
+                , H.div [ A.class "col-sm-2" ]
+                    [ H.input [ A.placeholder "Risc", E.onInput RiscChange ] [] ]
                 , button_ "Reset Cache" ResetCache
                 , H.div [ A.class "col-sm-3" ]
                     [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker ]
@@ -246,6 +262,10 @@ update msg model =
 
         CalcRisc ->
             ( model, Cmd.none )
+
+        RiscChange s ->
+            --Debug.log "RiscChange"
+            ( { model | risc = s }, Cmd.none )
 
         ToggleSelected ticker ->
             case model.options of
