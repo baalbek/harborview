@@ -30,3 +30,15 @@
 
 (defn etrade []
   (.getBean (factory) "etrade"))
+
+(defn calc []
+  (.getBean (factory) "calculator"))
+
+(def calls OPX/calls)
+
+(defn opx [ticker coll]
+  (first
+    (filter #(.equals (-> % .getDerivative .getTicker) ticker) coll)))
+
+(defn c []
+  (opx "YAR7G325" (calls "YAR")))

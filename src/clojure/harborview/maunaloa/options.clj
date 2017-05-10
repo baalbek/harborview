@@ -32,7 +32,7 @@
 
 (defn check-file [feed t]
   (let [t-now (LocalTime/now)
-        cur-file (str (today-feed feed) "/" t "-" (.getHour t-now) "." (.getMinute t-now) ".html")
+        cur-file (str (today-feed feed) "/" t "-" (.getHour t-now) "_" (.getMinute t-now) ".html")
         out (File. cur-file)
         pout (.getParentFile out)]
     (if (= (.exists pout) false)
@@ -57,12 +57,12 @@
         (println (str "Could not save: " out ", " (.getMessage e)))))
     out))
 
-(defn-memb parse-html [ticker]
+(comment parse-html [ticker]
   (let [^EtradeRepository e (get-bean "etrade")
         page (save-page ticker)]
     (.parseHtmlFor e ticker page)))
 
-(comment parse-html [ticker]
+(defn-memb parse-html [ticker]
   (let [^EtradeRepository e (get-bean "etrade")]
     (.parseHtmlFor e ticker nil)))
 
