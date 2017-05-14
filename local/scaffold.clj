@@ -2,7 +2,8 @@
   (:import
     [java.time LocalDate]
     [java.sql Date]
-    [org.springframework.context.support ClassPathXmlApplicationContext])
+    [org.springframework.context.support ClassPathXmlApplicationContext]
+    [ org.bson.types ObjectId])
   (:require
     [monger.core :as mg]
     [monger.collection :as mc]
@@ -21,13 +22,28 @@
 
 ;(def conn (atom (mg/connect {:host "172.17.0.3"})))
 
+(defn id []
+  (ObjectId.))
+
 (def conn
   (memoize
     (fn []
       (mg/connect {:host "172.17.0.3"}))))
 
 (defn db []
-  (mg/get-db  "maunaloa"))
+  ;(mg/get-db  "maunaloa")
+  (mg/get-db  (conn) "monger-test"))
+
+
+(defn insert []
+  ;(mc/insert-and-return (db) "documents" {:name "John" :age 30})
+  (let [
+        db   (mg/get-db (conn) "monger-test")
+        oid  (ObjectId.)
+        doc  {:_id oid :first_name "Alpakka" :last_name "Shurt"}]
+    ;(mc/insert db "documents" (merge doc {:_id oid}))))
+    (prn oid)
+    (mc/insert db "documents" doc)))
 
 (defn lt []
   (let [x [[1 1] [2 2] [3 3]]]
