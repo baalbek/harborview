@@ -17,9 +17,13 @@
     {:name (str account " - " text) :value (str account)}))
 
 (defn general-journal []
-  (P/render-file "templates/generaljournal/generaljournal.html"
-    {:ns4102 (map ns4102->select (DBX/fetch-ns4102))
-     :bilag (-> (DBX/fetch-by-bilag) first .getBilag inc str)}))
+  (let [bilag (first (DBX/fetch-by-bilag))
+        bilag-dx (.getTransactionDate bilag)]
+    (prn bilag-dx)
+    (P/render-file "templates/generaljournal/generaljournal.html"
+      {:ns4102 (map ns4102->select (DBX/fetch-ns4102))
+       :bilag (-> bilag .getBilag inc str)
+       :bilag-dx bilag-dx})))
 
 
 (defroutes my-routes
