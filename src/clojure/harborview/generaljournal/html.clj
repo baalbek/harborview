@@ -18,15 +18,15 @@
 
 (defn general-journal []
   (P/render-file "templates/generaljournal/generaljournal.html"
-    {:ns4102 (map ns4102->select (DBX/fetch-ns4102))}))
+    {:ns4102 (map ns4102->select (DBX/fetch-ns4102))
+     :bilag (-> (DBX/fetch-by-bilag) first .getBilag inc str)}))
 
 
 (defroutes my-routes
-  (GET "/" request (general-journal)))
-
-  ;(PUT "/insert" [credit debit curdate bilag desc amount mva mvaamt]
-  ;  (let [gj-bean (DBX/insert bilag curdate credit debit desc amount mva mvaamt)]
-  ;    (U/json-response {"beanId" (.getId gj-bean) "bilag" (-> bilag read-string inc str)})))
-  ;(PUT "/insertinvoice" [curdate bilag amount invoicenum]
-  ;  (let [gj-bean (DBX/insert-invoice bilag curdate amount invoicenum)]
-  ;    (U/json-response {"beanId" (.getId gj-bean) "bilag" (-> bilag read-string inc str)}))))
+  (GET "/" request (general-journal))
+  (PUT "/insert" [credit debit curdate bilag desc amount mva mvaamt]
+    (let [gj-bean (DBX/insert bilag curdate credit debit desc amount mva mvaamt)]
+      (U/json-response {"beanId" (.getId gj-bean) "bilag" (-> bilag read-string inc str)})))
+  (PUT "/insertinvoice" [curdate bilag amount invoicenum]
+    (let [gj-bean (DBX/insert-invoice bilag curdate amount invoicenum)]
+      (U/json-response {"beanId" (.getId gj-bean) "bilag" (-> bilag read-string inc str)}))))

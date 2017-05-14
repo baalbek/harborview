@@ -26,10 +26,10 @@
 ;;;--------------------------- KO TE RIKU  -------------------------
 ;;;-----------------------------------------------------------------
 
-(def fetch-by-bilag
-  (memoize (fn []
-             (DB/with-session :koteriku GeneralJournalMapper
-               (.selectByBilag it)))))
+(defn fetch-by-bilag []
+  ;(memoize (fn []
+  (DB/with-session :koteriku GeneralJournalMapper
+    (.selectByBilag it)))
 
 
 (def fetch-ns4102

@@ -70,8 +70,12 @@ dependencies {
     //------------------- Colt -------------------
     runtime "colt:colt:$coltVersion"
 
+    //------------------- Common -------------------
     compile "commons-codec:commons-codec:1.10"
     compile "commons-logging:commons-logging:1.2"
+
+    //------------------- MongoDB -------------------
+    compile "com.novemberain:monger:$mongerVersion"
 
     //------------------- Database -------------------
     runtime "org.mybatis:mybatis:$mybatisVersion"
@@ -165,4 +169,3 @@ buildscript {
 }
 
 apply plugin: 'rcstadheim.palenque'
-

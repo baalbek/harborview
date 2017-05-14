@@ -4,6 +4,8 @@
     [java.sql Date]
     [org.springframework.context.support ClassPathXmlApplicationContext])
   (:require
+    [monger.core :as mg]
+    [monger.collection :as mc]
     [harborview.service.commonutils :as CU]
     [harborview.maunaloa.options :as OPX]))
 
@@ -14,6 +16,18 @@
     ;[harborview.maunaloa.dbx :as MAUX]
     ;[harborview.service.db :as DB]
     ;[harborview.service.htmlutils :as U]))
+
+;(def conn (atom (mg/connect-via-uri mongo-uri)))
+
+;(def conn (atom (mg/connect {:host "172.17.0.3"})))
+
+(def conn
+  (memoize
+    (fn []
+      (mg/connect {:host "172.17.0.3"}))))
+
+(defn db []
+  (mg/get-db  "maunaloa"))
 
 (defn lt []
   (let [x [[1 1] [2 2] [3 3]]]

@@ -16,6 +16,7 @@
 		[colt/colt "1.2.0"]
 		[commons-codec/commons-codec "1.10"]
 		[commons-logging/commons-logging "1.2"]
+		[com.novemberain/monger "3.1.0"]
 		[org.mybatis/mybatis "3.4.2"]
 		[org.postgresql/postgresql "42.0.0"]
 		[log4j/log4j "1.2.17"]
@@ -23,6 +24,7 @@
 		[org.springframework/spring-core "4.2.3.RELEASE"]
 		[org.springframework/spring-context "4.2.3.RELEASE"]
 		[org.aspectj/aspectjrt "1.8.9"]
+
                 ] 
 
   ;:main ^:skip-aot harborview.webapp
@@ -38,9 +40,10 @@
   :resource-paths [
 		"/home/rcs/opt/java/koteriku/build/libs/koteriku-1.0.jar"
 		"/home/rcs/opt/java/netfonds-repos/build/libs/netfondsrepos-1.0.jar"
-		"/home/rcs/opt/java/oahu/build/libs/oahu-1.0.jar"
-		"/home/rcs/opt/java/ranoraraku/build/libs/ranoraraku-1.0.jar"
+		"/home/rcs/opt/java/oahu/build/libs/oahu-1.1.jar"
+		"/home/rcs/opt/java/ranoraraku/build/libs/ranoraraku-1.1.jar"
 		"/home/rcs/opt/java/stearnswharf-repos/build/libs/stearnswharf-1.0.jar"
 		"/home/rcs/opt/java/vega/build/libs/vega-1.0.jar"
+
                   ]
   :profiles {:uberjar {:aot :all}})
