@@ -1,5 +1,23 @@
 var MAUNALOA = MAUNALOA || {};
 
+MAUNALOA.repos = {
+  init : function() {
+    // listen for mouse events
+    this.canvas = $(this.canvasId);
+    this.canvas.mousedown(function(e){handleMouseDown(e);});
+    this.canvas.mousemove(function(e){handleMouseMove(e);});
+    this.canvas.mouseup(function(e){handleMouseUpOut(e);});
+    this.canvas.mouseout(function(e){handleMouseUpOut(e);});
+  }
+}
+
+MAUNALOA.crateRepos = function(canvasId){
+    var result = Object.create(MAUNALOA.repos);
+    result.canvasId = canvasId;
+    result.init();
+    return result;
+}
+
 MAUNALOA.draggable = {
   // select the nearest line to the mouse
   closestLine : function (mx,my,lines){
