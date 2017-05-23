@@ -5,8 +5,8 @@ MAUNALOA.levelLine = {
     draw : function(ctx) {
         console.log(ctx + "x1: " + this.x1 + ", y1: " + this.y1);
         ctx.beginPath();
-        ctx.moveTo(this.x0,this.y0);
-        ctx.lineTo(this.x1,this.y1);
+        ctx.moveTo(this.x1,this.y1);
+        ctx.lineTo(this.x2,this.y2);
         ctx.strokeStyle=this.color;
         ctx.stroke();
     }
@@ -20,23 +20,47 @@ MAUNALOA.levelLine = {
 // https://stackoverflow.com/questions/9880279/how-do-i-add-a-simple-onclick-event-handler-to-a-canvas-element
 
 MAUNALOA.repos = {
-  init : function() {
+  init : function(canvasId,vruler) {
+    this.canvas = document.getElementById(canvasId);
+    this.ctx = this.canvas.getContext("2d");
+    this.vruler = vruler;
+
+    /* No need for this
+    var clientRect = canvas.getBoundingClientRect();
+    this.offsetX = clientRect.left;
+    this.offsetY = clientRect.top;
+    */
     // listen for mouse events
-    this.canvas = $("#" + this.canvasId);
-    this.ctx = document.getElementById(this.canvasId).getContext("2d");
+    this.canvas.addEventListener('mouseup', this.handleMouseUpOut(this), false);
+    this.canvas.addEventListener('mousedown', this.handleMouseDown(this), false);
+    this.canvas.addEventListener('mousemove', this.handleMouseMove(this), false);
     //this.canvas.mousedown(function(e){handleMouseDown(e);});
     //this.canvas.mousemove(function(e){handleMouseMove(e);});
-    this.canvas.mouseup(this.handleMouseUpOut(this));
+    //this.canvas.mouseup(this.handleMouseUpOut(this));
     //this.canvas.mouseout(function(e){handleMouseUpOut(e);});
   },
-  
   handleMouseUpOut : function(self) {
     return function(e) {
-        self.draw();
+      // tell the browser we're handling this event
+      e.preventDefault();
+      e.stopPropagation();
+      self.draw();
     }
   },
-  handleMouseDown : function(e) {
-    alert("Hi!");
+  handleMouseDown : function(self) {
+    return function(e) {
+      // tell the browser we're handling this event
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  },
+  handleMouseMove : function(self) {
+    return function(e) {
+      // tell the browser we're handling this event
+      e.preventDefault();
+      e.stopPropagation();
+      console.log(e.offsetX);
+    }
   },
   lines : [],
   draw : function() {
@@ -45,30 +69,20 @@ MAUNALOA.repos = {
         this.lines[i].draw(this.ctx);
     }
   },
-  create : function(canvasId) {
+  create : function(canvasId,vruler) {
     var result = Object.create(MAUNALOA.repos);
-    result.canvasId = canvasId;
-    result.init();
+    result.init(canvasId,vruler);
     return result;
   },
   addLevelLine : function(lineId,levelValue) {
     var result = Object.create(MAUNALOA.levelLine);
-    result.x1 = 30;
-    result.y1 = 30;
-    result.x2 = 200;
-    result.y2 = 30;
+    result.x1 = 5;
+    result.y1 = 5;
+    result.x2 = 290;
+    result.y2 = 290;
     this.lines.push(result);
   }
-
 }
-/*
-MAUNALOA.crateRepos = function(canvasId){
-    var result = Object.create(MAUNALOA.repos);
-    result.canvasId = canvasId;
-    result.init();
-    return result;
-}
-*/
 
 MAUNALOA.draggable = {
   // select the nearest line to the mouse
@@ -92,10 +106,14 @@ MAUNALOA.draggable = {
 
 };
 
+MAUNALOA.vruler = function(chartInfo) {
 
+}
 
 jQuery(document).ready(function() {
-    var r = MAUNALOA.repos.create("canvas0");
+    var chartInfo = {}
+    var vruler = MAUNALOA.vruler(chartInfo);
+    var r = MAUNALOA.repos.create("canvas0",vruler);
     r.addLevelLine(1,3);
     //r.draw();
 });
@@ -109,7 +127,7 @@ var ch=canvas.height;
 function reOffset(){
     var BB=canvas.getBoundingClientRect();
     offsetX=BB.left;
-    offsetY=BB.top;        
+    offsetY=BB.top;
 }
 var offsetX,offsetY;
 reOffset();
