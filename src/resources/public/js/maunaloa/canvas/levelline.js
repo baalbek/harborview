@@ -2,11 +2,12 @@ var MAUNALOA = MAUNALOA || {};
 
 MAUNALOA.levelLine = {
     color : "red",
-    draw : function(ctx) {
-        console.log(ctx + "x1: " + this.x1 + ", y1: " + this.y1);
+    draw : function(repos) {
+        var ctx = repos.ctx;
+        console.log(ctx + "x1: " + this.x1 + ", y: " + this.y);
         ctx.beginPath();
-        ctx.moveTo(this.x1,this.y1);
-        ctx.lineTo(this.x2,this.y2);
+        ctx.moveTo(this.x1,this.y);
+        ctx.lineTo(this.x2,this.y);
         ctx.strokeStyle=this.color;
         ctx.stroke();
     }
@@ -66,7 +67,7 @@ MAUNALOA.repos = {
   draw : function() {
     var len = this.lines.length;
     for (var i=0; i<len; ++i) {
-        this.lines[i].draw(this.ctx);
+        this.lines[i].draw(this);
     }
   },
   create : function(canvasId,vruler) {
@@ -76,10 +77,9 @@ MAUNALOA.repos = {
   },
   addLevelLine : function(lineId,levelValue) {
     var result = Object.create(MAUNALOA.levelLine);
-    result.x1 = 5;
-    result.y1 = 5;
-    result.x2 = 290;
-    result.y2 = 290;
+    result.x1 = 20;
+    result.x2 = this.canvas.width;
+    result.y = this.vruler.valueToPix(levelValue);
     this.lines.push(result);
   }
 }
@@ -107,14 +107,39 @@ MAUNALOA.draggable = {
 };
 
 MAUNALOA.vruler = function(chartInfo) {
+  var double2decimal = function(x,roundingFactor) {
+      var rf = roundingFactor || 100;
+      return (Math.round(x*rf))/rf;
+  }
+  var chart = chartInfo.chart;
+  var minVal = chart.valueRange[0];
+  var maxVal = chart.valueRange[1];
+  var ppy = chart.height / (maxVal - minVal);
 
+  console.log("ppy: " + ppy);
+
+  var pixToValue = function(pix) {
+    return double2decimal(maxVal - (pix / ppy));
+  }
+  var valueToPix = function(v) {
+    return Math.round((maxVal - v) * ppy);
+  }
+  return {
+    valueToPix : valueToPix,
+    pixToValue : pixToValue
+  }
 }
 
+    var chartInfo = {
+        chart : {
+          valueRange : [35,40],
+          height : 300
+        }
+    }
 jQuery(document).ready(function() {
-    var chartInfo = {}
     var vruler = MAUNALOA.vruler(chartInfo);
     var r = MAUNALOA.repos.create("canvas0",vruler);
-    r.addLevelLine(1,3);
+    r.addLevelLine(1,37);
     //r.draw();
 });
 
