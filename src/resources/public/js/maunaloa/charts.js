@@ -69,8 +69,8 @@ jQuery(document).ready(function() {
         ctx.font = "16px Arial";
         ctx.strokeStyle = "#bbb";
         ctx.lineWidth = 0.25;
-        minVal = chart.valueRange[0];
-        maxVal = chart.valueRange[1];
+        var minVal = chart.valueRange[0];
+        var maxVal = chart.valueRange[1];
         var ppy = chart.height / (maxVal - minVal);
         var step = chart.height / (chart.numVlines - 1);
         var ix = chart.numVlines;
