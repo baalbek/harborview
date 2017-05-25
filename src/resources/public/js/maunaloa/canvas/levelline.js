@@ -18,14 +18,14 @@ MAUNALOA.draggable = {
 */
 
 MAUNALOA.levelLine = {
-    color : "red",
+    color : "black",
     draggable : true,
     legend : function() {
       return this.levelValue;
     },
     draw : function(repos) {
         var y = this.y1;
-        var ctx = repos.ctx;
+        var ctx = this.repos.ctx;
         ctx.beginPath();
         ctx.moveTo(this.x1,y);
         ctx.lineTo(this.x2,y);
@@ -33,7 +33,15 @@ MAUNALOA.levelLine = {
         ctx.stroke();
         ctx.fillText(this.legend(),this.x1,y-10);
         //ctx.fillText("[" + this.id + "] " + this.levelValue,this.x1,this.y-10);
+    },
+    move : function(dx,dy) {
+        this.x1+=dx;
+        this.x2+=dx;
+        this.y1+=dy;
+        this.y2+=dy;
+        this.levelValue = this.repos.vruler.pixToValue(this.y2);
     }
+
     /*
     create : function(levelValue) {
         var result = Object.create(MAUNALOA.levelLine);
@@ -76,8 +84,14 @@ MAUNALOA.repos = {
       // tell the browser we're handling this event
       e.preventDefault();
       e.stopPropagation();
+      self.isDown=false;
+      self.nearest=null;
+      self.draw();
     }
   },
+// dragging vars
+  startX : 0,
+  startY : 9,
   isDown : false,
   nearest : null,
   handleMouseDown : function(self) {
@@ -85,6 +99,8 @@ MAUNALOA.repos = {
       // tell the browser we're handling this event
       e.preventDefault();
       e.stopPropagation();
+      self.startX = e.offsetX;
+      self.startY = e.offsetY;
       self.nearest=self.closestLine(e.offsetX,e.offsetY);
       self.draw();
       // set dragging flag
@@ -93,9 +109,26 @@ MAUNALOA.repos = {
   },
   handleMouseMove : function(self) {
     return function(e) {
+      if(!self.isDown){return;}
       // tell the browser we're handling this event
       e.preventDefault();
       e.stopPropagation();
+      // calc how far mouse has moved since last mousemove event
+      var dx=e.offsetX-self.startX;
+      var dy=e.offsetY-self.startY;
+      self.startX=e.offsetX;
+      self.startY=e.offsetY;
+      // change nearest line vertices by distance moved
+      var line=self.nearest.line;
+      line.move(dx,dy);
+      /*
+      line.x1+=dx;
+      line.y1+=dy;
+      line.x2+=dx;
+      line.y2+=dy;
+      */
+      // redraw
+      self. draw();
     }
   },
   lines : [],
@@ -137,13 +170,13 @@ MAUNALOA.repos = {
         }
     }
     var line=this.lines[index];
-    return({ pt:pt, line:line, originalLine:{x0:line.x1,y0:line.y1,x1:line.x2,y1:line.y2} });
+    return({ pt:pt, line:line, originalLine:{x1:line.x1,y1:line.y1,x2:line.x2,y2:line.y2} });
   },
   draw : function() {
     this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
     var len = this.lines.length;
     for (var i=0; i<len; ++i) {
-        this.lines[i].draw(this);
+        this.lines[i].draw();
     }
     // draw markers if a line is being dragged
     if(this.nearest){
@@ -178,6 +211,7 @@ MAUNALOA.repos = {
                                         },
     */
     var result = Object.create(MAUNALOA.levelLine);
+    result.repos = this;
     result.id = lineId;
     result.levelValue = levelValue;
     result.x1 = 20;
