@@ -69,21 +69,11 @@ MAUNALOA.repos = {
     this.canvas = document.getElementById(canvasId);
     this.ctx = this.canvas.getContext("2d");
     this.vruler = vruler;
-
-    /* No need for this
-    var clientRect = canvas.getBoundingClientRect();
-    this.offsetX = clientRect.left;
-    this.offsetY = clientRect.top;
-    */
     // listen for mouse events
     this.canvas.addEventListener('mouseup', this.handleMouseUp(this), false);
     this.canvas.addEventListener('mouseout', this.handleMouseOut(this), false);
     this.canvas.addEventListener('mousedown', this.handleMouseDown(this), false);
     this.canvas.addEventListener('mousemove', this.handleMouseMove(this), false);
-    //this.canvas.mousedown(function(e){handleMouseDown(e);});
-    //this.canvas.mousemove(function(e){handleMouseMove(e);});
-    //this.canvas.mouseup(this.handleMouseUpOut(this));
-    //this.canvas.mouseout(function(e){handleMouseUpOut(e);});
   },
   handleMouseOut : function(self) {
     return function(e) {
@@ -208,7 +198,7 @@ MAUNALOA.repos = {
     result.init(canvasId,vruler);
     return result;
   },
-  addLevelLine : function(lineId,levelValue) {
+  addLevelLine : function(lineId,levelValue,doDraw=true) {
     var result = MAUNALOA.levelLine.create({parent:this,
                                             levelValue:levelValue,
                                             x1:20,
@@ -216,9 +206,11 @@ MAUNALOA.repos = {
                                             y:this.vruler.valueToPix(levelValue),
                                             id:lineId});
     this.lines.push(result);
-    this.draw();
+    if (doDraw) {
+      this.draw();
+    }
   },
-  addRiscLines : function(risc,breakEven) {
+  addRiscLines : function(option,risc,breakEven,doDraw=true) {
     var riscLine = MAUNALOA.levelLine.create({parent:this,
                                             levelValue:risc,
                                             x1:20,
@@ -226,7 +218,7 @@ MAUNALOA.repos = {
                                             y:this.vruler.valueToPix(risc),
                                             draggable:false,
                                             legendFn:function() {
-                                                return "Risc: " + this.levelValue;
+                                                return "[" + option + "] Risc: " + this.levelValue;
                                             }});
     this.lines.push(riscLine);
     var breakEvenLine = MAUNALOA.levelLine.create({parent:this,
@@ -236,10 +228,12 @@ MAUNALOA.repos = {
                                             y:this.vruler.valueToPix(breakEven),
                                             draggable:false,
                                             legendFn:function() {
-                                                return "Break-even: " + this.levelValue;
+                                                return "[" + option + "] Break-even: " + this.levelValue;
                                             }});
     this.lines.push(breakEvenLine);
-    this.draw();
+    if (doDraw) {
+      this.draw();
+    }
   }
 }
 
@@ -277,7 +271,7 @@ MAUNALOA.vruler = function(chartInfo) {
 jQuery(document).ready(function() {
     var vruler = MAUNALOA.vruler(chartInfo);
     var r = MAUNALOA.repos.create("canvas0",vruler);
-    r.addLevelLine(1,37);
-    r.addRiscLines(36,39);
+    r.addLevelLine(1,37,false);
+    r.addRiscLines("YAR8C300",36,39);
     //r.draw();
 });
