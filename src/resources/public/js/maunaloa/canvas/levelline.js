@@ -19,6 +19,7 @@ MAUNALOA.draggable = {
 
 MAUNALOA.levelLine = {
     color : "black",
+    lineWidth : 1,
     draggable : true,
     /*
     legend : function() {
@@ -28,6 +29,8 @@ MAUNALOA.levelLine = {
     draw : function(repos) {
         var y = this.y1;
         var ctx = this.parent.ctx;
+
+        ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.moveTo(this.x1,y);
         ctx.lineTo(this.x2,y);
@@ -44,13 +47,16 @@ MAUNALOA.levelLine = {
         this.levelValue = this.parent.vruler.pixToValue(this.y2);
     },
 
-    create : function({parent,levelValue,x1,x2,y,draggable=true,legendFn=null,id=null}={}) {
+    //create : function({parent,levelValue,x1,x2,y,draggable=true,legendFn=null,id=null}={}) {
+    create : function(parent,levelValue,x1,x2,y,{draggable=true,color="grey",lineWidth=1,legendFn=null,id=null}={}) {
         var result = Object.create(MAUNALOA.levelLine);
         result.parent = parent;
         if (id) {
           result.id = id;
         }
         result.levelValue = levelValue;
+        result.lineWidth = lineWidth;
+        result.color = color;
         result.x1 = x1;
         result.x2 = x2;
         result.y1 = y;
@@ -199,34 +205,35 @@ MAUNALOA.repos = {
     return result;
   },
   addLevelLine : function(lineId,levelValue,doDraw=true) {
-    var result = MAUNALOA.levelLine.create({parent:this,
-                                            levelValue:levelValue,
-                                            x1:20,
-                                            x2:this.canvas.width,
-                                            y:this.vruler.valueToPix(levelValue),
-                                            id:lineId});
+    var result = MAUNALOA.levelLine.create(this,
+                                            levelValue,
+                                            20,
+                                            this.canvas.width,
+                                            this.vruler.valueToPix(levelValue),
+                                            {id:lineId});
     this.lines.push(result);
     if (doDraw) {
       this.draw();
     }
   },
-  addRiscLines : function(option,risc,breakEven,doDraw=true) {
-    var riscLine = MAUNALOA.levelLine.create({parent:this,
-                                            levelValue:risc,
-                                            x1:20,
-                                            x2:this.canvas.width,
-                                            y:this.vruler.valueToPix(risc),
-                                            draggable:false,
+  addRiscLines : function(option,risc,riscLevel,breakEven,doDraw=true) {
+    var riscLine = MAUNALOA.levelLine.create(this,
+                                            riscLevel,
+                                            20,
+                                            this.canvas.width,
+                                            this.vruler.valueToPix(riscLevel),
+                                            {draggable:false,
+                                            color:"red",
+                                            lineWidth:2,
                                             legendFn:function() {
-                                                return "[" + option + "] Risc: " + this.levelValue;
+                                                return "[" + option + "] Risc: " + risc + " => " + this.levelValue;
                                             }});
     this.lines.push(riscLine);
-    var breakEvenLine = MAUNALOA.levelLine.create({parent:this,
-                                            levelValue:breakEven,
-                                            x1:20,
-                                            x2:this.canvas.width,
-                                            y:this.vruler.valueToPix(breakEven),
-                                            draggable:false,
+    var breakEvenLine = MAUNALOA.levelLine.create(this,breakEven,20,this.canvas.width,
+                                            this.vruler.valueToPix(breakEven),
+                                            {draggable:false,
+                                            color:"green",
+                                            lineWidth:2,
                                             legendFn:function() {
                                                 return "[" + option + "] Break-even: " + this.levelValue;
                                             }});
@@ -272,6 +279,6 @@ jQuery(document).ready(function() {
     var vruler = MAUNALOA.vruler(chartInfo);
     var r = MAUNALOA.repos.create("canvas0",vruler);
     r.addLevelLine(1,37,false);
-    r.addRiscLines("YAR8C300",36,39);
+    r.addRiscLines("YAR8C300",3.4,36,39);
     //r.draw();
 });
