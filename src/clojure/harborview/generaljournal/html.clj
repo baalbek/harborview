@@ -50,4 +50,8 @@
   (PUT "/insertinvoice" [curdate bilag amount invoicenum]
     (let [gj-bean (DBX/insert-invoice bilag curdate amount invoicenum)]
       (U/json-response
-         {"nextreceipt" (-> bilag read-string inc str)}))))
+         {"nextreceipt" (-> bilag read-string inc str)})))
+  (PUT "/test" [bilag]
+    (prn "Bilag "  bilag)
+    (U/json-response
+       {"nextreceipt" (-> "14" read-string inc str)})))
