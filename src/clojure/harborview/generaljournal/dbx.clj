@@ -27,7 +27,6 @@
 ;;;-----------------------------------------------------------------
 
 (defn fetch-by-bilag []
-  ;(memoize (fn []
   (DB/with-session :koteriku GeneralJournalMapper
     (.selectByBilag it)))
 

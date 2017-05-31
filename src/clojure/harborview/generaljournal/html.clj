@@ -1,6 +1,8 @@
 (ns harborview.generaljournal.html
   (:import
-    [koteriku.beans Ns4102Bean])
+    [koteriku.beans
+      GeneralJournalBean
+      Ns4102Bean])
   (:use
     [compojure.core :only (GET PUT defroutes)])
   (:require
@@ -16,6 +18,19 @@
         account (.getAccount v)]
     {:name (str account " - " text) :value (str account)}))
 
+(defn last-receipts []
+  (P/render-file "templates/generaljournal/gjitems.html"
+    {:items
+      (map (fn [^GeneralJournalBean x]
+            {:oid (str (.getId x))
+             :bilag (str (.getBilag x))
+             :date (.getTransactionDate x)
+             :debit (str (.getDebit x))
+              :credit (str (.getCredit x))
+             :text (str (.getText x))
+             :amount (str (.getAmount x))})
+         (DBX/fetch-by-bilag))}))
+
 (defn general-journal []
   (let [bilag (first (DBX/fetch-by-bilag))
         bilag-dx (.getTransactionDate bilag)]
@@ -24,6 +39,7 @@
       {:ns4102 (map ns4102->select (DBX/fetch-ns4102))
        :bilag (-> bilag .getBilag inc str)
        :bilag-dx bilag-dx})))
+       ;:items (last-receipts)})))
 
 
 (defroutes my-routes
@@ -33,4 +49,5 @@
       (U/json-response {"beanId" (.getId gj-bean) "bilag" (-> bilag read-string inc str)})))
   (PUT "/insertinvoice" [curdate bilag amount invoicenum]
     (let [gj-bean (DBX/insert-invoice bilag curdate amount invoicenum)]
-      (U/json-response {"beanId" (.getId gj-bean) "bilag" (-> bilag read-string inc str)}))))
+      (U/json-response
+         {"nextreceipt" (-> bilag read-string inc str)}))))

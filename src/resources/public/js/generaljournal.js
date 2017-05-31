@@ -22,7 +22,7 @@ var GeneralJournal = new function() {
             url: "/generaljournal/insertinvoice",
             type: "PUT",
             dataType: "json",
-            data: { 
+            data: {
                     "curdate" : $("#curdate").val(),
                     "bilag"   : $("#bilag").val(),
                     "amount"  : $("#amount").val(),
@@ -34,9 +34,10 @@ var GeneralJournal = new function() {
     }
     this.onSuccess = function(result) {
         if ($("#incbilag").is(':checked')) {
-            $("#bilag").val(result.bilag)
+            $("#bilag").val(result.nextreceipt);
         }
-        $("#feedback").html("<p>Last bean id: " + result.beanId + "</p>")
+        //$("#feedback").html("<p>Last bean id: " + result.beanId + "</p>")
+        //$("#feedback").html(result.lastreceipts);
     },
     this.onError = function(XMLHttpRequest, textStatus, errorThrown) {
         alert(textStatus)
@@ -59,83 +60,82 @@ var GeneralJournal = new function() {
 
 jQuery(document).ready(function() {
     $("#insertkassadagbok").click(function() {
-        GeneralJournal.insert()
-        return false
+        GeneralJournal.insert();
+        return false;
     })
     $("#insertinvoice").click(function() {
-        GeneralJournal.insertInvoice()
-        return false
+        GeneralJournal.insertInvoice();
+        return false;
     })
     $("#preset").click(function() {
-        var tpl_id = $("#preset").val()
-        $("#mvaamt").val('0.0')
+        var tpl_id = $("#preset").val();
+        $("#mvaamt").val('0.0');
         switch (tpl_id) {
             case '1':
-                $("#credit").val('1902')
-                $("#debit").val('7140')
-                $("#mva").val('-1')
-                $("#desc").val('Taxi')
-                break
+                $("#credit").val('1902');
+                $("#debit").val('7140');
+                $("#mva").val('-1');
+                $("#desc").val('Taxi');
+                break;
             case '2':
-                $("#credit").val('1902')
-                $("#debit").val('6581')
-                $("#mva").val('2711')
-                $("#desc").val('Datautstyr')
-                break
+                $("#credit").val('1902');
+                $("#debit").val('6581');
+                $("#mva").val('2711');
+                $("#desc").val('Datautstyr');
+                break;
             case '3':
-                $("#credit").val('1902')
-                $("#debit").val('6910')
-                $("#mva").val('2711')
-                $("#desc").val('NextGenTel')
-                break
+                $("#credit").val('1902');
+                $("#debit").val('6910');
+                $("#mva").val('2711');
+                $("#desc").val('NextGenTel');
+                break;
             case '4':
-                $("#credit").val('1902')
-                $("#debit").val('6900')
-                $("#mva").val('2711')
-                $("#desc").val('NetCom')
-                break
+                $("#credit").val('1902');
+                $("#debit").val('6900');
+                $("#mva").val('2711');
+                $("#desc").val('NetCom');
+                break;
             case '5':
-                $("#credit").val('1902')
-                $("#debit").val('6900')
-                $("#mva").val('2711')
-                $("#desc").val('Telenor')
-                break
+                $("#credit").val('1902');
+                $("#debit").val('6900');
+                $("#mva").val('2711');
+                $("#desc").val('Telenor');
+                break;
             case '6':
-                $("#credit").val('1902')
-                $("#debit").val('6300')
-                $("#mva").val('-1')
-                $("#desc").val('OBOS')
-                break
+                $("#credit").val('1902');
+                $("#debit").val('6300');
+                $("#mva").val('-1');
+                $("#desc").val('OBOS');
+                break;
             case '7':
-                $("#credit").val('1902')
-                $("#debit").val('6340')
-                $("#mva").val('-1')
-                $("#desc").val('Hafslund')
-                break
+                $("#credit").val('1902');
+                $("#debit").val('6340');
+                $("#mva").val('-1');
+                $("#desc").val('Hafslund');
+                break;
             case '8':
-                $("#credit").val('1902')
-                $("#debit").val('7160')
-                $("#mva").val('-1')
-                $("#desc").val('Lunsj')
-                break
+                $("#credit").val('1902');
+                $("#debit").val('7160');
+                $("#mva").val('-1');
+                $("#desc").val('Lunsj');
+                break;
             case '9':
-                $("#credit").val('1902')
-                $("#debit").val('7160')
-                $("#mva").val('-1')
-                $("#desc").val('Overtidsmat')
-                break
+                $("#credit").val('1902');
+                $("#debit").val('7160');
+                $("#mva").val('-1');
+                $("#desc").val('Overtidsmat');
+                break;
             case '10':
-                $("#credit").val('1902')
-                $("#debit").val('7140')
-                $("#mva").val('-1')
-                $("#desc").val('Ruter mnd kort')
-                break
+                $("#credit").val('1902');
+                $("#debit").val('7140');
+                $("#mva").val('-1');
+                $("#desc").val('Ruter mnd kort');
+                break;
             default:
-                $("#credit").val('na')
-                $("#debit").val('na')
-                $("#mva").val('-1')
-                $("#desc").val('')
-
+                $("#credit").val('na');
+                $("#debit").val('na');
+                $("#mva").val('-1');
+                $("#desc").val('');
         }
     })
 })
