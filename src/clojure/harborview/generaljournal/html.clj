@@ -26,8 +26,8 @@
              :bilag (str (.getBilag x))
              :date (.getTransactionDate x)
              :debit (str (.getDebit x))
-              :credit (str (.getCredit x))
-             :text (str (.getText x))
+             :credit (str (.getCredit x))
+             :text (.getText x)
              :amount (str (.getAmount x))})
          (DBX/fetch-by-bilag))}))
 
@@ -46,12 +46,12 @@
   (GET "/" request (general-journal))
   (PUT "/insert" [credit debit curdate bilag desc amount mva mvaamt]
     (let [gj-bean (DBX/insert bilag curdate credit debit desc amount mva mvaamt)]
-      (U/json-response {"beanId" (.getId gj-bean) "bilag" (-> bilag read-string inc str)})))
+      (U/json-response
+         {"nextreceipt" (-> bilag read-string inc str)
+          "lastreceipts" (last-receipts)})))
+      ;(U/json-response {"beanId" (.getId gj-bean) "bilag" (-> bilag read-string inc str)})))
   (PUT "/insertinvoice" [curdate bilag amount invoicenum]
     (let [gj-bean (DBX/insert-invoice bilag curdate amount invoicenum)]
       (U/json-response
-         {"nextreceipt" (-> bilag read-string inc str)})))
-  (PUT "/test" [bilag]
-    (prn "Bilag "  bilag)
-    (U/json-response
-       {"nextreceipt" (-> "14" read-string inc str)})))
+         {"nextreceipt" (-> bilag read-string inc str)
+          "lastreceipts" (last-receipts)}))))

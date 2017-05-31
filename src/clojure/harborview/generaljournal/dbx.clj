@@ -28,7 +28,7 @@
 
 (defn fetch-by-bilag []
   (DB/with-session :koteriku GeneralJournalMapper
-    (.selectByBilag it)))
+    (.selectByBilag it 5)))
 
 
 (def fetch-ns4102

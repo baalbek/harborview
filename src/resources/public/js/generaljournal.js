@@ -36,8 +36,7 @@ var GeneralJournal = new function() {
         if ($("#incbilag").is(':checked')) {
             $("#bilag").val(result.nextreceipt);
         }
-        //$("#feedback").html("<p>Last bean id: " + result.beanId + "</p>")
-        //$("#feedback").html(result.lastreceipts);
+        $("#feedback").html(result.lastreceipts);
     },
     this.onError = function(XMLHttpRequest, textStatus, errorThrown) {
         alert(textStatus)
