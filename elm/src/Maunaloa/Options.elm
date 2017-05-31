@@ -5,6 +5,7 @@ import Html as H
 import Html.Attributes as A
 import Json.Decode.Pipeline as JP
 import Json.Decode as Json
+import Json.Encode as JE
 import Html.Events as E
 import Table exposing (defaultCustomizations)
 import Common.Miscellaneous as MISC
@@ -76,6 +77,14 @@ type alias StockAndOptions =
     { stock : Stock
     , opx : Options
     }
+
+
+type alias RiscItem =
+    {}
+
+
+type alias RiscItems =
+    List RiscItem
 
 
 
@@ -182,6 +191,8 @@ type Msg
     | SetTableState Table.State
     | ResetCache
     | CalcRisc
+      -- | RiscCalculated (Result Http.Error RiscItems)
+    | RiscCalculated (Result Http.Error String)
     | RiscChange String
     | ToggleSelected String
 
@@ -261,7 +272,13 @@ update msg model =
             ( model, fetchOptions model model.selectedTicker True )
 
         CalcRisc ->
+            ( model, calcRisc model )
+
+        RiscCalculated (Ok s) ->
             ( model, Cmd.none )
+
+        RiscCalculated (Err s) ->
+            Debug.log ("RiscCalculated Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
 
         RiscChange s ->
             --Debug.log "RiscChange"
@@ -293,13 +310,28 @@ toggle ticker opt =
 calcRisc : Model -> Cmd Msg
 calcRisc model =
     let
+        url =
+            case model.flags.isCalls of
+                True ->
+                    mainUrl ++ "/callsrisc"
+
+                False ->
+                    mainUrl ++ "/putsrisc"
+
         opx =
             Maybe.withDefault [] model.options
 
         checked =
             List.filter (\x -> x.selected == True) opx
+
+        jbody =
+            MISC.asHttpBody
+                [ ( "sysid", JE.string "m.selectedSystem" )
+                , ( "el", JE.string "m.elementDesc" )
+                ]
     in
-        Cmd.none
+        Http.send RiscCalculated <|
+            Http.post url jbody Json.string
 
 
 optionDecoder : Json.Decoder Option
