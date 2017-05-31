@@ -18,18 +18,20 @@
         account (.getAccount v)]
     {:name (str account " - " text) :value (str account)}))
 
+
 (defn last-receipts []
+  (map (fn [^GeneralJournalBean x]
+        {:bilag (str (.getBilag x))
+         :date (.getTransactionDate x)
+         :debit (str (.getDebit x))
+         :credit (str (.getCredit x))
+         :text (.getText x)
+         :amount (str (.getAmount x))})
+     (DBX/fetch-by-bilag)))
+
+(defn last-receipts-html []
   (P/render-file "templates/generaljournal/gjitems.html"
-    {:items
-      (map (fn [^GeneralJournalBean x]
-            {:oid (str (.getId x))
-             :bilag (str (.getBilag x))
-             :date (.getTransactionDate x)
-             :debit (str (.getDebit x))
-             :credit (str (.getCredit x))
-             :text (.getText x)
-             :amount (str (.getAmount x))})
-         (DBX/fetch-by-bilag))}))
+    {:items (last-receipts)}))
 
 (defn general-journal []
   (let [bilag (first (DBX/fetch-by-bilag))
@@ -38,8 +40,8 @@
     (P/render-file "templates/generaljournal/generaljournal.html"
       {:ns4102 (map ns4102->select (DBX/fetch-ns4102))
        :bilag (-> bilag .getBilag inc str)
-       :bilag-dx bilag-dx})))
-       ;:items (last-receipts)})))
+       :bilag-dx bilag-dx
+       :items (last-receipts)})))
 
 
 (defroutes my-routes
@@ -54,4 +56,4 @@
     (let [gj-bean (DBX/insert-invoice bilag curdate amount invoicenum)]
       (U/json-response
          {"nextreceipt" (-> bilag read-string inc str)
-          "lastreceipts" (last-receipts)}))))
+          "lastreceipts" (last-receipts-html)}))))
