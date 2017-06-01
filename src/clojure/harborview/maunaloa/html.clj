@@ -175,6 +175,11 @@
   (GET "/calls" [ticker] (calls ticker))
   (GET "/resetcalls" [ticker] (binding [CU/*reset-cache* true] (calls ticker)))
   (GET "/resetputs" [ticker] (binding [CU/*reset-cache* true] (puts ticker)))
+  (POST "/calcrisccalls" request
+    (let [jr (U/json-req-parse request)]
+      (println jr)
+      (U/json-response "Ok")))
+  (POST "/calcriscputs" request)
   (GET "/tickers" request (tickers))
   ;(GET "/th" [oid] (test-hruler (U/rs oid)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))

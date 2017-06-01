@@ -80,7 +80,9 @@ type alias StockAndOptions =
 
 
 type alias RiscItem =
-    {}
+    { ticker : String
+    , risc : Float
+    }
 
 
 type alias RiscItems =
@@ -313,10 +315,10 @@ calcRisc model =
         url =
             case model.flags.isCalls of
                 True ->
-                    mainUrl ++ "/callsrisc"
+                    mainUrl ++ "/calcrisccalls"
 
                 False ->
-                    mainUrl ++ "/putsrisc"
+                    mainUrl ++ "/calcriscputs"
 
         opx =
             Maybe.withDefault [] model.options
@@ -326,12 +328,26 @@ calcRisc model =
 
         jbody =
             MISC.asHttpBody
-                [ ( "sysid", JE.string "m.selectedSystem" )
-                , ( "el", JE.string "m.elementDesc" )
-                ]
+                (List.map (\x -> ( x.ticker, JE.float 3 )) checked)
+
+        {-
+           jbody =
+               MISC.asHttpBody
+                   [ ( "YAR1", JE.float 2.3 )
+                   , ( "YAR2", JE.float 4.4 )
+                   ]
+        -}
+        myDecoder =
+            JP.decode RiscItem
+                |> JP.required "ticker" Json.string
+                |> JP.required "risc" Json.float
     in
         Http.send RiscCalculated <|
             Http.post url jbody Json.string
+
+
+
+-- (Json.list myDecoder)
 
 
 optionDecoder : Json.Decoder Option
