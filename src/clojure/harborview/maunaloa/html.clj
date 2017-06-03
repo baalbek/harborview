@@ -175,10 +175,22 @@
   (GET "/calls" [ticker] (calls ticker))
   (GET "/resetcalls" [ticker] (binding [CU/*reset-cache* true] (calls ticker)))
   (GET "/resetputs" [ticker] (binding [CU/*reset-cache* true] (puts ticker)))
-  (POST "/calcrisccalls" request
-    (let [jr (U/json-req-parse request)]
-      (println jr)
-      (U/json-response "Ok")))
+  (POST "/calcrisc" request
+    (let [jr (U/json-req-parse request)
+          prm (:params request)
+          stock-ticker ((tix->map) (:ticker prm))
+          optype (:optype prm)
+          options
+            (if (= optype "calls")
+              (OPX/calls stock-ticker)
+              (OPX/puts stock-ticker))
+          risc-fn
+            (fn [[a b]]
+              ;(let [ax (first (filter #(= (.getTicker %) a) options))])
+              (let [ax (CU/find-first #(= (.getTicker %) a) options)
+                    bx (U/rs b)]
+                {:ticker a, :risc (.calcRisc ax bx)}))]
+      (U/json-response (map risc-fn jr))))
   (POST "/calcriscputs" request)
   (GET "/tickers" request (tickers))
   ;(GET "/th" [oid] (test-hruler (U/rs oid)))

@@ -193,8 +193,8 @@ type Msg
     | SetTableState Table.State
     | ResetCache
     | CalcRisc
-      -- | RiscCalculated (Result Http.Error RiscItems)
-    | RiscCalculated (Result Http.Error String)
+    | RiscCalculated (Result Http.Error RiscItems)
+      -- | RiscCalculated (Result Http.Error String)
     | RiscChange String
     | ToggleSelected String
 
@@ -277,7 +277,8 @@ update msg model =
             ( model, calcRisc model )
 
         RiscCalculated (Ok s) ->
-            ( model, Cmd.none )
+            Debug.log (toString s)
+                ( model, Cmd.none )
 
         RiscCalculated (Err s) ->
             Debug.log ("RiscCalculated Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
@@ -312,13 +313,16 @@ toggle ticker opt =
 calcRisc : Model -> Cmd Msg
 calcRisc model =
     let
+        risc =
+            Result.withDefault 0 (String.toFloat model.risc)
+
         url =
             case model.flags.isCalls of
                 True ->
-                    mainUrl ++ "/calcrisccalls"
+                    mainUrl ++ "/calcrisc?optype=calls&ticker=" ++ model.selectedTicker
 
                 False ->
-                    mainUrl ++ "/calcriscputs"
+                    mainUrl ++ "/calcrisc?optype=puts&ticker=" ++ model.selectedTicker
 
         opx =
             Maybe.withDefault [] model.options
@@ -328,26 +332,15 @@ calcRisc model =
 
         jbody =
             MISC.asHttpBody
-                (List.map (\x -> ( x.ticker, JE.float 3 )) checked)
+                (List.map (\x -> ( x.ticker, JE.float risc )) checked)
 
-        {-
-           jbody =
-               MISC.asHttpBody
-                   [ ( "YAR1", JE.float 2.3 )
-                   , ( "YAR2", JE.float 4.4 )
-                   ]
-        -}
         myDecoder =
             JP.decode RiscItem
                 |> JP.required "ticker" Json.string
                 |> JP.required "risc" Json.float
     in
         Http.send RiscCalculated <|
-            Http.post url jbody Json.string
-
-
-
--- (Json.list myDecoder)
+            Http.post url jbody (Json.list myDecoder)
 
 
 optionDecoder : Json.Decoder Option

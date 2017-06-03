@@ -58,6 +58,9 @@
   ([v round-factor]
    (/ (Math/round (* v round-factor)) round-factor)))
 
+(defn find-first [f coll]
+  (first (drop-while (complement f) coll)))
+
 (comment
   (defmacro defn-defaults [name args body]
     "Create a function that can provide default values for arguments.
