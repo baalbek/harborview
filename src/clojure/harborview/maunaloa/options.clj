@@ -66,7 +66,7 @@
   (let [^EtradeRepository e (get-bean "etrade")]
     (.parseHtmlFor e ticker nil)))
 
-(defn check-implied-vol [ox]
+(comment check-implied-vol [ox]
   (try
     (if (> (.getIvBuy ox) 0)
       (if (> (.getIvSell ox) 0)
@@ -81,26 +81,32 @@
         (println "Iv sell fail for: " (-> ox .getDerivative .getTicker) ", " (.getMessage ex))
         false)))
 
+(defn check-implied-vol [ox]
+  (if (= (.isPresent (.getIvBuy ox)) true)
+    (if (= (.isPresent (.getIvSell ox)) true)
+      true
+      false)
+    false))
 
 (defn valid? [ox]
   (if (> (.getBuy ox) 0)
     (if (> (.getSell ox) 0)
-      (check-implied-vol ox)
+      (if (= (check-implied-vol ox) true)
+        (.isPresent (.getBreakEven ox)))
       false)
     false))
 
 (defn option->json [^DerivativePrice o]
-  (let [d (.getDerivative o)]
-        ;sp (.getStockPrice o)]
-    ;(U/json-response
-    {;:dx (CU/ld->str (.getLocalDx sp))
-     :ticker (-> o .getDerivative .getTicker)
+  (let [iv-buy (-> o .getIvBuy .get)
+        iv-sell (-> o .getIvSell .get)
+        be (-> o .getBreakEven .get)]
+    {:ticker (-> o .getDerivative .getTicker)
      :days (.getDays o)
      :buy (.getBuy o)
      :sell (.getSell o)
-     :iv-buy (CU/double->decimal (.getIvBuy o) 1000.0)
-     :iv-sell (CU/double->decimal (.getIvSell o) 1000.0)
-     :br-even (CU/double->decimal (.getBreakEven o) 1000.0)}))
+     :iv-buy (CU/double->decimal iv-buy 1000.0)
+     :iv-sell (CU/double->decimal iv-sell 1000.0)
+     :br-even (CU/double->decimal be 1000.0)}))
 
 (defn stock->json [^StockPrice s]
   {:dx (CU/ld->str (.getLocalDx s))

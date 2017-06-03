@@ -188,9 +188,12 @@
             (fn [[a b]]
               ;(let [ax (first (filter #(= (.getTicker %) a) options))])
               (let [ax (CU/find-first #(= (.getTicker %) a) options)
-                    bx (U/rs b)]
-                {:ticker a, :risc (.calcRisc ax bx)}))]
-      (U/json-response (map risc-fn jr))))
+                    bx (U/rs b)
+                    risc (.calcRisc ax bx)]
+                (if (.isPresent risc)
+                  {:ticker a, :risc (.get risc)}
+                  nil)))]
+      (U/json-response (filter (complement nil?) (map risc-fn jr)))))
   (POST "/calcriscputs" request)
   (GET "/tickers" request (tickers))
   ;(GET "/th" [oid] (test-hruler (U/rs oid)))

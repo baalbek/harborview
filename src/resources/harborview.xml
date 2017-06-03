@@ -8,7 +8,7 @@
         <!--
         <property name="storePath" value="file:///home/rcs/opt/java/netfondsjanitor/feed/2017/4/11" />
         -->
-        <property name="storePath" value="file:///home/rcs/opt/java/harborview/feed/2017/5/10" />
+        <property name="storePath" value="file:///home/rcs/opt/java/netfondsjanitor/feed/2017/6/2" />
     </bean>
 
         <!--
