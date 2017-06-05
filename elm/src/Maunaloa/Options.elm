@@ -1,5 +1,6 @@
 module Maunaloa.Options exposing (..)
 
+import Dict
 import Http
 import Html as H
 import Html.Attributes as A
@@ -65,6 +66,7 @@ type alias Option =
     , ivBuy : Float
     , ivSell : Float
     , breakEven : Float
+    , risc : Float
     , selected : Bool
     }
 
@@ -145,7 +147,7 @@ config =
             , Table.floatColumn "IvBuy" .ivBuy
             , Table.floatColumn "IvSell" .ivSell
             , Table.floatColumn "Break-Even" .breakEven
-            , Table.floatColumn "Risc" (\x -> 0.0)
+            , Table.floatColumn "Risc" .risc
             ]
         , customizations =
             { defaultCustomizations | rowAttrs = toRowAttrs }
@@ -277,8 +279,15 @@ update msg model =
             ( model, calcRisc model )
 
         RiscCalculated (Ok s) ->
-            Debug.log (toString s)
-                ( model, Cmd.none )
+            case model.options of
+                Nothing ->
+                    Debug.log (toString s)
+                        ( model, Cmd.none )
+
+                --Debug.log (toString (Dict.fromList (List.map (\x -> ( x.ticker, x.risc )) s)))
+                Just optionx ->
+                    Debug.log (toString s)
+                        ( { model | options = Just (List.map (setRisc s) optionx) }, Cmd.none )
 
         RiscCalculated (Err s) ->
             Debug.log ("RiscCalculated Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
@@ -296,6 +305,23 @@ update msg model =
                     ( { model | options = Just (List.map (toggle ticker) optionx) }
                     , Cmd.none
                     )
+
+
+setRisc : RiscItems -> Option -> Option
+setRisc riscs opt =
+    let
+        predicate =
+            \x -> x.ticker == opt.ticker
+
+        curRisc =
+            MISC.findInList predicate riscs
+    in
+        case curRisc of
+            Nothing ->
+                opt
+
+            Just curRisc_ ->
+                { opt | risc = MISC.toDecimal curRisc_.risc 100 }
 
 
 toggle : String -> Option -> Option
@@ -353,6 +379,7 @@ optionDecoder =
         |> JP.required "iv-buy" Json.float
         |> JP.required "iv-sell" Json.float
         |> JP.required "br-even" Json.float
+        |> JP.hardcoded 0.0
         |> JP.hardcoded False
 
 

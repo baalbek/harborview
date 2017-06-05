@@ -20,6 +20,19 @@ asHttpBody lx =
         Http.stringBody "application/json" (JE.encode 0 x)
 
 
+findInList : (a -> Bool) -> List a -> Maybe a
+findInList predicate list =
+    case list of
+        [] ->
+            Nothing
+
+        first :: rest ->
+            if predicate first then
+                Just first
+            else
+                findInList predicate rest
+
+
 httpErr2str : Http.Error -> String
 httpErr2str err =
     case err of
