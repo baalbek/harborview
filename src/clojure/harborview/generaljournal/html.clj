@@ -35,12 +35,15 @@
 
 (defn general-journal []
   (let [bilag (first (DBX/fetch-by-bilag))
-        bilag-dx (.getTransactionDate bilag)]
+        bilag-dx (.getTransactionDate bilag)
+        last-date (first (DBX/fetch-by-date))
+        last-date-dx (.getTransactionDate last-date)]
     (prn bilag-dx)
     (P/render-file "templates/generaljournal/generaljournal.html"
       {:ns4102 (map ns4102->select (DBX/fetch-ns4102))
        :bilag (-> bilag .getBilag inc str)
        :bilag-dx bilag-dx
+       :last-date last-date-dx
        :items (last-receipts)})))
 
 
@@ -50,7 +53,7 @@
     (let [gj-bean (DBX/insert bilag curdate credit debit desc amount mva mvaamt)]
       (U/json-response
          {"nextreceipt" (-> bilag read-string inc str)
-          "lastreceipts" (last-receipts)})))
+          "lastreceipts" (last-receipts-html)})))
       ;(U/json-response {"beanId" (.getId gj-bean) "bilag" (-> bilag read-string inc str)})))
   (PUT "/insertinvoice" [curdate bilag amount invoicenum]
     (let [gj-bean (DBX/insert-invoice bilag curdate amount invoicenum)]

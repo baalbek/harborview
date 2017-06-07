@@ -30,6 +30,9 @@
   (DB/with-session :koteriku GeneralJournalMapper
     (.selectByBilag it 5)))
 
+(defn fetch-by-date []
+  (DB/with-session :koteriku GeneralJournalMapper
+    (.selectByDate it 1)))
 
 (def fetch-ns4102
   (memoize (fn []

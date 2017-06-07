@@ -168,6 +168,29 @@
 (defn init-options []
   (P/render-file "templates/maunaloa/options.html" {}))
 
+(defn ticker->options [ticker optype]
+  (let [stock-ticker ((tix->map) ticker)]
+    (if (= optype "calls")
+      (OPX/calls stock-ticker)
+      (OPX/puts stock-ticker))))
+
+(defn calculated-riscs [ticker optype]
+  (let [options (ticker->options ticker optype)]
+    (filter #(= (-> % .getCurrentRisc .isPresent) true) options)))
+
+(defn calc-riscs [ticker optype jr]
+  (let [options (ticker->options ticker optype)
+        risc-fn
+          (fn [[a b]]
+            (let [ax (CU/find-first #(= (.getTicker %) a) options)
+                  bx (U/rs b)
+                  risc (.calcRisc ax bx)]
+              (if (.isPresent risc)
+                {:ticker a, :risc (.get risc)}
+                nil)))]
+    (filter (complement nil?) (map risc-fn jr))))
+
+
 (defroutes my-routes
   (GET "/charts" request (init-charts))
   (GET "/optiontickers" request (init-options))
@@ -175,26 +198,15 @@
   (GET "/calls" [ticker] (calls ticker))
   (GET "/resetcalls" [ticker] (binding [CU/*reset-cache* true] (calls ticker)))
   (GET "/resetputs" [ticker] (binding [CU/*reset-cache* true] (puts ticker)))
+  (GET "/risclines" [ticker optype]
+    (let [riscs (calculated-riscs ticker optype)]))
+
   (POST "/calcrisc" request
     (let [jr (U/json-req-parse request)
           prm (:params request)
-          stock-ticker ((tix->map) (:ticker prm))
-          optype (:optype prm)
-          options
-            (if (= optype "calls")
-              (OPX/calls stock-ticker)
-              (OPX/puts stock-ticker))
-          risc-fn
-            (fn [[a b]]
-              ;(let [ax (first (filter #(= (.getTicker %) a) options))])
-              (let [ax (CU/find-first #(= (.getTicker %) a) options)
-                    bx (U/rs b)
-                    risc (.calcRisc ax bx)]
-                (if (.isPresent risc)
-                  {:ticker a, :risc (.get risc)}
-                  nil)))]
-      (U/json-response (filter (complement nil?) (map risc-fn jr)))))
-  (POST "/calcriscputs" request)
+          ticker (:ticker prm)
+          optype (:optype prm)]
+      (U/json-response (calc-riscs ticker optype jr))))
   (GET "/tickers" request (tickers))
   ;(GET "/th" [oid] (test-hruler (U/rs oid)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
