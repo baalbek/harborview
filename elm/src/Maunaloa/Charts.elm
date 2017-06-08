@@ -13,6 +13,7 @@ import Common.DateUtil as DU
 import ChartRuler.VRuler as VR
 import Tuple as TUP
 import Date exposing (toTime)
+import Common.Buttons as BTN
 
 
 -- import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
@@ -123,10 +124,15 @@ type Msg
     = TickersFetched (Result Http.Error SelectItems)
     | FetchCharts String
     | ChartsFetched (Result Http.Error ChartInfo)
+    | FetchRiscLines
 
 
 
 -------------------- VIEW ---------------------
+
+
+button_ =
+    BTN.button "col-sm-2"
 
 
 view : Model -> H.Html Msg
@@ -134,6 +140,9 @@ view model =
     H.div [ A.class "container" ]
         [ H.div [ A.class "row" ]
             [ makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
+            ]
+        , H.div [ A.class "row" ]
+            [ button_ "Risc Lines" FetchRiscLines
             ]
         ]
 
@@ -275,6 +284,7 @@ chartInfoWindow ci model =
             incMonths
 
 
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         -- ToggleWeekly ->
@@ -307,6 +317,9 @@ update msg model =
         ChartsFetched (Err s) ->
             Debug.log ("ChartsFetched Error: " ++ (M.httpErr2str s))
                 ( model, Cmd.none )
+
+        FetchRiscLines ->
+            ( model, Cmd.none )
 
 
 
