@@ -93,14 +93,19 @@ MAUNALOA.repos = {
       // tell the browser we're handling this event
       e.preventDefault();
       e.stopPropagation();
+      var line=self.nearest.line;
+      if (line.onMouseUp != null) {
+          line.onMouseUp();
+      }
       self.isDown=false;
       self.nearest=null;
+      /*
       var len = self.lines.length;
       for (var i=0; i<len; ++i) {
           if (self.lines[i].onMouseUp != null) {
               self.lines[i].onMouseUp();
           }
-      }
+      }*/
       self.draw();
     }
   },
@@ -217,10 +222,7 @@ MAUNALOA.repos = {
                                             20,
                                             this.canvas.width,
                                             this.vruler.valueToPix(levelValue),
-                                            {id:lineId,
-                                             onMouseUp:function(){
-                                               alert("Hi: " + this.levelValue);
-                                             }});
+                                            {id:lineId});
     this.lines.push(result);
     if (doDraw) {
       this.draw();
@@ -236,7 +238,11 @@ MAUNALOA.repos = {
                                             color:"red",
                                             lineWidth:2,
                                             legendFn:function() {
-                                                return "[" + option + "] Risc: " + risc + " => " + this.levelValue;
+                                                var curRisc = this.risc || risc;
+                                                return "[" + option + "] Risc: " + curRisc + " => " + this.levelValue;
+                                            },
+                                            onMouseUp:function(){
+                                                this.risc = this.levelValue;
                                             }});
     this.lines.push(riscLine);
     var breakEvenLine = MAUNALOA.levelLine.create(this,breakEven,20,this.canvas.width,
