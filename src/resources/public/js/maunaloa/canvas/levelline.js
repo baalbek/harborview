@@ -48,7 +48,7 @@ MAUNALOA.levelLine = {
     },
 
     //create : function({parent,levelValue,x1,x2,y,draggable=true,legendFn=null,id=null}={}) {
-    create : function(parent,levelValue,x1,x2,y,{draggable=true,color="grey",lineWidth=1,legendFn=null,id=null}={}) {
+    create : function(parent,levelValue,x1,x2,y,{draggable=true,color="grey",lineWidth=1,legendFn=null,onMouseUp=null,id=null}={}) {
         var result = Object.create(MAUNALOA.levelLine);
         result.parent = parent;
         if (id) {
@@ -63,6 +63,7 @@ MAUNALOA.levelLine = {
         result.y2 = y;
         result.legend = legendFn || function() { return this.levelValue; }
         result.draggable = draggable;
+        result.onMouseUp = onMouseUp;
         return result;
     }
 };
@@ -94,6 +95,12 @@ MAUNALOA.repos = {
       e.stopPropagation();
       self.isDown=false;
       self.nearest=null;
+      var len = self.lines.length;
+      for (var i=0; i<len; ++i) {
+          if (self.lines[i].onMouseUp != null) {
+              self.lines[i].onMouseUp();
+          }
+      }
       self.draw();
     }
   },
@@ -210,7 +217,10 @@ MAUNALOA.repos = {
                                             20,
                                             this.canvas.width,
                                             this.vruler.valueToPix(levelValue),
-                                            {id:lineId});
+                                            {id:lineId,
+                                             onMouseUp:function(){
+                                               alert("Hi: " + this.levelValue);
+                                             }});
     this.lines.push(result);
     if (doDraw) {
       this.draw();
@@ -222,7 +232,7 @@ MAUNALOA.repos = {
                                             20,
                                             this.canvas.width,
                                             this.vruler.valueToPix(riscLevel),
-                                            {draggable:false,
+                                            {draggable:true,
                                             color:"red",
                                             lineWidth:2,
                                             legendFn:function() {
