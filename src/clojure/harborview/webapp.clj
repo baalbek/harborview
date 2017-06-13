@@ -38,10 +38,13 @@
   (R/files "/" {:root "public"})
   (R/resources "/" {:root "public"}))
 
+;(def handler (-> app wrap-params allow-cross-origin)
+
 (def webapp
   (-> main-routes
     api
-    wrap-params))
+    wrap-params
+    U/allow-cross-origin))
 
 ;(def server (run-jetty #'webapp {:port 8082 :join? false}))
 

@@ -36,6 +36,18 @@
 ;    `{"oid" (.getOid  ~b), "text" (.toHtml  ~b)}
 ;    `{"oid" (~oid-fn ~b), "text" (.toHtml  ~b)}
 
+(defn allow-cross-origin
+  "middleware function to allow cross origin"
+  [handler]
+  (fn [request]
+    (let [response (handler request)]
+      (-> response
+        (assoc-in [:headers "Access-Control-Allow-Origin"]  "*")
+        (assoc-in [:headers "Access-Control-Allow-Methods"] "GET,PUT,POST,DELETE,OPTIONS")
+        (assoc-in [:headers "Access-Control-Allow-Headers"] "X-Requested-With,Content-Type,Cache-Control")))))
+
+
+
 (comment populate-select [options]
   (fn [node]
     (HTML/at node [:option]

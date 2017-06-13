@@ -242,7 +242,8 @@ MAUNALOA.repos = {
                                                 return "[" + option + "] Risc: " + curRisc + " => " + this.levelValue;
                                             },
                                             onMouseUp:function(){
-                                                this.risc = this.levelValue;
+                                                this.risc = "-"; //this.levelValue;
+                                                
                                             }});
     this.lines.push(riscLine);
     var breakEvenLine = MAUNALOA.levelLine.create(this,breakEven,20,this.canvas.width,
@@ -296,5 +297,10 @@ jQuery(document).ready(function() {
     var r = MAUNALOA.repos.create("canvas0",vruler);
     r.addLevelLine(1,37,false);
     r.addRiscLines("YAR8C300",3.4,36,39);
+    $("#button1").click(function() {
+        HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/demo", {}, function(result) {
+          alert(result);
+        });
+    });
     //r.draw();
 });
