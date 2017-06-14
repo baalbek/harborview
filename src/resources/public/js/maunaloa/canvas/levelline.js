@@ -243,7 +243,12 @@ MAUNALOA.repos = {
                                             },
                                             onMouseUp:function(){
                                                 this.risc = "-"; //this.levelValue;
-                                                
+                                                HARBORVIEW.Utils.jsonGET("http://192.168.1.55:8082/maunaloa/calcrisc", 
+                                                    { "optype":"calls","ticker":,"stockprice": }, 
+                                                    function(result) {
+                                                        console.log("Risc result: " + result);
+                                                        this.risc = result; 
+                                                });
                                             }});
     this.lines.push(riscLine);
     var breakEvenLine = MAUNALOA.levelLine.create(this,breakEven,20,this.canvas.width,
@@ -298,7 +303,7 @@ jQuery(document).ready(function() {
     r.addLevelLine(1,37,false);
     r.addRiscLines("YAR8C300",3.4,36,39);
     $("#button1").click(function() {
-        HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/demo", {}, function(result) {
+        HARBORVIEW.Utils.jsonGET("http://192.168.1.55:8082/maunaloa/demo", {}, function(result) {
           alert(result);
         });
     });

@@ -346,10 +346,10 @@ calcRisc model =
         url =
             case model.flags.isCalls of
                 True ->
-                    mainUrl ++ "/calcrisc?optype=calls&ticker=" ++ model.selectedTicker
+                    mainUrl ++ "/calc-risc-stockprices?optype=calls&ticker=" ++ model.selectedTicker
 
                 False ->
-                    mainUrl ++ "/calcrisc?optype=puts&ticker=" ++ model.selectedTicker
+                    mainUrl ++ "/calc-risc-stockprices?optype=puts&ticker=" ++ model.selectedTicker
 
         opx =
             Maybe.withDefault [] model.options
