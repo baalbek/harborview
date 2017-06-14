@@ -2,7 +2,7 @@ var HARBORVIEW = HARBORVIEW || {};
 
 HARBORVIEW.Utils = (function () {
     var onError = function (xhr, status) {
-        alert(status);
+        alert("Ajax error: " + status);
     }
     var myAjax = function (myType, myDataType, myUrl, args, onSuccess) {
         $.ajax({

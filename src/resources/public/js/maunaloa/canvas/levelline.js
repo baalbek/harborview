@@ -243,11 +243,12 @@ MAUNALOA.repos = {
                                             },
                                             onMouseUp:function(){
                                                 this.risc = "-"; //this.levelValue;
-                                                HARBORVIEW.Utils.jsonGET("http://192.168.1.55:8082/maunaloa/calcrisc", 
-                                                    { "optype":"calls","ticker":,"stockprice": }, 
+                                                console.log("Level: " + this.levelValue);
+                                                HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/calcrisc",
+                                                    { "optype":"calls","ticker":"YAR8C300","stockprice":this.levelValue },
                                                     function(result) {
                                                         console.log("Risc result: " + result);
-                                                        this.risc = result; 
+                                                        // this.risc = result;
                                                 });
                                             }});
     this.lines.push(riscLine);
@@ -293,17 +294,17 @@ MAUNALOA.vruler = function(chartInfo) {
 
     var chartInfo = {
         chart : {
-          valueRange : [35,40],
+          valueRange : [310,330],
           height : 300
         }
     }
 jQuery(document).ready(function() {
     var vruler = MAUNALOA.vruler(chartInfo);
     var r = MAUNALOA.repos.create("canvas0",vruler);
-    r.addLevelLine(1,37,false);
-    r.addRiscLines("YAR8C300",3.4,36,39);
+    //r.addLevelLine(1,321,false);
+    r.addRiscLines("YAR8C300",3.4,319,325);
     $("#button1").click(function() {
-        HARBORVIEW.Utils.jsonGET("http://192.168.1.55:8082/maunaloa/demo", {}, function(result) {
+        HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/demo", {}, function(result) {
           alert(result);
         });
     });
