@@ -190,10 +190,10 @@
                 nil)))]
     (filter (complement nil?) (map risc-fn jr))))
 
-(defn calc-risc-for-stockprice [optype ticker stockprice]
-  (let [options (ticker->options ticker optype)
+(defn calc-risc-for-stockprice [stockticker ticker optype stockprice]
+  (let [options (ticker->options stockticker optype)
         sp (U/rs stockprice)
-        option (CU/find-first #(= (.getTicker %) options) options)]
+        option (CU/find-first #(= (.getTicker %) options) ticker)]
     3.4))
 
 (defroutes my-routes
@@ -216,7 +216,7 @@
       (prn result)
       (U/json-response result))) ;(calc-risc-stockprices ticker optype jr))))
   (GET "/calcrisc" [optype ticker stockprice]
-    (U/json-response (calc-risc-for-stockprice optype ticker stockprice)))
+    (U/json-response (calc-risc-for-stockprice "3" ticker optype stockprice)))
   (GET "/tickers" request (tickers))
   ;(GET "/th" [oid] (test-hruler (U/rs oid)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
