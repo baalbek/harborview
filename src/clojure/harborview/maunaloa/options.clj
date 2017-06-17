@@ -120,10 +120,20 @@
   (let [^Tuple3 parsed (parse-html ticker)]
     (.first parsed)))
 
+(def option-cache (atom {}))
+
+(defn populate-cache [options]
+  (doseq [o options]
+    (swap! option-cache assoc (.getTicker o) o)))
+
 (defn-memb calls [ticker]
-  (let [^Tuple3 parsed (parse-html ticker)]
-    (filter valid? (.second parsed))))
+  (let [^Tuple3 parsed (parse-html ticker)
+        result (filter valid? (.second parsed))]
+    (populate-cache result)
+    result))
 
 (defn-memb puts [ticker]
-  (let [^Tuple3 parsed (parse-html ticker)]
-    (filter valid? (.third parsed))))
+  (let [^Tuple3 parsed (parse-html ticker)
+        result (filter valid? (.third parsed))]
+    (populate-cache result)
+    result))

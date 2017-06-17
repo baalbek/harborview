@@ -343,13 +343,17 @@ calcRisc model =
         risc =
             Result.withDefault 0 (String.toFloat model.risc)
 
-        url =
-            case model.flags.isCalls of
-                True ->
-                    mainUrl ++ "/calc-risc-stockprices?optype=calls&ticker=" ++ model.selectedTicker
+        {-
+           url =
+               case model.flags.isCalls of
+                   True ->
+                       mainUrl ++ "/calc-risc-stockprices?optype=calls&ticker=" ++ model.selectedTicker
 
-                False ->
-                    mainUrl ++ "/calc-risc-stockprices?optype=puts&ticker=" ++ model.selectedTicker
+                   False ->
+                       mainUrl ++ "/calc-risc-stockprices?optype=puts&ticker=" ++ model.selectedTicker
+        -}
+        url =
+            mainUrl ++ "/calc-risc-stockprices"
 
         opx =
             Maybe.withDefault [] model.options

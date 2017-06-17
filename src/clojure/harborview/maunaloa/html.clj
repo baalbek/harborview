@@ -178,7 +178,7 @@
   (let [options (ticker->options ticker optype)]
     (filter #(= (-> % .getCurrentRisc .isPresent) true) options)))
 
-(defn calc-risc-stockprices [ticker optype jr]
+(comment calc-risc-stockprices [ticker optype jr]
   (let [options (ticker->options ticker optype)
         risc-fn
           (fn [[a b]]
@@ -190,33 +190,56 @@
                 nil)))]
     (filter (complement nil?) (map risc-fn jr))))
 
-(defn calc-risc-for-stockprice [stockticker ticker optype stockprice]
+(defn calc-risc-stockprices [jr]
+  (let [risc-fn
+          (fn [[a b]]
+            (if-let [ax (@OPX/option-cache a)]
+              (let [bx (U/rs b)
+                    risc (.stockPriceFor ax bx)]
+                (if (.isPresent risc)
+                  {:ticker a, :risc (.get risc)}
+                  nil))))]
+    (filter (complement nil?) (map risc-fn jr))))
+
+(comment calc-risc-for-stockprice [stockticker ticker optype stockprice]
   (let [options (ticker->options stockticker optype)
         sp (U/rs stockprice)
         option (CU/find-first #(= (.getTicker %) ticker) options)]
     (.optionPriceFor option stockprice)))
+
+(defn calc-risc-for-stockprice [ticker stockprice]
+  (if-let [ax (@OPX/option-cache ticker)]
+    (let [bx (U/rs stockprice)]
+      (CU/double->decimal (.optionPriceFor ax bx) 100.0))
+    -1))
 
 (defroutes my-routes
   (GET "/charts" request (init-charts))
   (GET "/optiontickers" request (init-options))
   (GET "/puts" [ticker] (puts ticker))
   (GET "/calls" [ticker] (calls ticker))
-  (GET "/resetcalls" [ticker] (binding [CU/*reset-cache* true] (calls ticker)))
-  (GET "/resetputs" [ticker] (binding [CU/*reset-cache* true] (puts ticker)))
+  (GET "/resetcalls" [ticker]
+    (binding [CU/*reset-cache* true]
+      (reset! (OPX/option-cache {}))
+      (calls ticker)))
+  (GET "/resetputs" [ticker]
+    (binding [CU/*reset-cache* true]
+      (reset! (OPX/option-cache {}))
+      (puts ticker)))
   (GET "/risclines" [ticker optype]
     (let [riscs (calculated-riscs ticker optype)]))
   (GET "/demo" request
     (U/json-response 2))
   (POST "/calc-risc-stockprices" request
     (let [jr (U/json-req-parse request)
-          prm (:params request)
-          ticker (:ticker prm)
-          optype (:optype prm)
-          result (calc-risc-stockprices ticker optype jr)]
+          ;prm (:params request)
+          ;ticker (:ticker prm)
+          ;optype (:optype prm)
+          result (calc-risc-stockprices jr)]
       (prn result)
       (U/json-response result))) ;(calc-risc-stockprices ticker optype jr))))
-  (GET "/calcrisc" [optype ticker stockprice]
-    (U/json-response (calc-risc-for-stockprice "3" ticker optype stockprice)))
+  (GET "/calcrisc" [ticker stockprice]
+    (U/json-response (calc-risc-for-stockprice ticker stockprice)))
   (GET "/tickers" request (tickers))
   ;(GET "/th" [oid] (test-hruler (U/rs oid)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))

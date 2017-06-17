@@ -245,8 +245,8 @@ MAUNALOA.repos = {
                                                 this.risc = "-"; //this.levelValue;
                                                 console.log("Level: " + this.levelValue);
                                                 var self = this;
-                                                HARBORVIEW.Utils.jsonGET("http://192.168.1.55:8082/maunaloa/calcrisc",
-                                                    { "optype":"calls","ticker":"YAR8C300","stockprice":this.levelValue },
+                                                HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/calcrisc",
+                                                    { "ticker":"YAR8C300","stockprice":this.levelValue },
                                                     function(result) {
                                                         console.log("Risc result: " + result);
                                                         self.risc = parseFloat(result);
