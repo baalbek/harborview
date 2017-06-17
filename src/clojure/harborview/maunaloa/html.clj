@@ -193,8 +193,8 @@
 (defn calc-risc-for-stockprice [stockticker ticker optype stockprice]
   (let [options (ticker->options stockticker optype)
         sp (U/rs stockprice)
-        option (CU/find-first #(= (.getTicker %) options) ticker)]
-    3.4))
+        option (CU/find-first #(= (.getTicker %) ticker) options)]
+    (.optionPriceFor option stockprice)))
 
 (defroutes my-routes
   (GET "/charts" request (init-charts))
