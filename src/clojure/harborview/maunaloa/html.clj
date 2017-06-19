@@ -168,14 +168,20 @@
 (defn init-options []
   (P/render-file "templates/maunaloa/options.html" {}))
 
-(defn ticker->options [ticker optype]
-  (let [stock-ticker ((tix->map) ticker)]
+(defn ticker->options
+  ([ticker]
+   (let [stock-ticker ((tix->map) ticker)]
+    (concat (OPX/calls stock-ticker) (OPX/puts stock-ticker))))
+  ([ticker optype]
+   (let [stock-ticker ((tix->map) ticker)]
     (if (= optype "calls")
       (OPX/calls stock-ticker)
-      (OPX/puts stock-ticker))))
+      (OPX/puts stock-ticker)))))
 
-(defn calculated-riscs [ticker optype]
-  (let [options (ticker->options ticker optype)]
+
+
+(defn calculated-riscs [ticker]
+  (let [options (ticker->options ticker)]
     (filter #(= (-> % .getCurrentRisc .isPresent) true) options)))
 
 (comment calc-risc-stockprices [ticker optype jr]
@@ -206,7 +212,6 @@
         sp (U/rs stockprice)
         option (CU/find-first #(= (.getTicker %) ticker) options)]
     (.optionPriceFor option stockprice)))
-
 (defn calc-risc-for-stockprice [ticker stockprice]
   (if-let [ax (@OPX/option-cache ticker)]
     (let [bx (U/rs stockprice)]
@@ -228,8 +233,6 @@
       (puts ticker)))
   (GET "/risclines" [ticker optype]
     (let [riscs (calculated-riscs ticker optype)]))
-  (GET "/demo" request
-    (U/json-response 2))
   (POST "/calc-risc-stockprices" request
     (let [jr (U/json-req-parse request)
           ;prm (:params request)
