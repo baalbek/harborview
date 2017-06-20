@@ -39,6 +39,18 @@ type alias Flags =
     }
 
 
+type alias RiscLine =
+    { ticker : String
+    , be : Float
+    , risc : Float
+    , optionPrice : Float
+    }
+
+
+type alias RiscLines =
+    List RiscLine
+
+
 
 {-
    main : Program Never Model Msg
@@ -125,6 +137,7 @@ type Msg
     | FetchCharts String
     | ChartsFetched (Result Http.Error ChartInfo)
     | FetchRiscLines
+    | RiscLinesFetched (Result Http.Error RiscLines)
 
 
 
@@ -319,11 +332,34 @@ update msg model =
                 ( model, Cmd.none )
 
         FetchRiscLines ->
+            ( model, fetchRiscLines model )
+
+        RiscLinesFetched (Ok lx) ->
             ( model, Cmd.none )
+
+        RiscLinesFetched (Err s) ->
+            Debug.log ("RiscLinesFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
 
 
 ------------------ COMMANDS -------------------
+
+
+fetchRiscLines : Model -> Cmd Msg
+fetchRiscLines model =
+    let
+        url =
+            mainUrl ++ "/risclines?ticker=" ++ model.selectedTicker
+
+        riscDecoder =
+            JP.decode RiscLine
+                |> JP.required "ticker" Json.string
+                |> JP.required "be" Json.float
+                |> JP.required "risc" Json.float
+                |> JP.required "option-price" Json.float
+    in
+        Http.send RiscLinesFetched <|
+            Http.get url (Json.list riscDecoder)
 
 
 fetchTickers : Cmd Msg

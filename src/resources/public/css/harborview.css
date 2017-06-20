@@ -60,6 +60,15 @@ nav a, nav a:link, nav a:visited, nav a:active, nav a.current {
   height: 159px;
   z-index: 9999; }
 
+.top-canvas {
+  border:1px solid red;
+  position:absolute;
+  top:300px;
+  left:200px;
+  width:1310px;
+  height:600px;
+}
+
 .modalDialog {
   position: fixed;
   font-family: Arial, Helvetica, sans-serif;

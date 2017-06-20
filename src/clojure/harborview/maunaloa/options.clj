@@ -116,6 +116,12 @@
    :lo (.getLo s)
    :spot (.getCls s)})
 
+(defn risc->json [^DerivativePrice o]
+  {:ticker (.getTicker o)
+   :be (-> o .getBreakEven .get)
+   :risc (-> o .getCurrentRiscStockPrice .get)
+   :option-price (.getCurrentRiscOptionPrice o)})
+
 (defn stock [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]
     (.first parsed)))

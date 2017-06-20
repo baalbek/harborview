@@ -182,7 +182,7 @@
 
 (defn calculated-riscs [ticker]
   (let [options (ticker->options ticker)]
-    (filter #(= (-> % .getCurrentRisc .isPresent) true) options)))
+    (filter #(= (-> % .getCurrentRiscStockPrice .isPresent) true) options)))
 
 (comment calc-risc-stockprices [ticker optype jr]
   (let [options (ticker->options ticker optype)
@@ -212,6 +212,7 @@
         sp (U/rs stockprice)
         option (CU/find-first #(= (.getTicker %) ticker) options)]
     (.optionPriceFor option stockprice)))
+
 (defn calc-risc-for-stockprice [ticker stockprice]
   (if-let [ax (@OPX/option-cache ticker)]
     (let [bx (U/rs stockprice)]
@@ -231,8 +232,9 @@
     (binding [CU/*reset-cache* true]
       (reset! (OPX/option-cache {}))
       (puts ticker)))
-  (GET "/risclines" [ticker optype]
-    (let [riscs (calculated-riscs ticker optype)]))
+  (GET "/risclines" [ticker]
+    (let [riscs (calculated-riscs ticker)]
+      (U/json-response (map OPX/risc->json riscs))))
   (POST "/calc-risc-stockprices" request
     (let [jr (U/json-req-parse request)
           ;prm (:params request)
