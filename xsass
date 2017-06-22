@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # sass --style compressed sass-src/harborview.scss src/resources/public/css/harborview.css
-sass sass-src/harborview.scss src/resources/public/css/harborview.css
+
+docker run --rm -v /home/rcs/opt/java/harborview:/harborview rcs/sass  sass /harborview/sass-src/harborview.scss /harborview/src/resources/public/css/harborview.css
 
 # sass --watch sass-src/harborview.scss:src/resources/public/css/harborview.css
 
