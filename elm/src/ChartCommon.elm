@@ -45,7 +45,6 @@ type alias Chart =
     { lines : Maybe (List (List Float))
     , bars : Maybe (List (List Float))
     , candlesticks : Maybe (List Candlestick)
-    , height : Float
     , valueRange : ( Float, Float )
     , numVlines : Int
     }
@@ -77,8 +76,49 @@ type alias ChartInfoJs =
     }
 
 
+minMax : List Float -> ( Maybe Float, Maybe Float )
+minMax v =
+    let
+        minVal =
+            List.minimum v
 
--- , chartLines : ChartLines
--- , candlesticks : Maybe (List Candlestick)
--- , chartLines2 : Maybe ChartLines
--- , strokes : List String
+        maxVal =
+            List.maximum v
+    in
+        ( minVal, maxVal )
+
+
+maybeMinMax : Maybe (List (List Float)) -> List ( Maybe Float, Maybe Float )
+maybeMinMax l =
+    case l of
+        Nothing ->
+            [ ( Nothing, Nothing ) ]
+
+        Just l_ ->
+            List.map minMax l_
+
+
+minMaxCndl : Maybe (List Candlestick) -> ( Maybe Float, Maybe Float )
+minMaxCndl cndl =
+    case cndl of
+        Nothing ->
+            ( Nothing, Nothing )
+
+        Just cndl_ ->
+            let
+                lows =
+                    List.map .l cndl_
+
+                his =
+                    List.map .h cndl_
+
+                minVal =
+                    List.minimum lows
+
+                -- |> Maybe.withDefault 0
+                maxVal =
+                    List.maximum his
+
+                -- |> Maybe.withDefault 0
+            in
+                ( minVal, maxVal )
