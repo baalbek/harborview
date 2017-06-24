@@ -1,33 +1,12 @@
 port module Maunaloa.Charts exposing (..)
 
-import Date exposing (Date)
 import Http
 import Html as H
 import Html.Attributes as A
-import Svg as S
-import Svg.Attributes as SA
-import Json.Decode as Json
-import Json.Decode.Pipeline as JP
 import Common.Miscellaneous as M
-import Common.DateUtil as DU
-import ChartRuler.VRuler as VR
-import Tuple as TUP
-import Date exposing (toTime)
+import ChartCommon as C
+import Common.ComboBox as CB
 import Common.Buttons as BTN
-
-
--- import Common.ModalDialog exposing (ModalDialog, dlgOpen, dlgClose, makeOpenDlgButton, modalDialog)
-
-import Common.Miscellaneous exposing (checkbox, makeLabel, onChange, stringToDateDecoder)
-import Common.ComboBox
-    exposing
-        ( ComboBoxItem
-        , SelectItems
-        , comboBoxItemListDecoder
-        , makeSelect
-        )
-import ChartRuler.VRuler as VR
-import ChartCommon as C exposing (Candlestick, ChartInfo, ChartInfoJs, Chart)
 
 
 mainUrl =
@@ -51,20 +30,6 @@ type alias RiscLines =
     List RiscLine
 
 
-
-{-
-   main : Program Never Model Msg
-   main =
-       H.program
-           { init = init
-           , view = view
-           , update = update
-           , subscriptions = subscriptions
-           }
-
--}
-
-
 main : Program Flags Model Msg
 main =
     H.programWithFlags
@@ -79,7 +44,7 @@ main =
 -------------------- PORTS ---------------------
 
 
-port drawCanvas : ChartInfoJs -> Cmd msg
+port drawCanvas : C.ChartInfoJs -> Cmd msg
 
 
 
@@ -101,10 +66,10 @@ init flags =
 
 
 type alias Model =
-    { tickers : Maybe SelectItems
+    { tickers : Maybe CB.SelectItems
     , selectedTicker : String
-    , chartInfo : Maybe ChartInfo
-    , chartInfoWin : Maybe ChartInfoJs
+    , chartInfo : Maybe C.ChartInfo
+    , chartInfoWin : Maybe C.ChartInfoJs
     , dropItems : Int
     , takeItems : Int
     , chartHeight : Float
@@ -133,9 +98,9 @@ initModel flags =
 
 
 type Msg
-    = TickersFetched (Result Http.Error SelectItems)
+    = TickersFetched (Result Http.Error CB.SelectItems)
     | FetchCharts String
-    | ChartsFetched (Result Http.Error ChartInfo)
+    | ChartsFetched (Result Http.Error C.ChartInfo)
     | FetchRiscLines
     | RiscLinesFetched (Result Http.Error RiscLines)
 
@@ -152,7 +117,7 @@ view : Model -> H.Html Msg
 view model =
     H.div [ A.class "container" ]
         [ H.div [ A.class "row" ]
-            [ makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
+            [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
             ]
         , H.div [ A.class "row" ]
             [ button_ "Risc Lines" FetchRiscLines
@@ -164,144 +129,9 @@ view model =
 ------------------- UPDATE --------------------
 
 
-scaledCandlestick : (Float -> Float) -> Candlestick -> Candlestick
-scaledCandlestick vruler cndl =
-    let
-        opn =
-            vruler cndl.o
-
-        hi =
-            vruler cndl.h
-
-        lo =
-            vruler cndl.l
-
-        cls =
-            vruler cndl.c
-    in
-        Candlestick opn hi lo cls
-
-
-slice : Model -> List a -> List a
-slice model vals =
-    List.take model.takeItems <| List.drop model.dropItems vals
-
-
-chartValueRange :
-    Maybe (List (List Float))
-    -> Maybe (List (List Float))
-    -> Maybe (List Candlestick)
-    -> ( Float, Float )
-chartValueRange lines bars candlesticks =
-    let
-        minMaxLines =
-            VR.maybeMinMax lines
-
-        minMaxBars =
-            VR.maybeMinMax bars
-
-        minMaxCndl =
-            VR.minMaxCndl candlesticks
-
-        result =
-            minMaxCndl :: (minMaxLines ++ minMaxBars)
-    in
-        M.minMaxTuples result
-
-
-chartWindow : Model -> Chart -> Chart
-chartWindow model c =
-    let
-        sliceFn =
-            slice model
-
-        lines_ =
-            case c.lines of
-                Nothing ->
-                    Nothing
-
-                Just l ->
-                    Just (List.map sliceFn l)
-
-        bars_ =
-            case c.bars of
-                Nothing ->
-                    Nothing
-
-                Just b ->
-                    Just (List.map sliceFn b)
-
-        cndl_ =
-            case c.candlesticks of
-                Nothing ->
-                    Nothing
-
-                Just cndl ->
-                    Just (sliceFn cndl)
-
-        valueRange =
-            chartValueRange lines_ bars_ cndl_
-
-        vr =
-            VR.vruler valueRange c.height
-
-        vr_cndl =
-            scaledCandlestick vr
-    in
-        Chart
-            (M.maybeMap (List.map vr) lines_)
-            (M.maybeMap (List.map vr) bars_)
-            (M.maybeMap vr_cndl cndl_)
-            c.height
-            valueRange
-            c.numVlines
-
-
-chartInfoWindow : ChartInfo -> Model -> ChartInfoJs
-chartInfoWindow ci model =
-    let
-        incMonths =
-            case model.flags.isWeekly of
-                True ->
-                    3
-
-                False ->
-                    1
-
-        xAxis_ =
-            slice model ci.xAxis
-
-        ( minDx_, maxDx_ ) =
-            DU.dateRangeOf ci.minDx xAxis_
-
-        strokes =
-            [ "#000000", "#ff0000", "#aa00ff" ]
-
-        chw =
-            chartWindow model ci.chart
-
-        chw2 =
-            case ci.chart2 of
-                Nothing ->
-                    Nothing
-
-                Just c2 ->
-                    Just (chartWindow model c2)
-    in
-        ChartInfoJs
-            (toTime minDx_)
-            xAxis_
-            chw
-            chw2
-            strokes
-            incMonths
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        -- ToggleWeekly ->
-        -- ( { model | isWeekly = not model.isWeekly }, Cmd.none )
         TickersFetched (Ok s) ->
             ( { model
                 | tickers = Just s
@@ -313,26 +143,17 @@ update msg model =
             Debug.log ("TickersFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
         FetchCharts s ->
-            ( { model | selectedTicker = s }, fetchCharts s model )
+            ( model, Cmd.none )
 
         ChartsFetched (Ok s) ->
-            let
-                ciWin =
-                    chartInfoWindow s model
-            in
-                ( { model
-                    | chartInfo = Just s
-                    , chartInfoWin = Just ciWin
-                  }
-                , drawCanvas ciWin
-                )
+            ( model, Cmd.none )
 
         ChartsFetched (Err s) ->
             Debug.log ("ChartsFetched Error: " ++ (M.httpErr2str s))
                 ( model, Cmd.none )
 
         FetchRiscLines ->
-            ( model, fetchRiscLines model )
+            ( model, Cmd.none )
 
         RiscLinesFetched (Ok lx) ->
             ( model, Cmd.none )
@@ -345,23 +166,6 @@ update msg model =
 ------------------ COMMANDS -------------------
 
 
-fetchRiscLines : Model -> Cmd Msg
-fetchRiscLines model =
-    let
-        url =
-            mainUrl ++ "/risclines?ticker=" ++ model.selectedTicker
-
-        riscDecoder =
-            JP.decode RiscLine
-                |> JP.required "ticker" Json.string
-                |> JP.required "be" Json.float
-                |> JP.required "risc" Json.float
-                |> JP.required "option-price" Json.float
-    in
-        Http.send RiscLinesFetched <|
-            Http.get url (Json.list riscDecoder)
-
-
 fetchTickers : Cmd Msg
 fetchTickers =
     let
@@ -369,51 +173,7 @@ fetchTickers =
             mainUrl ++ "/tickers"
     in
         Http.send TickersFetched <|
-            Http.get url comboBoxItemListDecoder
-
-
-candlestickDecoder : Json.Decoder Candlestick
-candlestickDecoder =
-    Json.map4 Candlestick
-        (Json.field "o" Json.float)
-        (Json.field "h" Json.float)
-        (Json.field "l" Json.float)
-        (Json.field "c" Json.float)
-
-
-chartDecoder : Float -> Int -> Json.Decoder Chart
-chartDecoder chartHeight numVlines =
-    let
-        lines =
-            (Json.field "lines" (Json.maybe (Json.list (Json.list Json.float))))
-
-        bars =
-            (Json.field "bars" (Json.maybe (Json.list (Json.list Json.float))))
-
-        candlesticks =
-            (Json.field "cndl" (Json.maybe (Json.list candlestickDecoder)))
-    in
-        Json.map6 Chart lines bars candlesticks (Json.succeed chartHeight) (Json.succeed ( 0, 0 )) (Json.succeed numVlines)
-
-
-fetchCharts : String -> Model -> Cmd Msg
-fetchCharts ticker model =
-    let
-        myDecoder =
-            JP.decode ChartInfo
-                |> JP.required "min-dx" stringToDateDecoder
-                |> JP.required "x-axis" (Json.list Json.float)
-                |> JP.required "chart" (chartDecoder model.chartHeight 10)
-                |> JP.required "chart2" (Json.nullable (chartDecoder model.chartHeight2 5))
-
-        -- |> JP.hardcoded Nothing
-        url =
-            if model.flags.isWeekly == True then
-                mainUrl ++ "/tickerweek?oid=" ++ ticker
-            else
-                mainUrl ++ "/ticker?oid=" ++ ticker
-    in
-        Http.send ChartsFetched <| Http.get url myDecoder
+            Http.get url CB.comboBoxItemListDecoder
 
 
 
