@@ -255,10 +255,20 @@ update msg model =
             Debug.log ("TickersFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
         FetchCharts s ->
-            ( model, Cmd.none )
+            ( { model | selectedTicker = s }, fetchCharts s model )
 
         ChartsFetched (Ok s) ->
-            ( model, Cmd.none )
+            let
+                ciWin =
+                    chartInfoWindow s model
+            in
+                Debug.log "ChartsFetched:"
+                    ( { model
+                        | chartInfo = Just s
+                        , chartInfoWin = Just ciWin
+                      }
+                    , drawCanvas ciWin
+                    )
 
         ChartsFetched (Err s) ->
             Debug.log ("ChartsFetched Error: " ++ (M.httpErr2str s))
