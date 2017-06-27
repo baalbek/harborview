@@ -242,7 +242,9 @@ MAUNALOA.repos = {
                                                 return "[" + option + "] Risc: " + curRisc + " => " + this.levelValue;
                                             },
                                             onMouseUp:function(){
-                                                this.risc = "-"; //this.levelValue;
+                                                this.risc = this.levelValue;
+                                                /*
+                                                this.risc = "-"; 
                                                 console.log("Level: " + this.levelValue);
                                                 var self = this;
                                                 HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/calcrisc",
@@ -252,6 +254,7 @@ MAUNALOA.repos = {
                                                         self.risc = parseFloat(result);
                                                         self.parent.draw();
                                                 });
+                                                */
                                             }});
     this.lines.push(riscLine);
     var breakEvenLine = MAUNALOA.levelLine.create(this,breakEven,20,this.canvas.width,
@@ -269,7 +272,7 @@ MAUNALOA.repos = {
   }
 }
 
-
+/*
 MAUNALOA.vruler = function(chartInfo) {
   var double2decimal = function(x,roundingFactor) {
       var rf = roundingFactor || 100;
@@ -293,7 +296,7 @@ MAUNALOA.vruler = function(chartInfo) {
     pixToValue : pixToValue
   }
 }
-
+*/
     var chartInfo = {
         chart : {
           valueRange : [310,330],
@@ -301,7 +304,7 @@ MAUNALOA.vruler = function(chartInfo) {
         }
     }
 jQuery(document).ready(function() {
-    var vruler = MAUNALOA.vruler(chartInfo);
+    var vruler = MAUNALOA.vruler(300,[310,330]);
     var r = MAUNALOA.repos.create("canvas0",vruler);
     //r.addLevelLine(1,321,false);
     r.addRiscLines("YAR8C300",2.8,319,325);

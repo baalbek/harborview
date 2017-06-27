@@ -16,11 +16,20 @@ jQuery(document).ready(function() {
           isWeekly : true
       });
       var drawCanvas1 = function (chartInfo) {
-          drawCanvas(chartInfo,'canvas1','canvas1b');
+          //drawCanvas(chartInfo,'canvas1','canvas1b');
       }
       var drawCanvas2 = function (chartInfo) {
-          drawCanvas(chartInfo,'canvas2','canvas2b');
+          //drawCanvas(chartInfo,'canvas2','canvas2b');
       }
+      var drawCanvas = function (chartInfo,canvasId,canvasId2) {
+        var offsets = chartInfo.xaxis;
+        var myHruler = createHruler(1300,chartInfo.startdate,offsets);
+        drawChart(canvasId,chartInfo,myHruler,chartInfo.chart);
+        if (chartInfo.chart2 != null) {
+          drawChart(canvasId2,chartInfo,myHruler,chartInfo.chart2);
+        }
+      }
+      /*
       var drawLines = function (ctx,xaxis,curLines,strokes) {
         for (var i = 0; i < curLines.length; ++i) {
             ctx.beginPath();
@@ -207,4 +216,5 @@ jQuery(document).ready(function() {
         }
         ctx.stroke();
       }
+    */
 });
