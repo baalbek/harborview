@@ -38,12 +38,14 @@ jQuery(document).ready(function() {
         var lineChart = MAUNALOA.lineChart(myHruler,myVruler,ctx);
         var strokes = chartInfo.strokes;
         for (var i=0;i<curChart.lines.length;++i) {
-            console.log("Drawing line");
             var line = curChart.lines[i];
             var curStroke = strokes[i] === undefined ? "#000000" : strokes[i];
-            lineChart.draw(line,curStroke);
+            lineChart.drawLine(line,curStroke);
         }
 
+        if (curChart.candlesticks != null) {
+            lineChart.drawCandlesticks(curChart.candlesticks);
+        }
         /*
         drawChart(canvasId,chartInfo,myHruler,chartInfo.chart);
         if (chartInfo.chart2 != null) {
