@@ -16,18 +16,40 @@ jQuery(document).ready(function() {
           isWeekly : true
       });
       var drawCanvas1 = function (chartInfo) {
-          //drawCanvas(chartInfo,'canvas1','canvas1b');
+          console.log("valueRange: " + chartInfo.chart.valueRange[0] + " - " + chartInfo.chart.valueRange[1]);
+          drawCanvas(chartInfo,'canvas1','canvas1b');
       }
       var drawCanvas2 = function (chartInfo) {
-          //drawCanvas(chartInfo,'canvas2','canvas2b');
+          drawCanvas(chartInfo,'canvas2','canvas2b');
       }
+      app.ports.drawCanvas.subscribe(drawCanvas1);
+      app2.ports.drawCanvas.subscribe(drawCanvas2);
+
       var drawCanvas = function (chartInfo,canvasId,canvasId2) {
         var offsets = chartInfo.xaxis;
-        var myHruler = createHruler(1300,chartInfo.startdate,offsets);
+        var myHruler = MAUNALOA.hruler(1300,chartInfo.startdate,offsets);
+        var canvas = document.getElementById(canvasId);
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        var curChart = chartInfo.chart;
+        var myVruler = MAUNALOA.vruler(canvas.height,curChart.valueRange);
+        myVruler.lines(ctx,canvas.width,curChart.numVlines);
+        var lineChart = MAUNALOA.lineChart(myHruler,myVruler,ctx);
+        var strokes = chartInfo.strokes;
+        for (var i=0;i<curChart.lines.length;++i) {
+            console.log("Drawing line");
+            var line = curChart.lines[i];
+            var curStroke = strokes[i] === undefined ? "#000000" : strokes[i];
+            lineChart.draw(line,curStroke);
+        }
+
+        /*
         drawChart(canvasId,chartInfo,myHruler,chartInfo.chart);
         if (chartInfo.chart2 != null) {
           drawChart(canvasId2,chartInfo,myHruler,chartInfo.chart2);
         }
+        */
       }
       /*
       var drawLines = function (ctx,xaxis,curLines,strokes) {

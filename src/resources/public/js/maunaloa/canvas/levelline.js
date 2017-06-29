@@ -244,7 +244,7 @@ MAUNALOA.repos = {
                                             onMouseUp:function(){
                                                 this.risc = this.levelValue;
                                                 /*
-                                                this.risc = "-"; 
+                                                this.risc = "-";
                                                 console.log("Level: " + this.levelValue);
                                                 var self = this;
                                                 HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/calcrisc",
@@ -297,12 +297,6 @@ MAUNALOA.vruler = function(chartInfo) {
   }
 }
 */
-    var chartInfo = {
-        chart : {
-          valueRange : [310,330],
-          height : 300
-        }
-    }
 jQuery(document).ready(function() {
     var vruler = MAUNALOA.vruler(300,[310,330]);
     var r = MAUNALOA.repos.create("canvas0",vruler);
