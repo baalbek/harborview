@@ -22,7 +22,10 @@ jQuery(document).ready(function() {
           }
       }
       var drawCanvas2 = function (chartInfo) {
-          //drawCanvas(chartInfo,'canvas2','canvas2b');
+          drawCanvas(chartInfo,chartInfo.chart,'canvas2');
+          if (chartInfo.chart2 != null) {
+            drawCanvas(chartInfo,chartInfo.chart2,'canvas2b');
+          }
       }
       app.ports.drawCanvas.subscribe(drawCanvas1);
       app2.ports.drawCanvas.subscribe(drawCanvas2);
