@@ -53,32 +53,57 @@ MAUNALOA.hruler = function(width,startDateAsMillis,offsets) {
     var diffDays = x1 - x0;
     var ppx = width / diffDays;
 
-    //console.log("startDateAsMillis: " + startDateAsMillis);
     var startDate = new Date(startDateAsMillis);
 
+    var date2string = function(d) {
+        return (d.getMonth()+1) + "." + d.getFullYear();
+    }
     var calcPix = function(x) {
       var curDiffDays = x-x0;
-      //console.log("x0: " + x0 + ", x: " + x + ", curDiffDays: " + curDiffDays);
       return ppx * curDiffDays;
     }
     var dateToPix = function(d) {
-      //console.log("d: " + d + ", startDate: " + startDate);
       var curOffset = x0 + ((d - startDate) / day_millis);
-      //console.log("curOffset: " + curOffset);
       return calcPix(curOffset);
     }
+    var day_millis = 86400000;
+    var incMonths = function(origDate,numMonths) {
+        return new Date(origDate.getFullYear(),origDate.getMonth()+numMonths,1);
+    }
+    var diffDays = function(d0,d1) {
+        return (d1 - d0) / day_millis;
+    }
     var offsetsToPix = function() {
-      //console.log("Calculating offsetsToPix...");
       var result = [];
       for (var i=0;i<offsets.length;++i)  {
           result[i] = calcPix(offsets[i]);
       }
       return result;
     }
+    var lines = function(ctx,chartHeight,numIncMonths) {
+        ctx.fillStyle = "black";
+        ctx.font = "16px Arial";
+        ctx.strokeStyle = "#bbb";
+        ctx.lineWidth = 0.25;
+        var d0x = incMonths(startDate,numIncMonths);
+        var txtY = chartHeight - 5;
+        var curX = 0;
+        while (curX < width) {
+            curX = dateToPix(d0x);
+            // console.log("Canvas width: " + canvas.width + ", curX: " + curX);
+            ctx.beginPath();
+            ctx.moveTo(curX,0);
+            ctx.lineTo(curX,chartHeight);
+            ctx.stroke();
+            ctx.fillText(date2string(d0x),curX+5,txtY);
+            d0x = incMonths(d0x,numIncMonths);
+        }
+    }
     var xaxis = offsetsToPix();
     return {
       dateToPix : dateToPix,
       xaxis : xaxis,
-      startDate : startDate
+      startDate : startDate,
+      lines : lines 
     }
 }
