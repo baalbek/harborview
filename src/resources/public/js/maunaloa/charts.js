@@ -15,6 +15,7 @@ jQuery(document).ready(function() {
       var app2 = Elm.Maunaloa.Charts.embed(node2, {
           isWeekly : true
       });
+      <!------------- drawCanvas ---------------->
       var drawCanvas1 = function (chartInfo) {
           drawCanvas(chartInfo,chartInfo.chart,'canvas1');
           if (chartInfo.chart2 != null) {
@@ -35,7 +36,7 @@ jQuery(document).ready(function() {
         var canvas = document.getElementById(canvasId);
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        
+
         var myHruler = MAUNALOA.hruler(1300,chartInfo.startdate,offsets);
         myHruler.lines(ctx,canvas.height,chartInfo.numIncMonths);
 
@@ -52,6 +53,24 @@ jQuery(document).ready(function() {
 
         if (curChart.candlesticks != null) {
             lineChart.drawCandlesticks(curChart.candlesticks);
+        }
+      }
+
+      <!------------- drawRiscLines ---------------->
+      var drawRiscLines1 = function(riscLinesInfo) {
+        drawRiscLines(riscLinesInfo,'canvas1x');
+      }
+      app.ports.drawRiscLines.subscribe(drawRiscLines1);
+      var drawRiscLines = function(riscLinesInfo,canvasId) {
+        var canvas = document.getElementById(canvasId);
+        var vruler = MAUNALOA.vruler(canvas.height,riscLinesInfo.valueRange);
+        var r = MAUNALOA.repos.create(canvasId,vruler);
+        var riscLines = riscLinesInfo.riscLines;
+        for (var i=0; i<riscLines.length;++i) {
+          var rl = riscLines[i];
+          //console.log("Ticker: " + rl.ticker + ", breakEven: "  + rl.be + ", risc: " + rl.risc + ", option price: " + rl.optionPrice);
+
+          r.addRiscLines(rl.ticker,rl.optionPrice,rl.risc,rl.be);
         }
       }
 });

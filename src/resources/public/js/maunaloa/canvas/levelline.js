@@ -83,6 +83,7 @@ MAUNALOA.repos = {
   init : function(canvasId,vruler) {
     this.canvas = document.getElementById(canvasId);
     this.ctx = this.canvas.getContext("2d");
+    this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
     this.vruler = vruler;
     // listen for mouse events
     this.canvas.addEventListener('mouseup', this.handleMouseUp(this), false);
@@ -279,32 +280,7 @@ MAUNALOA.repos = {
     }
   }
 }
-
 /*
-MAUNALOA.vruler = function(chartInfo) {
-  var double2decimal = function(x,roundingFactor) {
-      var rf = roundingFactor || 100;
-      return (Math.round(x*rf))/rf;
-  }
-  var chart = chartInfo.chart;
-  var minVal = chart.valueRange[0];
-  var maxVal = chart.valueRange[1];
-  var ppy = chart.height / (maxVal - minVal);
-
-  console.log("ppy: " + ppy);
-
-  var pixToValue = function(pix) {
-    return double2decimal(maxVal - (pix / ppy));
-  }
-  var valueToPix = function(v) {
-    return Math.round((maxVal - v) * ppy);
-  }
-  return {
-    valueToPix : valueToPix,
-    pixToValue : pixToValue
-  }
-}
-*/
 jQuery(document).ready(function() {
     var vruler = MAUNALOA.vruler(300,[310,330]);
     var r = MAUNALOA.repos.create("canvas0",vruler);
@@ -317,3 +293,4 @@ jQuery(document).ready(function() {
     });
     //r.draw();
 });
+*/
