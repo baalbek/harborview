@@ -33,6 +33,12 @@ type alias RiscLines =
     List RiscLine
 
 
+type alias RiscLinesJs =
+    { riscLines : RiscLines
+    , valueRange : ( Float, Float )
+    }
+
+
 main : Program Flags Model Msg
 main =
     H.programWithFlags
@@ -48,6 +54,9 @@ main =
 
 
 port drawCanvas : C.ChartInfoJs -> Cmd msg
+
+
+port drawRiscLines : RiscLinesJs -> Cmd msg
 
 
 
@@ -280,7 +289,18 @@ update msg model =
             ( model, fetchRiscLines model )
 
         RiscLinesFetched (Ok lx) ->
-            ( { model | riscLines = Just lx }, Cmd.none )
+            case
+                model.chartInfoWin
+            of
+                Just ciWin ->
+                    let
+                        riscLinesJs =
+                            RiscLinesJs lx ciWin.chart.valueRange
+                    in
+                        ( { model | riscLines = Just lx }, drawRiscLines riscLinesJs )
+
+                Nothing ->
+                    ( { model | riscLines = Just lx }, Cmd.none )
 
         RiscLinesFetched (Err s) ->
             Debug.log ("RiscLinesFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
