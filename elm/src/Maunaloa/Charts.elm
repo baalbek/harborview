@@ -18,8 +18,7 @@ mainUrl =
 
 
 type alias Flags =
-    { isWeekly : Bool
-    }
+    { isWeekly : Bool }
 
 
 type alias RiscLine =
@@ -54,9 +53,9 @@ port drawCanvas : C.ChartInfoJs -> Cmd msg
 
 -------------------- INIT ---------------------
 {-
-   init : ( Model, Cmd Msg )
+   init : ( Model, Cmd Msg)
    init =
-       ( initModel, fetchTickers )
+       ( initModel, fetchTickers)
 -}
 
 
@@ -67,6 +66,7 @@ init flags =
 
 
 ------------------- MODEL ---------------------
+-- <editor-fold>
 
 
 type alias Model =
@@ -74,6 +74,7 @@ type alias Model =
     , selectedTicker : String
     , chartInfo : Maybe C.ChartInfo
     , chartInfoWin : Maybe C.ChartInfoJs
+    , riscLines : Maybe RiscLines
     , dropItems : Int
     , takeItems : Int
     , chartHeight : Float
@@ -88,6 +89,7 @@ initModel flags =
     , selectedTicker = "-1"
     , chartInfo = Nothing
     , chartInfoWin = Nothing
+    , riscLines = Nothing
     , dropItems = 0
     , takeItems = 90
     , chartHeight = 600
@@ -97,6 +99,7 @@ initModel flags =
 
 
 
+-- </editor-fold>
 ------------------- TYPES ---------------------
 --
 
@@ -121,16 +124,15 @@ view : Model -> H.Html Msg
 view model =
     H.div [ A.class "container" ]
         [ H.div [ A.class "row" ]
-            [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker
-            ]
+            [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
         , H.div [ A.class "row" ]
-            [ button_ "Risc Lines" FetchRiscLines
-            ]
+            [ button_ "Risc Lines" FetchRiscLines ]
         ]
 
 
 
 ------------------- UPDATE --------------------
+-- <editor-fold>
 
 
 slice : Model -> List a -> List a
@@ -275,17 +277,36 @@ update msg model =
                 ( model, Cmd.none )
 
         FetchRiscLines ->
-            ( model, Cmd.none )
+            ( model, fetchRiscLines model )
 
         RiscLinesFetched (Ok lx) ->
-            ( model, Cmd.none )
+            ( { model | riscLines = Just lx }, Cmd.none )
 
         RiscLinesFetched (Err s) ->
             Debug.log ("RiscLinesFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
 
 
+-- </editor-fold>
 ------------------ COMMANDS -------------------
+-- <editor-fold>
+
+
+fetchRiscLines : Model -> Cmd Msg
+fetchRiscLines model =
+    let
+        url =
+            mainUrl ++ "/risclines?ticker=" ++ model.selectedTicker
+
+        riscDecoder =
+            JP.decode RiscLine
+                |> JP.required "ticker" Json.string
+                |> JP.required "be" Json.float
+                |> JP.required "risc" Json.float
+                |> JP.required "option-price" Json.float
+    in
+        Http.send RiscLinesFetched <|
+            Http.get url (Json.list riscDecoder)
 
 
 fetchTickers : Cmd Msg
@@ -343,6 +364,7 @@ fetchCharts ticker model =
 
 
 
+-- </editor-fold>
 ---------------- SUBSCRIPTIONS ----------------
 
 

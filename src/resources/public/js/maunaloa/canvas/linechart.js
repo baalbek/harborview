@@ -8,8 +8,8 @@ MAUNALOA.lineChart = function(hruler,vruler,ctx) {
         }
         return result;
     }
-    var drawLine = function(line,strokeStyle,lineWidth=0.5) {
-        ctx.lineWidth = 0.5;
+    var drawLine = function(line,strokeStyle,lineWidth) {
+        ctx.lineWidth = lineWidth || 0.5;
         ctx.strokeStyle = strokeStyle; // "#FF0000";
         var ys = scaleLine(line);
         var xs = hruler.xaxis;

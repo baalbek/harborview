@@ -120,7 +120,7 @@
   {:ticker (.getTicker o)
    :be (-> o .getBreakEven .get)
    :risc (-> o .getCurrentRiscStockPrice .get)
-   :option-price (.getCurrentRiscOptionPrice o)})
+   :option-price (.getCurrentRiscOptionValue o)})
 
 (defn stock [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]

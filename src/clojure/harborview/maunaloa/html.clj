@@ -184,18 +184,6 @@
   (let [options (ticker->options ticker)]
     (filter #(= (-> % .getCurrentRiscStockPrice .isPresent) true) options)))
 
-(comment calc-risc-stockprices [ticker optype jr]
-  (let [options (ticker->options ticker optype)
-        risc-fn
-          (fn [[a b]]
-            (let [ax (CU/find-first #(= (.getTicker %) a) options)
-                  bx (U/rs b)
-                  risc (.calcRisc ax bx)]
-              (if (.isPresent risc)
-                {:ticker a, :risc (.get risc)}
-                nil)))]
-    (filter (complement nil?) (map risc-fn jr))))
-
 (defn calc-risc-stockprices [jr]
   (let [risc-fn
           (fn [[a b]]
@@ -206,12 +194,6 @@
                   {:ticker a, :risc (.get risc)}
                   nil))))]
     (filter (complement nil?) (map risc-fn jr))))
-
-(comment calc-risc-for-stockprice [stockticker ticker optype stockprice]
-  (let [options (ticker->options stockticker optype)
-        sp (U/rs stockprice)
-        option (CU/find-first #(= (.getTicker %) ticker) options)]
-    (.optionPriceFor option stockprice)))
 
 (defn calc-risc-for-stockprice [ticker stockprice]
   (if-let [ax (@OPX/option-cache ticker)]
@@ -241,8 +223,7 @@
           ;ticker (:ticker prm)
           ;optype (:optype prm)
           result (calc-risc-stockprices jr)]
-      (prn result)
-      (U/json-response result))) ;(calc-risc-stockprices ticker optype jr))))
+      (U/json-response result))) 
   (GET "/calcrisc" [ticker stockprice]
     (U/json-response (calc-risc-for-stockprice ticker stockprice)))
   (GET "/tickers" request (tickers))

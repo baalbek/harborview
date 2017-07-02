@@ -47,8 +47,16 @@ MAUNALOA.levelLine = {
         this.levelValue = this.parent.vruler.pixToValue(this.y2);
     },
 
-    //create : function({parent,levelValue,x1,x2,y,draggable=true,legendFn=null,id=null}={}) {
-    create : function(parent,levelValue,x1,x2,y,{draggable=true,color="grey",lineWidth=1,legendFn=null,onMouseUp=null,id=null}={}) {
+    create : function(parent,levelValue,x1,x2,y,
+          {draggable=true,color="grey",lineWidth=1,legendFn=null,onMouseUp=null,id=null}={}) {
+        /*
+        var draggable = draggable || true;
+        var color = color || "grey";
+        var lineWidth = lineWidth || 1;
+        var legendFn = legendFn || null;
+        var onMouseUp = onMouseUp || null;
+        var id = || null;
+        */
         var result = Object.create(MAUNALOA.levelLine);
         result.parent = parent;
         if (id) {

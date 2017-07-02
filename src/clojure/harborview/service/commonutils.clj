@@ -10,7 +10,6 @@
   (let [mem (atom {})]
     (fn [& args]
       (let [arg0 (first args)]
-        (println "arg0 " arg0)
         (if-let [e (find @mem arg0)]
           (val e)
           (let [ret (apply f args)]
