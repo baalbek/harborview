@@ -106,8 +106,8 @@ mmax =
     mfunc (max)
 
 
-minMaxTuples : List ( Maybe Float, Maybe Float ) -> ( Float, Float )
-minMaxTuples tuples =
+minMaxTuples : List ( Maybe Float, Maybe Float ) -> Float -> ( Float, Float )
+minMaxTuples tuples scale =
     let
         min_ =
             List.map first tuples |> List.foldr mmin Nothing |> Maybe.withDefault 0
@@ -115,7 +115,7 @@ minMaxTuples tuples =
         max_ =
             List.map second tuples |> List.foldr mmax Nothing |> Maybe.withDefault 0
     in
-        ( min_, max_ )
+        ( min_ / scale, max_ * scale )
 
 
 customDecoder : JD.Decoder a -> (a -> Result String b) -> JD.Decoder b

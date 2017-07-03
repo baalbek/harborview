@@ -118,7 +118,7 @@ MAUNALOA.repos = {
       self.draw();
     }
   },
-// dragging vars
+  // dragging vars
   startX : 0,
   startY : 9,
   isDown : false,
@@ -280,17 +280,22 @@ MAUNALOA.repos = {
     }
   }
 }
-/*
 jQuery(document).ready(function() {
-    var vruler = MAUNALOA.vruler(300,[310,330]);
-    var r = MAUNALOA.repos.create("canvas0",vruler);
-    //r.addLevelLine(1,321,false);
-    r.addRiscLines("YAR8C300",2.8,319,325);
+    var addLines = function(valueRange,risc,riscLevel,breakEven) {
+      var canvas = document.getElementById("canvas0");
+      var vruler = MAUNALOA.vruler(canvas.height,valueRange);
+      var repos = MAUNALOA.repos.create("canvas0",vruler);
+      //r.addLevelLine(1,321,false);
+      repos.addRiscLines("YAR8C300",risc,riscLevel,breakEven);
+    }
     $("#button1").click(function() {
+        /*
         HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/demo", {}, function(result) {
           alert(result);
         });
+        */
+        addLines([300,350],3.0,310,315);
     });
+    addLines([310,330],2.8,319,325);
     //r.draw();
 });
-*/

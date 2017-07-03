@@ -168,7 +168,7 @@ chartValueRange lines bars candlesticks =
         result =
             minMaxCndl :: (minMaxLines ++ minMaxBars)
     in
-        M.minMaxTuples result
+        M.minMaxTuples result 1.0
 
 
 chartWindow : Model -> C.Chart -> C.Chart
