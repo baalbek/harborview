@@ -15,11 +15,15 @@ jQuery(document).ready(function() {
       var app2 = Elm.Maunaloa.Charts.embed(node2, {
           isWeekly : true
       });
+      var repos = null;
       <!------------- drawCanvas ---------------->
       var drawCanvas1 = function (chartInfo) {
           drawCanvas(chartInfo,chartInfo.chart,'canvas1');
           if (chartInfo.chart2 != null) {
             drawCanvas(chartInfo,chartInfo.chart2,'canvas1b');
+          }
+          if (repos != null) {
+            repos.reset();
           }
       }
       var drawCanvas2 = function (chartInfo) {
@@ -64,13 +68,19 @@ jQuery(document).ready(function() {
       var drawRiscLines = function(riscLinesInfo,canvasId) {
         var canvas = document.getElementById(canvasId);
         var vruler = MAUNALOA.vruler(canvas.height,riscLinesInfo.valueRange);
-        var r = MAUNALOA.repos.create(canvasId,vruler);
+        if (repos == null) {
+          repos = MAUNALOA.repos.create(canvasId,vruler);
+        }
+        else {
+          repos.reset();
+          repos.vruler = vruler;
+        }
         var riscLines = riscLinesInfo.riscLines;
         for (var i=0; i<riscLines.length;++i) {
           var rl = riscLines[i];
           //console.log("Ticker: " + rl.ticker + ", breakEven: "  + rl.be + ", risc: " + rl.risc + ", option price: " + rl.optionPrice);
 
-          r.addRiscLines(rl.ticker,rl.optionPrice,rl.risc,rl.be);
+          repos.addRiscLines(rl.ticker,rl.optionPrice,rl.risc,rl.be);
         }
       }
 });

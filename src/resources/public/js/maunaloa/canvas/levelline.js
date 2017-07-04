@@ -91,6 +91,10 @@ MAUNALOA.repos = {
     this.canvas.addEventListener('mousedown', this.handleMouseDown(this), false);
     this.canvas.addEventListener('mousemove', this.handleMouseMove(this), false);
   },
+  reset : function() {
+    this.lines = [];
+    this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+  },
   handleMouseOut : function(self) {
     return function(e) {
       e.preventDefault();
@@ -154,7 +158,7 @@ MAUNALOA.repos = {
       self. draw();
     }
   },
-  lines : [],
+  //lines : [],
   // linear interpolation -- needed in setClosestLine()
   lerp : function(a,b,x){
     return(a+x*(b-a));
@@ -190,7 +194,7 @@ MAUNALOA.repos = {
         var dx=mx-xy.x;
         var dy=my-xy.y;
         var thisDist=dx*dx+dy*dy;
-        if(thisDist<dist){
+        if (thisDist<dist){
             dist=thisDist;
             pt=xy;
             index=i;
@@ -221,7 +225,13 @@ MAUNALOA.repos = {
     }
   },
   create : function(canvasId,vruler) {
+    var F = function() { this.lines = [];}
+    F.prototype = MAUNALOA.repos;
+    F.constructor.prototype = F;
+    var result = new F();
+    /*
     var result = Object.create(MAUNALOA.repos);
+    */
     result.init(canvasId,vruler);
     return result;
   },
@@ -280,22 +290,29 @@ MAUNALOA.repos = {
     }
   }
 }
+/*
 jQuery(document).ready(function() {
+    var repos = null;
     var addLines = function(valueRange,risc,riscLevel,breakEven) {
       var canvas = document.getElementById("canvas0");
       var vruler = MAUNALOA.vruler(canvas.height,valueRange);
-      var repos = MAUNALOA.repos.create("canvas0",vruler);
+      if (repos == null) {
+        repos = MAUNALOA.repos.create("canvas0",vruler);
+      }
+      else {
+        repos.lines = [];
+        repos.vruler = vruler;
+      }
       //r.addLevelLine(1,321,false);
       repos.addRiscLines("YAR8C300",risc,riscLevel,breakEven);
     }
     $("#button1").click(function() {
-        /*
-        HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/demo", {}, function(result) {
-          alert(result);
-        });
-        */
+        //HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/demo", {}, function(result) {
+        //  alert(result);
+        //});
         addLines([300,350],3.0,310,315);
     });
     addLines([310,330],2.8,319,325);
     //r.draw();
 });
+*/
