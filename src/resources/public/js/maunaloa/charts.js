@@ -93,5 +93,5 @@ jQuery(document).ready(function() {
         }
       }
       app.ports.drawRiscLines.subscribe(drawRiscLines1);
-      app.ports.drawRiscLines.subscribe(drawRiscLines2);
+      app2.ports.drawRiscLines.subscribe(drawRiscLines2);
 });

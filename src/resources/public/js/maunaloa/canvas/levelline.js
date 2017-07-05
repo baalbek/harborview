@@ -1,31 +1,9 @@
 var MAUNALOA = MAUNALOA || {};
 
-/*
-MAUNALOA.draggable = {
-  lerp : function(a,b,x){
-    return(a+x*(b-a));
-  },
-  shortestDistance : function(mx,my) {
-    var dx=this.x2-this.x1;
-    var dy=this.y2-this.y1;
-    var t=((mx-this.x1)*dx+(my-this.y1)*dy)/(dx*dx+dy*dy);
-    t=Math.max(0,Math.min(1,t));
-    var x=this.lerp(this.x1,this.x2,t);
-    var y=this.lerp(this.y1,this.y2,t);
-    return({x:x,y:y});
-  },
-};
-*/
-
 MAUNALOA.levelLine = {
     color : "black",
     lineWidth : 1,
     draggable : true,
-    /*
-    legend : function() {
-      return this.levelValue;
-    },
-    */
     draw : function(repos) {
         var y = this.y1;
         var ctx = this.parent.ctx;
@@ -37,7 +15,6 @@ MAUNALOA.levelLine = {
         ctx.strokeStyle=this.color;
         ctx.stroke();
         ctx.fillText(this.legend(),this.x1,y-10);
-        //ctx.fillText("[" + this.id + "] " + this.levelValue,this.x1,this.y-10);
     },
     move : function(dx,dy) {
         this.x1+=dx;
@@ -49,14 +26,6 @@ MAUNALOA.levelLine = {
 
     create : function(parent,levelValue,x1,x2,y,
           {draggable=true,color="grey",lineWidth=1,legendFn=null,onMouseUp=null,id=null}={}) {
-        /*
-        var draggable = draggable || true;
-        var color = color || "grey";
-        var lineWidth = lineWidth || 1;
-        var legendFn = legendFn || null;
-        var onMouseUp = onMouseUp || null;
-        var id = || null;
-        */
         var result = Object.create(MAUNALOA.levelLine);
         result.parent = parent;
         if (id) {
@@ -106,6 +75,7 @@ MAUNALOA.repos = {
       // tell the browser we're handling this event
       e.preventDefault();
       e.stopPropagation();
+      if (self.nearest === null) {return;}
       var line=self.nearest.line;
       if (line.onMouseUp != null) {
           line.onMouseUp();
@@ -142,10 +112,13 @@ MAUNALOA.repos = {
   },
   handleMouseMove : function(self) {
     return function(e) {
-      if(!self.isDown){return;}
       // tell the browser we're handling this event
       e.preventDefault();
       e.stopPropagation();
+
+      if(!self.isDown){return;}
+      if (self.nearest === null) {return;}
+
       // calc how far mouse has moved since last mousemove event
       var dx=e.offsetX-self.startX;
       var dy=e.offsetY-self.startY;
@@ -158,8 +131,6 @@ MAUNALOA.repos = {
       self. draw();
     }
   },
-  //lines : [],
-  // linear interpolation -- needed in setClosestLine()
   lerp : function(a,b,x){
     return(a+x*(b-a));
   },
@@ -261,19 +232,17 @@ MAUNALOA.repos = {
                                                 return "[" + option + "] Risc: " + curRisc + " => " + this.levelValue;
                                             },
                                             onMouseUp:function(){
-                                                this.risc = this.levelValue;
-                                                /*
+                                                //this.risc = this.levelValue;
                                                 this.risc = "-";
                                                 console.log("Level: " + this.levelValue);
                                                 var self = this;
                                                 HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/calcrisc",
-                                                    { "ticker":"YAR8C300","stockprice":this.levelValue },
+                                                    { "ticker":option,"stockprice":this.levelValue },
                                                     function(result) {
                                                         console.log("Risc result: " + result);
                                                         self.risc = parseFloat(result);
                                                         self.parent.draw();
                                                 });
-                                                */
                                             }});
     this.lines.push(riscLine);
     var breakEvenLine = MAUNALOA.levelLine.create(this,breakEven,20,this.canvas.width,
