@@ -153,8 +153,9 @@ chartValueRange :
     Maybe (List (List Float))
     -> Maybe (List (List Float))
     -> Maybe (List C.Candlestick)
+    -> Float
     -> ( Float, Float )
-chartValueRange lines bars candlesticks =
+chartValueRange lines bars candlesticks scaling =
     let
         minMaxLines =
             C.maybeMinMax lines
@@ -168,11 +169,11 @@ chartValueRange lines bars candlesticks =
         result =
             minMaxCndl :: (minMaxLines ++ minMaxBars)
     in
-        M.minMaxTuples result 1.0
+        M.minMaxTuples result scaling
 
 
-chartWindow : Model -> C.Chart -> C.Chart
-chartWindow model c =
+chartWindow : Model -> C.Chart -> Float -> C.Chart
+chartWindow model c scaling =
     let
         sliceFn =
             slice model
@@ -202,7 +203,7 @@ chartWindow model c =
                     Just (sliceFn cndl)
 
         valueRange =
-            chartValueRange lines_ bars_ cndl_
+            chartValueRange lines_ bars_ cndl_ scaling
     in
         C.Chart
             lines_
@@ -233,7 +234,7 @@ chartInfoWindow ci model =
             [ "#000000", "#ff0000", "#aa00ff" ]
 
         chw =
-            chartWindow model ci.chart
+            chartWindow model ci.chart 1.05
 
         chw2 =
             case ci.chart2 of
@@ -241,7 +242,7 @@ chartInfoWindow ci model =
                     Nothing
 
                 Just c2 ->
-                    Just (chartWindow model c2)
+                    Just (chartWindow model c2 1.0)
     in
         C.ChartInfoJs
             (toTime minDx_)
@@ -273,13 +274,12 @@ update msg model =
                 ciWin =
                     chartInfoWindow s model
             in
-                Debug.log "ChartsFetched:"
-                    ( { model
-                        | chartInfo = Just s
-                        , chartInfoWin = Just ciWin
-                      }
-                    , drawCanvas ciWin
-                    )
+                ( { model
+                    | chartInfo = Just s
+                    , chartInfoWin = Just ciWin
+                  }
+                , drawCanvas ciWin
+                )
 
         ChartsFetched (Err s) ->
             Debug.log ("ChartsFetched Error: " ++ (M.httpErr2str s))
