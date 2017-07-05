@@ -15,15 +15,16 @@ jQuery(document).ready(function() {
       var app2 = Elm.Maunaloa.Charts.embed(node2, {
           isWeekly : true
       });
-      var repos = null;
+      var repos1 = null;
+      var repos2 = null;
       <!------------- drawCanvas ---------------->
       var drawCanvas1 = function (chartInfo) {
           drawCanvas(chartInfo,chartInfo.chart,'canvas1');
           if (chartInfo.chart2 != null) {
             drawCanvas(chartInfo,chartInfo.chart2,'canvas1b');
           }
-          if (repos != null) {
-            repos.reset();
+          if (repos1 != null) {
+            repos1.reset();
           }
       }
       var drawCanvas2 = function (chartInfo) {
@@ -62,14 +63,24 @@ jQuery(document).ready(function() {
 
       <!------------- drawRiscLines ---------------->
       var drawRiscLines1 = function(riscLinesInfo) {
-        drawRiscLines(riscLinesInfo,'canvas1x');
+        drawRiscLines(riscLinesInfo,'canvas1x',1);
       }
-      app.ports.drawRiscLines.subscribe(drawRiscLines1);
-      var drawRiscLines = function(riscLinesInfo,canvasId) {
+      var drawRiscLines2 = function(riscLinesInfo) {
+        drawRiscLines(riscLinesInfo,'canvas2x',2);
+      }
+      var drawRiscLines = function(riscLinesInfo,canvasId,reposId) {
         var canvas = document.getElementById(canvasId);
         var vruler = MAUNALOA.vruler(canvas.height,riscLinesInfo.valueRange);
-        if (repos == null) {
+
+        var repos = reposId === 1 ? repos1 : repos2;
+        if (repos === null) {
           repos = MAUNALOA.repos.create(canvasId,vruler);
+          if (reposId === 1) {
+            repos1 = repos;
+          }
+          else {
+            repos2 = repos;
+          }
         }
         else {
           repos.reset();
@@ -78,9 +89,9 @@ jQuery(document).ready(function() {
         var riscLines = riscLinesInfo.riscLines;
         for (var i=0; i<riscLines.length;++i) {
           var rl = riscLines[i];
-          //console.log("Ticker: " + rl.ticker + ", breakEven: "  + rl.be + ", risc: " + rl.risc + ", option price: " + rl.optionPrice);
-
           repos.addRiscLines(rl.ticker,rl.optionPrice,rl.risc,rl.be);
         }
       }
+      app.ports.drawRiscLines.subscribe(drawRiscLines1);
+      app.ports.drawRiscLines.subscribe(drawRiscLines2);
 });
