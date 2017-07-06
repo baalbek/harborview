@@ -24,23 +24,22 @@ MAUNALOA.levelLine = {
         this.levelValue = this.parent.vruler.pixToValue(this.y2);
     },
 
-    create : function(parent,levelValue,x1,x2,y,
-          {draggable=true,color="grey",lineWidth=1,legendFn=null,onMouseUp=null,id=null}={}) {
+    //create : function(parent,levelValue,x1,x2,y,
+    //      {draggable=true,color="grey",lineWidth=1,legendFn=null,onMouseUp=null,id=null}={}) {
+    create : function(parent,levelValue,x1,x2,y,conf) {
         var result = Object.create(MAUNALOA.levelLine);
         result.parent = parent;
-        if (id) {
-          result.id = id;
-        }
+        //result.id = conf.id;
         result.levelValue = levelValue;
-        result.lineWidth = lineWidth;
-        result.color = color;
+        result.lineWidth = conf.lineWidth || 1;
+        result.color = conf.color || "grey";
         result.x1 = x1;
         result.x2 = x2;
         result.y1 = y;
         result.y2 = y;
-        result.legend = legendFn || function() { return this.levelValue; }
-        result.draggable = draggable;
-        result.onMouseUp = onMouseUp;
+        result.legend = conf.legendFn || function() { return this.levelValue; }
+        result.draggable = conf.draggable || true;
+        result.onMouseUp = conf.onMouseUp || null;
         return result;
     }
 };
@@ -72,23 +71,16 @@ MAUNALOA.repos = {
   },
   handleMouseUp : function(self) {
     return function(e) {
+      if (self.nearest === null) {return;}
       // tell the browser we're handling this event
       e.preventDefault();
       e.stopPropagation();
-      if (self.nearest === null) {return;}
       var line=self.nearest.line;
       if (line.onMouseUp != null) {
           line.onMouseUp();
       }
       self.isDown=false;
       self.nearest=null;
-      /*
-      var len = self.lines.length;
-      for (var i=0; i<len; ++i) {
-          if (self.lines[i].onMouseUp != null) {
-              self.lines[i].onMouseUp();
-          }
-      }*/
       self.draw();
     }
   },
@@ -99,6 +91,7 @@ MAUNALOA.repos = {
   nearest : null,
   handleMouseDown : function(self) {
     return function(e) {
+      if (self.lines.length === 0) {return;}
       // tell the browser we're handling this event
       e.preventDefault();
       e.stopPropagation();
@@ -112,13 +105,12 @@ MAUNALOA.repos = {
   },
   handleMouseMove : function(self) {
     return function(e) {
-      // tell the browser we're handling this event
-      e.preventDefault();
-      e.stopPropagation();
-
       if(!self.isDown){return;}
       if (self.nearest === null) {return;}
 
+      // tell the browser we're handling this event
+      e.preventDefault();
+      e.stopPropagation();
       // calc how far mouse has moved since last mousemove event
       var dx=e.offsetX-self.startX;
       var dy=e.offsetY-self.startY;
@@ -206,7 +198,8 @@ MAUNALOA.repos = {
     result.init(canvasId,vruler);
     return result;
   },
-  addLevelLine : function(lineId,levelValue,doDraw=true) {
+  addLevelLine : function(lineId,levelValue,doDraw) {
+    var myDoDraw = doDraw || true;
     var result = MAUNALOA.levelLine.create(this,
                                             levelValue,
                                             20,
@@ -214,11 +207,12 @@ MAUNALOA.repos = {
                                             this.vruler.valueToPix(levelValue),
                                             {id:lineId});
     this.lines.push(result);
-    if (doDraw) {
+    if (myDoDraw) {
       this.draw();
     }
   },
-  addRiscLines : function(option,risc,riscLevel,breakEven,doDraw=true) {
+  addRiscLines : function(option,risc,riscLevel,breakEven,doDraw) {
+    var myDoDraw = doDraw || true;
     var riscLine = MAUNALOA.levelLine.create(this,
                                             riscLevel,
                                             20,
@@ -254,7 +248,7 @@ MAUNALOA.repos = {
                                                 return "[" + option + "] Break-even: " + this.levelValue;
                                             }});
     this.lines.push(breakEvenLine);
-    if (doDraw) {
+    if (myDoDraw) {
       this.draw();
     }
   }

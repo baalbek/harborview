@@ -32,6 +32,9 @@ jQuery(document).ready(function() {
           if (chartInfo.chart2 != null) {
             drawCanvas(chartInfo,chartInfo.chart2,'canvas2b');
           }
+          if (repos2 != null) {
+            repos2.reset();
+          }
       }
       app.ports.drawCanvas.subscribe(drawCanvas1);
       app2.ports.drawCanvas.subscribe(drawCanvas2);

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+HOME="/home/rcs/opt/java/harborview"
+
+JS="$HOME/src/resources/public/js/maunaloa"
+
+# ELM="$HOME/elm/src"
+
+FILES="/js/charts.js /js/canvas/rulers.js /js/canvas/linechart.js /js/canvas/levelline.js"
+
+# docker run -it --rm -v $JS:/js --name uglify rcs/node uglifyjs "$@"
+
+docker run -it --rm -v $JS:/js --name uglify rcs/node uglifyjs -o /js/maunaloa.min.js $FILES
+
+exit 0
