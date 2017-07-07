@@ -24,8 +24,9 @@ type alias Flags =
 type alias RiscLine =
     { ticker : String
     , be : Float
-    , risc : Float
+    , stockPrice : Float
     , optionPrice : Float
+    , risc : Float
     }
 
 
@@ -322,8 +323,9 @@ fetchRiscLines model =
             JP.decode RiscLine
                 |> JP.required "ticker" Json.string
                 |> JP.required "be" Json.float
+                |> JP.required "stockprice" Json.float
+                |> JP.required "optionprice" Json.float
                 |> JP.required "risc" Json.float
-                |> JP.required "option-price" Json.float
     in
         Http.send RiscLinesFetched <|
             Http.get url (Json.list riscDecoder)

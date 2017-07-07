@@ -67,6 +67,8 @@ type alias Option =
     , ivSell : Float
     , breakEven : Float
     , risc : Float
+    , optionPriceAtRisc : Float
+    , stockPriceAtRisc : Float
     , selected : Bool
     }
 
@@ -148,6 +150,8 @@ config =
             , Table.floatColumn "IvSell" .ivSell
             , Table.floatColumn "Break-Even" .breakEven
             , Table.floatColumn "Risc" .risc
+            , Table.floatColumn "O.P. at Risc" .optionPriceAtRisc
+            , Table.floatColumn "S.P. at Risc" .stockPriceAtRisc
             ]
         , customizations =
             { defaultCustomizations | rowAttrs = toRowAttrs }
@@ -282,13 +286,17 @@ update msg model =
         RiscCalculated (Ok s) ->
             case model.options of
                 Nothing ->
-                    Debug.log (toString s)
-                        ( model, Cmd.none )
+                    -- Debug.log (toString s)
+                    ( model, Cmd.none )
 
                 --Debug.log (toString (Dict.fromList (List.map (\x -> ( x.ticker, x.risc )) s)))
                 Just optionx ->
-                    Debug.log (toString s)
-                        ( { model | options = Just (List.map (setRisc s) optionx) }, Cmd.none )
+                    -- Debug.log (toString s)
+                    let
+                        curRisc =
+                            Result.withDefault 0 (String.toFloat model.risc)
+                    in
+                        ( { model | options = Just (List.map (setRisc curRisc s) optionx) }, Cmd.none )
 
         RiscCalculated (Err s) ->
             Debug.log ("RiscCalculated Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
@@ -308,21 +316,25 @@ update msg model =
                     )
 
 
-setRisc : RiscItems -> Option -> Option
-setRisc riscs opt =
+setRisc : Float -> RiscItems -> Option -> Option
+setRisc curRisc riscItems opt =
     let
         predicate =
             \x -> x.ticker == opt.ticker
 
-        curRisc =
-            MISC.findInList predicate riscs
+        curRiscItem =
+            MISC.findInList predicate riscItems
     in
-        case curRisc of
+        case curRiscItem of
             Nothing ->
                 opt
 
-            Just curRisc_ ->
-                { opt | risc = MISC.toDecimal curRisc_.risc 100 }
+            Just curRiscItem_ ->
+                { opt
+                    | stockPriceAtRisc = MISC.toDecimal curRiscItem_.risc 100
+                    , optionPriceAtRisc = opt.sell - curRisc
+                    , risc = curRisc
+                }
 
 
 toggle : String -> Option -> Option
@@ -384,6 +396,8 @@ optionDecoder =
         |> JP.required "iv-buy" Json.float
         |> JP.required "iv-sell" Json.float
         |> JP.required "br-even" Json.float
+        |> JP.hardcoded 0.0
+        |> JP.hardcoded 0.0
         |> JP.hardcoded 0.0
         |> JP.hardcoded False
 
