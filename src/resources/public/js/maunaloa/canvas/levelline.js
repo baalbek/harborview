@@ -38,7 +38,7 @@ MAUNALOA.levelLine = {
         result.y1 = y;
         result.y2 = y;
         result.legend = conf.legendFn || function() { return this.levelValue; }
-        result.draggable = conf.draggable || true;
+        result.draggable = conf.hasOwnProperty('draggable') == true ? conf.draggable : true;
         result.onMouseUp = conf.onMouseUp || null;
         return result;
     }
@@ -211,8 +211,8 @@ MAUNALOA.repos = {
       this.draw();
     }
   },
-  addRiscLines : function(option,risc,riscLevel,breakEven,doDraw) {
-    var myDoDraw = doDraw || true;
+  //addRiscLines : function(option,risc,riscLevel,breakEven,doDraw) {
+  addRiscLines : function(linesInfo,doDraw) {
     var riscLine = MAUNALOA.levelLine.create(this,
                                             riscLevel,
                                             20,
@@ -230,7 +230,7 @@ MAUNALOA.repos = {
                                                 this.risc = "-";
                                                 console.log("Level: " + this.levelValue);
                                                 var self = this;
-                                                HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/calcrisc",
+                                                HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/optionprice",
                                                     { "ticker":option,"stockprice":this.levelValue },
                                                     function(result) {
                                                         console.log("Risc result: " + result);
@@ -248,7 +248,7 @@ MAUNALOA.repos = {
                                                 return "[" + option + "] Break-even: " + this.levelValue;
                                             }});
     this.lines.push(breakEvenLine);
-    if (myDoDraw) {
+    if (doDraw===true) {
       this.draw();
     }
   }

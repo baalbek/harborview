@@ -90,9 +90,14 @@ jQuery(document).ready(function() {
           repos.vruler = vruler;
         }
         var riscLines = riscLinesInfo.riscLines;
-        for (var i=0; i<riscLines.length;++i) {
+        for (var i=0; i<riscLines.length-1;++i) {
           var rl = riscLines[i];
-          repos.addRiscLines(rl.ticker,rl.optionPrice,rl.risc,rl.be);
+          //repos.addRiscLines(rl.ticker,rl.optionPrice,rl.risc,rl.be);
+          repos.addRiscLines(rl,false);
+        }
+        if (riscLines.length > 0) {
+          var rlLast = riscLines[riscLines.length-1];
+          repos.addRiscLines(rlLast,true);
         }
       }
       app.ports.drawRiscLines.subscribe(drawRiscLines1);

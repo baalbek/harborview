@@ -1,4 +1,4 @@
-(ns harborview.maunaloa.html
+(kns harborview.maunaloa.html
   (:import
     [java.sql Date]
     [java.time LocalDate]
@@ -188,6 +188,7 @@
   (let [risc-fn
           (fn [[a b]]
             (if-let [ax (@OPX/option-cache a)]
+              ;(let [bx (- (.getSell ax) (U/rs b))])
               (let [bx (U/rs b)
                     risc (.stockPriceFor ax bx)]
                 (if (.isPresent risc)
@@ -195,7 +196,7 @@
                   nil))))]
     (filter (complement nil?) (map risc-fn jr))))
 
-(defn calc-risc-for-stockprice [ticker stockprice]
+(defn calc-optionprice-for-stockprice [ticker stockprice]
   (if-let [ax (@OPX/option-cache ticker)]
     (let [bx (U/rs stockprice)]
       (CU/double->decimal (.optionPriceFor ax bx) 100.0))
@@ -223,9 +224,9 @@
           ;ticker (:ticker prm)
           ;optype (:optype prm)
           result (calc-risc-stockprices jr)]
-      (U/json-response result))) 
-  (GET "/calcrisc" [ticker stockprice]
-    (U/json-response (calc-risc-for-stockprice ticker stockprice)))
+      (U/json-response result)))
+  (GET "/optionprice" [ticker stockprice]
+    (U/json-response (calc-optionprice-for-stockprice ticker stockprice)))
   (GET "/tickers" request (tickers))
   ;(GET "/th" [oid] (test-hruler (U/rs oid)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
