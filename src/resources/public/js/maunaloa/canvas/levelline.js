@@ -212,18 +212,19 @@ MAUNALOA.repos = {
     }
   },
   //addRiscLines : function(option,risc,riscLevel,breakEven,doDraw) {
-  addRiscLines : function(linesInfo,doDraw) {
+  addRiscLines : function(cfg,doDraw) {
     var riscLine = MAUNALOA.levelLine.create(this,
-                                            riscLevel,
+                                            cfg.stockPrice,
                                             20,
                                             this.canvas.width,
-                                            this.vruler.valueToPix(riscLevel),
+                                            this.vruler.valueToPix(cfg.stockPrice),
                                             {draggable:true,
                                             color:"red",
                                             lineWidth:2,
                                             legendFn:function() {
-                                                var curRisc = this.risc || risc;
-                                                return "[" + option + "] Risc: " + curRisc + " => " + this.levelValue;
+                                                var curRisc = this.risc || cfg.risc;
+                                                var curOptionPrice = this.optionPrice || cfg.optionPrice;
+                                                return "[" + cfg.ticker + "] Price: " + curOptionPrice + ", Risc: " + curRisc + " => " + this.levelValue;
                                             },
                                             onMouseUp:function(){
                                                 //this.risc = this.levelValue;
@@ -231,21 +232,23 @@ MAUNALOA.repos = {
                                                 console.log("Level: " + this.levelValue);
                                                 var self = this;
                                                 HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/optionprice",
-                                                    { "ticker":option,"stockprice":this.levelValue },
+                                                    { "ticker":cfg.ticker,"stockprice":this.levelValue },
                                                     function(result) {
                                                         console.log("Risc result: " + result);
-                                                        self.risc = parseFloat(result);
+                                                        self.risc = parseFloat(result.risc);
+                                                        self.optionPrice = parseFloat(result.optionprice);
                                                         self.parent.draw();
                                                 });
                                             }});
     this.lines.push(riscLine);
+    var breakEven = cfg.be;
     var breakEvenLine = MAUNALOA.levelLine.create(this,breakEven,20,this.canvas.width,
                                             this.vruler.valueToPix(breakEven),
                                             {draggable:false,
                                             color:"green",
                                             lineWidth:2,
                                             legendFn:function() {
-                                                return "[" + option + "] Break-even: " + this.levelValue;
+                                                return "[" + cfg.ticker + "] Break-even: " + this.levelValue;
                                             }});
     this.lines.push(breakEvenLine);
     if (doDraw===true) {

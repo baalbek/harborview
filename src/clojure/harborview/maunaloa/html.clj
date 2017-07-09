@@ -1,4 +1,4 @@
-(kns harborview.maunaloa.html
+(ns harborview.maunaloa.html
   (:import
     [java.sql Date]
     [java.time LocalDate]
@@ -188,9 +188,9 @@
   (let [risc-fn
           (fn [[a b]]
             (if-let [ax (@OPX/option-cache a)]
-              ;(let [bx (- (.getSell ax) (U/rs b))])
-              (let [bx (U/rs b)
+              (let [bx (- (.getSell ax) (U/rs b))
                     risc (.stockPriceFor ax bx)]
+                (println "bx: " (str bx) ", risc: " (str risc))
                 (if (.isPresent risc)
                   {:ticker a, :risc (.get risc)}
                   nil))))]
@@ -199,8 +199,10 @@
 (defn calc-optionprice-for-stockprice [ticker stockprice]
   (if-let [ax (@OPX/option-cache ticker)]
     (let [bx (U/rs stockprice)]
-      (CU/double->decimal (.optionPriceFor ax bx) 100.0))
-    -1))
+      {:optionprice (CU/double->decimal (.optionPriceFor ax bx) 100.0)
+       :risc (.getCurrentRisc ax)})
+    {:optionprice -1
+     :risc -1}))
 
 (defroutes my-routes
   (GET "/charts" request (init-charts))
