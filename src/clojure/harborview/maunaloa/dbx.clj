@@ -19,8 +19,9 @@
   (DB/with-session :ranoraraku StockMapper
     (.selectStockPrices it oid from-date)))
 
-(def fetch-prices-m
-  (CU/memoize-arg0 fetch-prices))
+(CU/defn-memb fetch-prices-m [oid from-date]
+  (println "fetch-prices-m: " oid ", " from-date)
+  (fetch-prices oid  from-date))
 
 (defn extract-year [^StockPriceBean price]
   (-> price .getLocalDx .getYear))

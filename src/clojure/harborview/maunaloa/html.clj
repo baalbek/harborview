@@ -164,6 +164,7 @@
 
 (defn init-charts []
   (P/render-file "templates/maunaloa/charts.html" {}))
+  ;(P/render-file "templates/maunaloa/charts.html" {:c-width 1310 :c1-height 500 :c2-height 200}))
 
 (defn init-options []
   (P/render-file "templates/maunaloa/options.html" {}))
@@ -232,4 +233,7 @@
   (GET "/tickers" request (tickers))
   ;(GET "/th" [oid] (test-hruler (U/rs oid)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
+  (GET "/resetticker" [oid]
+    (binding [CU/*reset-cache* true]
+      (ticker-chart (U/rs oid))))
   (GET "/tickerweek" [oid] (ticker-chart-week (U/rs oid))))

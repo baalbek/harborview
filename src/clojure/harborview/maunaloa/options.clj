@@ -9,7 +9,7 @@
     [oahu.financial.repository EtradeRepository]
     [oahu.financial.html EtradeDownloader])
   (:use
-    [harborview.service.commonutils :only (defn-memo,defn-memb,mem-binding,*reset-cache*)])
+    [harborview.service.commonutils :only (defn-memo,defn-memb)])
   (:require
     [harborview.service.commonutils :as CU]
     [harborview.service.htmlutils :as U]))
