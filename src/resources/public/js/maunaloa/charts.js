@@ -17,6 +17,20 @@ jQuery(document).ready(function() {
       });
       var repos1 = null;
       var repos2 = null;
+      <!------------- canvas sizes ---------------->
+      var setCanvasSize = function(selector,w,h) {
+          var c1 = document.querySelectorAll(selector);
+          for (var i=0; i<c1.length; ++i) {
+            var canvas = c1[i];
+            canvas.width = w;
+            canvas.height = h;
+          }
+      }
+      var setCanvasSizes = function() {
+        setCanvasSize('canvas.c1',1310,500);
+        setCanvasSize('canvas.c2',1310,200);
+      }
+      setCanvasSizes();
       <!------------- drawCanvas ---------------->
       var drawCanvas1 = function (chartInfo) {
           drawCanvas(chartInfo,chartInfo.chart,'canvas1');

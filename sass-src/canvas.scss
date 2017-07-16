@@ -1,0 +1,32 @@
+
+$c-left: 200px;
+$c-width: 1310px;
+
+$c1-top : 200px;
+$c1-height: 500px;
+
+$c2-top : 850px;
+$c2-height: 200px;
+
+div.c1 {
+    position: absolute;
+    top: $c1-top;;
+    left: $c-left;
+    //float: right;
+    //display:inline;
+    //width: $c-width;
+    //height: $c1-height;
+    //z-index: 9999;
+}
+
+div.c2 {
+    position: absolute;
+    top: $c2-top;
+    left: $c-left;
+}
+
+canvas.c1, canvas.c2 {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #000000;
+}
