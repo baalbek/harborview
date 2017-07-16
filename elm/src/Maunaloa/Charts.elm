@@ -120,6 +120,7 @@ type Msg
     | ChartsFetched (Result Http.Error C.ChartInfo)
     | FetchRiscLines
     | RiscLinesFetched (Result Http.Error RiscLines)
+    | ResetCache
 
 
 
@@ -134,9 +135,10 @@ view : Model -> H.Html Msg
 view model =
     H.div [ A.class "container" ]
         [ H.div [ A.class "row" ]
-            [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
-        , H.div [ A.class "row" ]
-            [ button_ "Risc Lines" FetchRiscLines ]
+            [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
+            , button_ "Risc Lines" FetchRiscLines
+            , button_ "Reset Cache" ResetCache
+            ]
         ]
 
 
@@ -268,7 +270,7 @@ update msg model =
             Debug.log ("TickersFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
         FetchCharts s ->
-            ( { model | selectedTicker = s }, fetchCharts s model )
+            ( { model | selectedTicker = s }, fetchCharts s model false )
 
         ChartsFetched (Ok s) ->
             let
@@ -305,6 +307,9 @@ update msg model =
 
         RiscLinesFetched (Err s) ->
             Debug.log ("RiscLinesFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
+
+        ResetCache ->
+            ( model, Cmd.none )
 
 
 
@@ -365,8 +370,8 @@ chartDecoder numVlines =
         Json.map5 C.Chart lines bars candlesticks (Json.succeed ( 0, 0 )) (Json.succeed numVlines)
 
 
-fetchCharts : String -> Model -> Cmd Msg
-fetchCharts ticker model =
+fetchCharts : String -> Model -> Boolean -> Cmd Msg
+fetchCharts ticker model resetCache =
     let
         myDecoder =
             JP.decode C.ChartInfo

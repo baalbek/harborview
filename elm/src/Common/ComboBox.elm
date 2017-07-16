@@ -94,7 +94,6 @@ makeSimpleSelect payload selected =
 {-|
 
     Makes a bootstrap form-group row with select
-
 -}
 makeFGRSelect : String -> String -> CM.ColXs -> Maybe SelectItems -> Maybe (String -> a) -> VD.Node a
 makeFGRSelect id lbl cx payload onChangeEvent =
