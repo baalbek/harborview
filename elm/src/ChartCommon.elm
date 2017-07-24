@@ -55,6 +55,7 @@ type alias ChartInfo =
     , xAxis : List Float
     , chart : Chart
     , chart2 : Maybe Chart
+    , chart3 : Maybe Chart
     }
 
 
@@ -71,6 +72,7 @@ type alias ChartInfoJs =
     , xaxis : List Float
     , chart : Chart
     , chart2 : Maybe Chart
+    , chart3 : Maybe Chart
     , strokes : List String
     , numIncMonths : Int
     }

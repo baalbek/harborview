@@ -29,6 +29,7 @@ jQuery(document).ready(function() {
       var setCanvasSizes = function() {
         setCanvasSize('canvas.c1',1310,500);
         setCanvasSize('canvas.c2',1310,200);
+        setCanvasSize('canvas.c3',1310,110);
       }
       setCanvasSizes();
       <!------------- drawCanvas ---------------->
@@ -36,6 +37,9 @@ jQuery(document).ready(function() {
           drawCanvas(chartInfo,chartInfo.chart,'canvas1');
           if (chartInfo.chart2 != null) {
             drawCanvas(chartInfo,chartInfo.chart2,'canvas1b');
+          }
+          if (chartInfo.chart3 != null) {
+            drawCanvas(chartInfo,chartInfo.chart3,'canvas1c');
           }
           if (repos1 != null) {
             repos1.reset();
@@ -59,7 +63,7 @@ jQuery(document).ready(function() {
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0,0,canvas.width,canvas.height);
 
-        var myHruler = MAUNALOA.hruler(1300,chartInfo.startdate,offsets);
+        var myHruler = MAUNALOA.hruler(1300,chartInfo.startdate,offsets,curChart.bars === null);
         myHruler.lines(ctx,canvas.height,chartInfo.numIncMonths);
 
         var myVruler = MAUNALOA.vruler(canvas.height,curChart.valueRange);
@@ -67,13 +71,20 @@ jQuery(document).ready(function() {
 
         var lineChart = MAUNALOA.lineChart(myHruler,myVruler,ctx);
         var strokes = chartInfo.strokes;
-        for (var i=0;i<curChart.lines.length;++i) {
-            var line = curChart.lines[i];
-            var curStroke = strokes[i] === undefined ? "#000000" : strokes[i];
-            lineChart.drawLine(line,curStroke);
+        if (curChart.lines !== null) {
+          for (var i=0;i<curChart.lines.length;++i) {
+              var line = curChart.lines[i];
+              var curStroke = strokes[i] === undefined ? "#000000" : strokes[i];
+              lineChart.drawLine(line,curStroke);
+          }
+        }
+        if (curChart.bars !== null) {
+          for (var i=0;i<curChart.bars.length;++i) {
+            lineChart.drawBars(curChart.bars[i]);
+          }
         }
 
-        if (curChart.candlesticks != null) {
+        if (curChart.candlesticks !== null) {
             lineChart.drawCandlesticks(curChart.candlesticks);
         }
       }

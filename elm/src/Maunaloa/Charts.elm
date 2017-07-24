@@ -87,8 +87,6 @@ type alias Model =
     , riscLines : Maybe RiscLines
     , dropItems : Int
     , takeItems : Int
-    , chartHeight : Float
-    , chartHeight2 : Float
     , flags : Flags
     }
 
@@ -102,8 +100,6 @@ initModel flags =
     , riscLines = Nothing
     , dropItems = 0
     , takeItems = 90
-    , chartHeight = 600
-    , chartHeight2 = 300
     , flags = flags
     }
 
@@ -246,12 +242,21 @@ chartInfoWindow ci model =
 
                 Just c2 ->
                     Just (chartWindow model c2 1.0)
+
+        chw3 =
+            case ci.chart3 of
+                Nothing ->
+                    Nothing
+
+                Just c3 ->
+                    Just (chartWindow model c3 1.0)
     in
         C.ChartInfoJs
             (toTime minDx_)
             xAxis_
             chw
             chw2
+            chw3
             strokes
             incMonths
 
@@ -270,19 +275,20 @@ update msg model =
             Debug.log ("TickersFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
         FetchCharts s ->
-            ( { model | selectedTicker = s }, fetchCharts s model false )
+            ( { model | selectedTicker = s }, fetchCharts s model False )
 
         ChartsFetched (Ok s) ->
             let
                 ciWin =
                     chartInfoWindow s model
             in
-                ( { model
-                    | chartInfo = Just s
-                    , chartInfoWin = Just ciWin
-                  }
-                , drawCanvas ciWin
-                )
+                Debug.log "ChartsFetched"
+                    ( { model
+                        | chartInfo = Just s
+                        , chartInfoWin = Just ciWin
+                      }
+                    , drawCanvas ciWin
+                    )
 
         ChartsFetched (Err s) ->
             Debug.log ("ChartsFetched Error: " ++ (M.httpErr2str s))
@@ -370,7 +376,7 @@ chartDecoder numVlines =
         Json.map5 C.Chart lines bars candlesticks (Json.succeed ( 0, 0 )) (Json.succeed numVlines)
 
 
-fetchCharts : String -> Model -> Boolean -> Cmd Msg
+fetchCharts : String -> Model -> Bool -> Cmd Msg
 fetchCharts ticker model resetCache =
     let
         myDecoder =
@@ -379,6 +385,7 @@ fetchCharts ticker model resetCache =
                 |> JP.required "x-axis" (Json.list Json.float)
                 |> JP.required "chart" (chartDecoder 10)
                 |> JP.required "chart2" (Json.nullable (chartDecoder 5))
+                |> JP.required "chart3" (Json.nullable (chartDecoder 5))
 
         -- |> JP.hardcoded Nothing
         url =

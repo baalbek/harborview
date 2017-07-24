@@ -86,6 +86,10 @@
    :c (.getCls b)})
 
 
+(defn normalize [coll]
+  (let [m (float (reduce max 0 coll))]
+    (map #(/ % m) coll)))
+
 (defn ticker-chart_ [spot-objs]
   (let [spots (map #(.getCls %) spot-objs)
         itrend-10 (calc-itrend spots 10)
@@ -94,6 +98,7 @@
         cc-10 (calc-cc spots 10)
         cc-50 (calc-cc spots 50)
         ;cc-200 (calc-cc spots 200)
+        volume (map #(.getVolume %) spot-objs)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
         hr (hruler min-dx)]
     (U/json-response
@@ -101,13 +106,16 @@
         :chart {:lines [
                         (reverse (map CU/double->decimal itrend-10))
                         (reverse (map CU/double->decimal itrend-50))]
-                :bars nil
-                :cndl (reverse (map #(bean->candlestick %) spot-objs))}
+                :cndl (reverse (map #(bean->candlestick %) spot-objs))
+                 :bars nil}
         :chart2 {:lines [
                           (reverse (map CU/double->decimal cc-10))
                           (reverse (map CU/double->decimal cc-50))]
                  :bars nil
                  :cndl nil}
+        :chart3 {:lines nil
+                 :cndl nil
+                 :bars [(reverse (normalize volume))]}
         :x-axis (reverse (map hr dx))
         :min-dx (CU/ld->str min-dx)})))
 

@@ -39,15 +39,21 @@ MAUNALOA.vruler = function(chartHeight,valueRange) {
   var valueToPix = function(v) {
     return Math.round((maxVal - v) * ppy);
   }
+  /*
+  var bottom = function() {
+    return chartHeight;
+  }
+  */
   return {
     valueToPix : valueToPix,
     pixToValue : pixToValue,
-    lines : lines
+    lines : lines,
+    bottom : chartHeight
   }
 }
 
 
-MAUNALOA.hruler = function(width,startDateAsMillis,offsets) {
+MAUNALOA.hruler = function(width,startDateAsMillis,offsets,drawLegend) {
     var x0 = offsets[offsets.length-1];
     var x1 = offsets[0] + 5;
     var diffDays = x1 - x0;
@@ -95,7 +101,9 @@ MAUNALOA.hruler = function(width,startDateAsMillis,offsets) {
             ctx.moveTo(curX,0);
             ctx.lineTo(curX,chartHeight);
             ctx.stroke();
-            ctx.fillText(date2string(d0x),curX+5,txtY);
+            if (drawLegend == true) {
+              ctx.fillText(date2string(d0x),curX+5,txtY);
+            }
             d0x = incMonths(d0x,numIncMonths);
         }
     }
@@ -104,6 +112,6 @@ MAUNALOA.hruler = function(width,startDateAsMillis,offsets) {
       dateToPix : dateToPix,
       xaxis : xaxis,
       startDate : startDate,
-      lines : lines 
+      lines : lines
     }
 }

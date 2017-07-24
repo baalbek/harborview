@@ -86,8 +86,35 @@ MAUNALOA.lineChart = function(hruler,vruler,ctx) {
         drawCandlestick(xs[i],scs[i]);
       }
     }
+    var scaleBars = function(bars) {
+        //var o = vruler.valueToPix(candleStick.o);
+        var result = []
+        for (var i=0;i<bars.length;++i) {
+          result.push(vruler.valueToPix(bars[i]));
+        }
+        return result;
+    }
+    var drawBar = function(x,bar) {
+      ctx.beginPath();
+      ctx.moveTo(x,vruler.bottom);
+      ctx.lineTo(x,bar);
+      ctx.stroke();
+    }
+    var drawBars = function(bars) {
+      ctx.strokeStyle = "#ff0000";
+      //ctx.fillStyle = "#ffaa00";
+      ctx.lineWidth = 0.5;
+
+      var xs = hruler.xaxis;
+      var sbars = scaleBars(bars);
+      var numBars = sbars.length;
+      for (var i = 0; i < numBars; ++i) {
+        drawBar(xs[i],sbars[i]);
+      }
+    }
     return {
         drawLine : drawLine,
-        drawCandlesticks : drawCandlesticks
+        drawCandlesticks : drawCandlesticks,
+        drawBars : drawBars
     }
 }

@@ -8,7 +8,8 @@
     [monger.core :as mg]
     [monger.collection :as mc]
     [harborview.service.commonutils :as CU]
-    [harborview.maunaloa.options :as OPX]))
+    [harborview.maunaloa.options :as OPX]
+    [harborview.maunaloa.html :as H]))
 
   ;(:require))
     ;[harborview.vinapu.dbx :as VIN]
@@ -21,6 +22,8 @@
 ;(def conn (atom (mg/connect-via-uri mongo-uri)))
 
 ;(def conn (atom (mg/connect {:host "172.17.0.3"})))
+
+(def min-dx (LocalDate/of 2014 1 1))
 
 (defn id []
   (ObjectId.))
@@ -72,3 +75,5 @@
 
 (defn c []
   (opx "YAR7G325" (calls "YAR")))
+
+(def tc H/ticker-chart)

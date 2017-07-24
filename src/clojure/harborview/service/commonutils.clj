@@ -60,26 +60,26 @@
 (defn find-first [f coll]
   (first (drop-while (complement f) coll)))
 
+(defmacro defn-defaults [name args & body]
+  "Create a function that can provide default values for arguments.
+  Arguments that are optional should be placed in a hash as the
+  last argument with their names mapped to their default values.
+  When invoking the function, :<optional-argument-name> <value>
+  specifies the value the argument should take on."
+
+  (if (map? (last args))
+    `(defn
+       ~name
+       ~(let [mandatory-args (drop-last args)
+              options (last args)
+              option-names (vec (keys options))]
+          (vec (concat mandatory-args
+                       [(symbol "&") {:keys option-names
+                                      :or options}])))
+       ~@body)
+    `(defn ~name ~args ~@body)))
+
 (comment
-  (defmacro defn-defaults [name args body]
-    "Create a function that can provide default values for arguments.
-    Arguments that are optional should be placed in a hash as the
-    last argument with their names mapped to their default values.
-    When invoking the function, :<optional-argument-name> <value>
-    specifies the value the argument should take on."
-
-    (if (map? (last args))
-      `(defn
-         ~name
-         ~(let [mandatory-args (drop-last args)
-                options (last args)
-                option-names (vec (keys options))]
-            (vec (concat mandatory-args
-                         [(symbol "&") {:keys option-names
-                                        :or options}])))
-         ~@body)
-      `(defn ~name ~args ~@body)))
-
   ; EXAMPLE
   (defn-defaults foo [a b {c 5 d 10}]
     (+ a b c d))
