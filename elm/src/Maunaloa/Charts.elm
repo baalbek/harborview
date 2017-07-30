@@ -282,13 +282,12 @@ update msg model =
                 ciWin =
                     chartInfoWindow s model
             in
-                Debug.log "ChartsFetched"
-                    ( { model
-                        | chartInfo = Just s
-                        , chartInfoWin = Just ciWin
-                      }
-                    , drawCanvas ciWin
-                    )
+                ( { model
+                    | chartInfo = Just s
+                    , chartInfoWin = Just ciWin
+                  }
+                , drawCanvas ciWin
+                )
 
         ChartsFetched (Err s) ->
             Debug.log ("ChartsFetched Error: " ++ (M.httpErr2str s))
@@ -315,7 +314,7 @@ update msg model =
             Debug.log ("RiscLinesFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
         ResetCache ->
-            ( model, Cmd.none )
+            ( model, fetchCharts model.selectedTicker model True )
 
 
 
@@ -387,12 +386,19 @@ fetchCharts ticker model resetCache =
                 |> JP.required "chart2" (Json.nullable (chartDecoder 5))
                 |> JP.required "chart3" (Json.nullable (chartDecoder 5))
 
-        -- |> JP.hardcoded Nothing
         url =
-            if model.flags.isWeekly == True then
-                mainUrl ++ "/tickerweek?oid=" ++ ticker
-            else
-                mainUrl ++ "/ticker?oid=" ++ ticker
+            case resetCache of
+                True ->
+                    if model.flags.isWeekly == True then
+                        mainUrl ++ "/resettickerweek?oid=" ++ ticker
+                    else
+                        mainUrl ++ "/resetticker?oid=" ++ ticker
+
+                False ->
+                    if model.flags.isWeekly == True then
+                        mainUrl ++ "/tickerweek?oid=" ++ ticker
+                    else
+                        mainUrl ++ "/ticker?oid=" ++ ticker
     in
         Http.send ChartsFetched <| Http.get url myDecoder
 
