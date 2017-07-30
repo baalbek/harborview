@@ -50,6 +50,9 @@ jQuery(document).ready(function() {
           if (chartInfo.chart2 != null) {
             drawCanvas(chartInfo,chartInfo.chart2,'canvas2b');
           }
+          if (chartInfo.chart3 != null) {
+            drawCanvas(chartInfo,chartInfo.chart3,'canvas2c');
+          }
           if (repos2 != null) {
             repos2.reset();
           }

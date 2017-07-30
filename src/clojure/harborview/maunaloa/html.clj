@@ -244,4 +244,7 @@
   (GET "/resetticker" [oid]
     (binding [CU/*reset-cache* true]
       (ticker-chart (U/rs oid))))
-  (GET "/tickerweek" [oid] (ticker-chart-week (U/rs oid))))
+  (GET "/tickerweek" [oid] (ticker-chart-week (U/rs oid)))
+  (GET "/resettickerweek" [oid]
+    (binding [CU/*reset-cache* true]
+      (ticker-chart-week (U/rs oid)))))
