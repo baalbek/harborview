@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# sudo this script
+
+JAVA_HOME=/usr/local/java
+export JAVA_HOME
+
+export PATH=$JAVA_HOME/bin:$PATH
+
+java -jar harborview-2.0.jar x &
+
+exit 0

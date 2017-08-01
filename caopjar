@@ -1,6 +1,6 @@
 #!/bin/bash
 
-gradle compileJava
+# gradle compileJava
 
 lein compile
 
