@@ -5,23 +5,27 @@
    [compojure.core :only (GET PUT defroutes)])
   (:require
    [selmer.parser :as P]
+   [harborview.service.db :as DB]
    [harborview.derivatives.dbx :as DBX]
    [harborview.service.htmlutils :as U]))
 
 
 (defn route-derivatives [tix opx-fn]
-  (let [derivatives (opx-fn (read-string tix))]
+  (let [[url user] (DB/dbcp :ranoraraku-dbcp)
+        derivatives (opx-fn (read-string tix))]
     (P/render-file "templates/derivatives/overlook.html"
-      {:derivatives
-       (map (fn [^Derivative d]
-              {:oid (.getOid d)
-               :ticker (.getTicker d)
-               :x (.getX d)
-               :exp (.getExpiry d)
-               :series (.getSeries d)
-               :optype (.getOpTypeStr d)
-               :days 12})
-         derivatives)})))
+      {:db-url url
+       :db-user user
+       :derivatives
+         (map (fn [^Derivative d]
+                {:oid (.getOid d)
+                 :ticker (.getTicker d)
+                 :x (.getX d)
+                 :exp (.getExpiry d)
+                 :series (.getSeries d)
+                 :optype (.getOpTypeStr d)
+                 :days 12})
+           derivatives)})))
 
 (defroutes my-routes
   (GET "/calls/:tix" [tix] (route-derivatives tix DBX/calls))

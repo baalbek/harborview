@@ -6,10 +6,27 @@
      SqlSessionFactory
      SqlSessionFactoryBuilder]
     [java.io  Reader]))
+  ;(:require [clojure.java.io :as io]))
 
 (def mybatis-conf {:ranoraraku "ranoraraku-mybatis.conf.xml"
+                   :ranoraraku-dbcp "ranoraraku-dbcp.properties"
                    :koteriku "koteriku-mybatis.conf.xml"
+                   :koteriku-dbcp "koteriku-dbcp.properties"
+                   :stearnswharf-dbcp "dbcp.properties"
                    :stearnswharf "mybatis.conf.xml"})
+
+(def dbcp
+  (memoize
+    (fn [db]
+      (let [f (db mybatis-conf)
+            content (slurp f)]
+        (let [[_ url] (re-find #"(?m)^db.url=(.*)" content)
+              [_ user] (re-find #"(?m)^db.user=(.*)" content)]
+          [url user])))))
+
+
+;(with-open [rdr (io/reader f)])
+  ;(doseq [line (line-seq rdr)]
 
 
 (def get-factory
