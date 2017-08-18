@@ -10,6 +10,7 @@
     [selmer.parser :as P]
     [harborview.service.logservice :as LOG]
     [harborview.service.htmlutils :as U]
+    [harborview.service.db :as DB]
     [harborview.critters.dbx :as DBX]))
 
 
@@ -130,14 +131,15 @@
                        (map critter-area critters))}))
 
 (defn overlook [ptype-str]
-  (let [ptype (U/rs ptype-str)
+  (let [[url user] (DB/dbcp :ranoraraku-dbcp)
+        ptype (U/rs ptype-str)
         purchases (DBX/active-purchases ptype)
         ptname (cond
                  (= ptype 3) "Money Critters"
                  (= ptype 4) "Test Critters"
                  (= ptype 11) "Paper Critters")]
    (P/render-file "templates/critters/overlook.html"
-     {:ptname ptname :purchases (map purchase-area purchases)})))
+     {:db-url url :db-user user :ptname ptname :purchases (map purchase-area purchases)})))
 
 (defroutes my-routes
   (GET "/overlook/:id" [id] (overlook id))

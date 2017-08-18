@@ -37,10 +37,13 @@
   (let [bilag (first (DBX/fetch-by-bilag))
         bilag-dx (.getTransactionDate bilag)
         last-date (first (DBX/fetch-by-date))
-        last-date-dx (.getTransactionDate last-date)]
+        last-date-dx (.getTransactionDate last-date)
+        [url user] (DB/dbcp :koteriku-dbcp)]
     (prn bilag-dx)
     (P/render-file "templates/generaljournal/generaljournal.html"
-      {:ns4102 (map ns4102->select (DBX/fetch-ns4102))
+      {:db-url url
+       :db-user user
+       :ns4102 (map ns4102->select (DBX/fetch-ns4102))
        :bilag (-> bilag .getBilag inc str)
        :bilag-dx bilag-dx
        :last-date last-date-dx

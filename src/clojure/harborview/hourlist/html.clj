@@ -6,6 +6,7 @@
   (:require
    [selmer.parser :as P]
    [harborview.hourlist.dbx :as DBX]
+   [harborview.service.db :as DB]
    [harborview.service.htmlutils :as U]))
 
 
@@ -18,17 +19,20 @@
   {:name (str (.getId x) " - " (.getDescription x)) :value (str (.getId x))})
 
 (defn hourlist []
-  (P/render-file "templates/hourlist/hourlist.html"
-    {:invoices
-      (map (fn [v]
-             (let [fnr (.getInvoiceNum v)
-                   cust (.getCustomerName v)
-                   desc (.getDescription v)]
-               {:content (str fnr " - " cust " - " desc) :value (str fnr)}))
-        (DBX/fetch-invoices))
-     :hourlistgroups
-       (map hourlistgroup->select
-         (DBX/fetch-hourlist-groups false))}))
+  (let [[url user] (DB/dbcp :koteriku-dbcp)]
+    (P/render-file "templates/hourlist/hourlist.html"
+      {:db-url url
+       :db-user user
+       :invoices
+        (map (fn [v]
+               (let [fnr (.getInvoiceNum v)
+                     cust (.getCustomerName v)
+                     desc (.getDescription v)]
+                 {:content (str fnr " - " cust " - " desc) :value (str fnr)}))
+          (DBX/fetch-invoices))
+       :hourlistgroups
+        (map hourlistgroup->select
+          (DBX/fetch-hourlist-groups false))})))
 
 (defn overview [fnr select-fn]
   (P/render-file "templates/hourlist/hourlistitems.html"
@@ -47,8 +51,8 @@
 
 (defn overview-groups [show-inactive]
   (P/render-file "templates/hourlist/groupitems.html"
-    {:hourlistgroups
-     (map hourlistgroup->map
+     {:hourlistgroups
+      (map hourlistgroup->map
        (DBX/fetch-hourlist-groups show-inactive))}))
 
 (defn groupsums [fnr]

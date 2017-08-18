@@ -11,6 +11,7 @@
     [selmer.parser :as P]
     [harborview.maunaloa.dbx :as DBX]
     [harborview.maunaloa.options :as OPX]
+    [harborview.service.db :as DB]
     [harborview.service.htmlutils :as U]
     [harborview.service.commonutils :as CU]))
 
@@ -171,11 +172,14 @@
         (map OPX/option->json (OPX/calls tick-str))})))
 
 (defn init-charts []
-  (P/render-file "templates/maunaloa/charts.html" {}))
+  (let [[url user] (DB/dbcp :ranoraraku-dbcp)]
+    (P/render-file "templates/maunaloa/charts.html" {:db-url url :db-user user})))
+
   ;(P/render-file "templates/maunaloa/charts.html" {:c-width 1310 :c1-height 500 :c2-height 200}))
 
 (defn init-options []
-  (P/render-file "templates/maunaloa/options.html" {}))
+  (let [[url user] (DB/dbcp :ranoraraku-dbcp)]
+    (P/render-file "templates/maunaloa/options.html" {:db-url url :db-user user})))
 
 (defn ticker->options
   ([ticker]
