@@ -100,6 +100,7 @@
         cc-50 (calc-cc spots 50)
         ;cc-200 (calc-cc spots 200)
         volume (map #(.getVolume %) spot-objs)
+        vol-norm (normalize volume)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
         hr (hruler min-dx)]
     (U/json-response
@@ -116,7 +117,7 @@
                  :cndl nil}
         :chart3 {:lines nil
                  :cndl nil
-                 :bars [(reverse (normalize volume))]}
+                 :bars [(reverse vol-norm)]}
         :x-axis (reverse (map hr dx))
         :min-dx (CU/ld->str min-dx)})))
 

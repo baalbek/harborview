@@ -60,6 +60,7 @@ type alias Stock =
 
 type alias Option =
     { ticker : String
+    , x : Float
     , days : Float
     , buy : Float
     , sell : Float
@@ -143,6 +144,7 @@ config =
         , columns =
             [ checkboxColumn
             , Table.stringColumn "Ticker" .ticker
+            , Table.floatColumn "Exercise" .x
             , Table.floatColumn "Days" .days
             , Table.floatColumn "Buy" .buy
             , Table.floatColumn "Sell" .sell
@@ -390,6 +392,7 @@ optionDecoder : Json.Decoder Option
 optionDecoder =
     JP.decode Option
         |> JP.required "ticker" Json.string
+        |> JP.required "x" Json.float
         |> JP.required "days" Json.float
         |> JP.required "buy" Json.float
         |> JP.required "sell" Json.float
