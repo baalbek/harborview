@@ -67,6 +67,7 @@ type alias Option =
     , ivBuy : Float
     , ivSell : Float
     , breakEven : Float
+    , spread : Float
     , risc : Float
     , optionPriceAtRisc : Float
     , stockPriceAtRisc : Float
@@ -148,6 +149,7 @@ config =
             , Table.floatColumn "Days" .days
             , Table.floatColumn "Buy" .buy
             , Table.floatColumn "Sell" .sell
+            , Table.floatColumn "Spread" .spread
             , Table.floatColumn "IvBuy" .ivBuy
             , Table.floatColumn "IvSell" .ivSell
             , Table.floatColumn "Break-Even" .breakEven
@@ -388,9 +390,36 @@ calcRisc model =
             Http.post url jbody (Json.list myDecoder)
 
 
+buildOption :
+    String
+    -> Float
+    -> Float
+    -> Float
+    -> Float
+    -> Float
+    -> Float
+    -> Float
+    -> Option
+buildOption t x d b s ib is be =
+    Option
+        t
+        x
+        d
+        b
+        s
+        ib
+        is
+        be
+        (MISC.toDecimal (100 * ((s / b) - 1.0)) 10.0)
+        0
+        0
+        0
+        False
+
+
 optionDecoder : Json.Decoder Option
 optionDecoder =
-    JP.decode Option
+    JP.decode buildOption
         |> JP.required "ticker" Json.string
         |> JP.required "x" Json.float
         |> JP.required "days" Json.float
@@ -399,10 +428,16 @@ optionDecoder =
         |> JP.required "iv-buy" Json.float
         |> JP.required "iv-sell" Json.float
         |> JP.required "br-even" Json.float
-        |> JP.hardcoded 0.0
-        |> JP.hardcoded 0.0
-        |> JP.hardcoded 0.0
-        |> JP.hardcoded False
+
+
+
+{-
+   |> JP.hardcoded 0.0
+   |> JP.hardcoded 0.0
+   |> JP.hardcoded 0.0
+   |> JP.hardcoded 0.0
+   |> JP.hardcoded False
+-}
 
 
 stockDecoder : Json.Decoder Stock
