@@ -1,6 +1,7 @@
 port module Maunaloa.Charts exposing (..)
 
-import Date exposing (toTime)
+import Date exposing (toTime, Date)
+import Time exposing (Time)
 import Http
 import Html as H
 import Html.Attributes as A
@@ -19,6 +20,15 @@ mainUrl =
 
 type alias Flags =
     { isWeekly : Bool }
+
+
+type alias Spot =
+    { dx : Time
+    , opn : Float
+    , hi : Float
+    , lo : Float
+    , spot : Float
+    }
 
 
 type alias RiscLine =
@@ -58,6 +68,9 @@ port drawCanvas : C.ChartInfoJs -> Cmd msg
 
 
 port drawRiscLines : RiscLinesJs -> Cmd msg
+
+
+port drawSpot : Spot -> Cmd msg
 
 
 
