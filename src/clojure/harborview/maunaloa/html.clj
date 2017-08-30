@@ -115,7 +115,7 @@
                           (reverse (map CU/double->decimal cc-50))]
                  :bars nil
                  :cndl nil}
-        :chart3 {:lines nil
+        :chart3 {:lines [(reverse (calc-itrend vol-norm 10))]
                  :cndl nil
                  :bars [(reverse vol-norm)]}
         :x-axis (reverse (map hr dx))
