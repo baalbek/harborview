@@ -129,6 +129,8 @@ type Msg
     | ChartsFetched (Result Http.Error C.ChartInfo)
     | FetchRiscLines
     | RiscLinesFetched (Result Http.Error RiscLines)
+    | FetchSpot
+    | SpotFetched (Result Http.Error Spot)
     | ResetCache
 
 
@@ -326,6 +328,15 @@ update msg model =
         RiscLinesFetched (Err s) ->
             Debug.log ("RiscLinesFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
+        FetchSpot ->
+            ( model, fetchSpot model )
+
+        SpotFetched (Ok s) ->
+            ( model, Cmd.none )
+
+        SpotFetched (Err s) ->
+            Debug.log ("SpotFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
+
         ResetCache ->
             ( model, fetchCharts model.selectedTicker model True )
 
@@ -334,6 +345,24 @@ update msg model =
 -- </editor-fold>
 ------------------ COMMANDS -------------------
 -- <editor-fold>
+
+
+fetchSpot : Model -> Cmd Msg
+fetchSpot model =
+    let
+        url =
+            mainUrl ++ "/risclines?ticker=" ++ model.selectedTicker
+
+        spotDecoder =
+            JP.decode Spot
+                |> JP.required "dx" M.stringToTimeDecoder
+                |> JP.required "opn" Json.float
+                |> JP.required "hi" Json.float
+                |> JP.required "lo" Json.float
+                |> JP.required "cld" Json.float
+    in
+        Http.send SpotFetched <|
+            Http.get url spotDecoder
 
 
 fetchRiscLines : Model -> Cmd Msg
