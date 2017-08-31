@@ -332,7 +332,7 @@ update msg model =
             ( model, fetchSpot model )
 
         SpotFetched (Ok s) ->
-            ( model, Cmd.none )
+            ( model, drawSpot s )
 
         SpotFetched (Err s) ->
             Debug.log ("SpotFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
@@ -351,7 +351,7 @@ fetchSpot : Model -> Cmd Msg
 fetchSpot model =
     let
         url =
-            mainUrl ++ "/risclines?ticker=" ++ model.selectedTicker
+            mainUrl ++ "/spot?ticker=" ++ model.selectedTicker
 
         spotDecoder =
             JP.decode Spot
@@ -359,7 +359,7 @@ fetchSpot model =
                 |> JP.required "opn" Json.float
                 |> JP.required "hi" Json.float
                 |> JP.required "lo" Json.float
-                |> JP.required "cld" Json.float
+                |> JP.required "cls" Json.float
     in
         Http.send SpotFetched <|
             Http.get url spotDecoder
