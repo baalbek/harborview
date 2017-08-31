@@ -59,6 +59,11 @@ jQuery(document).ready(function() {
       }
       app.ports.drawCanvas.subscribe(drawCanvas1);
       app2.ports.drawCanvas.subscribe(drawCanvas2);
+      <!------------- drawSpot ---------------->
+      var drawSpot1 = function (spot) {
+        alert(spot.dx);
+      }
+      app.ports.drawSpot.subscribe(drawSpot1);
 
       var drawCanvas = function (chartInfo,curChart,canvasId) {
         var offsets = chartInfo.xaxis;

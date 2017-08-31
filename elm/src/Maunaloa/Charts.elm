@@ -148,6 +148,7 @@ view model =
         [ H.div [ A.class "row" ]
             [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
             , button_ "Risc Lines" FetchRiscLines
+            , button_ "Spot" FetchSpot
             , button_ "Reset Cache" ResetCache
             ]
         ]
@@ -332,8 +333,10 @@ update msg model =
             ( model, fetchSpot model )
 
         SpotFetched (Ok s) ->
-            ( model, drawSpot s )
+            Debug.log (toString s)
+                ( model, drawSpot s )
 
+        -- ( model, drawSpot s )
         SpotFetched (Err s) ->
             Debug.log ("SpotFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
@@ -359,7 +362,7 @@ fetchSpot model =
                 |> JP.required "opn" Json.float
                 |> JP.required "hi" Json.float
                 |> JP.required "lo" Json.float
-                |> JP.required "cls" Json.float
+                |> JP.required "spot" Json.float
     in
         Http.send SpotFetched <|
             Http.get url spotDecoder
