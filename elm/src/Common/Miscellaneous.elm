@@ -7,8 +7,9 @@ import Http
 import Html as H
 import Html.Attributes as A
 import Html.Events as E
-import Date exposing (Date, fromString)
+import Date exposing (Date, fromString, toTime)
 import Tuple exposing (first, second)
+import Time exposing (Time)
 
 
 asHttpBody : List ( String, JE.Value ) -> Http.Body
@@ -135,6 +136,20 @@ customDecoder d f =
 stringToDateDecoder : JD.Decoder Date
 stringToDateDecoder =
     customDecoder JD.string fromString
+
+
+stringToTimeDecoder : JD.Decoder Time
+stringToTimeDecoder =
+    let
+        resultDecoder x =
+            case x of
+                Ok a ->
+                    JD.succeed (toTime a)
+
+                Err e ->
+                    JD.fail e
+    in
+        JD.map fromString JD.string |> JD.andThen resultDecoder
 
 
 makeLabel : String -> VD.Node a

@@ -1,6 +1,7 @@
 port module Maunaloa.Charts exposing (..)
 
-import Date exposing (toTime)
+import Date exposing (toTime, Date)
+import Time exposing (Time)
 import Http
 import Html as H
 import Html.Attributes as A
@@ -19,6 +20,15 @@ mainUrl =
 
 type alias Flags =
     { isWeekly : Bool }
+
+
+type alias Spot =
+    { dx : Time
+    , opn : Float
+    , hi : Float
+    , lo : Float
+    , spot : Float
+    }
 
 
 type alias RiscLine =
@@ -58,6 +68,9 @@ port drawCanvas : C.ChartInfoJs -> Cmd msg
 
 
 port drawRiscLines : RiscLinesJs -> Cmd msg
+
+
+port drawSpot : Spot -> Cmd msg
 
 
 
@@ -116,6 +129,8 @@ type Msg
     | ChartsFetched (Result Http.Error C.ChartInfo)
     | FetchRiscLines
     | RiscLinesFetched (Result Http.Error RiscLines)
+    | FetchSpot
+    | SpotFetched (Result Http.Error Spot)
     | ResetCache
 
 
@@ -133,6 +148,7 @@ view model =
         [ H.div [ A.class "row" ]
             [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
             , button_ "Risc Lines" FetchRiscLines
+            , button_ "Spot" FetchSpot
             , button_ "Reset Cache" ResetCache
             ]
         ]
@@ -313,6 +329,17 @@ update msg model =
         RiscLinesFetched (Err s) ->
             Debug.log ("RiscLinesFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
+        FetchSpot ->
+            ( model, fetchSpot model )
+
+        SpotFetched (Ok s) ->
+            Debug.log (toString s)
+                ( model, drawSpot s )
+
+        -- ( model, drawSpot s )
+        SpotFetched (Err s) ->
+            Debug.log ("SpotFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
+
         ResetCache ->
             ( model, fetchCharts model.selectedTicker model True )
 
@@ -321,6 +348,24 @@ update msg model =
 -- </editor-fold>
 ------------------ COMMANDS -------------------
 -- <editor-fold>
+
+
+fetchSpot : Model -> Cmd Msg
+fetchSpot model =
+    let
+        url =
+            mainUrl ++ "/spot?ticker=" ++ model.selectedTicker
+
+        spotDecoder =
+            JP.decode Spot
+                |> JP.required "dx" M.stringToTimeDecoder
+                |> JP.required "opn" Json.float
+                |> JP.required "hi" Json.float
+                |> JP.required "lo" Json.float
+                |> JP.required "spot" Json.float
+    in
+        Http.send SpotFetched <|
+            Http.get url spotDecoder
 
 
 fetchRiscLines : Model -> Cmd Msg

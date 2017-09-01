@@ -48,38 +48,6 @@
 
 (def min-dx (LocalDate/of 2012 1 1))
 
-(comment ticker-chart-static [oid w h]
-  (let [
-        spot-objs (DBX/fetch-prices (U/rs oid) (Date/valueOf min-dx))
-        spots (map #(.getCls %) spot-objs)
-        itrend-20 (calc-itrend spots 10)
-        dx (map #(.toLocalDate (.getDx %)) spot-objs)
-        max-dx (last dx) ;(.plusWeeks (last dx) 7)
-        ys (concat spots itrend-20)
-        min-val (apply min ys)
-        max-val (apply max ys)
-        vr (vruler-static h min-val max-val)
-        hr (hruler-static w min-dx max-dx)]
-    (U/json-response
-      {:spots (map vr spots)
-       :itrend-20 (map vr itrend-20)
-       ;:candlesticks [
-       ;               {:o 3, :h 4, :l 1, :c 2.5}
-       ;               {:o 3, :h 4, :l 1, :c 2.5}
-       ;               {:o 3, :h 4, :l 1, :c 2.5}
-       ;               {:o 3, :h 4, :l 1, :c 2.5}
-       ;               {:o 3, :h 4, :l 1, :c 2.5}
-       ;               {:o 3, :h 4, :l 1, :c 2.5}
-       ;               {:o 3, :h 4, :l 1, :c 2.5}
-       ;               {:o 3, :h 4, :l 1, :c 2.5}
-       ;               {:o 3, :h 4, :l 1, :c 2.5}]
-
-       :x-axis (map hr dx) ; [0 50 100 150 200]
-       :min-val min-val
-       :max-val max-val
-       :min-dx (CU/ld->str min-dx)
-       :max-dx (CU/ld->str max-dx)})))
-
 (defn bean->candlestick [b]
   {:o (.getOpn b)
    :h (.getHi b)
@@ -151,6 +119,11 @@
   (U/json-response
     (for [[oid ticker] (tix->map)] {"v" oid "t" ticker})))
 
+(defn spot [ticker]
+  (let [tick-str ((tix->map) ticker)]
+    (U/json-response
+      (OPX/stock->json (.get (OPX/stock tick-str))))))
+
 (defn putscalls [ticker]
   (U/json-response
     {:puts (map OPX/option->json (OPX/puts ticker))
@@ -221,6 +194,7 @@
 (defroutes my-routes
   (GET "/charts" request (init-charts))
   (GET "/optiontickers" request (init-options))
+  (GET "/spot" [ticker] (spot ticker))
   (GET "/puts" [ticker] (puts ticker))
   (GET "/calls" [ticker] (calls ticker))
   (GET "/resetcalls" [ticker]
