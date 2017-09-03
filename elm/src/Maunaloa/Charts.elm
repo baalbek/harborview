@@ -24,10 +24,10 @@ type alias Flags =
 
 type alias Spot =
     { dx : Time
-    , opn : Float
-    , hi : Float
-    , lo : Float
-    , spot : Float
+    , o : Float -- open
+    , h : Float -- high
+    , l : Float -- low
+    , c : Float -- close
     }
 
 

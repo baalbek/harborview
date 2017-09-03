@@ -104,6 +104,9 @@ jQuery(document).ready(function() {
       var drawRiscLines2 = function(riscLinesInfo) {
         drawRiscLines(riscLinesInfo,'canvas2x',2);
       }
+      var getRepos = function(reposId,vruler) {
+
+      }
       var drawRiscLines = function(riscLinesInfo,canvasId,reposId) {
         var canvas = document.getElementById(canvasId);
         var vruler = MAUNALOA.vruler(canvas.height,riscLinesInfo.valueRange);

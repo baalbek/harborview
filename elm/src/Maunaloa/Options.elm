@@ -51,10 +51,10 @@ init flags =
 type alias Stock =
     { date : String
     , time : String
-    , opn : Float
-    , hi : Float
-    , lo : Float
-    , spot : Float
+    , o : Float
+    , h : Float
+    , l : Float
+    , c : Float
     }
 
 
@@ -445,10 +445,10 @@ stockDecoder =
     JP.decode Stock
         |> JP.required "dx" Json.string
         |> JP.required "tm" Json.string
-        |> JP.required "opn" Json.float
-        |> JP.required "hi" Json.float
-        |> JP.required "lo" Json.float
-        |> JP.required "spot" Json.float
+        |> JP.required "o" Json.float
+        |> JP.required "h" Json.float
+        |> JP.required "l" Json.float
+        |> JP.required "c" Json.float
 
 
 fetchOptions : Model -> String -> Bool -> Cmd Msg
