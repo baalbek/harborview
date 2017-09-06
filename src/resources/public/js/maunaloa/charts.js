@@ -1,4 +1,21 @@
 
+var HARBORVIEW.cache =  {
+    hruler : null,
+    vruler : null,
+    repos1 : null,
+    repos2 : null,
+    getRepos : function(reposId) {
+
+    },
+    init : function(hruler,vruler) {
+        this.hruler = hruler;
+        this.hruler = hruler;
+        this.repos1 = null;
+        this.repos2 = null;
+    }
+}
+
+
 jQuery(document).ready(function() {
       /*
       $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -59,11 +76,6 @@ jQuery(document).ready(function() {
       }
       app.ports.drawCanvas.subscribe(drawCanvas1);
       app2.ports.drawCanvas.subscribe(drawCanvas2);
-      <!------------- drawSpot ---------------->
-      var drawSpot1 = function (spot) {
-        alert(spot.dx);
-      }
-      app.ports.drawSpot.subscribe(drawSpot1);
 
       var drawCanvas = function (chartInfo,curChart,canvasId) {
         var offsets = chartInfo.xaxis;
@@ -96,16 +108,17 @@ jQuery(document).ready(function() {
             lineChart.drawCandlesticks(curChart.candlesticks);
         }
       }
+      var getRepos = function(reposId,vruler) {
+
+      }
 
       <!------------- drawRiscLines ---------------->
+
       var drawRiscLines1 = function(riscLinesInfo) {
         drawRiscLines(riscLinesInfo,'canvas1x',1);
       }
       var drawRiscLines2 = function(riscLinesInfo) {
         drawRiscLines(riscLinesInfo,'canvas2x',2);
-      }
-      var getRepos = function(reposId,vruler) {
-
       }
       var drawRiscLines = function(riscLinesInfo,canvasId,reposId) {
         var canvas = document.getElementById(canvasId);
@@ -138,4 +151,11 @@ jQuery(document).ready(function() {
       }
       app.ports.drawRiscLines.subscribe(drawRiscLines1);
       app2.ports.drawRiscLines.subscribe(drawRiscLines2);
+
+      <!------------- drawSpot ---------------->
+
+      var drawSpot1 = function (spot) {
+        alert(spot.dx);
+      }
+      app.ports.drawSpot.subscribe(drawSpot1);
 });
