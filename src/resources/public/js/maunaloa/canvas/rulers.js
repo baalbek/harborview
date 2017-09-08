@@ -53,9 +53,9 @@ MAUNALOA.vruler = function(chartHeight,valueRange) {
 }
 
 
-MAUNALOA.hruler = function(width,startDateAsMillis,offsets,drawLegend) {
+MAUNALOA.hruler = function(width,startDateAsMillis,offsets,drawLegend,buffer) {
     var x0 = offsets[offsets.length-1];
-    var x1 = offsets[0] + 5;
+    var x1 = offsets[0] + buffer;
     var diffDays = x1 - x0;
     var ppx = width / diffDays;
 

@@ -1,19 +1,4 @@
-
-var HARBORVIEW.cache =  {
-    hruler : null,
-    vruler : null,
-    repos1 : null,
-    repos2 : null,
-    getRepos : function(reposId) {
-
-    },
-    init : function(hruler,vruler) {
-        this.hruler = hruler;
-        this.hruler = hruler;
-        this.repos1 = null;
-        this.repos2 = null;
-    }
-}
+var MAUNALOA = MAUNALOA || {};
 
 
 jQuery(document).ready(function() {
