@@ -50,6 +50,10 @@ MAUNALOA.levelLine = {
 MAUNALOA.repos = {
   init : function(canvasId,vruler) {
     this.canvas = document.getElementById(canvasId);
+    if (this.canvas === null) {
+        this.ctx = null;
+        return;
+    }
     this.ctx = this.canvas.getContext("2d");
     this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
     this.vruler = vruler;
@@ -61,7 +65,9 @@ MAUNALOA.repos = {
   },
   reset : function() {
     this.lines = [];
-    this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+    if (this.ctx !== null) {
+        this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+    }
   },
   handleMouseOut : function(self) {
     return function(e) {
