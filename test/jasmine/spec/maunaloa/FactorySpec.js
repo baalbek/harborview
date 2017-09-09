@@ -1,6 +1,6 @@
 var MAUNALOA = MAUNALOA || {};
 
-describe("Maunaloa.Cache", function() {
+describe("Maunaloa.Factory", function() {
     var date = new Date(2017,6,1);
     var tm = date.getTime();
     var offsets = [9,8,7,6,5,4,3,2,1,0];

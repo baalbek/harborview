@@ -8,6 +8,8 @@ jQuery(document).ready(function() {
           alert(target);
       });
       */
+      //var factory = MAUNALOA.factory.create();
+      var factory;
       var node = document.getElementById('my-app');
       var app = Elm.Maunaloa.Charts.embed(node, {
           isWeekly : false
@@ -17,8 +19,6 @@ jQuery(document).ready(function() {
       var app2 = Elm.Maunaloa.Charts.embed(node2, {
           isWeekly : true
       });
-      var repos1 = null;
-      var repos2 = null;
       <!------------- canvas sizes ---------------->
       var setCanvasSize = function(selector,w,h) {
           var c1 = document.querySelectorAll(selector);
@@ -36,28 +36,32 @@ jQuery(document).ready(function() {
       setCanvasSizes();
       <!------------- drawCanvas ---------------->
       var drawCanvas1 = function (chartInfo) {
-          drawCanvas(chartInfo,chartInfo.chart,'canvas1');
+          drawCanvas(chartInfo,chartInfo.chart,MAUNALOA.factory.canvasIds.DAY_LINES);
           if (chartInfo.chart2 != null) {
-            drawCanvas(chartInfo,chartInfo.chart2,'canvas1b');
+            drawCanvas(chartInfo,chartInfo.chart2,MAUNALOA.factory.canvasIds.DAY_OSC);
           }
           if (chartInfo.chart3 != null) {
-            drawCanvas(chartInfo,chartInfo.chart3,'canvas1c');
+            drawCanvas(chartInfo,chartInfo.chart3,MAUNALOA.factory.canvasIds.DAY_VOLUME);
           }
+          /*
           if (repos1 != null) {
             repos1.reset();
           }
+          */
       }
       var drawCanvas2 = function (chartInfo) {
-          drawCanvas(chartInfo,chartInfo.chart,'canvas2');
+          drawCanvas(chartInfo,chartInfo.chart,MAUNALOA.factory.canvasIds.WEEK_LINES);
           if (chartInfo.chart2 != null) {
-            drawCanvas(chartInfo,chartInfo.chart2,'canvas2b');
+            drawCanvas(chartInfo,chartInfo.chart2,MAUNALOA.factory.canvasIds.WEEK_OSC);
           }
           if (chartInfo.chart3 != null) {
-            drawCanvas(chartInfo,chartInfo.chart3,'canvas2c');
+            drawCanvas(chartInfo,chartInfo.chart3,MAUNALOA.factory.canvasIds.WEEK_VOLUME);
           }
+          /*
           if (repos2 != null) {
             repos2.reset();
           }
+          */
       }
       app.ports.drawCanvas.subscribe(drawCanvas1);
       app2.ports.drawCanvas.subscribe(drawCanvas2);
@@ -68,7 +72,7 @@ jQuery(document).ready(function() {
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0,0,canvas.width,canvas.height);
 
-        var myHruler = MAUNALOA.hruler(1300,chartInfo.startdate,offsets,curChart.bars === null);
+        var myHruler = MAUNALOA.hruler(1300,chartInfo.startdate,offsets,curChart.bars === null,5);
         myHruler.lines(ctx,canvas.height,chartInfo.numIncMonths);
 
         var myVruler = MAUNALOA.vruler(canvas.height,curChart.valueRange);
@@ -109,6 +113,7 @@ jQuery(document).ready(function() {
         var canvas = document.getElementById(canvasId);
         var vruler = MAUNALOA.vruler(canvas.height,riscLinesInfo.valueRange);
 
+        /*
         var repos = reposId === 1 ? repos1 : repos2;
         if (repos === null) {
           repos = MAUNALOA.repos.create(canvasId,vruler);
@@ -123,6 +128,7 @@ jQuery(document).ready(function() {
           repos.reset();
           repos.vruler = vruler;
         }
+        //*/
         var riscLines = riscLinesInfo.riscLines;
         for (var i=0; i<riscLines.length-1;++i) {
           var rl = riscLines[i];
