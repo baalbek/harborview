@@ -97,23 +97,21 @@ jQuery(document).ready(function() {
             lineChart.drawCandlesticks(curChart.candlesticks);
         }
       }
-      var getRepos = function(reposId,vruler) {
-
-      }
 
       <!------------- drawRiscLines ---------------->
 
       var drawRiscLines1 = function(riscLinesInfo) {
-        drawRiscLines(riscLinesInfo,'canvas1x',1);
+        drawRiscLines(riscLinesInfo,1);
       }
       var drawRiscLines2 = function(riscLinesInfo) {
-        drawRiscLines(riscLinesInfo,'canvas2x',2);
+        drawRiscLines(riscLinesInfo,2);
       }
-      var drawRiscLines = function(riscLinesInfo,canvasId,reposId) {
-        var canvas = document.getElementById(canvasId);
-        var vruler = MAUNALOA.vruler(canvas.height,riscLinesInfo.valueRange);
-
+      var drawRiscLines = function(riscLinesInfo,reposId) {
         /*
+        var canvasId = factory.getCanvasIdFor(reposId);
+        var canvas = document.getElementById(canvasId);
+
+        var vruler = MAUNALOA.vruler(canvas.height,riscLinesInfo.valueRange);
         var repos = reposId === 1 ? repos1 : repos2;
         if (repos === null) {
           repos = MAUNALOA.repos.create(canvasId,vruler);
@@ -129,10 +127,10 @@ jQuery(document).ready(function() {
           repos.vruler = vruler;
         }
         //*/
+        var repos = factory.initRepos(reposId);
         var riscLines = riscLinesInfo.riscLines;
         for (var i=0; i<riscLines.length-1;++i) {
           var rl = riscLines[i];
-          //repos.addRiscLines(rl.ticker,rl.optionPrice,rl.risc,rl.be);
           repos.addRiscLines(rl,false);
         }
         if (riscLines.length > 0) {

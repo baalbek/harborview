@@ -15,6 +15,14 @@ MAUNALOA.factory =  {
         WEEK_VOLUME         : 'canvas2c',
         WEEK_OSC            : 'canvas2b'
     },
+    getCanvasIdFor : function(reposId) {
+        if (reposId === 1) {
+            return this.canvasIds.DAY_LINES_OVERLAY;
+        }
+        else {
+            return this.canvasIds.WEEK_LINES_OVERLAY;
+        }
+    }
     initRepos : function(reposId) {
         var repos = reposId === 1 ? this.repos1 : this.repos2;
         var canvasId = reposId === 1 ? this.canvasIds.DAY_LINES_OVERLAY : this.canvasIds.WEEK_LINES_OVERLAY;
