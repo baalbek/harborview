@@ -252,7 +252,7 @@ MAUNALOA.repos = {
                                             color:"green",
                                             lineWidth:2,
                                             legendFn:function() {
-                                                return "[" + cfg.ticker + "] Break-even: " + this.levelValue;
+                                                return "[" + cfg.ticker + "] Ask: " + cfg.ask + ", Break-even: " + this.levelValue;
                                             }});
     this.lines.push(breakEvenLine);
     if (doDraw===true) {

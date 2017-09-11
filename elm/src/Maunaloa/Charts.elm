@@ -37,6 +37,7 @@ type alias RiscLine =
     , stockPrice : Float
     , optionPrice : Float
     , risc : Float
+    , ask : Float
     }
 
 
@@ -381,6 +382,7 @@ fetchRiscLines model =
                 |> JP.required "stockprice" Json.float
                 |> JP.required "optionprice" Json.float
                 |> JP.required "risc" Json.float
+                |> JP.required "ask" Json.float
     in
         Http.send RiscLinesFetched <|
             Http.get url (Json.list riscDecoder)

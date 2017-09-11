@@ -123,6 +123,7 @@
    :be (-> o .getBreakEven .get)
    :stockprice (-> o .getCurrentRiscStockPrice .get)
    :optionprice (.getCurrentRiscOptionValue o)
+   :ask (.getSell o)
    :risc (.getCurrentRisc o)})
 
 (defn stock [ticker]
