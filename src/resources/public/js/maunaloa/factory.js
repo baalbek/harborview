@@ -22,7 +22,7 @@ MAUNALOA.factory =  {
         else {
             return this.canvasIds.WEEK_LINES_OVERLAY;
         }
-    }
+    },
     initRepos : function(reposId) {
         var repos = reposId === 1 ? this.repos1 : this.repos2;
         var canvasId = reposId === 1 ? this.canvasIds.DAY_LINES_OVERLAY : this.canvasIds.WEEK_LINES_OVERLAY;
@@ -44,7 +44,7 @@ MAUNALOA.factory =  {
     create : function(hruler,vruler) {
         var C = function() { 
             this.hruler = hruler;
-            this.hruler = hruler;
+            this.vruler = vruler;
             this.repos1 = null;
             this.repos2 = null;
         }

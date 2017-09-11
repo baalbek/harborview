@@ -36,12 +36,12 @@ jQuery(document).ready(function() {
       setCanvasSizes();
       <!------------- drawCanvas ---------------->
       var drawCanvas1 = function (chartInfo) {
-          drawCanvas(chartInfo,chartInfo.chart,MAUNALOA.factory.canvasIds.DAY_LINES);
+          drawCanvas(chartInfo,chartInfo.chart,MAUNALOA.factory.canvasIds.DAY_LINES,true);
           if (chartInfo.chart2 != null) {
-            drawCanvas(chartInfo,chartInfo.chart2,MAUNALOA.factory.canvasIds.DAY_OSC);
+            drawCanvas(chartInfo,chartInfo.chart2,MAUNALOA.factory.canvasIds.DAY_OSC,false);
           }
           if (chartInfo.chart3 != null) {
-            drawCanvas(chartInfo,chartInfo.chart3,MAUNALOA.factory.canvasIds.DAY_VOLUME);
+            drawCanvas(chartInfo,chartInfo.chart3,MAUNALOA.factory.canvasIds.DAY_VOLUME,false);
           }
           /*
           if (repos1 != null) {
@@ -50,12 +50,12 @@ jQuery(document).ready(function() {
           */
       }
       var drawCanvas2 = function (chartInfo) {
-          drawCanvas(chartInfo,chartInfo.chart,MAUNALOA.factory.canvasIds.WEEK_LINES);
+          drawCanvas(chartInfo,chartInfo.chart,MAUNALOA.factory.canvasIds.WEEK_LINES,true);
           if (chartInfo.chart2 != null) {
-            drawCanvas(chartInfo,chartInfo.chart2,MAUNALOA.factory.canvasIds.WEEK_OSC);
+            drawCanvas(chartInfo,chartInfo.chart2,MAUNALOA.factory.canvasIds.WEEK_OSC,false);
           }
           if (chartInfo.chart3 != null) {
-            drawCanvas(chartInfo,chartInfo.chart3,MAUNALOA.factory.canvasIds.WEEK_VOLUME);
+            drawCanvas(chartInfo,chartInfo.chart3,MAUNALOA.factory.canvasIds.WEEK_VOLUME,false);
           }
           /*
           if (repos2 != null) {
@@ -66,7 +66,7 @@ jQuery(document).ready(function() {
       app.ports.drawCanvas.subscribe(drawCanvas1);
       app2.ports.drawCanvas.subscribe(drawCanvas2);
 
-      var drawCanvas = function (chartInfo,curChart,canvasId) {
+      var drawCanvas = function (chartInfo,curChart,canvasId,isMainChart) {
         var offsets = chartInfo.xaxis;
         var canvas = document.getElementById(canvasId);
         var ctx = canvas.getContext("2d");
@@ -77,6 +77,10 @@ jQuery(document).ready(function() {
 
         var myVruler = MAUNALOA.vruler(canvas.height,curChart.valueRange);
         myVruler.lines(ctx,canvas.width,curChart.numVlines);
+
+        if (isMainChart === true) {
+            factory = MAUNALOA.factory.create(myHruler,myVruler);
+        }
 
         var lineChart = MAUNALOA.lineChart(myHruler,myVruler,ctx);
         var strokes = chartInfo.strokes;
