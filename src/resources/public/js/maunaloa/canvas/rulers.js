@@ -10,8 +10,6 @@ MAUNALOA.vruler = function(chartHeight,valueRange) {
   var maxVal = valueRange[1];
   var ppy = chartHeight / (maxVal - minVal);
 
-  console.log("ppy: " + ppy);
-
   var lines = function(ctx,chartWidth,numVlines) {
     ctx.fillStyle = "black";
     ctx.font = "16px Arial";

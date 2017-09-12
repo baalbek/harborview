@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
       });
       */
       //var factory = MAUNALOA.factory.create();
-      var factory;
+      var factory = null;
       var node = document.getElementById('my-app');
       var app = Elm.Maunaloa.Charts.embed(node, {
           isWeekly : false
@@ -106,6 +106,9 @@ jQuery(document).ready(function() {
         myVruler.lines(ctx,canvas.width,curChart.numVlines);
 
         if (cfg.isMain === true) {
+            if (factory !== null) {
+                factory.dispose();
+            }
             factory = MAUNALOA.factory.create(myHruler,myVruler);
             clearCanvas(cfg.cidx);
         }

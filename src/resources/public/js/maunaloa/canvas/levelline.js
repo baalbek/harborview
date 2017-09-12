@@ -27,7 +27,11 @@ MAUNALOA.levelLine = {
     //create : function(parent,levelValue,x1,x2,y,
     //      {draggable=true,color="grey",lineWidth=1,legendFn=null,onMouseUp=null,id=null}={}) {
     create : function(parent,levelValue,x1,x2,y,conf) {
-        var result = Object.create(MAUNALOA.levelLine);
+        var LL = function() {}; 
+        LL.prototype = MAUNALOA.levelLine;
+        LL.constructor.prototype = LL;
+        var result = new LL();
+        //var result = Object.create(MAUNALOA.levelLine);
         result.parent = parent;
         //result.id = conf.id;
         result.levelValue = levelValue;
@@ -58,10 +62,23 @@ MAUNALOA.repos = {
     this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
     this.vruler = vruler;
     // listen for mouse events
+    this.mup = this.handleMouseUp(this);
+    this.mdo = this.handleMouseDown(this);
+    this.mmo = this.handleMouseMove(this);
+    this.canvas.addEventListener('mouseup', this.mup, false);
+    this.canvas.addEventListener('mousedown', this.mdo, false);
+    this.canvas.addEventListener('mousemove', this.mmo, false);
+    /*
     this.canvas.addEventListener('mouseup', this.handleMouseUp(this), false);
-    this.canvas.addEventListener('mouseout', this.handleMouseOut(this), false);
+    //this.canvas.addEventListener('mouseout', this.handleMouseOut(this), false);
     this.canvas.addEventListener('mousedown', this.handleMouseDown(this), false);
     this.canvas.addEventListener('mousemove', this.handleMouseMove(this), false);
+    //*/
+  },
+  dispose : function() {
+    this.canvas.removeEventListener('mouseup', this.mup, false);
+    this.canvas.removeEventListener('mousedown', this.mdo, false);
+    this.canvas.removeEventListener('mousemove', this.mmo, false);
   },
   reset : function() {
     this.lines = [];

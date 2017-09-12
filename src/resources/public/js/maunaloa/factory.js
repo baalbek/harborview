@@ -51,5 +51,14 @@ MAUNALOA.factory =  {
         C.prototype = MAUNALOA.factory;
         C.constructor.prototype = C;
         return new C();
+    },
+    dispose : function() {
+        if (this.repos1 !== null) {
+            this.repos1.dispose();
+        }
+        if (this.repos2 !== null) {
+            this.repos2.dispose();
+        }
     }
+
 }
