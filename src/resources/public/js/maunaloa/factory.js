@@ -58,8 +58,11 @@ MAUNALOA.factory =  {
             this.repos2.dispose();
         }
     },
-    initRepos : function(reposId) {
+    getRepos : function(reposId) { 
         var repos = reposId === 1 ? this.repos1 : this.repos2;
-    
+        if (repos === null) {
+            repos = this.initRepos(reposId);
+        }
+        return repos;
     }
 }

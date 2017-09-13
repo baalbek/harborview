@@ -334,8 +334,7 @@ update msg model =
             ( model, fetchSpot model )
 
         SpotFetched (Ok s) ->
-            Debug.log (toString s)
-                ( model, drawSpot s )
+            ( model, drawSpot s )
 
         -- ( model, drawSpot s )
         SpotFetched (Err s) ->

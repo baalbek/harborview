@@ -151,7 +151,7 @@ jQuery(document).ready(function() {
 
       var drawSpot1 = function (spot) {
         var repos = factory.getRepos(1);
-        alert(spot.dx);
+        repos.addSpot(spot);
       }
       app.ports.drawSpot.subscribe(drawSpot1);
 });

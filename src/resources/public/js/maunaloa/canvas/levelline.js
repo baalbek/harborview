@@ -258,8 +258,8 @@ MAUNALOA.repos = {
                                             onMouseUp:function(){
                                                 this.risc = "-";
                                                 var self = this;
-                                                /*HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/optionprice",*/
-                                                HARBORVIEW.Utils.jsonGET("https://andromeda/maunaloa/optionprice",
+                                                //HARBORVIEW.Utils.jsonGET("https://andromeda/maunaloa/optionprice",
+                                                HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/optionprice",
                                                     { "ticker":cfg.ticker,"stockprice":this.levelValue },
                                                     function(result) {
                                                         self.risc = parseFloat(result.risc);

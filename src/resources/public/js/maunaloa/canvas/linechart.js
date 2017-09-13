@@ -87,7 +87,7 @@ MAUNALOA.lineChart = function(hruler,vruler,ctx) {
       }
     }
     var drawCandlestick = function(candleStick) {
-        var scaled = scaleCandlesticks(candleStick);
+        var scaled = scaleCandlestick(candleStick);
         var x = hruler.timeStampToPix(candleStick.dx);
         _drawCandlestick(x,scaled);
     }

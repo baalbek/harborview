@@ -25,5 +25,9 @@ describe("Maunaloa.Factory", function() {
         var rx = factory.initRepos(1); 
         expect(rx).toEqual(r);
     });
+    it("should be able to return an uninitialized repos", function() {
+        var r = factory.getRepos(1); 
+        expect(r).not.toBeNull();
+    });
 });
 
