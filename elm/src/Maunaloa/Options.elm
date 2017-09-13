@@ -51,21 +51,23 @@ init flags =
 type alias Stock =
     { date : String
     , time : String
-    , opn : Float
-    , hi : Float
-    , lo : Float
-    , spot : Float
+    , o : Float
+    , h : Float
+    , l : Float
+    , c : Float
     }
 
 
 type alias Option =
     { ticker : String
+    , x : Float
     , days : Float
     , buy : Float
     , sell : Float
     , ivBuy : Float
     , ivSell : Float
     , breakEven : Float
+    , spread : Float
     , risc : Float
     , optionPriceAtRisc : Float
     , stockPriceAtRisc : Float
@@ -143,9 +145,11 @@ config =
         , columns =
             [ checkboxColumn
             , Table.stringColumn "Ticker" .ticker
+            , Table.floatColumn "Exercise" .x
             , Table.floatColumn "Days" .days
             , Table.floatColumn "Buy" .buy
             , Table.floatColumn "Sell" .sell
+            , Table.floatColumn "Spread" .spread
             , Table.floatColumn "IvBuy" .ivBuy
             , Table.floatColumn "IvSell" .ivSell
             , Table.floatColumn "Break-Even" .breakEven
@@ -386,20 +390,54 @@ calcRisc model =
             Http.post url jbody (Json.list myDecoder)
 
 
+buildOption :
+    String
+    -> Float
+    -> Float
+    -> Float
+    -> Float
+    -> Float
+    -> Float
+    -> Float
+    -> Option
+buildOption t x d b s ib is be =
+    Option
+        t
+        x
+        d
+        b
+        s
+        ib
+        is
+        be
+        (MISC.toDecimal (100 * ((s / b) - 1.0)) 10.0)
+        0
+        0
+        0
+        False
+
+
 optionDecoder : Json.Decoder Option
 optionDecoder =
-    JP.decode Option
+    JP.decode buildOption
         |> JP.required "ticker" Json.string
+        |> JP.required "x" Json.float
         |> JP.required "days" Json.float
         |> JP.required "buy" Json.float
         |> JP.required "sell" Json.float
         |> JP.required "iv-buy" Json.float
         |> JP.required "iv-sell" Json.float
         |> JP.required "br-even" Json.float
-        |> JP.hardcoded 0.0
-        |> JP.hardcoded 0.0
-        |> JP.hardcoded 0.0
-        |> JP.hardcoded False
+
+
+
+{-
+   |> JP.hardcoded 0.0
+   |> JP.hardcoded 0.0
+   |> JP.hardcoded 0.0
+   |> JP.hardcoded 0.0
+   |> JP.hardcoded False
+-}
 
 
 stockDecoder : Json.Decoder Stock
@@ -407,10 +445,10 @@ stockDecoder =
     JP.decode Stock
         |> JP.required "dx" Json.string
         |> JP.required "tm" Json.string
-        |> JP.required "opn" Json.float
-        |> JP.required "hi" Json.float
-        |> JP.required "lo" Json.float
-        |> JP.required "spot" Json.float
+        |> JP.required "o" Json.float
+        |> JP.required "h" Json.float
+        |> JP.required "l" Json.float
+        |> JP.required "c" Json.float
 
 
 fetchOptions : Model -> String -> Bool -> Cmd Msg

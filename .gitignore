@@ -16,6 +16,7 @@ libs
 target
 
 elm/elm-stuff/
+elm/tests/elm-stuff/
 elm/elm-stuff-0.17/
 elm/*.js
 tmp/
@@ -29,3 +30,5 @@ reflection_warning
 elm/elm-stuff.mdl_table/
 feed/
 harborview.css.map
+Demo.elm
+test/jasmine/lib/

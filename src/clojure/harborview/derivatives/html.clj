@@ -24,7 +24,7 @@
                  :exp (.getExpiry d)
                  :series (.getSeries d)
                  :optype (.getOpTypeStr d)
-                 :days 12})
+                 :days (.getDays d)})
            derivatives)})))
 
 (defroutes my-routes

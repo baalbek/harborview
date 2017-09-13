@@ -1,6 +1,7 @@
 port module Maunaloa.Charts exposing (..)
 
-import Date exposing (toTime)
+import Date exposing (toTime, Date)
+import Time exposing (Time)
 import Http
 import Html as H
 import Html.Attributes as A
@@ -21,12 +22,22 @@ type alias Flags =
     { isWeekly : Bool }
 
 
+type alias Spot =
+    { dx : Time
+    , o : Float -- open
+    , h : Float -- high
+    , l : Float -- low
+    , c : Float -- close
+    }
+
+
 type alias RiscLine =
     { ticker : String
     , be : Float
     , stockPrice : Float
     , optionPrice : Float
     , risc : Float
+    , ask : Float
     }
 
 
@@ -58,6 +69,9 @@ port drawCanvas : C.ChartInfoJs -> Cmd msg
 
 
 port drawRiscLines : RiscLinesJs -> Cmd msg
+
+
+port drawSpot : Spot -> Cmd msg
 
 
 
@@ -116,6 +130,8 @@ type Msg
     | ChartsFetched (Result Http.Error C.ChartInfo)
     | FetchRiscLines
     | RiscLinesFetched (Result Http.Error RiscLines)
+    | FetchSpot
+    | SpotFetched (Result Http.Error Spot)
     | ResetCache
 
 
@@ -133,6 +149,7 @@ view model =
         [ H.div [ A.class "row" ]
             [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
             , button_ "Risc Lines" FetchRiscLines
+            , button_ "Spot" FetchSpot
             , button_ "Reset Cache" ResetCache
             ]
         ]
@@ -313,6 +330,16 @@ update msg model =
         RiscLinesFetched (Err s) ->
             Debug.log ("RiscLinesFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
+        FetchSpot ->
+            ( model, fetchSpot model )
+
+        SpotFetched (Ok s) ->
+            ( model, drawSpot s )
+
+        -- ( model, drawSpot s )
+        SpotFetched (Err s) ->
+            Debug.log ("SpotFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
+
         ResetCache ->
             ( model, fetchCharts model.selectedTicker model True )
 
@@ -321,6 +348,24 @@ update msg model =
 -- </editor-fold>
 ------------------ COMMANDS -------------------
 -- <editor-fold>
+
+
+fetchSpot : Model -> Cmd Msg
+fetchSpot model =
+    let
+        url =
+            mainUrl ++ "/spot?ticker=" ++ model.selectedTicker
+
+        spotDecoder =
+            JP.decode Spot
+                |> JP.required "dx" M.stringToTimeDecoder
+                |> JP.required "o" Json.float
+                |> JP.required "h" Json.float
+                |> JP.required "l" Json.float
+                |> JP.required "c" Json.float
+    in
+        Http.send SpotFetched <|
+            Http.get url spotDecoder
 
 
 fetchRiscLines : Model -> Cmd Msg
@@ -336,6 +381,7 @@ fetchRiscLines model =
                 |> JP.required "stockprice" Json.float
                 |> JP.required "optionprice" Json.float
                 |> JP.required "risc" Json.float
+                |> JP.required "ask" Json.float
     in
         Http.send RiscLinesFetched <|
             Http.get url (Json.list riscDecoder)

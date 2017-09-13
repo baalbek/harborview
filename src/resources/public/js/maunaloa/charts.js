@@ -1,3 +1,5 @@
+var MAUNALOA = MAUNALOA || {};
+
 
 jQuery(document).ready(function() {
       /*
@@ -6,6 +8,8 @@ jQuery(document).ready(function() {
           alert(target);
       });
       */
+      //var factory = MAUNALOA.factory.create();
+      var factory = null;
       var node = document.getElementById('my-app');
       var app = Elm.Maunaloa.Charts.embed(node, {
           isWeekly : false
@@ -15,8 +19,6 @@ jQuery(document).ready(function() {
       var app2 = Elm.Maunaloa.Charts.embed(node2, {
           isWeekly : true
       });
-      var repos1 = null;
-      var repos2 = null;
       <!------------- canvas sizes ---------------->
       var setCanvasSize = function(selector,w,h) {
           var c1 = document.querySelectorAll(selector);
@@ -34,43 +36,73 @@ jQuery(document).ready(function() {
       setCanvasSizes();
       <!------------- drawCanvas ---------------->
       var drawCanvas1 = function (chartInfo) {
-          drawCanvas(chartInfo,chartInfo.chart,'canvas1');
+          var cfg = { ci: chartInfo, 
+                      ch: chartInfo.chart, 
+                      cid:MAUNALOA.factory.DAY_LINES,
+                      cidx:MAUNALOA.factory.DAY_LINES_OVERLAY,
+                      isMain: true }
+          drawCanvas(cfg);
+          cfg.isMain = false;
           if (chartInfo.chart2 != null) {
-            drawCanvas(chartInfo,chartInfo.chart2,'canvas1b');
+            cfg.ch = chartInfo.chart2;
+            cfg.cid =  MAUNALOA.factory.DAY_OSC;
+            drawCanvas(cfg);
           }
           if (chartInfo.chart3 != null) {
-            drawCanvas(chartInfo,chartInfo.chart3,'canvas1c');
-          }
-          if (repos1 != null) {
-            repos1.reset();
+            cfg.ch = chartInfo.chart3;
+            cfg.cid =  MAUNALOA.factory.DAY_VOLUME;
+            drawCanvas(cfg);
           }
       }
       var drawCanvas2 = function (chartInfo) {
-          drawCanvas(chartInfo,chartInfo.chart,'canvas2');
+          var cfg = { ci: chartInfo, 
+                      ch: chartInfo.chart, 
+                      cid:MAUNALOA.factory.WEEK_LINES,
+                      cidx:MAUNALOA.factory.WEEK_LINES_OVERLAY,
+                      isMain: true }
+          drawCanvas(cfg);
+          cfg.isMain = false;
           if (chartInfo.chart2 != null) {
-            drawCanvas(chartInfo,chartInfo.chart2,'canvas2b');
+            cfg.ch = chartInfo.chart2;
+            cfg.cid = MAUNALOA.factory.WEEK_OSC;
+            drawCanvas(cfg);
           }
           if (chartInfo.chart3 != null) {
-            drawCanvas(chartInfo,chartInfo.chart3,'canvas2c');
-          }
-          if (repos2 != null) {
-            repos2.reset();
+            cfg.ch = chartInfo.chart3;
+            cfg.cid = MAUNALOA.factory.WEEK_VOLUME;
+            drawCanvas(cfg);
           }
       }
       app.ports.drawCanvas.subscribe(drawCanvas1);
       app2.ports.drawCanvas.subscribe(drawCanvas2);
 
-      var drawCanvas = function (chartInfo,curChart,canvasId) {
-        var offsets = chartInfo.xaxis;
+      var clearCanvas = function(canvasId) {
         var canvas = document.getElementById(canvasId);
         var ctx = canvas.getContext("2d");
         ctx.clearRect(0,0,canvas.width,canvas.height);
+        return [ctx,canvas];
+      }
+      // var drawCanvas = function (chartInfo,curChart,canvasId,isMainChart,overlayId) {
+      var drawCanvas = function (cfg) {
+        var chartInfo = cfg.ci;
+        var curChart = cfg.ch;
+        var offsets = chartInfo.xaxis;
+        var ctx,canvas;
+        [ctx,canvas] = clearCanvas(cfg.cid);
 
-        var myHruler = MAUNALOA.hruler(1300,chartInfo.startdate,offsets,curChart.bars === null);
+        var myHruler = MAUNALOA.hruler(1300,chartInfo.startdate,offsets,curChart.bars === null,5);
         myHruler.lines(ctx,canvas.height,chartInfo.numIncMonths);
 
         var myVruler = MAUNALOA.vruler(canvas.height,curChart.valueRange);
         myVruler.lines(ctx,canvas.width,curChart.numVlines);
+
+        if (cfg.isMain === true) {
+            if (factory !== null) {
+                factory.dispose();
+            }
+            factory = MAUNALOA.factory.create(myHruler,myVruler);
+            clearCanvas(cfg.cidx);
+        }
 
         var lineChart = MAUNALOA.lineChart(myHruler,myVruler,ctx);
         var strokes = chartInfo.strokes;
@@ -93,34 +125,18 @@ jQuery(document).ready(function() {
       }
 
       <!------------- drawRiscLines ---------------->
+
       var drawRiscLines1 = function(riscLinesInfo) {
-        drawRiscLines(riscLinesInfo,'canvas1x',1);
+        drawRiscLines(riscLinesInfo,1);
       }
       var drawRiscLines2 = function(riscLinesInfo) {
-        drawRiscLines(riscLinesInfo,'canvas2x',2);
+        drawRiscLines(riscLinesInfo,2);
       }
-      var drawRiscLines = function(riscLinesInfo,canvasId,reposId) {
-        var canvas = document.getElementById(canvasId);
-        var vruler = MAUNALOA.vruler(canvas.height,riscLinesInfo.valueRange);
-
-        var repos = reposId === 1 ? repos1 : repos2;
-        if (repos === null) {
-          repos = MAUNALOA.repos.create(canvasId,vruler);
-          if (reposId === 1) {
-            repos1 = repos;
-          }
-          else {
-            repos2 = repos;
-          }
-        }
-        else {
-          repos.reset();
-          repos.vruler = vruler;
-        }
+      var drawRiscLines = function(riscLinesInfo,reposId) {
+        var repos = factory.initRepos(reposId);
         var riscLines = riscLinesInfo.riscLines;
         for (var i=0; i<riscLines.length-1;++i) {
           var rl = riscLines[i];
-          //repos.addRiscLines(rl.ticker,rl.optionPrice,rl.risc,rl.be);
           repos.addRiscLines(rl,false);
         }
         if (riscLines.length > 0) {
@@ -130,4 +146,12 @@ jQuery(document).ready(function() {
       }
       app.ports.drawRiscLines.subscribe(drawRiscLines1);
       app2.ports.drawRiscLines.subscribe(drawRiscLines2);
+
+      <!------------- drawSpot ---------------->
+
+      var drawSpot1 = function (spot) {
+        var repos = factory.getRepos(1);
+        repos.addSpot(spot);
+      }
+      app.ports.drawSpot.subscribe(drawSpot1);
 });

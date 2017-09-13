@@ -99,8 +99,10 @@
 (defn option->json [^DerivativePrice o]
   (let [iv-buy (-> o .getIvBuy .get)
         iv-sell (-> o .getIvSell .get)
-        be (-> o .getBreakEven .get)]
-    {:ticker (-> o .getDerivative .getTicker)
+        be (-> o .getBreakEven .get)
+        d (.getDerivative o)]
+    {:ticker (.getTicker d)
+     :x (.getX d)
      :days (.getDays o)
      :buy (.getBuy o)
      :sell (.getSell o)
@@ -111,16 +113,17 @@
 (defn stock->json [^StockPrice s]
   {:dx (CU/ld->str (.getLocalDx s))
    :tm (CU/tm->str (.getTm s))
-   :opn (.getOpn s)
-   :hi (.getHi s)
-   :lo (.getLo s)
-   :spot (.getCls s)})
+   :o (.getOpn s)
+   :h (.getHi s)
+   :l (.getLo s)
+   :c (.getCls s)})
 
 (defn risc->json [^DerivativePrice o]
   {:ticker (.getTicker o)
    :be (-> o .getBreakEven .get)
    :stockprice (-> o .getCurrentRiscStockPrice .get)
    :optionprice (.getCurrentRiscOptionValue o)
+   :ask (.getSell o)
    :risc (.getCurrentRisc o)})
 
 (defn stock [ticker]

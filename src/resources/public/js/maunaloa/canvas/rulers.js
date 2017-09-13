@@ -10,8 +10,6 @@ MAUNALOA.vruler = function(chartHeight,valueRange) {
   var maxVal = valueRange[1];
   var ppy = chartHeight / (maxVal - minVal);
 
-  console.log("ppy: " + ppy);
-
   var lines = function(ctx,chartWidth,numVlines) {
     ctx.fillStyle = "black";
     ctx.font = "16px Arial";
@@ -53,9 +51,9 @@ MAUNALOA.vruler = function(chartHeight,valueRange) {
 }
 
 
-MAUNALOA.hruler = function(width,startDateAsMillis,offsets,drawLegend) {
+MAUNALOA.hruler = function(width,startDateAsMillis,offsets,drawLegend,buffer) {
     var x0 = offsets[offsets.length-1];
-    var x1 = offsets[0] + 5;
+    var x1 = offsets[0] + buffer;
     var diffDays = x1 - x0;
     var ppx = width / diffDays;
 
@@ -68,11 +66,15 @@ MAUNALOA.hruler = function(width,startDateAsMillis,offsets,drawLegend) {
       var curDiffDays = x-x0;
       return ppx * curDiffDays;
     }
+    var day_millis = 86400000;
     var dateToPix = function(d) {
       var curOffset = x0 + ((d - startDate) / day_millis);
       return calcPix(curOffset);
     }
-    var day_millis = 86400000;
+    var timeStampToPix = function(tm) {
+        var d = new Date(tm);
+        return dateToPix(d);
+    } 
     var incMonths = function(origDate,numMonths) {
         return new Date(origDate.getFullYear(),origDate.getMonth()+numMonths,1);
     }
@@ -110,6 +112,7 @@ MAUNALOA.hruler = function(width,startDateAsMillis,offsets,drawLegend) {
     var xaxis = offsetsToPix();
     return {
       dateToPix : dateToPix,
+      timeStampToPix : timeStampToPix,
       xaxis : xaxis,
       startDate : startDate,
       lines : lines
