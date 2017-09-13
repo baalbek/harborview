@@ -39,7 +39,7 @@ MAUNALOA.lineChart = function(hruler,vruler,ctx) {
         }
         return result;
     }
-    var drawCandlestick = function(x,candleStick) {
+    var _drawCandlestick = function(x,candleStick) {
       var x0 = x - 4;
       ctx.beginPath();
 
@@ -83,8 +83,13 @@ MAUNALOA.lineChart = function(hruler,vruler,ctx) {
       var scs = scaleCandlesticks(cs);
       var numCandlesticks = scs.length;
       for (var i = 0; i < numCandlesticks; ++i) {
-        drawCandlestick(xs[i],scs[i]);
+        _drawCandlestick(xs[i],scs[i]);
       }
+    }
+    var drawCandlestick = function(candleStick) {
+        var scaled = scaleCandlesticks(candleStick);
+        var x = hruler.timeStampToPix(candleStick.dx);
+        _drawCandlestick(x,scaled);
     }
     var scaleBars = function(bars) {
         //var o = vruler.valueToPix(candleStick.o);
@@ -115,6 +120,7 @@ MAUNALOA.lineChart = function(hruler,vruler,ctx) {
     return {
         drawLine : drawLine,
         drawCandlesticks : drawCandlesticks,
+        drawCandlestick : drawCandlestick,
         drawBars : drawBars
     }
 }

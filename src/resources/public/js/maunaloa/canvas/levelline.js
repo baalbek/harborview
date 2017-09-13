@@ -52,7 +52,7 @@ MAUNALOA.levelLine = {
 // https://stackoverflow.com/questions/9880279/how-do-i-add-a-simple-onclick-event-handler-to-a-canvas-element
 
 MAUNALOA.repos = {
-  init : function(canvasId,vruler) {
+  init : function(canvasId,hruler,vruler) {
     this.canvas = document.getElementById(canvasId);
     if (this.canvas === null) {
         this.ctx = null;
@@ -61,6 +61,7 @@ MAUNALOA.repos = {
     this.ctx = this.canvas.getContext("2d");
     this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
     this.vruler = vruler;
+    this.hruler = hruler;
     // listen for mouse events
     this.mup = this.handleMouseUp(this);
     this.mdo = this.handleMouseDown(this);
@@ -68,12 +69,6 @@ MAUNALOA.repos = {
     this.canvas.addEventListener('mouseup', this.mup, false);
     this.canvas.addEventListener('mousedown', this.mdo, false);
     this.canvas.addEventListener('mousemove', this.mmo, false);
-    /*
-    this.canvas.addEventListener('mouseup', this.handleMouseUp(this), false);
-    //this.canvas.addEventListener('mouseout', this.handleMouseOut(this), false);
-    this.canvas.addEventListener('mousedown', this.handleMouseDown(this), false);
-    this.canvas.addEventListener('mousemove', this.handleMouseMove(this), false);
-    //*/
   },
   dispose : function() {
     this.canvas.removeEventListener('mouseup', this.mup, false);
@@ -195,6 +190,10 @@ MAUNALOA.repos = {
     for (var i=0; i<len; ++i) {
         this.lines[i].draw();
     }
+    if (this.spot !== null) {
+        var lineChart = MAUNALOA.lineChart(this.hruler,this.vruler,this.ctx);
+        lineChart.drawCandlestick(this.spot);
+    }
     // draw markers if a line is being dragged
     if(this.nearest){
         // point on line nearest to mouse
@@ -210,16 +209,23 @@ MAUNALOA.repos = {
         */
     }
   },
-  create : function(canvasId,vruler) {
-    var F = function() { this.lines = [];}
+  create : function(canvasId,hruler,vruler) {
+    var F = function() { 
+        this.lines = [];
+        this.spot = null;
+    }
     F.prototype = MAUNALOA.repos;
     F.constructor.prototype = F;
     var result = new F();
     /*
     var result = Object.create(MAUNALOA.repos);
     */
-    result.init(canvasId,vruler);
+    result.init(canvasId,hruler,vruler);
     return result;
+  },
+  addSpot : function(spot) {
+      this.spot = spot;
+      this.draw();
   },
   addLevelLine : function(lineId,levelValue,doDraw) {
     var myDoDraw = doDraw || true;
@@ -250,10 +256,10 @@ MAUNALOA.repos = {
                                                 return "[" + cfg.ticker + "] Price: " + curOptionPrice + ", Risc: " + curRisc + " => " + this.levelValue;
                                             },
                                             onMouseUp:function(){
-                                                //this.risc = this.levelValue;
                                                 this.risc = "-";
                                                 var self = this;
-                                                HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/optionprice",
+                                                /*HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/optionprice",*/
+                                                HARBORVIEW.Utils.jsonGET("https://andromeda/maunaloa/optionprice",
                                                     { "ticker":cfg.ticker,"stockprice":this.levelValue },
                                                     function(result) {
                                                         self.risc = parseFloat(result.risc);
@@ -277,29 +283,3 @@ MAUNALOA.repos = {
     }
   }
 }
-/*
-jQuery(document).ready(function() {
-    var repos = null;
-    var addLines = function(valueRange,risc,riscLevel,breakEven) {
-      var canvas = document.getElementById("canvas0");
-      var vruler = MAUNALOA.vruler(canvas.height,valueRange);
-      if (repos == null) {
-        repos = MAUNALOA.repos.create("canvas0",vruler);
-      }
-      else {
-        repos.lines = [];
-        repos.vruler = vruler;
-      }
-      //r.addLevelLine(1,321,false);
-      repos.addRiscLines("YAR8C300",risc,riscLevel,breakEven);
-    }
-    $("#button1").click(function() {
-        //HARBORVIEW.Utils.jsonGET("http://localhost:8082/maunaloa/demo", {}, function(result) {
-        //  alert(result);
-        //});
-        addLines([300,350],3.0,310,315);
-    });
-    addLines([310,330],2.8,319,325);
-    //r.draw();
-});
-*/

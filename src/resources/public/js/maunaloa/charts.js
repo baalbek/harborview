@@ -36,49 +36,40 @@ jQuery(document).ready(function() {
       setCanvasSizes();
       <!------------- drawCanvas ---------------->
       var drawCanvas1 = function (chartInfo) {
-          /*
-          drawCanvas(chartInfo,chartInfo.chart,MAUNALOA.factory.canvasIds.DAY_LINES,true);
-          if (chartInfo.chart2 != null) {
-            drawCanvas(chartInfo,chartInfo.chart2,MAUNALOA.factory.canvasIds.DAY_OSC,false);
-          }
-          if (chartInfo.chart3 != null) {
-            drawCanvas(chartInfo,chartInfo.chart3,MAUNALOA.factory.canvasIds.DAY_VOLUME,false);
-          }
-          //*/
           var cfg = { ci: chartInfo, 
                       ch: chartInfo.chart, 
-                      cid:MAUNALOA.factory.canvasIds.DAY_LINES,
-                      cidx:MAUNALOA.factory.canvasIds.DAY_LINES_OVERLAY,
+                      cid:MAUNALOA.factory.DAY_LINES,
+                      cidx:MAUNALOA.factory.DAY_LINES_OVERLAY,
                       isMain: true }
           drawCanvas(cfg);
           cfg.isMain = false;
           if (chartInfo.chart2 != null) {
             cfg.ch = chartInfo.chart2;
-            cfg.cid =  MAUNALOA.factory.canvasIds.DAY_OSC;
+            cfg.cid =  MAUNALOA.factory.DAY_OSC;
             drawCanvas(cfg);
           }
           if (chartInfo.chart3 != null) {
             cfg.ch = chartInfo.chart3;
-            cfg.cid =  MAUNALOA.factory.canvasIds.DAY_VOLUME;
+            cfg.cid =  MAUNALOA.factory.DAY_VOLUME;
             drawCanvas(cfg);
           }
       }
       var drawCanvas2 = function (chartInfo) {
           var cfg = { ci: chartInfo, 
                       ch: chartInfo.chart, 
-                      cid:MAUNALOA.factory.canvasIds.WEEK_LINES,
-                      cidx:MAUNALOA.factory.canvasIds.WEEK_LINES_OVERLAY,
+                      cid:MAUNALOA.factory.WEEK_LINES,
+                      cidx:MAUNALOA.factory.WEEK_LINES_OVERLAY,
                       isMain: true }
           drawCanvas(cfg);
           cfg.isMain = false;
           if (chartInfo.chart2 != null) {
             cfg.ch = chartInfo.chart2;
-            cfg.cid = MAUNALOA.factory.canvasIds.WEEK_OSC;
+            cfg.cid = MAUNALOA.factory.WEEK_OSC;
             drawCanvas(cfg);
           }
           if (chartInfo.chart3 != null) {
             cfg.ch = chartInfo.chart3;
-            cfg.cid = MAUNALOA.factory.canvasIds.WEEK_VOLUME;
+            cfg.cid = MAUNALOA.factory.WEEK_VOLUME;
             drawCanvas(cfg);
           }
       }
@@ -159,6 +150,7 @@ jQuery(document).ready(function() {
       <!------------- drawSpot ---------------->
 
       var drawSpot1 = function (spot) {
+        var repos = factory.getRepos(1);
         alert(spot.dx);
       }
       app.ports.drawSpot.subscribe(drawSpot1);
