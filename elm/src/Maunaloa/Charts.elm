@@ -360,10 +360,10 @@ fetchSpot model =
         spotDecoder =
             JP.decode Spot
                 |> JP.required "dx" M.stringToTimeDecoder
-                |> JP.required "opn" Json.float
-                |> JP.required "hi" Json.float
-                |> JP.required "lo" Json.float
-                |> JP.required "spot" Json.float
+                |> JP.required "o" Json.float
+                |> JP.required "h" Json.float
+                |> JP.required "l" Json.float
+                |> JP.required "c" Json.float
     in
         Http.send SpotFetched <|
             Http.get url spotDecoder
