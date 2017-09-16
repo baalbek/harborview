@@ -22,8 +22,8 @@
 (P/cache-off!)
 
 (defroutes main-routes
-  (GET "/" request (MAU/init-options))
-  ;(GET "/" request (MAU/init-charts))
+  ;(GET "/" request (MAU/init-options))
+  (GET "/" request (MAU/init-charts))
   ;(GET "/" request (VIN/projects))
   ;(GET "/" request (GJ/general-journal))
   ;(GET "/" request (HRL/hourlist))
@@ -50,7 +50,7 @@
 
 (defn -main [args]
     (def server (run-jetty #'webapp {:port 8082 :join? false}))
-    (comment server 
+    (comment server
       (run-jetty #'webapp
                  {:port 8443
                   :join? false
