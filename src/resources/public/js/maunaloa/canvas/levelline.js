@@ -244,7 +244,7 @@ MAUNALOA.repos = {
   addRiscLines : function(cfg,doDraw) {
     var riscLine = MAUNALOA.levelLine.create(this,
                                             cfg.stockPrice,
-                                            20,
+                                            100,
                                             this.canvas.width,
                                             this.vruler.valueToPix(cfg.stockPrice),
                                             {draggable:true,
@@ -269,7 +269,7 @@ MAUNALOA.repos = {
                                             }});
     this.lines.push(riscLine);
     var breakEven = cfg.be;
-    var breakEvenLine = MAUNALOA.levelLine.create(this,breakEven,20,this.canvas.width,
+    var breakEvenLine = MAUNALOA.levelLine.create(this,breakEven,100,this.canvas.width,
                                             this.vruler.valueToPix(breakEven),
                                             {draggable:false,
                                             color:"green",

@@ -3,7 +3,7 @@
     [java.sql Date]
     [java.time LocalDate]
     [java.time.temporal ChronoUnit]
-    [vega.filters.ehlers Itrend CyberCycle])
+    [vega.filters.ehlers Itrend CyberCycle SuperSmoother])
   (:use
     [compojure.core :only (GET POST defroutes)])
   (:require
@@ -15,9 +15,11 @@
     [harborview.service.htmlutils :as U]
     [harborview.service.commonutils :as CU]))
 
-(def calc-itrend (Itrend.))
+(def calc-itrend-10 (Itrend. 10))
+(def calc-itrend-50 (Itrend. 50))
 
-(def calc-cc (CyberCycle.))
+(def calc-cc-10 (comp (CyberCycle. 10) (SuperSmoother. 10)))
+(def calc-cc-50 (comp (CyberCycle. 50) (SuperSmoother. 50)))
 
 (defn create-freqs [f data-values freqs]
   (map #(f data-values %) freqs))
@@ -61,12 +63,10 @@
 
 (defn ticker-chart_ [spot-objs]
   (let [spots (map #(.getCls %) spot-objs)
-        itrend-10 (calc-itrend spots 10)
-        itrend-50 (calc-itrend spots 50)
-        ;itrend-200 (calc-itrend spots 200)
-        cc-10 (calc-cc spots 10)
-        cc-50 (calc-cc spots 50)
-        ;cc-200 (calc-cc spots 200)
+        itrend-10 (calc-itrend-10 spots)
+        itrend-50 (calc-itrend-50 spots)
+        cc-10 (calc-cc-10 spots)
+        cc-50 (calc-cc-50 spots)
         volume (map #(.getVolume %) spot-objs)
         vol-norm (normalize volume)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
@@ -83,7 +83,7 @@
                           (reverse (map CU/double->decimal cc-50))]
                  :bars nil
                  :cndl nil}
-        :chart3 {:lines [(reverse (calc-itrend vol-norm 10))]
+        :chart3 {:lines [(reverse (calc-itrend-10 vol-norm))]
                  :cndl nil
                  :bars [(reverse vol-norm)]}
         :x-axis (reverse (map hr dx))

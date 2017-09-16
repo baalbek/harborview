@@ -23,7 +23,7 @@
 
 (defroutes main-routes
   ;(GET "/" request (MAU/init-options))
-  ;(GET "/" request (MAU/init-charts))
+  (GET "/" request (MAU/init-charts))
   ;(GET "/" request (VIN/projects))
   ;(GET "/" request (GJ/general-journal))
   (GET "/" request (HRL/hourlist))
@@ -49,6 +49,7 @@
 ;(def server (run-jetty #'webapp {:port 8082 :join? false}))
 
 (defn -main [args]
+<<<<<<< HEAD
   (def server (run-jetty #'webapp {:port 8082 :join? false}))
   (comment server
     (run-jetty #'webapp
@@ -57,5 +58,15 @@
                 :ssl? true
                 :keystore "../local/harborview.ssl"
                 :key-password "VhCHeUJ4"})))
+=======
+    (def server (run-jetty #'webapp {:port 8082 :join? false}))
+    (comment server
+      (run-jetty #'webapp
+                 {:port 8443
+                  :join? false
+                  :ssl? true
+                  :keystore "../local/harborview.ssl"
+                  :key-password "VhCHeUJ4"})))
+>>>>>>> dev/elm
 
 (-main 1)
