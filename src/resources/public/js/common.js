@@ -11,7 +11,6 @@ HARBORVIEW.Utils = (function () {
             dataType: myDataType,
             data: args,
             success: function (result) {
-                console.log(result);
                 onSuccess(result);
             },
             error: onError

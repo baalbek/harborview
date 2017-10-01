@@ -18,6 +18,7 @@
   :aot :all
   ;:test {:resource-paths ["test/resources" "dist"]}
   :resource-paths [
+		"/home/rcs/opt/java/tongariki/target/tongariki-1.0.jar"
 ;palenque
                   ]
   :profiles {:uberjar {:aot :all}})
