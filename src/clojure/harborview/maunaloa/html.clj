@@ -3,12 +3,18 @@
     [java.sql Date]
     [java.time LocalDate]
     [java.time.temporal ChronoUnit]
-    [vega.filters.ehlers Itrend CyberCycle SuperSmoother])
+    [ranoraraku.beans StockPriceBean]
+    [vega.filters.ehlers
+       Itrend
+       CyberCycle
+       SuperSmoother
+       RoofingFilter])
   (:use
     [compojure.core :only (GET POST defroutes)])
   (:require
     [clj-json.core :as json]
     [selmer.parser :as P]
+    [tongariki.common :as TCO]
     [harborview.maunaloa.dbx :as DBX]
     [harborview.maunaloa.options :as OPX]
     [harborview.service.db :as DB]
@@ -18,8 +24,9 @@
 (def calc-itrend-10 (Itrend. 10))
 (def calc-itrend-50 (Itrend. 50))
 
-(def calc-cc-10 (comp (CyberCycle. 10) (SuperSmoother. 10)))
-(def calc-cc-50 (comp (CyberCycle. 50) (SuperSmoother. 50)))
+(def calc-cc-10 (CyberCycle. 10))
+(def calc-cc-10_ss (comp (CyberCycle. 10) (SuperSmoother. 10)))
+(def calc-cc-10_rf (comp (CyberCycle. 10) (RoofingFilter.)))
 
 (defn create-freqs [f data-values freqs]
   (map #(f data-values %) freqs))
@@ -56,6 +63,7 @@
    :l (.getLo b)
    :c (.getCls b)})
 
+(def normalize-dates (partial TCO/normalize-dates min-dx))
 
 (defn normalize [coll]
   (let [m (float (reduce max 0 coll))]
@@ -65,8 +73,7 @@
   (let [spots (map #(.getCls %) spot-objs)
         itrend-10 (calc-itrend-10 spots)
         itrend-50 (calc-itrend-50 spots)
-        cc-10 (calc-cc-10 spots)
-        cc-50 (calc-cc-50 spots)
+        cc-10 (calc-cc-10_ss spots)
         volume (map #(.getVolume %) spot-objs)
         vol-norm (normalize volume)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
@@ -79,8 +86,7 @@
                 :cndl (reverse (map #(bean->candlestick %) spot-objs))
                  :bars nil}
         :chart2 {:lines [
-                          (reverse (map CU/double->decimal cc-10))
-                          (reverse (map CU/double->decimal cc-50))]
+                          (reverse (map CU/double->decimal cc-10))]
                  :bars nil
                  :cndl nil}
         :chart3 {:lines [(reverse (calc-itrend-10 vol-norm))]
@@ -185,13 +191,31 @@
 
 (defn calc-optionprice-for-stockprice [ticker stockprice]
   (if-let [ax (@OPX/option-cache ticker)]
-    (let [bx (U/rs stockprice)]
+    (let [bx (U/rs stockprice)] ; if-let == true
       {:optionprice (CU/double->decimal (.optionPriceFor ax bx) 100.0)
        :risc (.getCurrentRisc ax)})
-    {:optionprice -1
+    {:optionprice -1 ; if-let == false
      :risc -1}))
 
+(defn to_R [oid]
+  (let [spot-objs (DBX/fetch-prices-m oid (Date/valueOf min-dx))
+        spots (map #(.getCls ^StockPriceBean %) spot-objs)
+        num-items 100
+        num-drop (- (.size spot-objs) num-items)
+        dx (map #(.toLocalDate ^Date (.getDx ^StockPriceBean %)) spot-objs)
+        ndx (normalize-dates (drop num-drop dx))
+        cc (TCO/normalize (drop num-drop (calc-cc-10 spots)))
+        cc_ss (TCO/normalize (drop num-drop (calc-cc-10_ss spots)))
+        cc_rf (TCO/normalize (drop num-drop (calc-cc-10_rf spots)))]
+    (U/json-response
+      {
+        :cc cc
+        :cc_ss cc_ss
+        :cc_rf cc_rf
+        :ndx ndx})))
+
 (defroutes my-routes
+  (GET "/to_r" [oid] (to_R (U/rs oid)))
   (GET "/charts" request (init-charts))
   (GET "/optiontickers" request (init-options))
   (GET "/spot" [ticker] (spot ticker))

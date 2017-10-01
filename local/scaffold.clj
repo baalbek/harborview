@@ -56,6 +56,14 @@
         (let [[a b] (first xx)]
           (recur (assoc result a b) (next xx)))))))
 
+(defn lt2 []
+  (let [a [1 2 3 4] b ["a" "b" "c" "d"]]
+    (loop [aa a bb b]
+      (if (not (nil? aa))
+        (do
+          (println (first aa) "-" (first bb))
+          (recur (next aa) (next bb)))))))
+
 (def factory
   (memoize
     (fn []
@@ -77,3 +85,36 @@
   (opx "YAR7G325" (calls "YAR")))
 
 (def tc H/ticker-chart)
+
+
+(defmacro xx [f & lists]
+  (let [num-lists (count lists)]
+    (cond 
+      (= 2 num-lists) 
+        (let [[a b] lists]
+          `(loop [a# ~a b# ~b]
+            (if (not (nil? a#))
+              (do
+                (~f (first a#) (first b#))
+                (recur (next a#) (next b#))))))
+      (= 3 num-lists) 
+        (let [[a b c] lists]
+          `(loop [a# ~a b# ~b c# ~c]
+            (if (not (nil? a#))
+              (do
+                (~f (first a#) (first b#) (first c#))
+                (recur (next a#) (next b#) (next c#))))))
+      (= 4 num-lists) 
+        (let [[a b c d] lists]
+          `(loop [a# ~a b# ~b c# ~c d# ~d]
+            (if (not (nil? a#))
+              (do
+                (~f (first a#) (first b#) (first c#) (first d#))
+                (recur (next a#) (next b#) (next c#) (next d#))))))
+      (= 5 num-lists) 
+        (let [[a b c d e] lists]
+          `(loop [a# ~a b# ~b c# ~c d# ~d e# ~e]
+            (if (not (nil? a#))
+              (do
+                (~f (first a#) (first b#) (first c#) (first d#) (first e#))
+                (recur (next a#) (next b#) (next c#) (next d#) (next e#)))))))))
