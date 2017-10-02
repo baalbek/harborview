@@ -197,9 +197,8 @@
     {:optionprice -1 ; if-let == false
      :risc -1}))
 
-(defn to_R [oid]
-  (let [spot-objs (DBX/fetch-prices-m oid (Date/valueOf min-dx))
-        spots (map #(.getCls ^StockPriceBean %) spot-objs)
+(defn to_R_so [spot-objs]
+  (let [spots (map #(.getCls ^StockPriceBean %) spot-objs)
         num-items 100
         num-drop (- (.size spot-objs) num-items)
         dx (map #(.toLocalDate ^Date (.getDx ^StockPriceBean %)) spot-objs)
@@ -207,12 +206,24 @@
         cc (TCO/normalize (drop num-drop (calc-cc-10 spots)))
         cc_ss (TCO/normalize (drop num-drop (calc-cc-10_ss spots)))
         cc_rf (TCO/normalize (drop num-drop (calc-cc-10_rf spots)))]
+    [ndx cc cc_ss cc_rf]))
+
+(defn to_R [oid]
+  (let [days (DBX/fetch-prices-m oid (Date/valueOf min-dx))
+        weeks (DBX/candlestick-weeks-m oid days)
+        [d1,d2,d3,d4] (to_R_so days)
+        [w1,w2,w3,w4] (to_R_so weeks)]
     (U/json-response
       {
-        :cc cc
-        :cc_ss cc_ss
-        :cc_rf cc_rf
-        :ndx ndx})))
+        :ndx d1 
+        :cc d2 
+        :cc_ss d3 
+        :cc_rf d4 
+        :w_ndx w1 
+        :w_cc w2 
+        :w_cc_ss w3 
+        :w_cc_rf w4 
+        })))
 
 (defroutes my-routes
   (GET "/to_r" [oid] (to_R (U/rs oid)))
