@@ -73,7 +73,10 @@
   (let [spots (map #(.getCls %) spot-objs)
         itrend-10 (calc-itrend-10 spots)
         itrend-50 (calc-itrend-50 spots)
-        cc-10 (calc-cc-10_ss spots)
+        ;cc-10 (TCO/normalize (calc-cc-10 spots))
+        ;cc-10_rf (TCO/normalize (calc-cc-10_rf spots))
+        cc-10 (calc-cc-10 spots)
+        cc-10_rf (calc-cc-10_rf spots)
         volume (map #(.getVolume %) spot-objs)
         vol-norm (normalize volume)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
@@ -86,7 +89,11 @@
                 :cndl (reverse (map #(bean->candlestick %) spot-objs))
                  :bars nil}
         :chart2 {:lines [
-                          (reverse (map CU/double->decimal cc-10))]
+                          ;(reverse (map CU/double->decimal cc-10))
+                          ;(reverse (map CU/double->decimal cc-10_rf))
+                          ;(reverse cc-10)
+                          (reverse cc-10_rf)
+                          ]
                  :bars nil
                  :cndl nil}
         :chart3 {:lines [(reverse (calc-itrend-10 vol-norm))]
