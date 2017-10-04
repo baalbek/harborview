@@ -91,9 +91,9 @@
         :chart2 {:lines [
                           ;(reverse (map CU/double->decimal cc-10))
                           ;(reverse (map CU/double->decimal cc-10_rf))
-                          ;(reverse cc-10)
-                          (reverse cc-10_rf)
-                          ]
+                          (reverse cc-10)
+                          (reverse cc-10_rf)]
+
                  :bars nil
                  :cndl nil}
         :chart3 {:lines [(reverse (calc-itrend-10 vol-norm))]
@@ -222,15 +222,15 @@
         [w1,w2,w3,w4] (to_R_so weeks)]
     (U/json-response
       {
-        :ndx d1 
-        :cc d2 
-        :cc_ss d3 
-        :cc_rf d4 
-        :w_ndx w1 
-        :w_cc w2 
-        :w_cc_ss w3 
-        :w_cc_rf w4 
-        })))
+        :ndx d1
+        :cc d2
+        :cc_ss d3
+        :cc_rf d4
+        :w_ndx w1
+        :w_cc w2
+        :w_cc_ss w3
+        :w_cc_rf w4})))
+
 
 (defroutes my-routes
   (GET "/to_r" [oid] (to_R (U/rs oid)))
