@@ -40,11 +40,11 @@
   :resource-paths [
 		"/home/rcs/opt/java/tongariki/target/tongariki-1.0.jar"
 		"/home/rcs/opt/java/koteriku/build/libs/koteriku-1.0.jar"
-		"/home/rcs/opt/java/netfonds-repos/build/libs/netfondsrepos-1.0.jar"
+		"/home/rcs/opt/java/netfonds-repos/build/libs/netfondsrepos-1.1.jar"
 		"/home/rcs/opt/java/oahu/build/libs/oahu-1.1.jar"
 		"/home/rcs/opt/java/ranoraraku/build/libs/ranoraraku-1.1.jar"
 		"/home/rcs/opt/java/stearnswharf-repos/build/libs/stearnswharf-1.0.jar"
-		"/home/rcs/opt/java/vega/build/libs/vega-1.0.jar"
+		"/home/rcs/opt/java/vega/build/libs/vega-1.2.jar"
 
                   ]
   :profiles {:uberjar {:aot :all}})

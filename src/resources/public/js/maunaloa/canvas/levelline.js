@@ -27,7 +27,7 @@ MAUNALOA.levelLine = {
     //create : function(parent,levelValue,x1,x2,y,
     //      {draggable=true,color="grey",lineWidth=1,legendFn=null,onMouseUp=null,id=null}={}) {
     create : function(parent,levelValue,x1,x2,y,conf) {
-        var LL = function() {}; 
+        var LL = function() {};
         LL.prototype = MAUNALOA.levelLine;
         LL.constructor.prototype = LL;
         var result = new LL();
@@ -52,6 +52,14 @@ MAUNALOA.levelLine = {
 // https://stackoverflow.com/questions/9880279/how-do-i-add-a-simple-onclick-event-handler-to-a-canvas-element
 
 MAUNALOA.repos = {
+  DAY_LINES           : 'canvas1',
+  DAY_LINES_OVERLAY   : 'canvas1x',
+  DAY_VOLUME          : 'canvas1c',
+  DAY_OSC             : 'canvas1b',
+  WEEK_LINES          : 'canvas2',
+  WEEK_LINES_OVERLAY  : 'canvas2x',
+  WEEK_VOLUME         : 'canvas2c',
+  WEEK_OSC            : 'canvas2b',
   init : function(canvasId,hruler,vruler) {
     this.canvas = document.getElementById(canvasId);
     if (this.canvas === null) {
@@ -74,6 +82,7 @@ MAUNALOA.repos = {
     this.canvas.removeEventListener('mouseup', this.mup, false);
     this.canvas.removeEventListener('mousedown', this.mdo, false);
     this.canvas.removeEventListener('mousemove', this.mmo, false);
+    this.reset();
   },
   reset : function() {
     this.lines = [];
@@ -210,16 +219,13 @@ MAUNALOA.repos = {
     }
   },
   create : function(canvasId,hruler,vruler) {
-    var F = function() { 
+    var F = function() {
         this.lines = [];
         this.spot = null;
     }
     F.prototype = MAUNALOA.repos;
     F.constructor.prototype = F;
     var result = new F();
-    /*
-    var result = Object.create(MAUNALOA.repos);
-    */
     result.init(canvasId,hruler,vruler);
     return result;
   },

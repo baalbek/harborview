@@ -73,7 +73,10 @@
   (let [spots (map #(.getCls %) spot-objs)
         itrend-10 (calc-itrend-10 spots)
         itrend-50 (calc-itrend-50 spots)
-        cc-10 (calc-cc-10_ss spots)
+        ;cc-10 (TCO/normalize (calc-cc-10 spots))
+        ;cc-10_rf (TCO/normalize (calc-cc-10_rf spots))
+        cc-10 (calc-cc-10 spots)
+        cc-10_rf (calc-cc-10_rf spots)
         volume (map #(.getVolume %) spot-objs)
         vol-norm (normalize volume)
         dx (map #(.toLocalDate (.getDx %)) spot-objs)
@@ -86,7 +89,11 @@
                 :cndl (reverse (map #(bean->candlestick %) spot-objs))
                  :bars nil}
         :chart2 {:lines [
-                          (reverse (map CU/double->decimal cc-10))]
+                          ;(reverse (map CU/double->decimal cc-10))
+                          ;(reverse (map CU/double->decimal cc-10_rf))
+                          (reverse cc-10)
+                          (reverse cc-10_rf)]
+
                  :bars nil
                  :cndl nil}
         :chart3 {:lines [(reverse (calc-itrend-10 vol-norm))]
@@ -197,9 +204,8 @@
     {:optionprice -1 ; if-let == false
      :risc -1}))
 
-(defn to_R [oid]
-  (let [spot-objs (DBX/fetch-prices-m oid (Date/valueOf min-dx))
-        spots (map #(.getCls ^StockPriceBean %) spot-objs)
+(defn to_R_so [spot-objs]
+  (let [spots (map #(.getCls ^StockPriceBean %) spot-objs)
         num-items 100
         num-drop (- (.size spot-objs) num-items)
         dx (map #(.toLocalDate ^Date (.getDx ^StockPriceBean %)) spot-objs)
@@ -207,12 +213,24 @@
         cc (TCO/normalize (drop num-drop (calc-cc-10 spots)))
         cc_ss (TCO/normalize (drop num-drop (calc-cc-10_ss spots)))
         cc_rf (TCO/normalize (drop num-drop (calc-cc-10_rf spots)))]
+    [ndx cc cc_ss cc_rf]))
+
+(defn to_R [oid]
+  (let [days (DBX/fetch-prices-m oid (Date/valueOf min-dx))
+        weeks (DBX/candlestick-weeks-m oid days)
+        [d1,d2,d3,d4] (to_R_so days)
+        [w1,w2,w3,w4] (to_R_so weeks)]
     (U/json-response
       {
-        :cc cc
-        :cc_ss cc_ss
-        :cc_rf cc_rf
-        :ndx ndx})))
+        :ndx d1
+        :cc d2
+        :cc_ss d3
+        :cc_rf d4
+        :w_ndx w1
+        :w_cc w2
+        :w_cc_ss w3
+        :w_cc_rf w4})))
+
 
 (defroutes my-routes
   (GET "/to_r" [oid] (to_R (U/rs oid)))

@@ -188,8 +188,28 @@ chartValueRange lines bars candlesticks scaling =
         M.minMaxTuples result scaling
 
 
-chartWindow : Model -> C.Chart -> Float -> C.Chart
-chartWindow model c scaling =
+normalizeLine : List Float -> List Float
+normalizeLine line =
+    let
+        ( mi, ma ) =
+            C.minMaxWithDefault line -1.0 1.0
+
+        scalingFactor =
+            max (abs mi) ma
+
+        scalingFunction x =
+            x / scalingFactor
+    in
+        List.map scalingFunction line
+
+
+normalizeLines : List (List Float) -> List (List Float)
+normalizeLines lines =
+    List.map normalizeLine lines
+
+
+chartWindow : Model -> C.Chart -> Float -> Bool -> C.Chart
+chartWindow model c scaling doNormalizeLines =
     let
         sliceFn =
             slice model
@@ -200,7 +220,16 @@ chartWindow model c scaling =
                     Nothing
 
                 Just l ->
-                    Just (List.map sliceFn l)
+                    case doNormalizeLines of
+                        True ->
+                            let
+                                normalized =
+                                    normalizeLines (List.map sliceFn l)
+                            in
+                                Just normalized
+
+                        False ->
+                            Just (List.map sliceFn l)
 
         bars_ =
             case c.bars of
@@ -250,7 +279,7 @@ chartInfoWindow ci model =
             [ "#000000", "#ff0000", "#aa00ff" ]
 
         chw =
-            chartWindow model ci.chart 1.05
+            chartWindow model ci.chart 1.05 False
 
         chw2 =
             case ci.chart2 of
@@ -258,7 +287,7 @@ chartInfoWindow ci model =
                     Nothing
 
                 Just c2 ->
-                    Just (chartWindow model c2 1.0)
+                    Just (chartWindow model c2 1.0 True)
 
         chw3 =
             case ci.chart3 of
@@ -266,7 +295,7 @@ chartInfoWindow ci model =
                     Nothing
 
                 Just c3 ->
-                    Just (chartWindow model c3 1.0)
+                    Just (chartWindow model c3 1.0 False)
     in
         C.ChartInfoJs
             (toTime minDx_)

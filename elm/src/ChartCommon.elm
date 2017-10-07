@@ -90,6 +90,20 @@ minMax v =
         ( minVal, maxVal )
 
 
+minMaxWithDefault : List Float -> Float -> Float -> ( Float, Float )
+minMaxWithDefault v minDefault maxDefault =
+    let
+        minVal =
+            List.minimum v
+
+        maxVal =
+            List.maximum v
+    in
+        ( Maybe.withDefault minDefault minVal
+        , Maybe.withDefault maxDefault maxVal
+        )
+
+
 maybeMinMax : Maybe (List (List Float)) -> List ( Maybe Float, Maybe Float )
 maybeMinMax l =
     case l of
