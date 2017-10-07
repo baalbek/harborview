@@ -120,15 +120,16 @@ jQuery(document).ready(function() {
                 if (repos1 !== null) {
                   repos1.dispose();
                 }
-                repos1 = MAUNALOA.repos.create(MAUNALOA.repos.DAY_LINES_OVERLAY,myHruler,myVruler);
+                repos1 = MAUNALOA.repos.create(cfg.cidx,myHruler,myVruler);
               }
               else {
                 if (repos2 !== null) {
                   repos2.dispose();
                 }
-                repos2 = MAUNALOA.repos.create(MAUNALOA.repos.WEEK_LINES_OVERLAY,myHruler,myVruler);
+                // repos2 = MAUNALOA.repos.create(MAUNALOA.repos.WEEK_LINES_OVERLAY,myHruler,myVruler);
+                repos2 = MAUNALOA.repos.create(cfg.cidx,myHruler,myVruler);
               }
-              clearCanvas(cfg.cidx);
+              //clearCanvas(cfg.cidx);
         }
 
         var lineChart = MAUNALOA.lineChart(myHruler,myVruler,ctx);
@@ -165,6 +166,7 @@ jQuery(document).ready(function() {
           alert("Repos not initialized! Aborting.")
           return;
         }
+        repos.reset();
         var riscLines = riscLinesInfo.riscLines;
         for (var i=0; i<riscLines.length-1;++i) {
           var rl = riscLines[i];

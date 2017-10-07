@@ -82,8 +82,7 @@ MAUNALOA.repos = {
     this.canvas.removeEventListener('mouseup', this.mup, false);
     this.canvas.removeEventListener('mousedown', this.mdo, false);
     this.canvas.removeEventListener('mousemove', this.mmo, false);
-    this.lines = [];
-    this.spot = null;
+    this.reset();
   },
   reset : function() {
     this.lines = [];
