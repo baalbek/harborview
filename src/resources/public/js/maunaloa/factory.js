@@ -40,7 +40,7 @@ MAUNALOA.factory =  {
         return repos;
     },
     create : function(hruler,vruler) {
-        var C = function() { 
+        var C = function() {
             this.hruler = hruler;
             this.vruler = vruler;
             this.repos1 = null;
@@ -58,7 +58,7 @@ MAUNALOA.factory =  {
             this.repos2.dispose();
         }
     },
-    getRepos : function(reposId) { 
+    getRepos : function(reposId) {
         var repos = reposId === 1 ? this.repos1 : this.repos2;
         if (repos === null) {
             repos = this.initRepos(reposId);
