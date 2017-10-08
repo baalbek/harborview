@@ -12,12 +12,12 @@ jQuery(document).ready(function() {
       var repos2 = null;
       var node = document.getElementById('my-app');
       var app = Elm.Maunaloa.Charts.embed(node, {
-          isWeekly : false
+          chartResolution : 1
       });
 
       var node2 = document.getElementById('my-app2');
       var app2 = Elm.Maunaloa.Charts.embed(node2, {
-          isWeekly : true
+          chartResolution : 2
       });
       <!------------- canvas sizes ---------------->
       var setCanvasSize = function(selector,w,h) {

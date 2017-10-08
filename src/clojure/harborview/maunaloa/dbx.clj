@@ -72,3 +72,7 @@
   (CU/memoize-arg0
     (fn [ticker beans]
       (candlestick-weeks beans))))
+
+(defn candlestick-months [beans]
+  (let [years (distinct (map #(extract-year %) beans))]
+    years))

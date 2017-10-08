@@ -18,8 +18,20 @@ mainUrl =
     "/maunaloa"
 
 
+days =
+    1
+
+
+weeks =
+    2
+
+
+months =
+    3
+
+
 type alias Flags =
-    { isWeekly : Bool }
+    { chartResolution : Int }
 
 
 type alias Spot =
@@ -147,17 +159,17 @@ view : Model -> H.Html Msg
 view model =
     let
         row =
-            case model.flags.isWeekly of
-                True ->
-                    [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
-                    , button_ "Risc Lines" FetchRiscLines
-                    , button_ "Reset Cache" ResetCache
-                    ]
-
-                False ->
+            case model.flags.chartResolution of
+                1 ->
                     [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
                     , button_ "Risc Lines" FetchRiscLines
                     , button_ "Spot" FetchSpot
+                    , button_ "Reset Cache" ResetCache
+                    ]
+
+                _ ->
+                    [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
+                    , button_ "Risc Lines" FetchRiscLines
                     , button_ "Reset Cache" ResetCache
                     ]
     in
@@ -274,11 +286,11 @@ chartInfoWindow : C.ChartInfo -> Model -> C.ChartInfoJs
 chartInfoWindow ci model =
     let
         incMonths =
-            case model.flags.isWeekly of
-                True ->
+            case model.flags.chartResolution of
+                2 ->
                     3
 
-                False ->
+                _ ->
                     1
 
         xAxis_ =
@@ -476,13 +488,13 @@ fetchCharts ticker model resetCache =
         url =
             case resetCache of
                 True ->
-                    if model.flags.isWeekly == True then
+                    if model.flags.chartResolution == 2 then
                         mainUrl ++ "/resettickerweek?oid=" ++ ticker
                     else
                         mainUrl ++ "/resetticker?oid=" ++ ticker
 
                 False ->
-                    if model.flags.isWeekly == True then
+                    if model.flags.chartResolution == 2 then
                         mainUrl ++ "/tickerweek?oid=" ++ ticker
                     else
                         mainUrl ++ "/ticker?oid=" ++ ticker
