@@ -145,14 +145,26 @@ button_ =
 
 view : Model -> H.Html Msg
 view model =
-    H.div [ A.class "container" ]
-        [ H.div [ A.class "row" ]
-            [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
-            , button_ "Risc Lines" FetchRiscLines
-            , button_ "Spot" FetchSpot
-            , button_ "Reset Cache" ResetCache
+    let
+        row =
+            case model.flags.isWeekly of
+                True ->
+                    [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
+                    , button_ "Risc Lines" FetchRiscLines
+                    , button_ "Reset Cache" ResetCache
+                    ]
+
+                False ->
+                    [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
+                    , button_ "Risc Lines" FetchRiscLines
+                    , button_ "Spot" FetchSpot
+                    , button_ "Reset Cache" ResetCache
+                    ]
+    in
+        H.div [ A.class "container" ]
+            [ H.div [ A.class "row" ]
+                row
             ]
-        ]
 
 
 
