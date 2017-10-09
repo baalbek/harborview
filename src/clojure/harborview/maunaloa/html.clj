@@ -116,7 +116,7 @@
 
 (CU/defn-memo tix->map []
   (let [tix (DBX/fetch-tickers)]
-    (loop [result {} t tix]
+    (loop [result {}  t tix]
       (if (nil? t)
         result
         (let [tf (first t)
@@ -129,8 +129,9 @@
     (DBX/fetch-tickers)))
 
 (CU/defn-memo tickers []
-  (U/json-response
-    (for [[oid ticker] (tix->map)] {"v" oid "t" ticker})))
+  (let [sorted (sort-by second (tix->map))]
+    (U/json-response
+      (for [[oid ticker] sorted] {"v" oid "t" ticker}))))
 
 (defn spot [ticker]
   (let [tick-str ((tix->map) ticker)]
