@@ -21,6 +21,7 @@
     [harborview.service.htmlutils :as U]
     [harborview.service.commonutils :as CU]))
 
+
 (def calc-itrend-10 (Itrend. 10))
 (def calc-itrend-50 (Itrend. 50))
 
@@ -121,22 +122,26 @@
         result
         (let [tf (first t)
               oid (.getOid tf)
-              ticker (.getTicker tf)]
-          (recur (assoc result (str oid) ticker) (next t)))))))
+              ticker (.getTicker tf)
+              comp-name (.getCompanyName tf)]
+          (recur (assoc result (str oid) {:t ticker :c comp-name}) (next t)))))))
+
+(defn tick-str [t]
+  (:t ((tix->map) t)))
 
 (comment db-tix []
   (map (fn [s] {"t" (.getTicker s) "v" (str (.getOid s))})
     (DBX/fetch-tickers)))
 
 (CU/defn-memo tickers []
-  (let [sorted (sort-by second (tix->map))]
+  (let [sorted (sort-by #(:t (second %)) (tix->map))]
     (U/json-response
-      (for [[oid ticker] sorted] {"v" oid "t" ticker}))))
+      (for [[oid ticker] sorted]
+        {"v" oid "t" (str "[" (:t ticker) "] " (:c ticker))}))))
 
 (defn spot [ticker]
-  (let [tick-str ((tix->map) ticker)]
-    (U/json-response
-      (OPX/stock->json (.get (OPX/stock tick-str))))))
+  (U/json-response
+    (OPX/stock->json (.get (OPX/stock (tick-str ticker))))))
 
 (defn putscalls [ticker]
   (U/json-response
@@ -144,20 +149,20 @@
      :calls (map OPX/option->json (OPX/calls ticker))}))
 
 (defn puts [ticker]
-  (let [tick-str ((tix->map) ticker)]
+  (let [ts (tick-str ticker)]
     (U/json-response
       {:stock
-        (OPX/stock->json (.get (OPX/stock tick-str)))
+        (OPX/stock->json (.get (OPX/stock ts)))
        :options
-        (map OPX/option->json (OPX/puts  tick-str))})))
+        (map OPX/option->json (OPX/puts ts))})))
 
 (defn calls [ticker]
-  (let [tick-str ((tix->map) ticker)]
+  (let [ts (tick-str ticker)]
     (U/json-response
       {:stock
-        (OPX/stock->json (.get (OPX/stock tick-str)))
+        (OPX/stock->json (.get (OPX/stock ts)))
        :options
-        (map OPX/option->json (OPX/calls tick-str))})))
+        (map OPX/option->json (OPX/calls ts))})))
 
 (defn init-charts []
   (let [[url user] (DB/dbcp :ranoraraku-dbcp)]
@@ -242,11 +247,11 @@
   (GET "/calls" [ticker] (calls ticker))
   (GET "/resetcalls" [ticker]
     (binding [CU/*reset-cache* true]
-      (reset! (OPX/option-cache {}))
+      (reset! OPX/option-cache {})
       (calls ticker)))
   (GET "/resetputs" [ticker]
     (binding [CU/*reset-cache* true]
-      (reset! (OPX/option-cache {}))
+      (reset! OPX/option-cache {})
       (puts ticker)))
   (GET "/risclines" [ticker]
     (let [riscs (calculated-riscs ticker)]
