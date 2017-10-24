@@ -56,7 +56,7 @@
       cur-diff)))
 
 
-(def min-dx (LocalDate/of 2012 1 1))
+(def min-dx (LocalDate/of 2008 1 1))
 
 (defn bean->candlestick [b]
   {:o (.getOpn b)
@@ -88,7 +88,7 @@
                         (reverse (map CU/double->decimal itrend-10))
                         (reverse (map CU/double->decimal itrend-50))]
                 :cndl (reverse (map #(bean->candlestick %) spot-objs))
-                 :bars nil}
+                :bars nil}
         :chart2 {:lines [
                           ;(reverse (map CU/double->decimal cc-10))
                           ;(reverse (map CU/double->decimal cc-10_rf))
@@ -114,6 +114,18 @@
         spot-objs (DBX/fetch-prices-m oidi (Date/valueOf min-dx))
         weeks (DBX/candlestick-weeks-m oidi spot-objs)]
     (ticker-chart_ weeks)))
+
+(defn ticker-chart-month [oid]
+  (let [oidi (U/rs oid)
+        spot-objs (DBX/fetch-prices-m oidi (Date/valueOf min-dx))
+        months (DBX/candlestick-months spot-objs)]
+    (ticker-chart_ months)))
+
+(defn weeks [oid]
+  (let [oidi (U/rs oid)
+        spot-objs (DBX/fetch-prices-m oidi (Date/valueOf min-dx))
+        weeks (DBX/candlestick-weeks-m oidi spot-objs)]
+    weeks))
 
 (CU/defn-memo tix->map []
   (let [tix (DBX/fetch-tickers)]
@@ -271,7 +283,8 @@
   (GET "/resetticker" [oid]
     (binding [CU/*reset-cache* true]
       (ticker-chart (U/rs oid))))
-  (GET "/tickerweek" [oid] (ticker-chart-week (U/rs oid)))
+  (GET "/tickerweek" [oid] (ticker-chart-month (U/rs oid)))
+  ;(GET "/tickermonth" [oid] (ticker-chart-month (U/rs oid)))
   (GET "/resettickerweek" [oid]
     (binding [CU/*reset-cache* true]
       (ticker-chart-week (U/rs oid)))))

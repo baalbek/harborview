@@ -290,6 +290,9 @@ chartInfoWindow ci model =
                 2 ->
                     3
 
+                3 ->
+                    6
+
                 _ ->
                     1
 

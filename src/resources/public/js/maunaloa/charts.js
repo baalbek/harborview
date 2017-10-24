@@ -10,6 +10,7 @@ jQuery(document).ready(function() {
       */
       var repos1 = null;
       var repos2 = null;
+      var repos3 = null;
       var node = document.getElementById('my-app');
       var app = Elm.Maunaloa.Charts.embed(node, {
           chartResolution : 1
@@ -18,6 +19,11 @@ jQuery(document).ready(function() {
       var node2 = document.getElementById('my-app2');
       var app2 = Elm.Maunaloa.Charts.embed(node2, {
           chartResolution : 2
+      });
+
+      var node3 = document.getElementById('my-app3');
+      var app3 = Elm.Maunaloa.Charts.embed(node3, {
+          chartResolution : 3
       });
       <!------------- canvas sizes ---------------->
       var setCanvasSize = function(selector,w,h) {
@@ -75,8 +81,31 @@ jQuery(document).ready(function() {
             drawCanvas(cfg);
           }
       }
+      var drawCanvas3 = function (chartInfo) {
+          var cfg = { ci: chartInfo,
+                      ch: chartInfo.chart,
+                      cid:MAUNALOA.repos.MONTH_LINES,
+                      cidx:MAUNALOA.repos.MONTH_LINES_OVERLAY,
+                      reposId: 3,
+                      isMain: true }
+          drawCanvas(cfg);
+          /*
+          cfg.isMain = false;
+          if (chartInfo.chart2 != null) {
+            cfg.ch = chartInfo.chart2;
+            cfg.cid = MAUNALOA.repos.WEEK_OSC;
+            drawCanvas(cfg);
+          }
+          if (chartInfo.chart3 != null) {
+            cfg.ch = chartInfo.chart3;
+            cfg.cid = MAUNALOA.repos.WEEK_VOLUME;
+            drawCanvas(cfg);
+          }
+          //*/
+      }
       app.ports.drawCanvas.subscribe(drawCanvas1);
       app2.ports.drawCanvas.subscribe(drawCanvas2);
+      app3.ports.drawCanvas.subscribe(drawCanvas3);
 
       var clearCanvas = function(canvasId) {
         var canvas = document.getElementById(canvasId);
@@ -98,38 +127,24 @@ jQuery(document).ready(function() {
         myVruler.lines(ctx,canvas.width,curChart.numVlines);
 
         if (cfg.isMain === true) {
-              /*
-            if (factory !== null) {
-                factory.dispose();
+            if (cfg.reposId === 1) {
+              if (repos1 !== null) {
+                repos1.dispose();
+              }
+              repos1 = MAUNALOA.repos.create(cfg.cidx,myHruler,myVruler);
             }
-            factory = MAUNALOA.factory.create(myHruler,myVruler);
-              */
-              /*
-              if (cfg.reposId === 1) {
-                repos1 = cfg.reposId === 1 ? repos1 : repos2;
-                if (repos1 !== null) {
-                  repos1.dispose();
-                }
-                else {
-                  repos1 = MAUNALOA.repos.create(canvasId,this.hruler,this.vruler);
-                }
+            else if (cfg.reposId === 2) {
+              if (repos2 !== null) {
+                repos2.dispose();
               }
-              */
-
-              if (cfg.reposId === 1) {
-                if (repos1 !== null) {
-                  repos1.dispose();
-                }
-                repos1 = MAUNALOA.repos.create(cfg.cidx,myHruler,myVruler);
+              repos2 = MAUNALOA.repos.create(cfg.cidx,myHruler,myVruler);
+            }
+            else  {
+              if (repos3 !== null) {
+                repos3.dispose();
               }
-              else {
-                if (repos2 !== null) {
-                  repos2.dispose();
-                }
-                // repos2 = MAUNALOA.repos.create(MAUNALOA.repos.WEEK_LINES_OVERLAY,myHruler,myVruler);
-                repos2 = MAUNALOA.repos.create(cfg.cidx,myHruler,myVruler);
-              }
-              //clearCanvas(cfg.cidx);
+              repos3 = MAUNALOA.repos.create(cfg.cidx,myHruler,myVruler);
+            }
         }
 
         var lineChart = MAUNALOA.lineChart(myHruler,myVruler,ctx);

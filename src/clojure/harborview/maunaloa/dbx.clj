@@ -50,7 +50,9 @@
         result (get-week year-beans week)]
     result))
 
-(defn candlestick-week [w]
+;<editor-fold> Candlesticks Weeks
+
+(defn candlestick-collection [w]
   (let [lp (last w)
         dx (.getDx lp)
         opn (.getCls (first w))
@@ -61,7 +63,7 @@
        (StockPriceBean. dx opn hi lo cls vol)))
 
 (defn candlestick-weeks-helper [prices-year]
-  (map #(candlestick-week %) (filter #(seq %) (by-week prices-year))))
+  (map #(candlestick-collection %) (filter #(seq %) (by-week prices-year))))
 
 (defn candlestick-weeks [beans]
   (let [years (distinct (map #(extract-year %) beans))
@@ -73,6 +75,22 @@
     (fn [ticker beans]
       (candlestick-weeks beans))))
 
+;</editor-fold>
+
+
+;(defn by-year [prices years]
+;  (map #(get-year prices %) years))
+
+;(defn by-month [prices-year]
+;  (map #(get-month prices-year %) (range 1 12)))
+
+(defn get-month [prices month]
+  (filter #(= (extract-month %) month) prices))
+
 (defn candlestick-months [beans]
-  (let [years (distinct (map #(extract-year %) beans))]
-    years))
+  (let [distinct-years (distinct (map #(extract-year %) beans))
+        years (map #(get-year beans %) distinct-years)
+        result (for [y years]
+                 (map candlestick-collection (filter #(> (count %) 0) (map #(get-month y %) (range 1 13)))))]
+    (flatten result)))
+        ;months (for [y years] (map #(get-month y %) (range 1 13)))

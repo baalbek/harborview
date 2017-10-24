@@ -60,6 +60,10 @@ MAUNALOA.repos = {
   WEEK_LINES_OVERLAY  : 'canvas2x',
   WEEK_VOLUME         : 'canvas2c',
   WEEK_OSC            : 'canvas2b',
+  MONTH_LINES         : 'canvas3',
+  MONTH_LINES_OVERLAY : 'canvas3x',
+  MONTH_VOLUME        : 'canvas3c',
+  MONTH_OSC           : 'canvas3b',
   init : function(canvasId,hruler,vruler) {
     this.canvas = document.getElementById(canvasId);
     if (this.canvas === null) {
