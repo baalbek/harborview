@@ -167,10 +167,15 @@ view model =
                     , button_ "Reset Cache" ResetCache
                     ]
 
-                _ ->
+                2 ->
                     [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
                     , button_ "Risc Lines" FetchRiscLines
                     , button_ "Reset Cache" ResetCache
+                    ]
+
+                _ ->
+                    [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
+                    , button_ "Risc Lines" FetchRiscLines
                     ]
     in
         H.div [ A.class "container" ]
@@ -497,10 +502,20 @@ fetchCharts ticker model resetCache =
                         mainUrl ++ "/resetticker?oid=" ++ ticker
 
                 False ->
-                    if model.flags.chartResolution == 2 then
-                        mainUrl ++ "/tickerweek?oid=" ++ ticker
-                    else
-                        mainUrl ++ "/ticker?oid=" ++ ticker
+                    case model.flags.chartResolution of
+                        1 ->
+                            mainUrl ++ "/ticker?oid=" ++ ticker
+
+                        2 ->
+                            mainUrl ++ "/tickerweek?oid=" ++ ticker
+
+                        _ ->
+                            mainUrl ++ "/tickermonth?oid=" ++ ticker
+
+        -- if model.flags.chartResolution == 2 then
+        --     mainUrl ++ "/tickerweek?oid=" ++ ticker
+        -- else
+        --     mainUrl ++ "/ticker?oid=" ++ ticker
     in
         Http.send ChartsFetched <| Http.get url myDecoder
 

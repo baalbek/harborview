@@ -118,8 +118,21 @@
 (defn ticker-chart-month [oid]
   (let [oidi (U/rs oid)
         spot-objs (DBX/fetch-prices-m oidi (Date/valueOf min-dx))
-        months (DBX/candlestick-months spot-objs)]
-    (ticker-chart_ months)))
+        months (DBX/candlestick-months spot-objs)
+        spots (map #(.getCls %) months)
+        hr (hruler min-dx)
+        itrend-10 (calc-itrend-10 spots)
+        dx (map #(.toLocalDate (.getDx %)) months)]
+    (U/json-response
+      {
+        :chart {:lines [
+                        (reverse (map CU/double->decimal itrend-10))]
+                :cndl (reverse (map #(bean->candlestick %) months))
+                :bars nil}
+        :chart2 nil
+        :chart3 nil
+        :x-axis (reverse (map hr dx))
+        :min-dx (CU/ld->str min-dx)})))
 
 (defn weeks [oid]
   (let [oidi (U/rs oid)
@@ -283,8 +296,8 @@
   (GET "/resetticker" [oid]
     (binding [CU/*reset-cache* true]
       (ticker-chart (U/rs oid))))
-  (GET "/tickerweek" [oid] (ticker-chart-month (U/rs oid)))
-  ;(GET "/tickermonth" [oid] (ticker-chart-month (U/rs oid)))
+  (GET "/tickerweek" [oid] (ticker-chart-week (U/rs oid)))
+  (GET "/tickermonth" [oid] (ticker-chart-month (U/rs oid)))
   (GET "/resettickerweek" [oid]
     (binding [CU/*reset-cache* true]
       (ticker-chart-week (U/rs oid)))))
