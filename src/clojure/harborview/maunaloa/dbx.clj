@@ -1,5 +1,6 @@
 (ns harborview.maunaloa.dbx
   (:import
+    [java.time LocalDate]
     [java.time.temporal IsoFields]
     [ranoraraku.beans StockPriceBean]
     [ranoraraku.models.mybatis StockMapper])
@@ -52,9 +53,11 @@
 
 ;<editor-fold> Candlesticks Weeks
 
-(defn candlestick-collection [w]
+(defn candlestick-collection [date-fn w]
   (let [lp (last w)
-        dx (.getDx lp)
+        dx (if (nil? date-fn)
+             (.getDx lp)
+             (date-fn (.getDx lp)))
         opn (.getCls (first w))
         cls (.getCls lp)
         hi (apply max (map #(.getCls %) w))
@@ -62,8 +65,20 @@
         vol (apply + (map #(.getVolume %) w))]
        (StockPriceBean. dx opn hi lo cls vol)))
 
+(def candlestick-coll->week (partial candlestick-collection nil))
+(def candlestick-coll->month
+  (partial candlestick-collection
+    (fn [dx]
+      (let [locd (.toLocalDate dx)
+            y (.getYear locd)
+            m (.getMonthValue locd)]
+        (LocalDate/of y m 1)))))
+
+
+
+
 (defn candlestick-weeks-helper [prices-year]
-  (map #(candlestick-collection %) (filter #(seq %) (by-week prices-year))))
+  (map #(candlestick-coll->week %) (filter #(seq %) (by-week prices-year))))
 
 (defn candlestick-weeks [beans]
   (let [years (distinct (map #(extract-year %) beans))
@@ -91,6 +106,6 @@
   (let [distinct-years (distinct (map #(extract-year %) beans))
         years (map #(get-year beans %) distinct-years)
         result (for [y years]
-                 (map candlestick-collection (filter #(> (count %) 0) (map #(get-month y %) (range 1 13)))))]
+                 (map candlestick-coll->month (filter #(> (count %) 0) (map #(get-month y %) (range 1 13)))))]
     (flatten result)))
         ;months (for [y years] (map #(get-month y %) (range 1 13)))
