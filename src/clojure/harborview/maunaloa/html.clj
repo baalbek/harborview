@@ -71,23 +71,24 @@
     (map #(/ % m) coll)))
 
 (defn ticker-chart_ [spot-objs]
-  (let [spots (map #(.getCls %) spot-objs)
+  (let [win-spot-objs (drop (- (count spot-objs) 400) spot-objs)
+        spots (map #(.getCls %) win-spot-objs)
         itrend-10 (calc-itrend-10 spots)
         itrend-50 (calc-itrend-50 spots)
         ;cc-10 (TCO/normalize (calc-cc-10 spots))
         ;cc-10_rf (TCO/normalize (calc-cc-10_rf spots))
         cc-10 (calc-cc-10 spots)
         cc-10_rf (calc-cc-10_rf spots)
-        volume (map #(.getVolume %) spot-objs)
+        volume (map #(.getVolume %) win-spot-objs)
         vol-norm (normalize volume)
-        dx (map #(.toLocalDate (.getDx %)) spot-objs)
+        dx (map #(.toLocalDate (.getDx %)) win-spot-objs)
         hr (hruler min-dx)]
     (U/json-response
       {
         :chart {:lines [
                         (reverse (map CU/double->decimal itrend-10))
                         (reverse (map CU/double->decimal itrend-50))]
-                :cndl (reverse (map #(bean->candlestick %) spot-objs))
+                :cndl (reverse (map #(bean->candlestick %) win-spot-objs))
                 :bars nil}
         :chart2 {:lines [
                           ;(reverse (map CU/double->decimal cc-10))
@@ -201,10 +202,10 @@
 
 (defn ticker->options
   ([ticker]
-   (let [stock-ticker ((tix->map) ticker)]
+   (let [stock-ticker (tick-str ticker)]
     (concat (OPX/calls stock-ticker) (OPX/puts stock-ticker))))
   ([ticker optype]
-   (let [stock-ticker ((tix->map) ticker)]
+   (let [stock-ticker (tick-str ticker)]
     (if (= optype "calls")
       (OPX/calls stock-ticker)
       (OPX/puts stock-ticker)))))

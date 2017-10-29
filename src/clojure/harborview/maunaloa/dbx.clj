@@ -55,9 +55,10 @@
 
 (defn candlestick-collection [date-fn w]
   (let [lp (last w)
-        dx (if (nil? date-fn)
-             (.getDx lp)
-             (date-fn (.getDx lp)))
+        dx (let [my-dx (.getDx lp)]
+             (if (nil? date-fn)
+               my-dx
+               (date-fn my-dx)))
         opn (.getCls (first w))
         cls (.getCls lp)
         hi (apply max (map #(.getCls %) w))
