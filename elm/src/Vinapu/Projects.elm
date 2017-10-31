@@ -502,7 +502,7 @@ view model =
                     ]
                 , H.div [ A.class "tab-content" ]
                     [ H.div [ A.id "geo1", A.class "tab-pane in active" ]
-                        [ makeFGRSelect "id6" "Element type:" CM.CX39 (Just model.elementTypes) (Just ElementTypeSelected)
+                        [ makeFGRSelect "id12" "Element type:" CM.CX39 (Just model.elementTypes) (Just ElementTypeSelected)
                         , makeFGRInput ElementDescChange "id1" "Element desc:" "text" CM.CX39 model.elementDesc
                         , makeFGRSelect "id2" "Node 1:" CM.CX39 model.nodes (Just Node1Selected)
                         , makeFGRSelect "id3" "Node 2:" CM.CX39 model.nodes (Just Node2Selected)

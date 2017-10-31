@@ -292,7 +292,7 @@
   (GET "/optionprice" [ticker stockprice]
     (U/json-response (calc-optionprice-for-stockprice ticker stockprice)))
   (GET "/tickers" request (tickers))
-  ;(GET "/th" [oid] (test-hruler (U/rs oid)))
+  (GET "/optionpurchases" [oid] (optionpurchases oid))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
   (GET "/resetticker" [oid]
     (binding [CU/*reset-cache* true]

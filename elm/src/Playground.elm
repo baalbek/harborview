@@ -37,4 +37,27 @@ f1 ticker =
         url =
             "/maunaloa/ticker?oid=" ++ ticker
     in
-        Http.send ChartsFetched <| Http.get url myDecoder
+        Http.send ChartsFetched <|
+            Http.get url
+                myDecoder
+
+
+type alias Model =
+    { street : String
+    }
+
+
+myModel : Model
+myModel =
+    { street = "jax " }
+
+
+type alias Address r =
+    { r
+        | street : String
+    }
+
+
+alterAddress : String -> Address r -> Address r
+alterAddress s a =
+    ({ a | street = s })

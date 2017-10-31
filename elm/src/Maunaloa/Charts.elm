@@ -12,6 +12,7 @@ import ChartCommon as C
 import Common.ComboBox as CB
 import Common.Buttons as BTN
 import Common.DateUtil as DU
+import Common.ModalDialog as DLG
 
 
 mainUrl =
@@ -61,6 +62,24 @@ type alias RiscLinesJs =
     { riscLines : RiscLines
     , valueRange : ( Float, Float )
     }
+
+
+type alias OptionPurchase =
+    { oid : Int
+    , ticker : String
+    , purchaseDate : String
+    , volume : Int
+    , purchasePrice : Float
+    , ivAtPurchase : Maybe Float
+    , bid : Float
+    , ask : Float
+    , iv : Maybe Float
+    , spot : Float
+    }
+
+
+type alias OptionPurchases =
+    List OptionPurchase
 
 
 main : Program Flags Model Msg
@@ -114,6 +133,8 @@ type alias Model =
     , dropItems : Int
     , takeItems : Int
     , flags : Flags
+    , dlgOptions : DLG.ModalDialog
+    , optionPurchases : Maybe OptionPurchases
     }
 
 
@@ -127,6 +148,8 @@ initModel flags =
     , dropItems = 0
     , takeItems = 90
     , flags = flags
+    , dlgOptions = DLG.dlgClose
+    , optionPurchases = Nothing
     }
 
 
@@ -145,6 +168,10 @@ type Msg
     | FetchSpot
     | SpotFetched (Result Http.Error Spot)
     | ResetCache
+    | OptionsPurchasesClick
+    | OptionsPurchasesFetched
+    | OptionsDlgOk
+    | OptionsDlgCancel
 
 
 
@@ -153,6 +180,45 @@ type Msg
 
 button_ =
     BTN.button "col-sm-2"
+
+
+optionTabs =
+    3
+
+
+
+{-
+   [ H.ul [ A.class "nav nav-tabs" ]
+       [ H.li [ A.class "active" ]
+           [ H.a [ A.href "#geo1", A.attribute "data-toggle" "pill" ]
+               [ H.text "Geometry" ]
+           ]
+       , H.li []
+           [ H.a [ A.href "#loads1", A.attribute "data-toggle" "pill" ]
+               [ H.text "Loads" ]
+           ]
+       ]
+   , H.div [ A.class "tab-content" ]
+       [ H.div [ A.id "geo1", A.class "tab-pane in active" ]
+           [ makeFGRSelect "id12" "Element type:" CM.CX39 (Just model.elementTypes) (Just ElementTypeSelected)
+           , makeFGRInput ElementDescChange "id1" "Element desc:" "text" CM.CX39 model.elementDesc
+           , makeFGRSelect "id2" "Node 1:" CM.CX39 model.nodes (Just Node1Selected)
+           , makeFGRSelect "id3" "Node 2:" CM.CX39 model.nodes (Just Node2Selected)
+           , makeFGRInput PlwChange "id4" "Load distribution factor:" "number" CM.CX66 model.plw
+           , makeFGRInput PlateWidthChange "id5" "Plate width:" "number" CM.CX66 model.plateWidth
+           , plateWidth2Item
+           ]
+       , H.div [ A.id "loads1", A.class "tab-pane" ]
+           [ makeFGRSelect "id6" "Dead load:" CM.CX39 model.deadloads (Just Load1Selected)
+           , makeFGRInput LoadFactor1Change "id7" "Load factor dead load:" "number" CM.CX66 model.loadFactor1
+           , makeFGRInput FormFactor1Change "id8" "Form factor dead load:" "number" CM.CX66 model.formFactor1
+           , makeFGRSelect "id9" "Live load:" CM.CX39 model.liveloads (Just Load2Selected)
+           , makeFGRInput LoadFactor2Change "id10" "Load factor live load:" "number" CM.CX66 model.loadFactor2
+           , makeFGRInput FormFactor2Change "id11" "Form factor live load:" "number" CM.CX66 model.formFactor2
+           ]
+       ]
+   ]
+-}
 
 
 view : Model -> H.Html Msg
@@ -165,6 +231,7 @@ view model =
                     , button_ "Risc Lines" FetchRiscLines
                     , button_ "Spot" FetchSpot
                     , button_ "Reset Cache" ResetCache
+                    , button_ "Option Purchases" OptionsPurchasesClick
                     ]
 
                 2 ->
@@ -181,6 +248,11 @@ view model =
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
                 row
+            , DLG.modalDialog "Optionpurchases"
+                model.dlgOptions
+                OptionsDlgOk
+                OptionsDlgCancel
+                []
             ]
 
 
@@ -404,11 +476,60 @@ update msg model =
         ResetCache ->
             ( model, fetchCharts model.selectedTicker model True )
 
+        OptionsPurchasesClick ->
+            ( model, fetchOptionPurchases model )
+
+        OptionsPurchasesFetched ->
+            ( { model | dlgOptions = DLG.dlgOpen }, Cmd.none )
+
+        OptionsDlgOk ->
+            ( { model | dlgOptions = DLG.dlgClose }, Cmd.none )
+
+        OptionsDlgCancel ->
+            ( { model | dlgOptions = DLG.dlgClose }, Cmd.none )
+
 
 
 -- </editor-fold>
 ------------------ COMMANDS -------------------
 -- <editor-fold>
+{-
+   type alias OptionPurchase =
+       { oid : Int
+       , ticker : String
+       , purchaseDate : String
+       , volume : Int
+       , purchasePrice : Float
+       , ivAtPurchase : Float
+       , bid : Float
+       , ask : Float
+       , iv : Float
+       , spot : Float
+       }
+-}
+
+
+fetchOptionPurchases : Model -> Cmd Msg
+fetchOptionPurchases ticker =
+    let
+        url =
+            mainUrl ++ "/optionpurchases?ticker=" ++ model.selectedTicker
+
+        myDecoder =
+            JP.decode OptionPurchase
+                |> JP.required "oid" Json.int
+                |> JP.required "ticker" Json.string
+                |> JP.required "purchaseDate" Json.string
+                |> JP.required "volume" Json.int
+                |> JP.required "purchasePrice" Json.float
+                |> JP.optional "ivAtPurchase" Json.float -1.0
+                |> JP.required "bid" Json.float
+                |> JP.required "ask" Json.float
+                |> JP.optional "iv" Json.float -1.0
+                |> JP.required "spot" Json.float
+    in
+        Http.send OptionsPurchasesFetched <|
+            Http.get url (Json.list myDecoder)
 
 
 fetchSpot : Model -> Cmd Msg
