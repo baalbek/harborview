@@ -44,12 +44,17 @@ f1 ticker =
 
 type alias Model =
     { street : String
+    , city : String
+    , houseNum : String
     }
 
 
-myModel : Model
-myModel =
-    { street = "jax " }
+model : Model
+model =
+    { street = "jax "
+    , city = "San Francisco"
+    , houseNum = "108"
+    }
 
 
 type alias Address r =
@@ -58,6 +63,15 @@ type alias Address r =
     }
 
 
-alterAddress : String -> Address r -> Address r
-alterAddress s a =
+alter : String -> Address r -> Address r
+alter s a =
     ({ a | street = s })
+
+
+peek : Model -> String
+peek m =
+    m.city ++ " " ++ m.street ++ " " ++ m.houseNum
+
+
+
+-- ++ " " ++ m.street -- ++ " " ++ m.houseNum

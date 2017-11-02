@@ -12,6 +12,7 @@ import Table exposing (defaultCustomizations)
 import Common.Miscellaneous as MISC
 import Common.ComboBox as CMB
 import Common.Buttons as BTN
+import Common.ModalDialog as DLG
 
 
 mainUrl =
@@ -118,6 +119,8 @@ type alias Model =
     , risc : String
     , flags : Flags
     , tableState : Table.State
+    , dlgPurchase : DLG.ModalDialog
+    , selectedPurchase : Maybe Option
     }
 
 
@@ -130,6 +133,8 @@ initModel flags =
     , risc = "0.0"
     , flags = flags
     , tableState = Table.initialSort "Ticker"
+    , dlgPurchase = DLG.dlgClose
+    , selectedPurchase = Nothing
     }
 
 
@@ -144,6 +149,7 @@ config =
         , toMsg = SetTableState
         , columns =
             [ checkboxColumn
+            , buttonColumn
             , Table.stringColumn "Ticker" .ticker
             , Table.floatColumn "Exercise" .x
             , Table.floatColumn "Days" .days
@@ -164,8 +170,8 @@ config =
 
 toRowAttrs : Option -> List (H.Attribute Msg)
 toRowAttrs opt =
-    [ E.onClick (ToggleSelected opt.ticker)
-    , A.style
+    [ -- E.onClick (ToggleSelected opt.ticker)
+      A.style
         [ ( "background"
           , if opt.selected then
                 "#CEFAF8"
@@ -186,9 +192,25 @@ checkboxColumn =
 
 
 viewCheckbox : Option -> Table.HtmlDetails Msg
-viewCheckbox { selected } =
+viewCheckbox { selected, ticker } =
     Table.HtmlDetails []
-        [ H.input [ A.type_ "checkbox", A.checked selected ] []
+        [ H.input [ A.type_ "checkbox", A.checked selected, E.onClick (ToggleSelected ticker) ] []
+        ]
+
+
+buttonColumn : Table.Column Option Msg
+buttonColumn =
+    Table.veryCustomColumn
+        { name = "Purchase"
+        , viewData = tableButton
+        , sorter = Table.unsortable
+        }
+
+
+tableButton : Option -> Table.HtmlDetails Msg
+tableButton opt =
+    Table.HtmlDetails []
+        [ H.button [ E.onClick (PurchaseClick opt) ] [ H.text "Buy" ]
         ]
 
 
@@ -207,6 +229,9 @@ type Msg
       -- | RiscCalculated (Result Http.Error String)
     | RiscChange String
     | ToggleSelected String
+    | PurchaseClick Option
+    | PurchaseDlgOk
+    | PurchaseDlgCancel
 
 
 
@@ -229,8 +254,15 @@ view model =
                     ""
 
                 Just sx ->
-                    -- "Spot: " ++ (toString sx.spot)
                     toString sx
+
+        dlgHeader =
+            case model.selectedPurchase of
+                Nothing ->
+                    "Option Purchase"
+
+                Just sp ->
+                    "Option Purchase " ++ sp.ticker
     in
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
@@ -246,10 +278,52 @@ view model =
             , H.div [ A.class "row" ]
                 [ Table.view config model.tableState opx
                 ]
+            , DLG.modalDialog dlgHeader
+                model.dlgPurchase
+                PurchaseDlgOk
+                PurchaseDlgCancel
+                []
             ]
 
 
 
+{-
+   [ H.ul [ A.class "nav nav-tabs" ]
+       [ H.li [ A.class "active" ]
+           [ H.a [ A.href "#geo1", A.attribute "data-toggle" "pill" ]
+               [ H.text "Geometry" ]
+           ]
+       , H.li []
+           [ H.a [ A.href "#loads1", A.attribute "data-toggle" "pill" ]
+               [ H.text "Loads" ]
+           ]
+       ]
+   , H.div [ A.class "tab-content" ]
+       [ H.div [ A.id "geo1", A.class "tab-pane in active" ]
+           [ H.div [ A.class "row" ]
+               [ H.div [ A.class "col-sm-3" ]
+                   [ H.text stockInfo ]
+               , button_ "Calc Risc" CalcRisc
+               , H.div [ A.class "col-sm-2" ]
+                   [ H.input [ A.placeholder "Risc", E.onInput RiscChange ] [] ]
+               , button_ "Reset Cache" ResetCache
+               , H.div [ A.class "col-sm-3" ]
+                   [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker ]
+               ]
+           , H.div [ A.class "row" ]
+               [ Table.view config model.tableState opx
+               ]
+           , DLG.modalDialog dlgHeader
+               model.dlgPurchase
+               PurchaseDlgOk
+               PurchaseDlgCancel
+               []
+           ]
+       , H.div [ A.id "loads1", A.class "tab-pane" ]
+           []
+       ]
+   ]
+-}
 ------------------- UPDATE --------------------
 
 
@@ -318,6 +392,15 @@ update msg model =
                     ( { model | options = Just (List.map (toggle ticker) optionx) }
                     , Cmd.none
                     )
+
+        PurchaseClick opt ->
+            ( { model | dlgPurchase = DLG.dlgOpen, selectedPurchase = Just opt }, Cmd.none )
+
+        PurchaseDlgOk ->
+            ( { model | dlgPurchase = DLG.dlgClose }, Cmd.none )
+
+        PurchaseDlgCancel ->
+            ( { model | dlgPurchase = DLG.dlgClose }, Cmd.none )
 
 
 setRisc : Float -> RiscItems -> Option -> Option
