@@ -34,6 +34,8 @@
 (defn verify [m]
   (map (fn [x] (let [d0 (first m) d1 (last m)]
                  [d0 d1])) m))
+
+
 (comment
   (defn id []
     (ObjectId.))

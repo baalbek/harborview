@@ -5,6 +5,7 @@
     [org.springframework.beans.factory BeanFactory]
     [org.springframework.context.support ClassPathXmlApplicationContext]
     [oahu.dto Tuple3]
+    [ranoraraku.beans.options OptionPurchaseBean]
     [oahu.financial Derivative DerivativePrice StockPrice]
     [oahu.financial.repository EtradeRepository]
     [oahu.financial.html EtradeDownloader])
@@ -125,6 +126,12 @@
    :optionprice (.getCurrentRiscOptionValue o)
    :ask (.getSell o)
    :risc (.getCurrentRisc o)})
+
+(defn purchase->json [^OptionPurchaseBean p]
+  {:oid (.getOid p)
+   :ticker (.getOptionName p)
+   :price (.getPrice p)
+   :spot (.getSpotAtPurchase p)})
 
 (defn stock [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]

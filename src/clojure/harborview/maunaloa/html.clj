@@ -292,7 +292,9 @@
   (GET "/optionprice" [ticker stockprice]
     (U/json-response (calc-optionprice-for-stockprice ticker stockprice)))
   (GET "/tickers" request (tickers))
-  (GET "/optionpurchases" [oid] (optionpurchases oid))
+  (GET "/optionpurchases" [oid ptype optype]
+    (let [purchases (DBX/option-purchases (U/rs oid) (U/rs ptype) 1 optype)]
+      (U/json-response (map OPX/purchase->json purchases))))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
   (GET "/resetticker" [oid]
     (binding [CU/*reset-cache* true]

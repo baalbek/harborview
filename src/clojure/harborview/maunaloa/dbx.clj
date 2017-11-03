@@ -3,7 +3,7 @@
     [java.time LocalDate]
     [java.time.temporal IsoFields]
     [ranoraraku.beans StockPriceBean]
-    [ranoraraku.models.mybatis StockMapper])
+    [ranoraraku.models.mybatis CritterMapper StockMapper])
   (:require
     [harborview.service.commonutils :as CU]
     [harborview.service.db :as DB]))
@@ -19,6 +19,10 @@
   (println "fetch-prices, ticker: " oid)
   (DB/with-session :ranoraraku StockMapper
     (.selectStockPrices it oid from-date)))
+
+(defn option-purchases [stock-id purchase-type status optype]
+  (DB/with-session :ranoraraku CritterMapper
+    (.activePurchasesWithSales it stock-id purchase-type status optype)))
 
 (CU/defn-memb fetch-prices-m [oid from-date]
   (println "fetch-prices-m: " oid ", " from-date)

@@ -220,11 +220,11 @@ lastElem =
     List.foldl (Just >> always) Nothing
 
 
-checkbox : msg -> String -> H.Html msg
-checkbox msg name =
+checkbox : String -> Bool -> msg -> H.Html msg
+checkbox name selected msg =
     H.div [ A.class "col-sm-4 checkbox" ]
         [ H.label []
-            [ H.input [ A.type_ "checkbox", E.onClick msg ] []
+            [ H.input [ A.checked selected, A.type_ "checkbox", E.onClick msg ] []
             , H.text name
             ]
         ]
