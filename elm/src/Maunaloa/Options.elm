@@ -99,6 +99,7 @@ type alias OptionSale =
 type alias OptionPurchaseWithSale =
     { oid : Int
     , ticker : String
+    , purchaseDate : String
     , price : Float
     , spot : Float
     }
@@ -198,6 +199,7 @@ view model =
                                 H.tr []
                                     [ H.td [] [ H.text (toString x.oid) ]
                                     , H.td [] [ H.text x.ticker ]
+                                    , H.td [] [ H.text x.purchaseDate ]
                                     , H.td [] [ H.text (toString x.price) ]
                                     , H.td [] [ H.text (toString x.spot) ]
                                     , H.td [] [ H.text (toString curBuy) ]
@@ -213,6 +215,7 @@ view model =
                                     []
                                     [ H.th [] [ H.text "Oid" ]
                                     , H.th [] [ H.text "Ticker" ]
+                                    , H.th [] [ H.text "Purchase Date" ]
                                     , H.th [] [ H.text "Purchase Price " ]
                                     , H.th [] [ H.text "Spot" ]
                                     , H.th [] [ H.text "Current Price" ]
@@ -472,6 +475,7 @@ fetchOptionPurchases ticker isRealTime isCalls =
             JP.decode OptionPurchaseWithSale
                 |> JP.required "oid" Json.int
                 |> JP.required "ticker" Json.string
+                |> JP.required "dx" Json.string
                 |> JP.required "price" Json.float
                 |> JP.required "spot" Json.float
     in

@@ -130,6 +130,7 @@
 (defn purchase->json [^OptionPurchaseBean p]
   {:oid (.getOid p)
    :ticker (.getOptionName p)
+   :dx (CU/ld->str (.getLocalDx p))
    :price (.getPrice p)
    :spot (.getSpotAtPurchase p)})
 
