@@ -104,8 +104,6 @@
         :x-axis (reverse (map hr dx))
         :min-dx (CU/ld->str min-dx)})))
 
-
-
 (defn ticker-chart [oid]
   (let [spot-objs (DBX/fetch-prices-m (U/rs oid) (Date/valueOf min-dx))]
     (ticker-chart_ spot-objs)))
@@ -190,15 +188,21 @@
        :options
         (map OPX/option->json (OPX/calls ts))})))
 
+; region SELMER
+
 (defn init-charts []
   (let [[url user] (DB/dbcp :ranoraraku-dbcp)]
     (P/render-file "templates/maunaloa/charts.html" {:db-url url :db-user user})))
 
-  ;(P/render-file "templates/maunaloa/charts.html" {:c-width 1310 :c1-height 500 :c2-height 200}))
-
 (defn init-options []
   (let [[url user] (DB/dbcp :ranoraraku-dbcp)]
     (P/render-file "templates/maunaloa/options.html" {:db-url url :db-user user})))
+
+(defn init-purchases []
+  (let [[url user] (DB/dbcp :ranoraraku-dbcp)]
+    (P/render-file "templates/maunaloa/optionpurchases.html" {:db-url url :db-user user})))
+
+; endregion
 
 (defn ticker->options
   ([ticker]
@@ -210,8 +214,7 @@
       (OPX/calls stock-ticker)
       (OPX/puts stock-ticker)))))
 
-
-
+; region RISC
 (defn calculated-riscs [ticker]
   (let [options (ticker->options ticker)]
     (filter #(= (-> % .getCurrentRiscStockPrice .isPresent) true) options)))
@@ -235,6 +238,7 @@
        :risc (.getCurrentRisc ax)})
     {:optionprice -1 ; if-let == false
      :risc -1}))
+; endregion
 
 (defn to_R_so [spot-objs]
   (let [spots (map #(.getCls ^StockPriceBean %) spot-objs)
@@ -268,6 +272,7 @@
   (GET "/to_r" [oid] (to_R (U/rs oid)))
   (GET "/charts" request (init-charts))
   (GET "/optiontickers" request (init-options))
+  (GET "/optionpurchases" request (init-purchases))
   (GET "/spot" [ticker] (spot ticker))
   (GET "/puts" [ticker] (puts ticker))
   (GET "/calls" [ticker] (calls ticker))
@@ -292,7 +297,7 @@
   (GET "/optionprice" [ticker stockprice]
     (U/json-response (calc-optionprice-for-stockprice ticker stockprice)))
   (GET "/tickers" request (tickers))
-  (GET "/optionpurchases" [oid ptype optype]
+  (GET "/fetchpurchases" [oid ptype optype]
     (let [purchases (DBX/option-purchases (U/rs oid) (U/rs ptype) 1 optype)]
       (U/json-response (map OPX/purchase->json purchases))))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))

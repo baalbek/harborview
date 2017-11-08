@@ -67,21 +67,6 @@
   (let [^EtradeRepository e (get-bean "etrade")]
     (.parseHtmlFor e ticker nil)))
 
-(comment check-implied-vol [ox]
-  (try
-    (if (> (.getIvBuy ox) 0)
-      (if (> (.getIvSell ox) 0)
-        true
-        (do
-          (println "Iv sell <= 0 for: " (-> ox .getDerivative .getTicker))
-          false))
-      (do
-        (println "Iv buy <= 0 for: " (-> ox .getDerivative .getTicker))
-        false))
-    (catch Exception ex
-        (println "Iv sell fail for: " (-> ox .getDerivative .getTicker) ", " (.getMessage ex))
-        false)))
-
 (defn check-implied-vol [ox]
   (if (= (.isPresent (.getIvBuy ox)) true)
     (if (= (.isPresent (.getIvSell ox)) true)
@@ -97,6 +82,7 @@
       false)
     false))
 
+; region JSON
 (defn option->json [^DerivativePrice o]
   (let [iv-buy (-> o .getIvBuy .get)
         iv-sell (-> o .getIvSell .get)
@@ -133,6 +119,7 @@
    :dx (CU/ld->str (.getLocalDx p))
    :price (.getPrice p)
    :spot (.getSpotAtPurchase p)})
+; endregion JSON
 
 (defn stock [ticker]
   (let [^Tuple3 parsed (parse-html ticker)]

@@ -469,7 +469,7 @@ fetchOptionPurchases ticker isRealTime isCalls =
                     "p"
 
         url =
-            mainUrl ++ "/optionpurchases?oid=" ++ ticker ++ "&ptype=" ++ purchaseType ++ "&optype=" ++ optype
+            mainUrl ++ "/fetchpurchases?oid=" ++ ticker ++ "&ptype=" ++ purchaseType ++ "&optype=" ++ optype
 
         myDecoder =
             JP.decode OptionPurchaseWithSale

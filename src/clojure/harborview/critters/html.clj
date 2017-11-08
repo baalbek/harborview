@@ -100,7 +100,7 @@
 (defn critter-acc-denys [^CritterBean c, ^AcceptRuleBean acc, ^ArrayList result]
   (let [denyx (.getDenyRules acc)]
     (if (nil? denyx)
-      (.add result (critter-acc-only c))
+      (.add result (critter-acc-only c acc))
       (critter-with-denyrules c acc result))))
 
 (defn critter-with-accrules [^CritterBean c, ^ArrayList result]

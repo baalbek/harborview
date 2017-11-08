@@ -3,14 +3,16 @@
     [java.time LocalDate]
     [java.sql Date]
     [org.springframework.context.support ClassPathXmlApplicationContext]
-    [ org.bson.types ObjectId])
+    [ org.bson.types ObjectId]
+    [ranoraraku.models.mybatis CritterMapper])
   (:require
     [monger.core :as mg]
     [monger.collection :as mc]
     [harborview.service.commonutils :as CU]
     [harborview.maunaloa.options :as OPX]
     [harborview.maunaloa.html :as H]
-    [harborview.maunaloa.dbx :as DB]))
+    [harborview.service.db :as DB]
+    [harborview.maunaloa.dbx :as DBX]))
 
   ;(:require))
     ;[harborview.vinapu.dbx :as VIN]
@@ -24,16 +26,24 @@
 
 ;(def conn (atom (mg/connect {:host "172.17.0.3"})))
 
-(def min-dx (LocalDate/of 2004 1 1))
+(defn opx []
+  (DB/with-session :ranoraraku CritterMapper
+    (.activePurchasesAll it 11)))
 
-(defn months []
-  (let [prices (DB/fetch-prices-m 3 (java.sql.Date/valueOf min-dx))]
-    (prn "Num beans: " (count prices))
-    (DB/candlestick-months prices)))
+(defn px [oid]
+  (filter #(= (.getOid %) oid) (opx)))
 
-(defn verify [m]
-  (map (fn [x] (let [d0 (first m) d1 (last m)]
-                 [d0 d1])) m))
+(comment
+  (def min-dx (LocalDate/of 2004 1 1))
+
+  (defn months []
+    (let [prices (DB/fetch-prices-m 3 (java.sql.Date/valueOf min-dx))]
+      (prn "Num beans: " (count prices))
+      (DB/candlestick-months prices)))
+
+  (defn verify [m]
+    (map (fn [x] (let [d0 (first m) d1 (last m)]
+                   [d0 d1])) m)))
 
 
 (comment
