@@ -2,8 +2,8 @@
   (:import
     [java.io IOException File FileOutputStream FileNotFoundException]
     [java.time LocalTime LocalDate]
+    [java.time.temporal ChronoUnit]
     [org.springframework.beans.factory BeanFactory]
-    [org.springframework.context.support ClassPathXmlApplicationContext]
     [oahu.dto Tuple3]
     [ranoraraku.beans.options OptionPurchaseBean]
     [oahu.financial Derivative DerivativePrice StockPrice]
@@ -12,17 +12,63 @@
   (:use
     [harborview.service.commonutils :only (defn-memo,defn-memb)])
   (:require
+    ;[harborview.protocols.optionsprotocol :as P]
+    [harborview.service.springservice :as S]
     [harborview.service.commonutils :as CU]
     [harborview.service.htmlutils :as U]))
 
-(defn-memo spring-context []
-  (println "Initializing spring context: harborview.xml")
-  (ClassPathXmlApplicationContext. "harborview.xml"))
+; region SPRING
+(comment
+  (defn-memo spring-context []
+    (println "Initializing spring context: harborview.xml")
+    (ClassPathXmlApplicationContext. "harborview.xml"))
 
 
-(defn get-bean  [bn]
-  (let [^BeanFactory factory (spring-context)]
-    (.getBean factory bn)))
+  (defn get-bean  [bn]
+    (let [^BeanFactory factory (spring-context)]
+      (.getBean factory bn))))
+
+; endregion
+
+; region protocols
+
+(def jse "\"")
+
+(comment P/Vega
+  OptionPurchaseBean
+  (toJSON [this]
+    (let [calc (S/get-bean "calculator")
+          oid (.getOid this)
+          ticker (.getOptionName this)
+          d0 (.getLocalDx this)
+          ot (.getOptionType this)
+          spot (.getSpotAtPurchase this)
+          price (.getPrice this)
+          bid (.getBuyAtPurchase this)
+          x (.getX this)
+          d1 (.getExpiry this)
+          days (.between ChronoUnit/DAYS d0 d1)
+          t (/ days 365.0)
+          svol (.volumeSold this)
+      ;(println "d0: " d0 ", days:" days ", ot: " ot ",spot: " spot ",strike: " x)
+          iv (if (= ot "c")
+              (.ivCall calc spot x t price)
+              (.ivPut calc spot x t price))]
+       (str "{\"oid\":" oid
+            ",\"ticker\":\"" ticker  jse
+            ",\"pdate\":\"" (CU/ld->str d0) jse
+            ",\"price\":" price
+            ",\"spot\":" spot
+            ",\"bid\":" bid
+            ",\"svol\":" svol
+            ",\"iv\":" iv
+            "}"))))
+
+
+
+
+
+; endregion
 
 (defn today-feed [feed]
   (let [dx (LocalDate/now)
@@ -44,7 +90,7 @@
 
 (defn save-page [ticker]
   (let [my-feed "../feed"
-        ^EtradeDownloader dl (get-bean "downloader")
+        ^EtradeDownloader dl (S/get-bean "downloader")
         page (.downloadDerivatives dl ticker)
         out (check-file my-feed ticker)]
     (try
@@ -59,12 +105,12 @@
     out))
 
 (comment parse-html [ticker]
-  (let [^EtradeRepository e (get-bean "etrade")
+  (let [^EtradeRepository e (S/get-bean "etrade")
         page (save-page ticker)]
     (.parseHtmlFor e ticker page)))
 
 (defn-memb parse-html [ticker]
-  (let [^EtradeRepository e (get-bean "etrade")]
+  (let [^EtradeRepository e (S/get-bean "etrade")]
     (.parseHtmlFor e ticker nil)))
 
 (defn check-implied-vol [ox]
@@ -119,6 +165,36 @@
    :dx (CU/ld->str (.getLocalDx p))
    :price (.getPrice p)
    :spot (.getSpotAtPurchase p)})
+
+(defn purchasesales->json [^OptionPurchaseBean p]
+  (let [calc (S/get-bean "calculator")
+        oid (.getOid p)
+        ticker (.getOptionName p)
+        d0 (.getLocalDx p)
+        ot (.getOptionType p)
+        spot (.getSpotAtPurchase p)
+        price (.getPrice p)
+        bid (.getBuyAtPurchase p)
+        x (.getX p)
+        d1 (.getExpiry p)
+        days (.between ChronoUnit/DAYS d0 d1)
+        t (/ days 365.0)
+        pvol (.getVolume p)
+        svol (.volumeSold p)
+        iv (if (= ot "c")
+            (.ivCall calc spot x t price)
+            (.ivPut calc spot x t price))]
+    {:oid oid
+     :ot ot
+     :ticker ticker
+     :dx (CU/ld->str d0)
+     :price price
+     :spot spot
+     :bid bid
+     :pvol pvol
+     :svol svol
+     :iv iv}))
+
 ; endregion JSON
 
 (defn stock [ticker]

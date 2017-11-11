@@ -162,6 +162,9 @@
     (U/json-response
       (for [[oid ticker] sorted]
         {"v" oid "t" (str "[" (:t ticker) "] " (:c ticker))}))))
+;(let [tx (str "[" (:t ticker) "] " (:c ticker))]
+;  (str "{\"v\":" oid ",\"t\":\"" tx "\"}")}))))
+
 
 (defn spot [ticker]
   (U/json-response
@@ -240,6 +243,7 @@
      :risc -1}))
 ; endregion
 
+; region R
 (defn to_R_so [spot-objs]
   (let [spots (map #(.getCls ^StockPriceBean %) spot-objs)
         num-items 100
@@ -267,6 +271,11 @@
         :w_cc_ss w3
         :w_cc_rf w4})))
 
+; endregion
+
+(defn ptest []
+  (let [purchases (DBX/option-purchases 3 11 1 nil)]
+    (U/json-response (map OPX/purchasesales->json purchases))))
 
 (defroutes my-routes
   (GET "/to_r" [oid] (to_R (U/rs oid)))
@@ -300,6 +309,9 @@
   (GET "/fetchpurchases" [oid ptype optype]
     (let [purchases (DBX/option-purchases (U/rs oid) (U/rs ptype) 1 optype)]
       (U/json-response (map OPX/purchase->json purchases))))
+  (GET "/fetchpurchases2" [oid ptype]
+    (let [purchases (DBX/option-purchases (U/rs oid) (U/rs ptype) 1 nil)]
+      (U/json-response (map OPX/purchasesales->json purchases))))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
   (GET "/resetticker" [oid]
     (binding [CU/*reset-cache* true]

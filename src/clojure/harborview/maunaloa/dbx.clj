@@ -22,7 +22,7 @@
 
 (defn option-purchases [stock-id purchase-type status optype]
   (DB/with-session :ranoraraku CritterMapper
-    (.activePurchasesWithSales it stock-id purchase-type status optype)))
+    (.purchasesWithSales it stock-id purchase-type status optype)))
 
 (CU/defn-memb fetch-prices-m [oid from-date]
   (println "fetch-prices-m: " oid ", " from-date)
