@@ -96,17 +96,21 @@ type alias OptionSale =
     {}
 
 
-type alias OptionPurchaseWithSale =
-    { oid : Int
-    , ticker : String
-    , purchaseDate : String
-    , price : Float
-    , spot : Float
-    }
+
+{- }
+   type alias OptionPurchaseWithSale =
+       { oid : Int
+       , ticker : String
+       , purchaseDate : String
+       , price : Float
+       , spot : Float
+       }
 
 
-type alias OptionPurchases =
-    List OptionPurchaseWithSale
+   type alias OptionPurchases =
+       List OptionPurchaseWithSale
+
+-}
 
 
 type Msg
@@ -122,9 +126,12 @@ type Msg
     | PurchaseClick Option
     | PurchaseDlgOk
     | PurchaseDlgCancel
-    | FetchPurchases
-    | PurchasesFetched (Result Http.Error OptionPurchases)
-    | ToggleRealTimePurchase
+
+
+
+-- | FetchPurchases
+-- | PurchasesFetched (Result Http.Error OptionPurchases)
+-- | ToggleRealTimePurchase
 
 
 type alias Model =
@@ -137,8 +144,9 @@ type alias Model =
     , tableState : Table.State
     , dlgPurchase : DLG.ModalDialog
     , selectedPurchase : Maybe Option
-    , isRealTimePurchase : Bool
-    , optionPurchases : Maybe OptionPurchases
+
+    -- , isRealTimePurchase : Bool
+    -- , optionPurchases : Maybe OptionPurchases
     }
 
 
@@ -173,68 +181,71 @@ view model =
                 Just sp ->
                     "Option Purchase " ++ sp.ticker
 
-        purchaseTable =
-            case model.optionPurchases of
-                Nothing ->
-                    H.text "Purchases"
+        {-
+           purchaseTable =
+               case model.optionPurchases of
+                   Nothing ->
+                       H.text "Purchases"
 
-                Just s ->
-                    let
-                        toRow x =
-                            let
-                                predicate =
-                                    \z -> z.ticker == x.ticker
+                   Just s ->
+                       let
+                           toRow x =
+                               let
+                                   predicate =
+                                       \z -> z.ticker == x.ticker
 
-                                curOpx =
-                                    MISC.findInList predicate opx
+                                   curOpx =
+                                       MISC.findInList predicate opx
 
-                                ( curBuy, diff ) =
-                                    case curOpx of
-                                        Nothing ->
-                                            ( -1, -1 )
+                                   ( curBuy, diff ) =
+                                       case curOpx of
+                                           Nothing ->
+                                               ( -1, -1 )
 
-                                        Just curOpx_ ->
-                                            ( curOpx_.buy, curOpx_.buy - x.price )
-                            in
-                                H.tr []
-                                    [ H.td [] [ H.text (toString x.oid) ]
-                                    , H.td [] [ H.text x.ticker ]
-                                    , H.td [] [ H.text x.purchaseDate ]
-                                    , H.td [] [ H.text (toString x.price) ]
-                                    , H.td [] [ H.text (toString x.spot) ]
-                                    , H.td [] [ H.text (toString curBuy) ]
-                                    , H.td [] [ H.text (toString diff) ]
-                                    ]
+                                           Just curOpx_ ->
+                                               ( curOpx_.buy, curOpx_.buy - x.price )
+                               in
+                                   H.tr []
+                                       [ H.td [] [ H.text (toString x.oid) ]
+                                       , H.td [] [ H.text x.ticker ]
+                                       , H.td [] [ H.text x.purchaseDate ]
+                                       , H.td [] [ H.text (toString x.price) ]
+                                       , H.td [] [ H.text (toString x.spot) ]
+                                       , H.td [] [ H.text (toString curBuy) ]
+                                       , H.td [] [ H.text (toString diff) ]
+                                       ]
 
-                        rows =
-                            List.map toRow s
-                    in
-                        H.table [ A.class "table table-hoover" ]
-                            [ H.thead []
-                                [ H.tr
-                                    []
-                                    [ H.th [] [ H.text "Oid" ]
-                                    , H.th [] [ H.text "Ticker" ]
-                                    , H.th [] [ H.text "Purchase Date" ]
-                                    , H.th [] [ H.text "Purchase Price " ]
-                                    , H.th [] [ H.text "Spot" ]
-                                    , H.th [] [ H.text "Current Price" ]
-                                    , H.th [] [ H.text "Diff" ]
-                                    ]
-                                ]
-                            , H.tbody []
-                                rows
-                            ]
+                           rows =
+                               List.map toRow s
+                       in
+                           H.table [ A.class "table table-hoover" ]
+                               [ H.thead []
+                                   [ H.tr
+                                       []
+                                       [ H.th [] [ H.text "Oid" ]
+                                       , H.th [] [ H.text "Ticker" ]
+                                       , H.th [] [ H.text "Purchase Date" ]
+                                       , H.th [] [ H.text "Purchase Price " ]
+                                       , H.th [] [ H.text "Spot" ]
+                                       , H.th [] [ H.text "Current Price" ]
+                                       , H.th [] [ H.text "Diff" ]
+                                       ]
+                                   ]
+                               , H.tbody []
+                                   rows
+                               ]
+        -}
     in
         H.div [ A.class "container" ]
-            [ H.div [ A.class "row" ]
-                [ button_ "Fetch Purchases" FetchPurchases
-                , MISC.checkbox "Real-time purchase" True ToggleRealTimePurchase
-                ]
-            , H.div [ A.class "row" ]
-                [ purchaseTable
-                ]
-            , H.div [ A.class "row" ]
+            [ {- H.div [ A.class "row" ]
+                     [ button_ "Fetch Purchases" FetchPurchases
+                     , MISC.checkbox "Real-time purchase" True ToggleRealTimePurchase
+                     ]
+                 , H.div [ A.class "row" ]
+                     [ purchaseTable
+                     ]
+              -}
+              H.div [ A.class "row" ]
                 [ H.div [ A.class "col-sm-3" ]
                     [ H.text stockInfo ]
                 , button_ "Calc Risc" CalcRisc
@@ -270,8 +281,9 @@ initModel flags =
     , tableState = Table.initialSort "Ticker"
     , dlgPurchase = DLG.dlgClose
     , selectedPurchase = Nothing
-    , isRealTimePurchase = True
-    , optionPurchases = Nothing
+
+    -- , isRealTimePurchase = True
+    -- , optionPurchases = Nothing
     }
 
 
@@ -373,7 +385,7 @@ update msg model =
             ( { model | selectedTicker = s }, fetchOptions model s False )
 
         OptionsFetched (Ok s) ->
-            ( { model | stock = Just s.stock, options = Just s.opx, optionPurchases = Nothing }, Cmd.none )
+            ( { model | stock = Just s.stock, options = Just s.opx }, Cmd.none )
 
         OptionsFetched (Err s) ->
             Debug.log ("OptionsFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
@@ -427,60 +439,64 @@ update msg model =
         PurchaseDlgCancel ->
             ( { model | dlgPurchase = DLG.dlgClose }, Cmd.none )
 
-        FetchPurchases ->
-            ( model, fetchOptionPurchases model.selectedTicker model.isRealTimePurchase model.flags.isCalls )
-
-        PurchasesFetched (Ok s) ->
-            ( { model | optionPurchases = Just s }, Cmd.none )
-
-        PurchasesFetched (Err s) ->
-            Debug.log ("PurchasesFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
-
-        ToggleRealTimePurchase ->
-            let
-                checked =
-                    not model.isRealTimePurchase
-            in
-                ( { model | isRealTimePurchase = checked }, fetchOptionPurchases model.selectedTicker checked model.flags.isCalls )
 
 
+{-
+      FetchPurchases ->
+          ( model, fetchOptionPurchases model.selectedTicker model.isRealTimePurchase model.flags.isCalls )
 
+      PurchasesFetched (Ok s) ->
+          ( { model | optionPurchases = Just s }, Cmd.none )
+
+      PurchasesFetched (Err s) ->
+          Debug.log ("PurchasesFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
+   ToggleRealTimePurchase ->
+       let
+           checked =
+               not model.isRealTimePurchase
+       in
+           ( { model | isRealTimePurchase = checked }, fetchOptionPurchases model.selectedTicker checked model.flags.isCalls )
+
+-}
 -- #endregion
 -- #region COMMANDS
+{-
+
+   fetchOptionPurchases : String -> Bool -> Bool -> Cmd Msg
+   fetchOptionPurchases ticker isRealTime isCalls =
+       let
+           purchaseType =
+               case isRealTime of
+                   True ->
+                       "3"
+
+                   False ->
+                       "11"
+
+           optype =
+               case isCalls of
+                   True ->
+                       "c"
+
+                   False ->
+                       "p"
+
+           url =
+               mainUrl ++ "/fetchpurchases?oid=" ++ ticker ++ "&ptype=" ++ purchaseType ++ "&optype=" ++ optype
+
+           myDecoder =
+               JP.decode OptionPurchaseWithSale
+                   |> JP.required "oid" Json.int
+                   |> JP.required "ticker" Json.string
+                   |> JP.required "dx" Json.string
+                   |> JP.required "price" Json.float
+                   |> JP.required "spot" Json.float
+       in
+           Http.send PurchasesFetched <|
+               Http.get url (Json.list myDecoder)
 
 
-fetchOptionPurchases : String -> Bool -> Bool -> Cmd Msg
-fetchOptionPurchases ticker isRealTime isCalls =
-    let
-        purchaseType =
-            case isRealTime of
-                True ->
-                    "3"
-
-                False ->
-                    "11"
-
-        optype =
-            case isCalls of
-                True ->
-                    "c"
-
-                False ->
-                    "p"
-
-        url =
-            mainUrl ++ "/fetchpurchases?oid=" ++ ticker ++ "&ptype=" ++ purchaseType ++ "&optype=" ++ optype
-
-        myDecoder =
-            JP.decode OptionPurchaseWithSale
-                |> JP.required "oid" Json.int
-                |> JP.required "ticker" Json.string
-                |> JP.required "dx" Json.string
-                |> JP.required "price" Json.float
-                |> JP.required "spot" Json.float
-    in
-        Http.send PurchasesFetched <|
-            Http.get url (Json.list myDecoder)
+-}
 
 
 toggle : String -> Option -> Option
@@ -634,53 +650,4 @@ fetchTickers =
 
 
 
--- #endregion
--- #region OBSOLETE
-{-
-   [ H.ul [ A.class "nav nav-tabs" ]
-       [ H.li [ A.class "active" ]
-           [ H.a [ A.href "#geo1", A.attribute "data-toggle" "pill" ]
-               [ H.text "Geometry" ]
-           ]
-       , H.li []
-           [ H.a [ A.href "#loads1", A.attribute "data-toggle" "pill" ]
-               [ H.text "Loads" ]
-           ]
-       ]
-   , H.div [ A.class "tab-content" ]
-       [ H.div [ A.id "geo1", A.class "tab-pane in active" ]
-           [ H.div [ A.class "row" ]
-               [ H.div [ A.class "col-sm-3" ]
-                   [ H.text stockInfo ]
-               , button_ "Calc Risc" CalcRisc
-               , H.div [ A.class "col-sm-2" ]
-                   [ H.input [ A.placeholder "Risc", E.onInput RiscChange ] [] ]
-               , button_ "Reset Cache" ResetCache
-               , H.div [ A.class "col-sm-3" ]
-                   [ CMB.makeSelect "Tickers: " FetchOptions model.tickers model.selectedTicker ]
-               ]
-           , H.div [ A.class "row" ]
-               [ Table.view config model.tableState opx
-               ]
-           , DLG.modalDialog dlgHeader
-               model.dlgPurchase
-               PurchaseDlgOk
-               PurchaseDlgCancel
-               []
-           ]
-       , H.div [ A.id "loads1", A.class "tab-pane" ]
-           []
-       ]
-   ]
-   type alias Stock =
-       { dx : String
-       }
-
-
-   type alias StockWithOptions =
-       { stock : Stock
-       , options : List Option
-       }
-
--}
 -- #endregion
