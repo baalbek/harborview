@@ -157,9 +157,9 @@ makeLabel caption =
     H.label [] [ H.text caption ]
 
 
-makeInput : (String -> a) -> VD.Node a
-makeInput msg =
-    H.input [ A.class "form-control", onChange msg ] []
+makeInput : (String -> a) -> String -> VD.Node a
+makeInput msg initVal =
+    H.input [ A.class "form-control", onChange msg, A.value initVal ] []
 
 
 type ColXs

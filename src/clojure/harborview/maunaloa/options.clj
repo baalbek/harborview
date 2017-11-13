@@ -128,6 +128,29 @@
       false)
     false))
 
+
+(defn stock [ticker]
+  (let [^Tuple3 parsed (parse-html ticker)]
+    (.first parsed)))
+
+(def option-cache (atom {}))
+
+(defn populate-cache [options]
+  (doseq [o options]
+    (swap! option-cache assoc (.getTicker o) o)))
+
+(defn-memb calls [ticker]
+  (let [^Tuple3 parsed (parse-html ticker)
+        result (filter valid? (.second parsed))]
+    (populate-cache result)
+    result))
+
+(defn-memb puts [ticker]
+  (let [^Tuple3 parsed (parse-html ticker)
+        result (filter valid? (.third parsed))]
+    (populate-cache result)
+    result))
+
 ; region JSON
 (defn option->json [^DerivativePrice o]
   (let [iv-buy (-> o .getIvBuy .get)
@@ -170,6 +193,7 @@
   (let [calc (S/get-bean "calculator")
         oid (.getOid p)
         ticker (.getOptionName p)
+        stock-ticker (.getTicker p)
         d0 (.getLocalDx p)
         ot (.getOptionType p)
         spot (.getSpotAtPurchase p)
@@ -182,39 +206,30 @@
         pvol (.getVolume p)
         svol (.volumeSold p)
         iv (if (= ot "c")
-            (.ivCall calc spot x t price)
-            (.ivPut calc spot x t price))]
+            (.ivCall calc spot x t bid)
+            (.ivPut calc spot x t bid))
+        cur-opt (let [items (if (= ot "c")
+                              (calls stock-ticker)
+                              (puts stock-ticker))]
+                  (first (filter #(= (.getTicker %) ticker) items)))
+        cur-ask (.getSell cur-opt)
+        cur-bid (.getBuy cur-opt)
+        cur-iv (.getIvBuy cur-opt)]
     {:oid oid
      :ot ot
      :ticker ticker
      :dx (CU/ld->str d0)
      :price price
-     :spot spot
      :bid bid
+     :spot spot
      :pvol pvol
      :svol svol
-     :iv iv}))
+     :iv (CU/double->decimal iv 1000.0)
+     :cur-ask cur-ask
+     :cur-bid cur-bid
+     :cur-iv (if (true? (.isPresent cur-iv))
+               (CU/double->decimal (.get cur-iv) 1000.0)
+               -1.0)}))
+
 
 ; endregion JSON
-
-(defn stock [ticker]
-  (let [^Tuple3 parsed (parse-html ticker)]
-    (.first parsed)))
-
-(def option-cache (atom {}))
-
-(defn populate-cache [options]
-  (doseq [o options]
-    (swap! option-cache assoc (.getTicker o) o)))
-
-(defn-memb calls [ticker]
-  (let [^Tuple3 parsed (parse-html ticker)
-        result (filter valid? (.second parsed))]
-    (populate-cache result)
-    result))
-
-(defn-memb puts [ticker]
-  (let [^Tuple3 parsed (parse-html ticker)
-        result (filter valid? (.third parsed))]
-    (populate-cache result)
-    result))

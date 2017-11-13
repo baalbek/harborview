@@ -273,9 +273,13 @@
 
 ; endregion
 
-(defn ptest []
-  (let [purchases (DBX/option-purchases 3 11 1 nil)]
-    (U/json-response (map OPX/purchasesales->json purchases))))
+
+(defn fetchpurchases [oid ptype]
+  (let [purchases (DBX/option-purchases (U/rs oid) (U/rs ptype) 1 nil)
+        cur-stock (.get (OPX/stock (tick-str oid)))]
+    (U/json-response {:purchases (map OPX/purchasesales->json purchases)
+                      :cur-dx (CU/ld->str (.getLocalDx cur-stock))
+                      :cur-spot (.getCls cur-stock)})))
 
 (defroutes my-routes
   (GET "/to_r" [oid] (to_R (U/rs oid)))
@@ -306,12 +310,13 @@
   (GET "/optionprice" [ticker stockprice]
     (U/json-response (calc-optionprice-for-stockprice ticker stockprice)))
   (GET "/tickers" request (tickers))
-  (GET "/fetchpurchases" [oid ptype optype]
-    (let [purchases (DBX/option-purchases (U/rs oid) (U/rs ptype) 1 optype)]
-      (U/json-response (map OPX/purchase->json purchases))))
-  (GET "/fetchpurchases2" [oid ptype]
-    (let [purchases (DBX/option-purchases (U/rs oid) (U/rs ptype) 1 nil)]
-      (U/json-response (map OPX/purchasesales->json purchases))))
+  ;(GET "/fetchpurchases" [oid ptype optype]
+  ;  (fetchpurchases oid ptyp 1 optype))
+  (GET "/fetchpurchases" [oid ptype]
+    (fetchpurchases oid ptype))
+  (GET "/resetfetchpurchases" [oid ptype]
+    (binding [CU/*reset-cache* true]
+      (fetchpurchases oid ptype)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
   (GET "/resetticker" [oid]
     (binding [CU/*reset-cache* true]
