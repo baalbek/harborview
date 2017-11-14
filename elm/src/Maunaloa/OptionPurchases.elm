@@ -348,9 +348,9 @@ sellPurchase oid volume price =
             mainUrl ++ "/sellpurchase"
 
         params =
-            [ ( "pn", JE.int oid )
-            , ( "pn", JE.int volume )
-            , ( "pn", JE.float price )
+            [ ( "oid", JE.int oid )
+            , ( "vol", JE.int volume )
+            , ( "price", JE.float price )
             ]
 
         jbody =

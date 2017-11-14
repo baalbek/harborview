@@ -319,8 +319,8 @@
       (fetchpurchases oid ptype)))
   (POST "/sellpurchase" request
     (let [jr (U/json-req-parse request)
-          result "Sold! New sale oid: 34"];result (DBX/sell-purchase (jr "oid") (jr "price") (jr "volume"))]
-      (U/json-response result)))
+          result (DBX/sell-purchase (jr "oid") (jr "price") (jr "volume"))]
+      (U/json-response (str "Sold! Sale oid: " result))))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
   (GET "/resetticker" [oid]
     (binding [CU/*reset-cache* true]

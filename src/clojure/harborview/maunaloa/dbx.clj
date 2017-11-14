@@ -55,7 +55,7 @@
         result (get-week year-beans week)]
     result))
 
-;<editor-fold> Candlesticks Weeks
+; region Candlesticks Weeks
 
 (defn candlestick-collection [date-fn w]
   (let [lp (last w)
@@ -95,7 +95,7 @@
     (fn [ticker beans]
       (candlestick-weeks beans))))
 
-;</editor-fold>
+; endregion
 
 
 ;(defn by-year [prices years]
@@ -114,3 +114,6 @@
                  (map candlestick-coll->month (filter #(> (count %) 0) (map #(get-month y %) (range 1 13)))))]
     (flatten result)))
         ;months (for [y years] (map #(get-month y %) (range 1 13)))
+
+(defn sell-purchase [oid volume price]
+  1234)
