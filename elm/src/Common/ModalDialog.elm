@@ -1,12 +1,15 @@
-module Common.ModalDialog
-    exposing
-        ( ModalDialog
-        , dlgOpen
-        , dlgClose
-        , modalDialog
-        , AlertCategory(..)
-        , alert
-        )
+module Common.ModalDialog exposing (..)
+
+{-
+   ( ModalDialog
+   , dlgOpen
+   , dlgClose
+   , modalDialog
+   , AlertCategory(..)
+   , alert
+   )
+
+-}
 
 import VirtualDom as VD
 import Html as H
@@ -30,9 +33,14 @@ dlgClose =
     ModalDialog "0" "none"
 
 
+type DialogState
+    = DialogHidden
+    | DialogVisible
+
+
 modalDialog :
     String
-    -> ModalDialog
+    -> DialogState
     -> a
     -> a
     -> List (H.Html a)
@@ -52,8 +60,24 @@ modalDialog title md ok cancel content =
             [ okButton
             , cancelButton
             ]
+
+        opc =
+            case md of
+                DialogHidden ->
+                    "0"
+
+                DialogVisible ->
+                    "1"
+
+        ptre =
+            case md of
+                DialogHidden ->
+                    "none"
+
+                DialogVisible ->
+                    "auto"
     in
-        H.div [ A.class "modalDialog", A.style [ ( "opacity", md.opacity ), ( "pointer-events", md.pointerEvents ) ] ]
+        H.div [ A.class "modalDialog", A.style [ ( "opacity", opc ), ( "pointer-events", ptre ) ] ]
             [ H.div []
                 (titleDiv
                     :: content

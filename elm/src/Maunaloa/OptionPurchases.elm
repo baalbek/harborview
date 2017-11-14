@@ -36,8 +36,8 @@ initModel =
     , selectedTicker = "-1"
     , purchases = Nothing
     , isRealTimePurchase = True
-    , dlgSell = DLG.dlgClose
-    , dlgAlert = DLG.dlgClose
+    , dlgSell = DLG.DialogHidden
+    , dlgAlert = DLG.DialogHidden
     , selectedPurchase = Nothing
     , salePrice = "0.0"
     , saleVolume = "10"
@@ -102,8 +102,8 @@ type alias Model =
     , purchases : Maybe OptionPurchases
     , isRealTimePurchase : Bool
     , selectedPurchase : Maybe PurchaseWithSales
-    , dlgSell : DLG.ModalDialog
-    , dlgAlert : DLG.ModalDialog
+    , dlgSell : DLG.DialogState
+    , dlgAlert : DLG.DialogState
     , salePrice : String
     , saleVolume : String
     }
@@ -139,7 +139,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         AlertOk ->
-            ( { model | dlgAlert = DLG.dlgClose }, Cmd.none )
+            ( { model | dlgAlert = DLG.DialogVisible }, Cmd.none )
 
         TickersFetched (Ok s) ->
             ( { model
@@ -170,7 +170,7 @@ update msg model =
 
         SellClick p ->
             ( { model
-                | dlgSell = DLG.dlgOpen
+                | dlgSell = DLG.DialogVisible
                 , selectedPurchase = Just p
                 , salePrice = toString p.curBid
                 , saleVolume = toString (p.purchaseVolume - p.volumeSold)
@@ -192,7 +192,7 @@ update msg model =
                             M.unpackEither model.salePrice String.toFloat -1
                     in
                         ( { model
-                            | dlgSell = DLG.dlgClose
+                            | dlgSell = DLG.DialogHidden
                             , purchases = swap model.purchases curPur.oid (curPur.volumeSold + saleVol)
                           }
                           -- , Cmd.none
@@ -200,10 +200,10 @@ update msg model =
                         )
 
         SellDlgCancel ->
-            ( { model | dlgSell = DLG.dlgClose }, Cmd.none )
+            ( { model | dlgSell = DLG.DialogHidden }, Cmd.none )
 
         SaleOk (Ok s) ->
-            ( { model | dlgAlert = DLG.dlgOpen }, Cmd.none )
+            ( { model | dlgAlert = DLG.DialogVisible }, Cmd.none )
 
         SaleOk (Err s) ->
             Debug.log ("SaleOk Error: " ++ (M.httpErr2str s))
@@ -326,8 +326,8 @@ view model =
                 , M.makeLabel "Sale Volume:"
                 , M.makeInput SaleVolumeChange model.saleVolume
                 ]
-            , DLG.alert "Alert!" "Sold!" DLG.Info model.dlgAlert AlertOk
 
+            -- , DLG.alert "Alert!" "Sold!" DLG.Info model.dlgAlert AlertOk
             {-
                , H.div [ A.class "row" ]
                    [ purchaseTable
