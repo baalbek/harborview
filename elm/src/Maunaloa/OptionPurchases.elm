@@ -7,7 +7,7 @@ import Html.Events as E
 import Json.Decode as Json
 import Json.Decode.Pipeline as JP
 import Common.ComboBox as CMB
-import Common.Miscellaneous as MISC
+import Common.Miscellaneous as M
 import Common.Buttons as BTN
 import Common.ModalDialog as DLG
 
@@ -109,6 +109,27 @@ type alias Model =
 -- region UPDATE
 
 
+swap : Maybe OptionPurchases -> Int -> Int -> Maybe OptionPurchases
+swap lx oid saleVol =
+    case lx of
+        Nothing ->
+            Nothing
+
+        Just lxx ->
+            let
+                swapFn : PurchaseWithSales -> PurchaseWithSales
+                swapFn x =
+                    if x.oid == oid then
+                        { x | volumeSold = x.volumeSold + saleVol }
+                    else
+                        x
+
+                modifiedPurchases =
+                    List.map swapFn lxx.purchases
+            in
+                Just { lxx | purchases = modifiedPurchases }
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -120,7 +141,7 @@ update msg model =
             )
 
         TickersFetched (Err s) ->
-            Debug.log ("TickersFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
+            Debug.log ("TickersFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
         ToggleRealTimePurchase ->
             let
@@ -137,7 +158,7 @@ update msg model =
             ( { model | purchases = Just s }, Cmd.none )
 
         PurchasesFetched (Err s) ->
-            Debug.log ("PurchasesFetched Error: " ++ (MISC.httpErr2str s)) ( model, Cmd.none )
+            Debug.log ("PurchasesFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
         SellClick p ->
             ( { model
@@ -150,8 +171,25 @@ update msg model =
             )
 
         SellDlgOk ->
-            Debug.log "SellDlgOk:"
-                ( { model | dlgSell = DLG.dlgClose }, Cmd.none )
+            case model.selectedPurchase of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just curPur ->
+                    let
+                        saleVol =
+                            M.unpackEither model.saleVolume String.toInt -1
+
+                        salePri =
+                            M.unpackEither model.salePrice String.toFloat -1
+                    in
+                        Debug.log "SellDlgOk:"
+                            ( { model
+                                | dlgSell = DLG.dlgClose
+                                , purchases = swap model.purchases curPur.oid (curPur.volumeSold + saleVol)
+                              }
+                            , Cmd.none
+                            )
 
         SellDlgCancel ->
             ( { model | dlgSell = DLG.dlgClose }, Cmd.none )
@@ -209,10 +247,10 @@ view model =
                         toRow x =
                             let
                                 diffBid =
-                                    MISC.toDecimal (x.curBid - x.bid) 10.0
+                                    M.toDecimal (x.curBid - x.bid) 10.0
 
                                 diffIv =
-                                    MISC.toDecimal (100.0 * ((x.curIv / x.iv) - 1.0)) 100.0
+                                    M.toDecimal (100.0 * ((x.curIv / x.iv) - 1.0)) 100.0
 
                                 oidStr =
                                     toString x.oid
@@ -259,7 +297,7 @@ view model =
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
                 [ -- button_ "Fetch Purchases" (FetchPurchases model.selectedTicker)
-                  MISC.checkbox "Real-time purchase" True ToggleRealTimePurchase
+                  M.checkbox "Real-time purchase" True ToggleRealTimePurchase
                 , H.div [ A.class "col-sm-3" ]
                     [ CMB.makeSelect "Tickers: " FetchPurchases model.tickers model.selectedTicker ]
                 ]
@@ -268,10 +306,10 @@ view model =
                 model.dlgSell
                 SellDlgOk
                 SellDlgCancel
-                [ MISC.makeLabel "Sale Price:"
-                , MISC.makeInput SalePriceChange model.salePrice
-                , MISC.makeLabel "Sale Volume:"
-                , MISC.makeInput SaleVolumeChange model.saleVolume
+                [ M.makeLabel "Sale Price:"
+                , M.makeInput SalePriceChange model.salePrice
+                , M.makeLabel "Sale Volume:"
+                , M.makeInput SaleVolumeChange model.saleVolume
                 ]
 
             {-

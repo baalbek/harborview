@@ -26,12 +26,22 @@
 
 ;(def conn (atom (mg/connect {:host "172.17.0.3"})))
 
-(defn opx []
-  (DB/with-session :ranoraraku CritterMapper
-    (.activePurchasesAll it 11)))
+(def factory
+  (memoize
+    (fn []
+      (ClassPathXmlApplicationContext. "harborview.xml"))))
 
-(defn px [oid]
-  (filter #(= (.getOid %) oid) (opx)))
+(defn calc []
+  (.getBean (factory) "calculator"))
+
+(defn opx [oid status optype]
+  (DB/with-session :ranoraraku CritterMapper
+    (.purchasesWithSales it oid 11 status optype)))
+
+
+(def px OPX/purchasesales->json)
+
+(def calls OPX/calls)
 
 (comment
   (def min-dx (LocalDate/of 2004 1 1))

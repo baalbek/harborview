@@ -12,6 +12,20 @@ import Tuple exposing (first, second)
 import Time exposing (Time)
 
 
+unpackEither : String -> (String -> Result String a) -> a -> a
+unpackEither s f default =
+    let
+        x =
+            f s
+    in
+        case x of
+            Ok okx ->
+                okx
+
+            Err _ ->
+                default
+
+
 asHttpBody : List ( String, JE.Value ) -> Http.Body
 asHttpBody lx =
     let

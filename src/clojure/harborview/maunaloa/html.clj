@@ -317,6 +317,10 @@
   (GET "/resetfetchpurchases" [oid ptype]
     (binding [CU/*reset-cache* true]
       (fetchpurchases oid ptype)))
+  (comment "/sellpurchase" request
+    (let [jr (U/json-req-parse request)
+          result (DBX/sell-purchase (jr "oid") (jr "price") (jr "volume"))]
+      (U/json-response result)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
   (GET "/resetticker" [oid]
     (binding [CU/*reset-cache* true]
