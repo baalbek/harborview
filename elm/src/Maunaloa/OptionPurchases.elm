@@ -6,6 +6,7 @@ import Html.Attributes as A
 import Html.Events as E
 import Json.Decode as Json
 import Json.Decode.Pipeline as JP
+import Json.Encode as JE
 import Common.ComboBox as CMB
 import Common.Miscellaneous as M
 import Common.Buttons as BTN
@@ -36,6 +37,7 @@ initModel =
     , purchases = Nothing
     , isRealTimePurchase = True
     , dlgSell = DLG.dlgClose
+    , dlgAlert = DLG.dlgClose
     , selectedPurchase = Nothing
     , salePrice = "0.0"
     , saleVolume = "10"
@@ -88,8 +90,10 @@ type Msg
     | SellClick PurchaseWithSales
     | SellDlgOk
     | SellDlgCancel
+    | SaleOk (Result Http.Error String)
     | SalePriceChange String
     | SaleVolumeChange String
+    | AlertOk
 
 
 type alias Model =
@@ -99,6 +103,7 @@ type alias Model =
     , isRealTimePurchase : Bool
     , selectedPurchase : Maybe PurchaseWithSales
     , dlgSell : DLG.ModalDialog
+    , dlgAlert : DLG.ModalDialog
     , salePrice : String
     , saleVolume : String
     }
@@ -133,6 +138,9 @@ swap lx oid saleVol =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        AlertOk ->
+            ( { model | dlgAlert = DLG.dlgClose }, Cmd.none )
+
         TickersFetched (Ok s) ->
             ( { model
                 | tickers = Just s
@@ -183,16 +191,23 @@ update msg model =
                         salePri =
                             M.unpackEither model.salePrice String.toFloat -1
                     in
-                        Debug.log "SellDlgOk:"
-                            ( { model
-                                | dlgSell = DLG.dlgClose
-                                , purchases = swap model.purchases curPur.oid (curPur.volumeSold + saleVol)
-                              }
-                            , Cmd.none
-                            )
+                        ( { model
+                            | dlgSell = DLG.dlgClose
+                            , purchases = swap model.purchases curPur.oid (curPur.volumeSold + saleVol)
+                          }
+                          -- , Cmd.none
+                        , sellPurchase curPur.oid saleVol salePri
+                        )
 
         SellDlgCancel ->
             ( { model | dlgSell = DLG.dlgClose }, Cmd.none )
+
+        SaleOk (Ok s) ->
+            ( { model | dlgAlert = DLG.dlgOpen }, Cmd.none )
+
+        SaleOk (Err s) ->
+            Debug.log ("SaleOk Error: " ++ (M.httpErr2str s))
+                ( model, Cmd.none )
 
         SalePriceChange s ->
             ( { model | salePrice = s }, Cmd.none )
@@ -256,7 +271,7 @@ view model =
                                     toString x.oid
                             in
                                 H.tr []
-                                    [ H.button [ A.class "btn btn-default", E.onClick (SellClick x) ] [ H.text ("Sell " ++ oidStr) ]
+                                    [ H.button [ A.class "btn btn-success", E.onClick (SellClick x) ] [ H.text ("Sell " ++ oidStr) ]
                                     , H.td [] [ H.text oidStr ]
                                     , H.td [] [ H.text x.optionType ]
                                     , H.td [] [ H.text x.ticker ]
@@ -311,6 +326,7 @@ view model =
                 , M.makeLabel "Sale Volume:"
                 , M.makeInput SaleVolumeChange model.saleVolume
                 ]
+            , DLG.alert "Alert!" "Sold!" DLG.Info model.dlgAlert AlertOk
 
             {-
                , H.div [ A.class "row" ]
@@ -323,6 +339,25 @@ view model =
 
 -- endregion
 -- region COMMANDS
+
+
+sellPurchase : Int -> Int -> Float -> Cmd Msg
+sellPurchase oid volume price =
+    let
+        url =
+            mainUrl ++ "/sellpurchase"
+
+        params =
+            [ ( "pn", JE.int oid )
+            , ( "pn", JE.int volume )
+            , ( "pn", JE.float price )
+            ]
+
+        jbody =
+            M.asHttpBody params
+    in
+        Http.send SaleOk <|
+            Http.post url jbody Json.string
 
 
 fetchTickers : Cmd Msg

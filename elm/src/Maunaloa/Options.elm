@@ -359,7 +359,7 @@ buttonColumn =
 tableButton : Option -> Table.HtmlDetails Msg
 tableButton opt =
     Table.HtmlDetails []
-        [ H.button [ E.onClick (PurchaseClick opt) ] [ H.text "Buy" ]
+        [ H.button [ A.class "btn btn-success", E.onClick (PurchaseClick opt) ] [ H.text "Buy" ]
         ]
 
 
