@@ -16,7 +16,7 @@ import Html as H
 import Html.Attributes as A
 import Html.Events as E
 
-
+{-
 type alias ModalDialog =
     { opacity : String
     , pointerEvents : String
@@ -31,12 +31,19 @@ dlgOpen =
 dlgClose : ModalDialog
 dlgClose =
     ModalDialog "0" "none"
-
+-}
 
 type DialogState
     = DialogHidden
     | DialogVisible
+    | DialogVisibleAlert String String
 
+
+dialogStatePrm : DialogState -> (String,String)
+dialogStatePrm s = 
+    case s of
+        DialogHidden -> ("0","none")
+        _ -> ("1","auto")
 
 modalDialog :
     String
@@ -45,7 +52,7 @@ modalDialog :
     -> a
     -> List (H.Html a)
     -> H.Html a
-modalDialog title md ok cancel content =
+modalDialog title dialogState ok cancel content =
     let
         titleDiv =
             H.h4 [] [ H.text title ]
@@ -61,21 +68,7 @@ modalDialog title md ok cancel content =
             , cancelButton
             ]
 
-        opc =
-            case md of
-                DialogHidden ->
-                    "0"
-
-                DialogVisible ->
-                    "1"
-
-        ptre =
-            case md of
-                DialogHidden ->
-                    "none"
-
-                DialogVisible ->
-                    "auto"
+        (opc,ptre) = dialogStatePrm dialogState 
     in
         H.div [ A.class "modalDialog", A.style [ ( "opacity", opc ), ( "pointer-events", ptre ) ] ]
             [ H.div []
@@ -107,30 +100,36 @@ type AlertCategory
     | Error
 
 
-alert : String -> String -> AlertCategory -> ModalDialog -> a -> H.Html a
-alert title msg alertCat md ok =
-    let
-        titleDiv =
-            H.h4 [] [ H.text title ]
+alert : DialogState -> AlertCategory -> a -> H.Html a
+alert state alertCat ok =
+    case state of   
+        DialogVisibleAlert title msg ->
+            let
+                titleDiv =
+                    H.h4 [] [ H.text title ]
 
-        btnClass =
-            case alertCat of
-                Info ->
-                    "btn btn-outline-info"
+                btnClass =
+                    case alertCat of
+                        Info ->
+                            "btn btn-outline-info"
 
-                Warn ->
-                    "btn btn-outline-warning"
+                        Warn ->
+                            "btn btn-outline-warning"
 
-                Error ->
-                    "btn btn-outline-danger"
+                        Error ->
+                            "btn btn-outline-danger"
 
-        okButton =
-            H.button [ A.class btnClass, E.onClick ok ] [ H.text "OK" ]
+                okButton =
+                    H.button [ A.class btnClass, E.onClick ok ] [ H.text "OK" ]
 
-        content =
-            H.div [] [ H.p [] [ H.text msg ] ]
-    in
-        H.div [ A.class "modalDialog", A.style [ ( "opacity", md.opacity ), ( "pointer-events", md.pointerEvents ) ] ]
-            [ H.div []
-                [ titleDiv, content, okButton ]
-            ]
+                content =
+                    H.div [] [ H.p [] [ H.text msg ] ]
+
+            in
+                H.div [ A.class "modalDialog", A.style [ ( "opacity", "1"), ( "pointer-events", "auto") ] ]
+                    [ H.div []
+                        [ titleDiv, content, okButton ]
+                    ]
+        _ ->
+            H.div [ A.class "modalDialog", A.style [ ( "opacity", "0"), ( "pointer-events", "none") ] ]
+                []
