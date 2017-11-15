@@ -93,7 +93,7 @@ type Msg
     | SaleOk (Result Http.Error String)
     | SalePriceChange String
     | SaleVolumeChange String
-    | AlertOk 
+    | AlertOk
 
 
 type alias Model =
@@ -203,11 +203,14 @@ update msg model =
             ( { model | dlgSell = DLG.DialogHidden }, Cmd.none )
 
         SaleOk (Ok s) ->
-            ( { model | dlgAlert = DLG.DialogVisibleAlert "Purchase Sale" s}, Cmd.none )
+            ( { model | dlgAlert = DLG.DialogVisibleAlert "Purchase Sale" s DLG.Info }, Cmd.none )
 
         SaleOk (Err s) ->
-            Debug.log ("SaleOk Error: " ++ (M.httpErr2str s))
-                ( model, Cmd.none )
+            let
+                errStr =
+                    "SaleOk Error: " ++ (M.httpErr2str s)
+            in
+                ( { model | dlgAlert = DLG.DialogVisibleAlert "Purchase Sale ERROR!" errStr DLG.Error }, Cmd.none )
 
         SalePriceChange s ->
             ( { model | salePrice = s }, Cmd.none )
@@ -326,7 +329,7 @@ view model =
                 , M.makeLabel "Sale Volume:"
                 , M.makeInput SaleVolumeChange model.saleVolume
                 ]
-            , DLG.alert model.dlgAlert DLG.Info AlertOk
+            , DLG.alert model.dlgAlert AlertOk
             ]
 
 
