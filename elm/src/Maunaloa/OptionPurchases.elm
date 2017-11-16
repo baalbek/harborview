@@ -135,6 +135,11 @@ swap lx oid saleVol =
                 Just { lxx | purchases = modifiedPurchases }
 
 
+errorAlert : Http.Error -> Cmd Msg
+errorAlert err =
+    Cmd.none
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of

@@ -275,7 +275,7 @@
 
 
 (defn fetchpurchases [oid ptype]
-  (let [purchases (DBX/option-purchases (U/rs oid) (U/rs ptype) 1 nil)
+  (let [purchases (OPX/option-purchases (U/rs oid) (U/rs ptype) 1 nil)
         cur-stock (.get (OPX/stock (tick-str oid)))]
     (U/json-response {:purchases (map OPX/purchasesales->json purchases)
                       :cur-dx (CU/ld->str (.getLocalDx cur-stock))

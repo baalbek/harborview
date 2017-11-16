@@ -20,10 +20,6 @@
   (DB/with-session :ranoraraku StockMapper
     (.selectStockPrices it oid from-date)))
 
-(defn option-purchases [stock-id purchase-type status optype]
-  (DB/with-session :ranoraraku CritterMapper
-    (.purchasesWithSales it stock-id purchase-type status optype)))
-
 (CU/defn-memb fetch-prices-m [oid from-date]
   (println "fetch-prices-m: " oid ", " from-date)
   (fetch-prices oid  from-date))
@@ -114,6 +110,3 @@
                  (map candlestick-coll->month (filter #(> (count %) 0) (map #(get-month y %) (range 1 13)))))]
     (flatten result)))
         ;months (for [y years] (map #(get-month y %) (range 1 13)))
-
-(defn sell-purchase [oid volume price]
-  1234)

@@ -70,6 +70,7 @@
 
 ; endregion
 
+; region NETFONDS REPOS
 (defn today-feed [feed]
   (let [dx (LocalDate/now)
         y (.getYear dx)
@@ -150,6 +151,20 @@
         result (filter valid? (.third parsed))]
     (populate-cache result)
     result))
+
+; endregion
+
+;region OPTION PURCHASES
+
+(defn option-purchases [stock-id purchase-type status optype]
+  (DB/with-session :ranoraraku CritterMapper
+    (.purchasesWithSales it stock-id purchase-type status optype)))
+
+(defn sell-purchase [oid volume price]
+  (let [p (filter #(.getOid %) (option-purchases))])
+  1234)
+
+; endregion
 
 ; region JSON
 (defn option->json [^DerivativePrice o]
