@@ -4,6 +4,8 @@
     [java.time.temporal IsoFields]
     [ranoraraku.beans StockPriceBean]
     [ranoraraku.models.mybatis CritterMapper StockMapper])
+  (:use
+    [harborview.service.commonutils :only (*reset-cache*)])
   (:require
     [harborview.service.commonutils :as CU]
     [harborview.service.db :as DB]))
@@ -110,3 +112,42 @@
                  (map candlestick-coll->month (filter #(> (count %) 0) (map #(get-month y %) (range 1 13)))))]
     (flatten result)))
         ;months (for [y years] (map #(get-month y %) (range 1 13)))
+
+;region OPTION PURCHASES
+
+
+(defn option-purchases [stock-id purchase-type status optype]
+  (DB/with-session :ranoraraku CritterMapper
+    (.purchasesWithSales it stock-id purchase-type status optype)))
+
+(defn sell-purchase [oid volume price]
+  (let [p (filter #(.getOid %) (option-purchases))]
+    1234))
+
+(defn cache-key [stock-id purchase-type status optype]
+  (str stock-id ":" purchase-type ":" status ":" optype))
+
+(def opx
+  (let [cache (atom {})
+        cache2 (atom {})]
+    {:opx1
+      (fn [stock-id purchase-type status optype]
+        (if (= *reset-cache* true)
+          (do
+            (reset! cache {})
+            (reset! cache2 {})))
+        (let [key (cache-key stock-id purchase-type status optype)]
+          (if-let [e (find @cache key)]
+            (val e)
+            (let [ret (option-purchases stock-id purchase-type status optype)]
+              (prn "FIRST TIME: " key)
+              (doseq [r ret]
+                (let [oid (.getOid r)]
+                  (swap! cache2 assoc oid r)))
+              (swap! cache assoc key ret)
+              ret))))
+     :opx2
+      (fn [oid]
+        (@cache2 oid))}))
+
+; endregion

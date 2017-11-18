@@ -5,6 +5,8 @@
     [org.springframework.context.support ClassPathXmlApplicationContext]
     [ org.bson.types ObjectId]
     [ranoraraku.models.mybatis CritterMapper])
+  (:use
+    [harborview.service.commonutils :only (*reset-cache*)])
   (:require
     [monger.core :as mg]
     [monger.collection :as mc]
@@ -34,7 +36,7 @@
 (defn calc []
   (.getBean (factory) "calculator"))
 
-(defn opx [oid status optype]
+(comment opx [oid status optype]
   (DB/with-session :ranoraraku CritterMapper
     (.purchasesWithSales it oid 11 status optype)))
 
@@ -42,6 +44,8 @@
 (def px OPX/purchasesales->json)
 
 (def calls OPX/calls)
+
+(def opx DBX/opx)
 
 (comment
   (def min-dx (LocalDate/of 2004 1 1))

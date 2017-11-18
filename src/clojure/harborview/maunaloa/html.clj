@@ -273,9 +273,11 @@
 
 ; endregion
 
+(def opx1 (:opx1 DBX/opx))
+(def opx2 (:opx2 DBX/opx))
 
 (defn fetchpurchases [oid ptype]
-  (let [purchases (OPX/option-purchases (U/rs oid) (U/rs ptype) 1 nil)
+  (let [purchases (opx1 (U/rs oid) (U/rs ptype) 1 nil)
         cur-stock (.get (OPX/stock (tick-str oid)))]
     (U/json-response {:purchases (map OPX/purchasesales->json purchases)
                       :cur-dx (CU/ld->str (.getLocalDx cur-stock))
