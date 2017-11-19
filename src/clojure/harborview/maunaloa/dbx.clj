@@ -117,27 +117,27 @@
 ;region OPTION PURCHASES
 
 
-(defn option-purchases [stock-id purchase-type status optype]
+(defn option-purchases [stock-id purchase-type status]
   (DB/with-session :ranoraraku CritterMapper
-    (.purchasesWithSales it stock-id purchase-type status optype)))
+    (.purchasesWithSales it stock-id purchase-type status nil)))
 
 
-(defn cache-key [stock-id purchase-type status optype]
-  (str stock-id ":" purchase-type ":" status ":" optype))
+(defn cache-key [stock-id purchase-type status]
+  (str stock-id ":" purchase-type ":" status))
 
 (def opx
   (let [cache (atom {})
         cache2 (atom {})]
     {:opx1
-      (fn [stock-id purchase-type status optype]
+      (fn [stock-id purchase-type status]
         (if (= *reset-cache* true)
           (do
             (reset! cache {})
             (reset! cache2 {})))
-        (let [key (cache-key stock-id purchase-type status optype)]
+        (let [key (cache-key stock-id purchase-type status)]
           (if-let [e (find @cache key)]
             (val e)
-            (let [ret (option-purchases stock-id purchase-type status optype)]
+            (let [ret (option-purchases stock-id purchase-type status)]
               (doseq [r ret]
                 (let [oid (.getOid r)]
                   (swap! cache2 assoc oid r)))
@@ -154,7 +154,9 @@
       (DB/with-session :ranoraraku CritterMapper
         (do
           (if (.isFullySold p)
-            (.registerPurchaseFullySold it p))
+            (do
+              (.setStatus p 2)
+              (.registerPurchaseFullySold it p)))
           (.insertCritterSale it sale)))
       (.getOid sale))
     -1))
