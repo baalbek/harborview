@@ -45,7 +45,10 @@
 
 (def calls OPX/calls)
 
-(def opx DBX/opx)
+(def opx1 (:opx1 DBX/opx))
+(def opx2 (:opx2 DBX/opx))
+
+(def sell DBX/sell-purchase)
 
 (comment
   (def min-dx (LocalDate/of 2004 1 1))

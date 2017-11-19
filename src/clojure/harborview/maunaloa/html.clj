@@ -274,7 +274,6 @@
 ; endregion
 
 (def opx1 (:opx1 DBX/opx))
-(def opx2 (:opx2 DBX/opx))
 
 (defn fetchpurchases [oid ptype]
   (let [purchases (opx1 (U/rs oid) (U/rs ptype) 1 nil)
@@ -321,7 +320,8 @@
       (fetchpurchases oid ptype)))
   (POST "/sellpurchase" request
     (let [jr (U/json-req-parse request)
-          result (DBX/sell-purchase (jr "oid") (jr "price") (jr "volume"))]
+          result (DBX/sell-purchase (jr "oid") (jr "price") (jr "vol"))]
+      (prn (str "Oid: " (jr "oid") ", price: " (jr "price") ", volume: " (jr "vol")))
       (U/json-response (str "Sold! Sale oid: " result))))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
   (GET "/resetticker" [oid]

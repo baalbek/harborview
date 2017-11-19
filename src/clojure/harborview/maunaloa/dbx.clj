@@ -3,6 +3,7 @@
     [java.time LocalDate]
     [java.time.temporal IsoFields]
     [ranoraraku.beans StockPriceBean]
+    [ranoraraku.beans.options OptionSaleBean]
     [ranoraraku.models.mybatis CritterMapper StockMapper])
   (:use
     [harborview.service.commonutils :only (*reset-cache*)])
@@ -120,9 +121,6 @@
   (DB/with-session :ranoraraku CritterMapper
     (.purchasesWithSales it stock-id purchase-type status optype)))
 
-(defn sell-purchase [oid volume price]
-  (let [p (filter #(.getOid %) (option-purchases))]
-    1234))
 
 (defn cache-key [stock-id purchase-type status optype]
   (str stock-id ":" purchase-type ":" status ":" optype))
@@ -140,7 +138,6 @@
           (if-let [e (find @cache key)]
             (val e)
             (let [ret (option-purchases stock-id purchase-type status optype)]
-              (prn "FIRST TIME: " key)
               (doseq [r ret]
                 (let [oid (.getOid r)]
                   (swap! cache2 assoc oid r)))
@@ -149,5 +146,20 @@
      :opx2
       (fn [oid]
         (@cache2 oid))}))
+
+(defn sell-purchase [oid price volume]
+  (if-let [p ((:opx2 opx) oid)]
+    (let [sale (OptionSaleBean. oid price volume)]
+      (.addSale p sale)
+      (DB/with-session :ranoraraku CritterMapper
+        (do
+          (if (.isFullySold p)
+            (.registerPurchaseFullySold it p))
+          (.insertCritterSale it sale)))
+      (.getOid sale))
+    -1))
+
+
+
 
 ; endregion
