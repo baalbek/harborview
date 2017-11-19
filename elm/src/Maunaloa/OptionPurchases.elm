@@ -154,7 +154,11 @@ update msg model =
             )
 
         TickersFetched (Err s) ->
-            Debug.log ("TickersFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
+            let
+                errStr =
+                    "TickersFetched Error: " ++ (M.httpErr2str s)
+            in
+                ( { model | dlgAlert = DLG.DialogVisibleAlert "TickersFetched ERROR!" errStr DLG.Error }, Cmd.none )
 
         ToggleRealTimePurchase ->
             let
@@ -171,7 +175,11 @@ update msg model =
             ( { model | purchases = Just s }, Cmd.none )
 
         PurchasesFetched (Err s) ->
-            Debug.log ("PurchasesFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
+            let
+                errStr =
+                    "PurchasesFetched Error: " ++ (M.httpErr2str s)
+            in
+                ( { model | dlgAlert = DLG.DialogVisibleAlert "PurchasesFetched ERROR!" errStr DLG.Error }, Cmd.none )
 
         SellClick p ->
             ( { model
