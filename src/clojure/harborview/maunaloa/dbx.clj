@@ -136,7 +136,7 @@
             (reset! cache2 {})))
         (let [key (cache-key stock-id purchase-type status)]
           (if-let [e (find @cache key)]
-            (val e)
+            (filter #(= (.getStatus %) status) (val e))
             (let [ret (option-purchases stock-id purchase-type status)]
               (doseq [r ret]
                 (let [oid (.getOid r)]

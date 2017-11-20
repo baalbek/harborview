@@ -206,7 +206,9 @@ update msg model =
                     in
                         ( { model
                             | dlgSell = DLG.DialogHidden
-                            , purchases = swap model.purchases curPur.oid (curPur.volumeSold + saleVol)
+                            , purchases = swap model.purchases curPur.oid saleVol
+
+                            -- , purchases = swap model.purchases curPur.oid (curPur.volumeSold + saleVol)
                           }
                           -- , Cmd.none
                         , sellPurchase curPur.oid saleVol salePri
