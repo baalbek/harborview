@@ -142,7 +142,7 @@ type alias Model =
     , risc : String
     , flags : Flags
     , tableState : Table.State
-    , dlgPurchase : DLG.ModalDialog
+    , dlgPurchase : DLG.DialogState
     , selectedPurchase : Maybe Option
 
     -- , isRealTimePurchase : Bool
@@ -279,7 +279,7 @@ initModel flags =
     , risc = "0.0"
     , flags = flags
     , tableState = Table.initialSort "Ticker"
-    , dlgPurchase = DLG.dlgClose
+    , dlgPurchase = DLG.DialogHidden
     , selectedPurchase = Nothing
 
     -- , isRealTimePurchase = True
@@ -431,13 +431,13 @@ update msg model =
                     )
 
         PurchaseClick opt ->
-            ( { model | dlgPurchase = DLG.dlgOpen, selectedPurchase = Just opt }, Cmd.none )
+            ( { model | dlgPurchase = DLG.DialogVisible, selectedPurchase = Just opt }, Cmd.none )
 
         PurchaseDlgOk ->
-            ( { model | dlgPurchase = DLG.dlgClose }, Cmd.none )
+            ( { model | dlgPurchase = DLG.DialogHidden }, Cmd.none )
 
         PurchaseDlgCancel ->
-            ( { model | dlgPurchase = DLG.dlgClose }, Cmd.none )
+            ( { model | dlgPurchase = DLG.DialogHidden }, Cmd.none )
 
 
 
@@ -538,9 +538,8 @@ calcRisc model =
             mainUrl ++ "/calc-risc-stockprices"
 
         opx =
-            []
+            Maybe.withDefault [] model.options
 
-        -- Maybe.withDefault [] model.options
         checked =
             List.filter (\x -> x.selected == True) opx
 
