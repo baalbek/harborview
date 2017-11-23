@@ -133,7 +133,7 @@ type alias Model =
     , dropItems : Int
     , takeItems : Int
     , flags : Flags
-    , dlgOptions : DLG.ModalDialog
+    , dlgOptions : DLG.DialogState
     , optionPurchases : Maybe OptionPurchases
     }
 
@@ -148,7 +148,7 @@ initModel flags =
     , dropItems = 0
     , takeItems = 90
     , flags = flags
-    , dlgOptions = DLG.dlgClose
+    , dlgOptions = DLG.DialogHidden
     , optionPurchases = Nothing
     }
 
@@ -169,7 +169,7 @@ type Msg
     | SpotFetched (Result Http.Error Spot)
     | ResetCache
     | OptionsPurchasesClick
-    | OptionsPurchasesFetched
+    -- | OptionsPurchasesFetched
     | OptionsDlgOk
     | OptionsDlgCancel
 
@@ -477,16 +477,16 @@ update msg model =
             ( model, fetchCharts model.selectedTicker model True )
 
         OptionsPurchasesClick ->
-            ( model, fetchOptionPurchases model )
+            ( model, fetchOptionPurchases model.selectedTicker)
 
-        OptionsPurchasesFetched ->
-            ( { model | dlgOptions = DLG.dlgOpen }, Cmd.none )
+        -- OptionsPurchasesFetched ->
+        --     ( { model | dlgOptions = DLG.DialogVisible }, Cmd.none )
 
         OptionsDlgOk ->
-            ( { model | dlgOptions = DLG.dlgClose }, Cmd.none )
+            ( { model | dlgOptions = DLG.DialogHidden }, Cmd.none )
 
         OptionsDlgCancel ->
-            ( { model | dlgOptions = DLG.dlgClose }, Cmd.none )
+            ( { model | dlgOptions = DLG.DialogHidden }, Cmd.none )
 
 
 
@@ -509,11 +509,13 @@ update msg model =
 -}
 
 
-fetchOptionPurchases : Model -> Cmd Msg
+fetchOptionPurchases : String -> Cmd Msg
 fetchOptionPurchases ticker =
+  Cmd.none
+  {-
     let
         url =
-            mainUrl ++ "/optionpurchases?ticker=" ++ model.selectedTicker
+            mainUrl ++ "/optionpurchases?ticker=" ++ ticker --
 
         myDecoder =
             JP.decode OptionPurchase
@@ -530,7 +532,7 @@ fetchOptionPurchases ticker =
     in
         Http.send OptionsPurchasesFetched <|
             Http.get url (Json.list myDecoder)
-
+-}
 
 fetchSpot : Model -> Cmd Msg
 fetchSpot model =
