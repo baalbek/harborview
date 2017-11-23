@@ -126,6 +126,7 @@ type Msg
     | PurchaseClick Option
     | PurchaseDlgOk
     | PurchaseDlgCancel
+    | OptionPurchased (Result Http.Error String)
     | ToggleRealTimePurchase
     | AskChange String
     | BidChange String
@@ -148,6 +149,7 @@ type alias Model =
     , flags : Flags
     , tableState : Table.State
     , dlgPurchase : DLG.DialogState
+    , dlgAlert : DLG.DialogState
     , selectedPurchase : Maybe Option
     , isRealTimePurchase : Bool
     , ask : String
@@ -167,6 +169,7 @@ initModel flags =
     , flags = flags
     , tableState = Table.initialSort "Ticker"
     , dlgPurchase = DLG.DialogHidden
+    , dlgAlert = DLG.DialogHidden
     , selectedPurchase = Nothing
     , isRealTimePurchase = True
     , ask = "0.0"
@@ -319,6 +322,15 @@ tableButton opt =
 -- #region UPDATE
 
 
+errorAlert : String -> String -> Http.Error -> Model -> ( Model, Cmd Msg )
+errorAlert title errMsg httpErr model =
+    let
+        errStr =
+            errMsg ++ (M.httpErr2str httpErr)
+    in
+        ( { model | dlgAlert = DLG.DialogVisibleAlert title errStr DLG.Error }, Cmd.none )
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -350,7 +362,7 @@ update msg model =
             ( model, fetchOptions model model.selectedTicker True )
 
         CalcRisc ->
-            ( model, calcRisc model )
+            ( model, calcRisc model.risc model.options )
 
         RiscCalculated (Ok s) ->
             case model.options of
@@ -398,6 +410,12 @@ update msg model =
         PurchaseDlgCancel ->
             ( { model | dlgPurchase = DLG.DialogHidden }, Cmd.none )
 
+        OptionPurchased (Ok s) ->
+            ( { model | dlgAlert = DLG.DialogVisibleAlert "Option purchase" s DLG.Info }, Cmd.none )
+
+        OptionPurchased (Err s) ->
+            errorAlert "Purchase Sale ERROR!" "SaleOk Error: " s model
+
         ToggleRealTimePurchase ->
             let
                 checked =
@@ -421,6 +439,27 @@ update msg model =
 
 -- #endregion
 -- #region COMMANDS
+
+
+purchaseOption : String -> Float -> Float -> Int -> Float -> Cmd Msg
+purchaseOption ticker ask bid volume spot =
+    let
+        url =
+            mainUrl ++ "/purchaseoption"
+
+        params =
+            [ ( "ticker", JE.string ticker )
+            , ( "ask", JE.float ask )
+            , ( "bid", JE.float bid )
+            , ( "vol", JE.int volume )
+            , ( "spot", JE.float spot )
+            ]
+
+        jbody =
+            M.asHttpBody params
+    in
+        Http.send OptionPurchased <|
+            Http.post url jbody Json.string
 
 
 toggle : String -> Option -> Option
@@ -452,17 +491,17 @@ setRisc curRisc riscItems opt =
                 }
 
 
-calcRisc : Model -> Cmd Msg
-calcRisc model =
+calcRisc : String -> Maybe Options -> Cmd Msg
+calcRisc riscStr options =
     let
         risc =
-            Result.withDefault 0 (String.toFloat model.risc)
+            Result.withDefault 0 (String.toFloat riscStr)
 
         url =
             mainUrl ++ "/calc-risc-stockprices"
 
         opx =
-            Maybe.withDefault [] model.options
+            Maybe.withDefault [] options
 
         checked =
             List.filter (\x -> x.selected == True) opx
