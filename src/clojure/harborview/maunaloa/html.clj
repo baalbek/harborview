@@ -323,6 +323,11 @@
           result (DBX/sell-purchase (jr "oid") (jr "price") (jr "vol"))]
       (prn (str "Oid: " (jr "oid") ", price: " (jr "price") ", volume: " (jr "vol")))
       (U/json-response (str "Sold! Sale oid: " result))))
+  (POST "/purchaseoption" request
+    (let [jr (U/json-req-parse request)
+          result (DBX/sell-purchase (jr "oid") (jr "price") (jr "vol"))]
+      (prn (str "Oid: " (jr "oid") ", price: " (jr "price") ", volume: " (jr "vol")))
+      (U/json-response (str "Sold! Sale oid: " result))))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
   (GET "/resetticker" [oid]
     (binding [CU/*reset-cache* true]

@@ -22,8 +22,8 @@
 (P/cache-off!)
 
 (defroutes main-routes
-  (GET "/" request (MAU/init-purchases))
-  ;(GET "/" request (MAU/init-options))
+  ;(GET "/" request (MAU/init-purchases))
+  (GET "/" request (MAU/init-options))
   ;(GET "/" request (MAU/init-charts))
   ;(GET "/" request (VIN/projects))
   ;(GET "/" request (GJ/general-journal))
