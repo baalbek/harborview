@@ -17,7 +17,9 @@ import Common.ModalDialog as DLG
 
 
 mainUrl =
+
     "/maunaloa"
+
 
 
 main : Program Never Model Msg
