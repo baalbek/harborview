@@ -1,38 +1,11 @@
 module Common.ModalDialog exposing (..)
 
-{-
-   ( ModalDialog
-   , dlgOpen
-   , dlgClose
-   , modalDialog
-   , AlertCategory(..)
-   , alert
-   )
-
--}
-
 import VirtualDom as VD
+import Http
 import Html as H
 import Html.Attributes as A
 import Html.Events as E
-
-
-{-
-   type alias ModalDialog =
-       { opacity : String
-       , pointerEvents : String
-       }
-
-
-   dlgOpen : ModalDialog
-   dlgOpen =
-       ModalDialog "1" "auto"
-
-
-   dlgClose : ModalDialog
-   dlgClose =
-       ModalDialog "0" "none"
--}
+import Common.Miscellaneous as M
 
 
 type AlertCategory
@@ -140,3 +113,16 @@ alert state ok =
         _ ->
             H.div [ A.class "modalDialog", A.style [ ( "opacity", "0" ), ( "pointer-events", "none" ) ] ]
                 []
+
+
+type alias Alertable a =
+    { a | dlgAlert : DialogState }
+
+
+errorAlert : String -> String -> Http.Error -> Alertable a -> Alertable a
+errorAlert title errMsg httpErr model =
+    let
+        errStr =
+            errMsg ++ (M.httpErr2str httpErr)
+    in
+        { model | dlgAlert = DialogVisibleAlert title errStr Error }

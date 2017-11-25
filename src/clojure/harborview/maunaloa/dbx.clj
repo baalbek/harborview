@@ -3,8 +3,8 @@
     [java.time LocalDate]
     [java.time.temporal IsoFields]
     [ranoraraku.beans StockPriceBean]
-    [ranoraraku.beans.options OptionSaleBean]
-    [ranoraraku.models.mybatis CritterMapper StockMapper])
+    [ranoraraku.beans.options OptionSaleBean OptionPurchaseBean]
+    [ranoraraku.models.mybatis CritterMapper StockMapper DerivativeMapper])
   (:use
     [harborview.service.commonutils :only (*reset-cache*)])
   (:require
@@ -160,6 +160,35 @@
           (.insertCritterSale it sale)))
       (.getOid sale))
     -1))
+
+(comment create-option [ticker ask bid volume spot]
+  (DB/with-session :ranoraraku DerivativeMapper
+    ()))
+
+
+;(defn buy-purchase [ticker ask bid volume spot])
+(defn find-option-oid [ticker]
+  (DB/with-session :ranoraraku DerivativeMapper
+    (.findDerivativeId it ticker)))
+
+; stockmarket.optionpurchase (opid, dx, price, volume, status, purchase_type, spot, buy)
+
+(defn buy-option [ticker ask bid vol spot realtime]
+  (if-let [oid (find-option-oid ticker)]
+    (let [purchase (OptionPurchaseBean.)]
+      (doto purchase
+            (.setOptionId oid)
+            (.setLocalDx (LocalDate/now))
+            (.setPrice ask)
+            (.setVolume vol)
+            (.setStatus 1)
+            (.setPurchaseType (if (= realtime true) 3 11))
+            (.setSpotAtPurchase spot)
+            (.setBuyAtPurchase bid))
+      (DB/with-session :ranoraraku CritterMapper
+        (.insertPurchase it purchase))
+      {:ok true  :msg (str "Option purchase with oid: " oid)})
+    {:ok false :msg "Option does not exist in database"}))
 
 
 

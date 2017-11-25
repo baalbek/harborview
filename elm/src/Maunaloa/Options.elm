@@ -12,7 +12,7 @@ import Table exposing (defaultCustomizations)
 import Common.Miscellaneous as M
 import Common.ComboBox as CMB
 import Common.Buttons as BTN
-import Common.ModalDialog as DLG
+import Common.ModalDialog as DLG exposing (errorAlert)
 
 
 mainUrl =
@@ -113,8 +113,13 @@ type alias OptionSale =
 -}
 
 
+type alias PurchaseStatus =
+    { ok : Bool, msg : String }
+
+
 type Msg
-    = TickersFetched (Result Http.Error CMB.SelectItems)
+    = AlertOk
+    | TickersFetched (Result Http.Error CMB.SelectItems)
     | FetchOptions String
     | OptionsFetched (Result Http.Error StockAndOptions)
     | SetTableState Table.State
@@ -126,7 +131,7 @@ type Msg
     | PurchaseClick Option
     | PurchaseDlgOk
     | PurchaseDlgCancel
-    | OptionPurchased (Result Http.Error String)
+    | OptionPurchased (Result Http.Error PurchaseStatus)
     | ToggleRealTimePurchase
     | AskChange String
     | BidChange String
@@ -237,6 +242,7 @@ view model =
                 , M.makeFGRInput VolumeChange "id3" "Volume:" "number" M.CX39 model.volume
                 , M.makeFGRInput SpotChange "id4" "Spot:" "number" M.CX39 model.spot
                 ]
+            , DLG.alert model.dlgAlert AlertOk
             ]
 
 
@@ -320,20 +326,28 @@ tableButton opt =
 
 -- #endregion
 -- #region UPDATE
+{-
+
+   type alias Alertable a =
+       { a | dlgAlert : DLG.DialogState }
 
 
-errorAlert : String -> String -> Http.Error -> Model -> ( Model, Cmd Msg )
-errorAlert title errMsg httpErr model =
-    let
-        errStr =
-            errMsg ++ (M.httpErr2str httpErr)
-    in
-        ( { model | dlgAlert = DLG.DialogVisibleAlert title errStr DLG.Error }, Cmd.none )
+   errorAlert : String -> String -> Http.Error -> Alertable a -> Alertable a
+   errorAlert title errMsg httpErr model =
+       let
+           errStr =
+               errMsg ++ (M.httpErr2str httpErr)
+       in
+           { model | dlgAlert = DLG.DialogVisibleAlert title errStr DLG.Error }
+-}
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        AlertOk ->
+            ( { model | dlgAlert = DLG.DialogHidden }, Cmd.none )
+
         TickersFetched (Ok s) ->
             ( { model
                 | tickers = Just s
@@ -342,7 +356,7 @@ update msg model =
             )
 
         TickersFetched (Err s) ->
-            Debug.log ("TickersFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
+            ( errorAlert "Error" "TickersFetched Error: " s model, Cmd.none )
 
         FetchOptions s ->
             ( { model | selectedTicker = s }, fetchOptions model s False )
@@ -351,7 +365,7 @@ update msg model =
             ( { model | stock = Just s.stock, options = Just s.opx }, Cmd.none )
 
         OptionsFetched (Err s) ->
-            Debug.log ("OptionsFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
+            ( errorAlert "Error" "OptionsFetched Error: " s model, Cmd.none )
 
         SetTableState newState ->
             ( { model | tableState = newState }
@@ -377,7 +391,7 @@ update msg model =
                         ( { model | options = Just (List.map (setRisc curRisc s) optionx) }, Cmd.none )
 
         RiscCalculated (Err s) ->
-            Debug.log ("RiscCalculated Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
+            ( errorAlert "RiscCalculated" "RiscCalculated Error: " s model, Cmd.none )
 
         RiscChange s ->
             --Debug.log "RiscChange"
@@ -394,27 +408,64 @@ update msg model =
                     )
 
         PurchaseClick opt ->
-            ( { model
-                | dlgPurchase = DLG.DialogVisible
-                , selectedPurchase = Just opt
-                , ask = toString opt.sell
-                , bid = toString opt.buy
-              }
-            , Cmd.none
-            )
+            let
+                curSpot =
+                    M.unpackMaybe model.stock .c 0
+
+                -- Maybe.withDefault 0 <| Maybe.map .c model.stock
+            in
+                ( { model
+                    | dlgPurchase = DLG.DialogVisible
+                    , selectedPurchase = Just opt
+                    , ask = toString opt.sell
+                    , bid = toString opt.buy
+                    , volume = "10"
+                    , spot = toString curSpot
+                  }
+                , Cmd.none
+                )
 
         PurchaseDlgOk ->
-            Debug.log "PurchaseDlgOk"
-                ( { model | dlgPurchase = DLG.DialogHidden }, Cmd.none )
+            case model.selectedPurchase of
+                Just opx ->
+                    let
+                        curAsk =
+                            Result.withDefault -1 (String.toFloat model.ask)
+
+                        curBid =
+                            Result.withDefault -1 (String.toFloat model.bid)
+
+                        curVol =
+                            Result.withDefault -1 (String.toInt model.volume)
+
+                        curSpot =
+                            Result.withDefault -1 (String.toFloat model.spot)
+                    in
+                        ( { model | dlgPurchase = DLG.DialogHidden }
+                        , purchaseOption opx.ticker curAsk curBid curVol curSpot model.isRealTimePurchase
+                        )
+
+                Nothing ->
+                    ( { model | dlgPurchase = DLG.DialogHidden }, Cmd.none )
 
         PurchaseDlgCancel ->
             ( { model | dlgPurchase = DLG.DialogHidden }, Cmd.none )
 
         OptionPurchased (Ok s) ->
-            ( { model | dlgAlert = DLG.DialogVisibleAlert "Option purchase" s DLG.Info }, Cmd.none )
+            let
+                alertCat =
+                    case s.ok of
+                        True ->
+                            DLG.Info
+
+                        False ->
+                            DLG.Error
+            in
+                ( { model | dlgAlert = DLG.DialogVisibleAlert "Option purchase" s.msg alertCat }, Cmd.none )
 
         OptionPurchased (Err s) ->
-            errorAlert "Purchase Sale ERROR!" "SaleOk Error: " s model
+            Debug.log "OptionPurchased ERR"
+                ( errorAlert "Purchase Sale ERROR!" "SaleOk Error: " s model, Cmd.none )
 
         ToggleRealTimePurchase ->
             let
@@ -441,8 +492,8 @@ update msg model =
 -- #region COMMANDS
 
 
-purchaseOption : String -> Float -> Float -> Int -> Float -> Cmd Msg
-purchaseOption ticker ask bid volume spot =
+purchaseOption : String -> Float -> Float -> Int -> Float -> Bool -> Cmd Msg
+purchaseOption ticker ask bid volume spot isRealTime =
     let
         url =
             mainUrl ++ "/purchaseoption"
@@ -453,13 +504,19 @@ purchaseOption ticker ask bid volume spot =
             , ( "bid", JE.float bid )
             , ( "vol", JE.int volume )
             , ( "spot", JE.float spot )
+            , ( "rt", JE.bool isRealTime )
             ]
 
         jbody =
             M.asHttpBody params
+
+        myDecoder =
+            JP.decode PurchaseStatus
+                |> JP.required "ok" Json.bool
+                |> JP.required "msg" Json.string
     in
         Http.send OptionPurchased <|
-            Http.post url jbody Json.string
+            Http.post url jbody myDecoder
 
 
 toggle : String -> Option -> Option
@@ -568,10 +625,6 @@ stockDecoder =
         |> JP.required "h" Json.float
         |> JP.required "l" Json.float
         |> JP.required "c" Json.float
-
-
-
--- purchaseOption :
 
 
 fetchOptions : Model -> String -> Bool -> Cmd Msg

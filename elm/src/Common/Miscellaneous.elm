@@ -12,6 +12,11 @@ import Tuple exposing (first, second)
 import Time exposing (Time)
 
 
+unpackMaybe : Maybe a -> (a -> b) -> b -> b
+unpackMaybe obj fn default =
+    Maybe.withDefault default <| Maybe.map fn obj
+
+
 unpackEither : String -> (String -> Result String a) -> a -> a
 unpackEither s f default =
     let
