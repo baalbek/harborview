@@ -324,13 +324,14 @@
       (U/json-response (str "Sold! Sale oid: " result))))
   (POST "/purchaseoption" request
     (let [jr (U/json-req-parse request)
+          soid (jr "soid")
           ticker (jr "ticker")
           ask (jr "ask")
           bid (jr "bid")
           vol (jr "vol")
           spot (jr "spot")
           rt (jr "rt")
-          result (DBX/buy-option ticker ask bid vol spot rt)]
+          result (DBX/buy-option soid ticker ask bid vol spot rt)]
       (U/json-response result)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
   (GET "/resetticker" [oid]

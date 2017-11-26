@@ -173,7 +173,7 @@
 
 ; stockmarket.optionpurchase (opid, dx, price, volume, status, purchase_type, spot, buy)
 
-(defn buy-option [ticker ask bid vol spot realtime]
+(defn buy-option [soid ticker ask bid vol spot realtime]
   (if-let [oid (find-option-oid ticker)]
     (let [purchase (OptionPurchaseBean.)]
       (doto purchase
