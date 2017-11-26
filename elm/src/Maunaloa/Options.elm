@@ -234,7 +234,8 @@ view model =
                 PurchaseDlgOk
                 PurchaseDlgCancel
                 [ H.div [ A.class "form-group row" ]
-                    [ H.input [ A.checked True, A.type_ "checkbox", E.onClick ToggleRealTimePurchase ] []
+                    [ H.input [ A.class "form-control", A.checked True, A.type_ "checkbox", E.onClick ToggleRealTimePurchase ]
+                        []
                     , H.text "Real-time purchase"
                     ]
                 , M.makeFGRInput AskChange "id1" "Ask:" "number" M.CX39 model.ask
@@ -429,6 +430,9 @@ update msg model =
             case model.selectedPurchase of
                 Just opx ->
                     let
+                        soid =
+                            Result.withDefault -1 (String.toInt model.selectedTicker)
+
                         curAsk =
                             Result.withDefault -1 (String.toFloat model.ask)
 
@@ -442,7 +446,7 @@ update msg model =
                             Result.withDefault -1 (String.toFloat model.spot)
                     in
                         ( { model | dlgPurchase = DLG.DialogHidden }
-                        , purchaseOption opx.ticker curAsk curBid curVol curSpot model.isRealTimePurchase
+                        , purchaseOption soid opx.ticker curAsk curBid curVol curSpot model.isRealTimePurchase
                         )
 
                 Nothing ->
@@ -492,14 +496,15 @@ update msg model =
 -- #region COMMANDS
 
 
-purchaseOption : String -> Float -> Float -> Int -> Float -> Bool -> Cmd Msg
-purchaseOption ticker ask bid volume spot isRealTime =
+purchaseOption : Int -> String -> Float -> Float -> Int -> Float -> Bool -> Cmd Msg
+purchaseOption stockId ticker ask bid volume spot isRealTime =
     let
         url =
             mainUrl ++ "/purchaseoption"
 
         params =
-            [ ( "ticker", JE.string ticker )
+            [ ( "soid", JE.string ticker )
+            , ( "ticker", JE.string ticker )
             , ( "ask", JE.float ask )
             , ( "bid", JE.float bid )
             , ( "vol", JE.int volume )
