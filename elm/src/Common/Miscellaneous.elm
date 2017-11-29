@@ -223,7 +223,36 @@ makeFGRInput msg id lbl aType cx inputValue =
         H.div [ A.class "form-group row" ]
             [ H.label [ A.for id, A.class (first cx_) ] [ H.text lbl ]
             , H.div [ A.class (second cx_) ]
-                [ H.input [ onChange msg, A.step "0.1", A.class "form-control", A.attribute "type" aType, A.value inputValue, A.id id ]
+                [ H.input
+                    [ onChange msg
+                    , A.step "0.1"
+                    , A.class "form-control"
+                    , A.attribute "type" aType
+                    , A.value inputValue
+                    , A.id id
+                    ]
+                    []
+                ]
+            ]
+
+
+makeFGRChecbox : (String -> a) -> String -> String -> String -> ColXs -> String -> VD.Node a
+makeFGRChecbox msg id lbl aType cx inputValue =
+    let
+        cx_ =
+            colXs cx
+    in
+        H.div [ A.class "form-group row" ]
+            [ H.label [ A.for id, A.class (first cx_) ] [ H.text lbl ]
+            , H.div [ A.class (second cx_) ]
+                [ H.input
+                    [ onChange msg
+                    , A.step "0.1"
+                    , A.class "form-control"
+                    , A.attribute "type" aType
+                    , A.value inputValue
+                    , A.id id
+                    ]
                     []
                 ]
             ]
