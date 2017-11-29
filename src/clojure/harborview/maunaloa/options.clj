@@ -1,5 +1,6 @@
 (ns harborview.maunaloa.options
   (:import
+    [java.util Optional]
     [java.io IOException File FileOutputStream FileNotFoundException]
     [java.time LocalTime LocalDate]
     [java.time.temporal ChronoUnit]
@@ -142,13 +143,15 @@
 
 (defn-memb calls [ticker]
   (let [^Tuple3 parsed (parse-html ticker)
-        result (filter valid? (.second parsed))]
+        result (.second parsed)]
+        ;result (filter valid? (.second parsed))]
     (populate-cache result)
     result))
 
 (defn-memb puts [ticker]
   (let [^Tuple3 parsed (parse-html ticker)
-        result (filter valid? (.third parsed))]
+        result (.third parsed)]
+        ;result (filter valid? (.third parsed))]
     (populate-cache result)
     result))
 
@@ -216,9 +219,15 @@
                               (calls stock-ticker)
                               (puts stock-ticker))]
                   (first (filter #(= (.getTicker %) ticker) items)))
-        cur-ask (.getSell cur-opt)
-        cur-bid (.getBuy cur-opt)
-        cur-iv (.getIvBuy cur-opt)]
+        cur-ask (if (nil? cur-opt)
+                  -1
+                  (.getSell cur-opt))
+        cur-bid (if (nil? cur-opt)
+                  -1
+                  (.getBuy cur-opt))
+        cur-iv (if (nil? cur-opt)
+                 (Optional/empty)
+                 (.getIvBuy cur-opt))]
     {:oid oid
      :ot ot
      :ticker ticker
@@ -233,7 +242,7 @@
      :cur-bid cur-bid
      :cur-iv (if (true? (.isPresent cur-iv))
                (CU/double->decimal (.get cur-iv) 1000.0)
-               -1.0)}))
+               -1)}))
 
 
 ; endregion JSON
