@@ -107,11 +107,6 @@ port drawSpot : Spot -> Cmd msg
 
 
 -------------------- INIT ---------------------
-{-
-   init : ( Model, Cmd Msg)
-   init =
-       ( initModel, fetchTickers)
--}
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -121,7 +116,6 @@ init flags =
 
 
 ------------------- MODEL ---------------------
--- <editor-fold>
 
 
 type alias Model =
@@ -135,6 +129,7 @@ type alias Model =
     , flags : Flags
     , dlgOptions : DLG.DialogState
     , optionPurchases : Maybe OptionPurchases
+    , isResetCache : Bool
     }
 
 
@@ -150,13 +145,12 @@ initModel flags =
     , flags = flags
     , dlgOptions = DLG.DialogHidden
     , optionPurchases = Nothing
+    , isResetCache = False
     }
 
 
 
--- </editor-fold>
 ------------------- TYPES ---------------------
---
 
 
 type Msg
@@ -167,9 +161,7 @@ type Msg
     | RiscLinesFetched (Result Http.Error RiscLines)
     | FetchSpot
     | SpotFetched (Result Http.Error Spot)
-    | ResetCache
-    | OptionsPurchasesClick
-    -- | OptionsPurchasesFetched
+    | ToggleResetCache
     | OptionsDlgOk
     | OptionsDlgCancel
 
@@ -186,58 +178,21 @@ optionTabs =
     3
 
 
-
-{-
-   [ H.ul [ A.class "nav nav-tabs" ]
-       [ H.li [ A.class "active" ]
-           [ H.a [ A.href "#geo1", A.attribute "data-toggle" "pill" ]
-               [ H.text "Geometry" ]
-           ]
-       , H.li []
-           [ H.a [ A.href "#loads1", A.attribute "data-toggle" "pill" ]
-               [ H.text "Loads" ]
-           ]
-       ]
-   , H.div [ A.class "tab-content" ]
-       [ H.div [ A.id "geo1", A.class "tab-pane in active" ]
-           [ makeFGRSelect "id12" "Element type:" CM.CX39 (Just model.elementTypes) (Just ElementTypeSelected)
-           , makeFGRInput ElementDescChange "id1" "Element desc:" "text" CM.CX39 model.elementDesc
-           , makeFGRSelect "id2" "Node 1:" CM.CX39 model.nodes (Just Node1Selected)
-           , makeFGRSelect "id3" "Node 2:" CM.CX39 model.nodes (Just Node2Selected)
-           , makeFGRInput PlwChange "id4" "Load distribution factor:" "number" CM.CX66 model.plw
-           , makeFGRInput PlateWidthChange "id5" "Plate width:" "number" CM.CX66 model.plateWidth
-           , plateWidth2Item
-           ]
-       , H.div [ A.id "loads1", A.class "tab-pane" ]
-           [ makeFGRSelect "id6" "Dead load:" CM.CX39 model.deadloads (Just Load1Selected)
-           , makeFGRInput LoadFactor1Change "id7" "Load factor dead load:" "number" CM.CX66 model.loadFactor1
-           , makeFGRInput FormFactor1Change "id8" "Form factor dead load:" "number" CM.CX66 model.formFactor1
-           , makeFGRSelect "id9" "Live load:" CM.CX39 model.liveloads (Just Load2Selected)
-           , makeFGRInput LoadFactor2Change "id10" "Load factor live load:" "number" CM.CX66 model.loadFactor2
-           , makeFGRInput FormFactor2Change "id11" "Form factor live load:" "number" CM.CX66 model.formFactor2
-           ]
-       ]
-   ]
--}
-
-
 view : Model -> H.Html Msg
 view model =
     let
         row =
             case model.flags.chartResolution of
                 1 ->
-                    [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
+                    [ H.div [ A.class "col-sm-4" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
                     , button_ "Risc Lines" FetchRiscLines
                     , button_ "Spot" FetchSpot
-                    , button_ "Reset Cache" ResetCache
-                    , button_ "Option Purchases" OptionsPurchasesClick
+                    , M.checkbox "Reset Cache" "col-sm-2 checkbox" False ToggleResetCache
                     ]
 
                 2 ->
                     [ H.div [ A.class "col-sm-8" ] [ CB.makeSelect "Tickers: " FetchCharts model.tickers model.selectedTicker ]
                     , button_ "Risc Lines" FetchRiscLines
-                    , button_ "Reset Cache" ResetCache
                     ]
 
                 _ ->
@@ -258,7 +213,6 @@ view model =
 
 
 ------------------- UPDATE --------------------
--- <editor-fold>
 
 
 slice : Model -> List a -> List a
@@ -425,7 +379,7 @@ update msg model =
             Debug.log ("TickersFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
         FetchCharts s ->
-            ( { model | selectedTicker = s }, fetchCharts s model False )
+            ( { model | selectedTicker = s }, fetchCharts s model.flags.chartResolution model.isResetCache )
 
         ChartsFetched (Ok s) ->
             let
@@ -464,7 +418,7 @@ update msg model =
             Debug.log ("RiscLinesFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
         FetchSpot ->
-            ( model, fetchSpot model )
+            ( model, fetchSpot model.selectedTicker model.isResetCache )
 
         SpotFetched (Ok s) ->
             ( model, drawSpot s )
@@ -473,72 +427,41 @@ update msg model =
         SpotFetched (Err s) ->
             Debug.log ("SpotFetched Error: " ++ (M.httpErr2str s)) ( model, Cmd.none )
 
-        ResetCache ->
-            ( model, fetchCharts model.selectedTicker model True )
-
-        OptionsPurchasesClick ->
-            ( model, fetchOptionPurchases model.selectedTicker)
-
-        -- OptionsPurchasesFetched ->
-        --     ( { model | dlgOptions = DLG.DialogVisible }, Cmd.none )
-
+        --ResetCache ->
+        --   ( model, fetchCharts model.selectedTicker model True )
         OptionsDlgOk ->
             ( { model | dlgOptions = DLG.DialogHidden }, Cmd.none )
 
         OptionsDlgCancel ->
             ( { model | dlgOptions = DLG.DialogHidden }, Cmd.none )
 
+        ToggleResetCache ->
+            let
+                checked =
+                    not model.isResetCache
+            in
+                ( { model | isResetCache = checked }, Cmd.none )
 
 
--- </editor-fold>
+
 ------------------ COMMANDS -------------------
--- <editor-fold>
-{-
-   type alias OptionPurchase =
-       { oid : Int
-       , ticker : String
-       , purchaseDate : String
-       , volume : Int
-       , purchasePrice : Float
-       , ivAtPurchase : Float
-       , bid : Float
-       , ask : Float
-       , iv : Float
-       , spot : Float
-       }
--}
 
 
-fetchOptionPurchases : String -> Cmd Msg
-fetchOptionPurchases ticker =
-  Cmd.none
-  {-
+resetCacheJson : Bool -> String
+resetCacheJson resetCache =
+    case resetCache of
+        True ->
+            "&rc=true"
+
+        False ->
+            "&rc=false"
+
+
+fetchSpot : String -> Bool -> Cmd Msg
+fetchSpot selectedTicker resetCache =
     let
         url =
-            mainUrl ++ "/optionpurchases?ticker=" ++ ticker --
-
-        myDecoder =
-            JP.decode OptionPurchase
-                |> JP.required "oid" Json.int
-                |> JP.required "ticker" Json.string
-                |> JP.required "purchaseDate" Json.string
-                |> JP.required "volume" Json.int
-                |> JP.required "purchasePrice" Json.float
-                |> JP.optional "ivAtPurchase" Json.float -1.0
-                |> JP.required "bid" Json.float
-                |> JP.required "ask" Json.float
-                |> JP.optional "iv" Json.float -1.0
-                |> JP.required "spot" Json.float
-    in
-        Http.send OptionsPurchasesFetched <|
-            Http.get url (Json.list myDecoder)
--}
-
-fetchSpot : Model -> Cmd Msg
-fetchSpot model =
-    let
-        url =
-            mainUrl ++ "/spot?ticker=" ++ model.selectedTicker
+            mainUrl ++ "/spot?ticker=" ++ selectedTicker ++ (resetCacheJson resetCache)
 
         spotDecoder =
             JP.decode Spot
@@ -605,9 +528,11 @@ chartDecoder numVlines =
         Json.map5 C.Chart lines bars candlesticks (Json.succeed ( 0, 0 )) (Json.succeed numVlines)
 
 
-fetchCharts : String -> Model -> Bool -> Cmd Msg
-fetchCharts ticker model resetCache =
+fetchCharts : String -> Int -> Bool -> Cmd Msg
+fetchCharts ticker chartResolution resetCache =
     let
+        --rc =
+        --   resetCacheJson resetCache
         myDecoder =
             JP.decode C.ChartInfo
                 |> JP.required "min-dx" M.stringToDateDecoder
@@ -617,34 +542,20 @@ fetchCharts ticker model resetCache =
                 |> JP.required "chart3" (Json.nullable (chartDecoder 5))
 
         url =
-            case resetCache of
-                True ->
-                    if model.flags.chartResolution == 2 then
-                        mainUrl ++ "/resettickerweek?oid=" ++ ticker
-                    else
-                        mainUrl ++ "/resetticker?oid=" ++ ticker
+            case chartResolution of
+                1 ->
+                    mainUrl ++ "/ticker?oid=" ++ ticker
 
-                False ->
-                    case model.flags.chartResolution of
-                        1 ->
-                            mainUrl ++ "/ticker?oid=" ++ ticker
+                2 ->
+                    mainUrl ++ "/tickerweek?oid=" ++ ticker
 
-                        2 ->
-                            mainUrl ++ "/tickerweek?oid=" ++ ticker
-
-                        _ ->
-                            mainUrl ++ "/tickermonth?oid=" ++ ticker
-
-        -- if model.flags.chartResolution == 2 then
-        --     mainUrl ++ "/tickerweek?oid=" ++ ticker
-        -- else
-        --     mainUrl ++ "/ticker?oid=" ++ ticker
+                _ ->
+                    mainUrl ++ "/tickermonth?oid=" ++ ticker
     in
         Http.send ChartsFetched <| Http.get url myDecoder
 
 
 
--- </editor-fold>
 ---------------- SUBSCRIPTIONS ----------------
 
 
