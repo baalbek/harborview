@@ -334,11 +334,5 @@
           result (DBX/buy-option soid ticker ask bid vol spot rt)]
       (U/json-response result)))
   (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
-  (GET "/resetticker" [oid]
-    (binding [CU/*reset-cache* true]
-      (ticker-chart (U/rs oid))))
   (GET "/tickerweek" [oid] (ticker-chart-week (U/rs oid)))
-  (GET "/tickermonth" [oid] (ticker-chart-month (U/rs oid)))
-  (GET "/resettickerweek" [oid]
-    (binding [CU/*reset-cache* true]
-      (ticker-chart-week (U/rs oid)))))
+  (GET "/tickermonth" [oid] (ticker-chart-month (U/rs oid))))
