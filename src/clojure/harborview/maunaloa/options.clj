@@ -155,6 +155,12 @@
     (populate-cache result)
     result))
 
+(defn vcalls [ticker]
+  (filter valid? (calls ticker)))
+
+(defn vputs [ticker]
+  (filter valid? (puts ticker)))
+
 ; endregion
 
 

@@ -181,7 +181,7 @@
       {:stock
         (OPX/stock->json (.get (OPX/stock ts)))
        :options
-        (map OPX/option->json (OPX/puts ts))})))
+        (map OPX/option->json (OPX/vputs ts))})))
 
 (defn calls [ticker]
   (let [ts (tick-str ticker)]
@@ -189,7 +189,7 @@
       {:stock
         (OPX/stock->json (.get (OPX/stock ts)))
        :options
-        (map OPX/option->json (OPX/calls ts))})))
+        (map OPX/option->json (OPX/vcalls ts))})))
 
 ; region SELMER
 
