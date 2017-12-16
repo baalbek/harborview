@@ -16,6 +16,7 @@ jQuery(document).ready(function() {
           chartResolution : 1
       });
 
+      /*
       var node2 = document.getElementById('my-app2');
       var app2 = Elm.Maunaloa.Charts.embed(node2, {
           chartResolution : 2
@@ -25,6 +26,7 @@ jQuery(document).ready(function() {
       var app3 = Elm.Maunaloa.Charts.embed(node3, {
           chartResolution : 3
       });
+      */
       <!------------- canvas sizes ---------------->
       var setCanvasSize = function(selector,w,h) {
           var c1 = document.querySelectorAll(selector);
@@ -104,8 +106,10 @@ jQuery(document).ready(function() {
           //*/
       }
       app.ports.drawCanvas.subscribe(drawCanvas1);
+      /*
       app2.ports.drawCanvas.subscribe(drawCanvas2);
       app3.ports.drawCanvas.subscribe(drawCanvas3);
+      */
 
       var clearCanvas = function(canvasId) {
         var canvas = document.getElementById(canvasId);
@@ -192,13 +196,13 @@ jQuery(document).ready(function() {
           repos.addRiscLines(rlLast,true);
         }
       }
+      /*
       app.ports.drawRiscLines.subscribe(drawRiscLines1);
       app2.ports.drawRiscLines.subscribe(drawRiscLines2);
-
-      <!------------- drawSpot ---------------->
 
       var drawSpot1 = function (spot) {
         repos1.addSpot(spot);
       }
       app.ports.drawSpot.subscribe(drawSpot1);
+      */
 });

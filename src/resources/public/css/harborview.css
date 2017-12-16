@@ -28,10 +28,16 @@ nav a {
     }
 }
 */
+/*
 .row {
   margin-top: 30px;
   margin-bottom: 30px; }
-
+  */
+.container {
+    width: 90%;
+    padding-left: 0px;
+    padding-right: 0px;
+}
 .logo {
   background: url("/img/02.png") center no-repeat;
   position: absolute;
@@ -135,16 +141,16 @@ a.href-td {
 
 div.c1, div.c2, div.c3 {
   position: absolute;
-  left: 200px; }
+  left: 0px; }
 
 div.c1 {
-  top: 200px; }
+  top: 0px; }
 
 div.c2 {
-  top: 850px; }
+  top: 650px; }
 
 div.c3 {
-  top: 720px; }
+  top: 520px; }
 
 canvas.c1, canvas.c2, canvas.c3 {
   border-style: solid;

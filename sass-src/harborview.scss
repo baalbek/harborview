@@ -58,11 +58,6 @@ nav a {
 }
 */
 
-.row {
-    margin-top: 30px;
-    margin-bottom: 30px
-}
-
 
 .logo {
     background:url('/img/02.png') center no-repeat;
@@ -91,6 +86,7 @@ nav a {
 @import "dialog";
 @import "href-button";
 @import "canvas";
+@import "bootstrap";
 
 // @import "fieldset";
 // @import "table-std";
