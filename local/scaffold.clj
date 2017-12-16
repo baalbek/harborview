@@ -4,7 +4,8 @@
     [java.sql Date]
     [org.springframework.context.support ClassPathXmlApplicationContext]
     [ org.bson.types ObjectId]
-    [ranoraraku.models.mybatis CritterMapper])
+    [ranoraraku.models.mybatis CritterMapper]
+    [java.time.temporal ChronoUnit])
   (:use
     [harborview.service.commonutils :only (*reset-cache*)])
   (:require
@@ -14,6 +15,7 @@
     [harborview.maunaloa.options :as OPX]
     [harborview.maunaloa.html :as H]
     [harborview.service.db :as DB]
+    [harborview.service.springservice :as S]
     [harborview.maunaloa.dbx :as DBX]))
 
   ;(:require))
@@ -40,15 +42,25 @@
   (DB/with-session :ranoraraku CritterMapper
     (.purchasesWithSales it oid 11 status optype)))
 
+(defn t [d0 d1]
+  (let [days (.between ChronoUnit/DAYS d0 d1)]
+    (/ days 365.0)))
 
 (def px OPX/purchasesales->json)
 
+(def stox OPX/stock)
+
 (def calls OPX/calls)
+(def puts OPX/puts)
 
 (def opx1 (:opx1 DBX/opx))
 (def opx2 (:opx2 DBX/opx))
 
 (def sell DBX/sell-purchase)
+
+(def opx DBX/option-purchases)
+
+(def fpx H/fetchpurchases)
 
 (comment
   (def min-dx (LocalDate/of 2004 1 1))

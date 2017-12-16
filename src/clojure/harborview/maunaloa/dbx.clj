@@ -145,7 +145,13 @@
               ret))))
      :opx2
       (fn [oid]
-        (@cache2 oid))}))
+        (@cache2 oid))
+     :opx3
+      (fn [purchase-type status]
+        (if (= *reset-cache* true)
+          (do
+            (reset! cache {})
+            (reset! cache2 {}))))}))
 
 (defn sell-purchase [oid price volume]
   (if-let [p ((:opx2 opx) oid)]
