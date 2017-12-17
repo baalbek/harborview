@@ -16,6 +16,7 @@ jQuery(document).ready(function() {
           chartResolution : 1
       });
 
+      MAUNALOA.scrapbook.init();
       /*
       var node2 = document.getElementById('my-app2');
       var app2 = Elm.Maunaloa.Charts.embed(node2, {

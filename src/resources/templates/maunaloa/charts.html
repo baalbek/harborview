@@ -12,6 +12,7 @@
     <script src="/js/maunaloa/canvas/rulers.js"></script>
     <script src="/js/maunaloa/canvas/linechart.js"></script>
     <script src="/js/maunaloa/canvas/levelline.js"></script>
+    <script src="/js/maunaloa/canvas/scrapbook.js"></script>
     <!--
     <script src="/js/maunaloa/maunaloa.min.js"></script>
     -->
@@ -39,8 +40,11 @@
                 <div class="c1">
                   <canvas class="c1" id="canvas1"></canvas>
                 </div>
-                <div class="c1">
+                <div class="c1 top" id="div-1x">
                   <canvas class="c1" id="canvas1x"></canvas>
+                </div>
+                <div class="c1" id="div-1scrap">
+                  <canvas class="c1" id="canvas1-scrap"></canvas>
                 </div>
                 <div class="c3">
                   <canvas class="c3" id="canvas1c"></canvas>
@@ -50,7 +54,37 @@
                 </div>
               </div>
               <div class="col-sm-2">
-                <button>Toolbox</button>
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <label class="checkbox-inline">
+                        <!--
+                        <input type="checkbox" id="scrapbook" value="scrapbook" checked="checked">Scrapbook</input>
+                      -->
+                        <input type="checkbox" id="scrapbook" value="scrapbook">Scrapbook</input>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <input type="color" value="#ff5c00" id="color"></input>
+                    </div>
+                  </div>
+                  <!--
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <label class="radio-inline">
+                        <input type="radio" name="rg-color" checked="checked">Red</input>
+                      </label>
+                      <label class="radio-inline">
+                        <input type="radio" name="rg-color">Blue</input>
+                      </label>
+                      <label class="radio-inline">
+                        <input type="radio" name="rg-color">Green</input>
+                      </label>
+                    </div>
+                  </div>
+                -->
               </div>
             </div>
             <!-- Cyber Cycle -->

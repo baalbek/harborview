@@ -28,11 +28,9 @@ nav a {
     }
 }
 */
-/*
 .row {
-  margin-top: 30px;
-  margin-bottom: 30px; }
-  */
+  /*margin-top: 30px;*/
+  margin-bottom: 10px; }
 .container {
     width: 90%;
     padding-left: 0px;
@@ -140,6 +138,7 @@ a.href-td {
   color: #fff; }
 
 div.c1, div.c2, div.c3 {
+  z-index: 0;
   position: absolute;
   left: 0px; }
 
@@ -151,6 +150,10 @@ div.c2 {
 
 div.c3 {
   top: 520px; }
+
+div.top {
+    z-index: 10;
+}
 
 canvas.c1, canvas.c2, canvas.c3 {
   border-style: solid;

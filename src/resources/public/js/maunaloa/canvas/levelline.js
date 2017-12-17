@@ -54,6 +54,7 @@ MAUNALOA.levelLine = {
 MAUNALOA.repos = {
   DAY_LINES           : 'canvas1',
   DAY_LINES_OVERLAY   : 'canvas1x',
+  DAY_LINES_OVERLAY_2 : 'canvas1-scrap',
   DAY_VOLUME          : 'canvas1c',
   DAY_OSC             : 'canvas1b',
   WEEK_LINES          : 'canvas2',
