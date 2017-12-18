@@ -23,12 +23,20 @@ MAUNALOA.scrapbook = {
         var div_1x = document.getElementById("div-1x");
         var div_1scrap = document.getElementById("div-1scrap");
         if (scrapbook.checked === true) {
+          /*
           div_1scrap.classList.add("top");
           div_1x.classList.remove("top");
+          */
+          div_1scrap.style.zIndex = "10";
+          div_1x.style.zIndex = "0";
         }
         else {
+          /*
           div_1x.classList.add("top");
           div_1scrap.classList.remove("top");
+          */
+          div_1x.style.zIndex = "10";
+          div_1scrap.style.zIndex = "0";
         }
       }
     }
