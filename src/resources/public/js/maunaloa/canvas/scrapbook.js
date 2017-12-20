@@ -2,10 +2,9 @@ var MAUNALOA = MAUNALOA || {};
 
 MAUNALOA.scrapbook = {
   paint : false,
-  clickX : [],
-  clickY : [],
-  clixX : [],
-  clixY : [],
+  clickX : null,
+  clickY : null,
+  //lines : [],
   ctx : null,
   init : function() {
     var scrapbook = document.getElementById("scrapbook");
@@ -14,8 +13,9 @@ MAUNALOA.scrapbook = {
       var c_scrap = document.getElementById(MAUNALOA.repos.DAY_LINES_OVERLAY_2);
       c_scrap.addEventListener('mousedown', this.handleMouseDown(this), false);
       c_scrap.addEventListener('mousemove', this.handleMouseMove(this), false);
-      c_scrap.addEventListener('mouseup', this.handleMouseUp(this), false);
-      this.ctx = c_scrap.getContext("2d"); 
+      c_scrap.addEventListener('mouseup', this.handleMouseDone(this), false);
+      c_scrap.addEventListener('mouseleave', this.handleMouseDone(this), false);
+      this.ctx = c_scrap.getContext("2d");
 
       scrapbook.onchange = function() {
         var div_1x = document.getElementById("div-1x");
@@ -36,9 +36,7 @@ MAUNALOA.scrapbook = {
       clearBtn.onclick = function() {
         var canvas = self.ctx.canvas;
         self.ctx.clearRect(0, 0, canvas.width, canvas.height)
-        self.clickX = [];
-        self.clickY = [];
-        
+        self.lines = [];
       }
     }
   },
@@ -53,11 +51,11 @@ MAUNALOA.scrapbook = {
       context.strokeStyle = "#df4b26";
       context.lineJoin = "round";
       context.lineWidth = 5;
-      var cx = this.clickX; 
-      var cy = this.clickY; 
+      var cx = this.clickX;
+      var cy = this.clickY;
         context.beginPath();
         context.moveTo(cx[0], cy[0]);
-        for(var i=1; i < cx.length; ++i) {      
+        for(var i=1; i < cx.length; ++i) {
             context.lineTo(cx[i], cy[i]);
         }
 
@@ -67,8 +65,10 @@ MAUNALOA.scrapbook = {
   handleMouseDown : function(self) {
     return function(e) {
         self.paint = true;
+        self.clickX = [];
+        self.clickY = [];
         self.addClick(e.offsetX,e.offsetY);
-        self.redraw(e);
+        //self.redraw(e);
     }
   },
   handleMouseMove : function(self) {
@@ -79,9 +79,11 @@ MAUNALOA.scrapbook = {
         }
     }
   },
-  handleMouseUp : function(self) {
+  handleMouseDone : function(self) {
     return function(e) {
         self.paint = false;
+        self.clickX = null;
+        self.clickY = null;
     }
   }
 }
