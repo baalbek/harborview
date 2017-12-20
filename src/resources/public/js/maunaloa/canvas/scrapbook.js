@@ -2,6 +2,7 @@ var MAUNALOA = MAUNALOA || {};
 
 MAUNALOA.scrapbook = {
   paint : false,
+  textMode : false,
   clickX : null,
   clickY : null,
   //lines : [],
@@ -34,6 +35,14 @@ MAUNALOA.scrapbook = {
     if (clearBtn !== null) {
       clearBtn.onclick = this.clearCanvas;
     }
+    var textBtn = document.getElementById("btn-scrapbook-text");
+    if (textBtn !== null) {
+      textBtn.onclick = this.placeText;
+    }
+  },
+  placeText : function() {
+      var self = MAUNALOA.scrapbook;
+      self.textMode = true;
   },
   clearCanvas : function() {
     var self = MAUNALOA.scrapbook;
@@ -58,8 +67,6 @@ MAUNALOA.scrapbook = {
         for(var i=1; i < cx.length; ++i) {
             context.lineTo(cx[i], cy[i]);
         }
-
-    //context.closePath();
     context.stroke();
   },
   getLineSize : function() {
@@ -74,14 +81,24 @@ MAUNALOA.scrapbook = {
   lineColor : "#ff5c00",
     handleMouseDown : function(self) {
         return function(e) {
-            self.paint = true;
-            self.clickX = [];
-            self.clickY = [];
-            self.addClick(e.offsetX,e.offsetY);
-            self.lineSize = self.getLineSize();
-            self.lineColor = document.getElementById("color").value;
-
-            //self.redraw(e);
+            if (self.textMode === true) {
+              self.textMode = false;
+              self.ctx.fillStyle = "#000"; //self.lineColor;
+              self.ctx.font = "16px Arial";
+              //self.ctx.strokeStyle = self.lineColor;
+              //self.ctx.lineWidth = 0.25;
+              //self.ctx.strokeText("sdfsdfsd",e.offsetX,e.offsetY);
+              var comment = document.getElementById("comment").value;
+              self.ctx.fillText(comment,e.offsetX,e.offsetY);
+            }
+            else {
+              self.paint = true;
+              self.clickX = [];
+              self.clickY = [];
+              self.addClick(e.offsetX,e.offsetY);
+              self.lineSize = self.getLineSize();
+              self.lineColor = document.getElementById("color").value;
+            }
         }
     },
   handleMouseMove : function(self) {
