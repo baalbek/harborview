@@ -61,6 +61,7 @@ jQuery(document).ready(function() {
             cfg.cid =  MAUNALOA.repos.DAY_VOLUME;
             drawCanvas(cfg);
           }
+          MAUNALOA.scrapbook.clearCanvas();
       }
       var drawCanvas2 = function (chartInfo) {
           var cfg = { ci: chartInfo,

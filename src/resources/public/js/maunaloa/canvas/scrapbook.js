@@ -32,13 +32,13 @@ MAUNALOA.scrapbook = {
     }
     var clearBtn = document.getElementById("btn-scrapbook-clear");
     if (clearBtn !== null) {
-      var self = this;
-      clearBtn.onclick = function() {
-        var canvas = self.ctx.canvas;
-        self.ctx.clearRect(0, 0, canvas.width, canvas.height)
-        self.lines = [];
-      }
+      clearBtn.onclick = this.clearCanvas;
     }
+  },
+  clearCanvas : function() {
+    var self = MAUNALOA.scrapbook;
+    var canvas = self.ctx.canvas;
+    self.ctx.clearRect(0, 0, canvas.width, canvas.height)
   },
   addClick : function(x,y) {
     this.clickX.push(x);
@@ -48,9 +48,9 @@ MAUNALOA.scrapbook = {
       var context = this.ctx;
       var canvas = this.ctx.canvas;
       //context.clearRect(0, 0, canvas.width, canvas.height)
-      context.strokeStyle = "#df4b26";
+      context.strokeStyle = this.lineColor;
       context.lineJoin = "round";
-      context.lineWidth = 5;
+      context.lineWidth = this.lineSize;
       var cx = this.clickX;
       var cy = this.clickY;
         context.beginPath();
@@ -62,15 +62,28 @@ MAUNALOA.scrapbook = {
     //context.closePath();
     context.stroke();
   },
-  handleMouseDown : function(self) {
-    return function(e) {
-        self.paint = true;
-        self.clickX = [];
-        self.clickY = [];
-        self.addClick(e.offsetX,e.offsetY);
-        //self.redraw(e);
+  getLineSize : function() {
+    var rgLine = document.querySelector('input[name="rg-line"]:checked').value;
+    switch (rgLine) {
+        case "1": return 1;
+        case "2": return 3;
+        case "3": return 7;
     }
   },
+  lineSize : 3,
+  lineColor : "#ff5c00",
+    handleMouseDown : function(self) {
+        return function(e) {
+            self.paint = true;
+            self.clickX = [];
+            self.clickY = [];
+            self.addClick(e.offsetX,e.offsetY);
+            self.lineSize = self.getLineSize();
+            self.lineColor = document.getElementById("color").value;
+
+            //self.redraw(e);
+        }
+    },
   handleMouseMove : function(self) {
     return function(e) {
         if(self.paint){
