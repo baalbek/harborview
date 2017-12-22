@@ -1,160 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <!--
+  <!--
     <title>Maunaloa - Charts</title>
     -->
-    <title>Visual Studio Web Example</title>
-    <meta charset="UTF-8">
-    {% include "templates/head.html" %}
-    <script src="/js/elm/maunaloa/elm-charts.js"></script>
-    <script src="/js/maunaloa/charts.js"></script>
-    <script src="/js/maunaloa/canvas/rulers.js"></script>
-    <script src="/js/maunaloa/canvas/linechart.js"></script>
-    <script src="/js/maunaloa/canvas/levelline.js"></script>
-    <script src="/js/maunaloa/canvas/scrapbook.js"></script>
-    <!--
+  <title>Visual Studio Web Example</title>
+  <meta charset="UTF-8"> {% include "templates/head.html" %}
+  <script src="/js/elm/maunaloa/elm-charts.js"></script>
+  <script src="/js/maunaloa/charts.js"></script>
+  <script src="/js/maunaloa/canvas/rulers.js"></script>
+  <script src="/js/maunaloa/canvas/linechart.js"></script>
+  <script src="/js/maunaloa/canvas/levelline.js"></script>
+  <script src="/js/maunaloa/canvas/scrapbook.js"></script>
+  <!--
     <script src="/js/maunaloa/maunaloa.min.js"></script>
     -->
 </head>
-<body>
-    <div class="logo"></div>
-    <ul class="nav nav-tabs">
-      <li class="active"><a data-toggle="tab" href="#chart1">Daily</a></li>
-      <li><a data-toggle="tab" href="#chart2">Weekly</a></li>
-      <li><a data-toggle="tab" href="#chart3">Monthly</a></li>
-    </ul>
 
-    <div class="tab-content">
-      <div id="chart1" class="tab-pane active">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-12">
-              <div id="my-app"></div>
+<body>
+  <div class="logo"></div>
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#chart1">Daily</a></li>
+    <li><a data-toggle="tab" href="#chart2">Weekly</a></li>
+    <li><a data-toggle="tab" href="#chart3">Monthly</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div id="chart1" class="tab-pane active">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12">
+            <div id="my-app"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-9">
+            <div class="c1">
+              <canvas class="c1" id="canvas1"></canvas>
+            </div>
+            <div class="c1 top" id="div-1x">
+              <canvas class="c1" id="canvas1x"></canvas>
+            </div>
+            <div class="c1" id="div-1scrap">
+              <canvas class="c1" id="canvas1-scrap"></canvas>
+            </div>
+            <div class="c3">
+              <canvas class="c3" id="canvas1c"></canvas>
+            </div>
+            <div class="c2">
+              <canvas class="c2" id="canvas1b"></canvas>
             </div>
           </div>
-          <div class="row">
-            <div class="col-sm-9">
-              <div class="c1">
-                <canvas class="c1" id="canvas1"></canvas>
-              </div>
-              <div class="c1 top" id="div-1x">
-                <canvas class="c1" id="canvas1x"></canvas>
-              </div>
-              <div class="c1" id="div-1scrap">
-                <canvas class="c1" id="canvas1-scrap"></canvas>
-              </div>
-              <div class="c3">
-                <canvas class="c3" id="canvas1c"></canvas>
-              </div>
-              <div class="c2">
-                <canvas class="c2" id="canvas1b"></canvas>
-              </div>
-            </div>
-            <div class="col-sm-3">
-              <div class="container">
-                <div class="row">
-                  <div class="col-sm-12">
-                    <label class="checkbox-inline">
+          <div class="col-sm-3">
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-12">
+                  <label class="checkbox-inline">
                       <input type="checkbox" id="scrapbook" value="scrapbook">Scrapbook</input>
                     </label>
-                  </div>
                 </div>
-                <div class="row">
-                  <div class="col-sm-12">
-                    <input type="color" value="#ff5c00" id="color"></input>
-                  </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <input type="color" value="#ff5c00" id="color"></input>
                 </div>
-                <div class="row">
-                  <div class="col-sm-12">
-                    <label>Line size</label>
-                    <br/>
-                    <label class="radio-inline">
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <label>Line size</label>
+                  <br/>
+                  <label class="radio-inline">
                       <input type="radio" name="rg-line" value="1">Small</input>
                     </label>
-                    <label class="radio-inline">
+                  <label class="radio-inline">
                       <input type="radio" name="rg-line" value="2" checked="checked">Normal</input>
                     </label>
-                    <label class="radio-inline">
+                  <label class="radio-inline">
                       <input type="radio" name="rg-line" value="3">Large</input>
                     </label>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-12">
-                      <button class="btn btn-success" type="button" id="btn-scrapbook-line"><span class="glyphicon glyphicon-pencil"></span></button>
-                      <button class="btn btn-success" type="button" id="btn-scrapbook-text"><span class="glyphicon glyphicon-font"></span></button>
-                      <!--
-                      <button type="button" class="btn btn-success" id="btn-scrapbook-text">Place text</button>
-                    -->
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-12">
-                    <textarea rows="5" cols="20" id="comment"></textarea>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-12">
-                      <button class="btn btn-warning" type="button" id="btn-scrapbook-clear"><span class="glyphicon glyphicon-trash"></span></button>
-                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="chart2" class="tab-pane">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-12">
-              <div id="my-app2"></div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-12">
-              <div class="c1">
-                <canvas id="canvas2" class="c1"></canvas>
+              <div class="row">
+                <div class="col-sm-12">
+                  <button class="btn btn-success" type="button" id="btn-scrapbook-line"><span class="glyphicon glyphicon-pencil"></span></button>
+                  <button class="btn btn-success" type="button" id="btn-scrapbook-text"><span class="glyphicon glyphicon-font"></span></button>
+                </div>
               </div>
-              <div class="c1">
-                <canvas id="canvas2x" class="c1"></canvas>
+              <div class="row">
+                <div class="col-sm-12">
+                  <textarea rows="5" cols="20" id="comment"></textarea>
+                </div>
               </div>
-              <div class="c3">
-                <canvas id="canvas2c" class="c3"></canvas>
-              </div>
-              <div class="c2">
-                <canvas id="canvas2b" class="c2"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="chart3" class="tab-pane">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-12">
-              <div id="my-app3"></div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-12">
-              <div class="c1">
-                <canvas id="canvas3" class="c1"></canvas>
-              </div>
-              <div class="c1">
-                <canvas id="canvas3x" class="c1"></canvas>
-              </div>
-              <div class="c3">
-                <canvas id="canvas3c" class="c3"></canvas>
-              </div>
-              <div class="c2">
-                <canvas id="canvas3b" class="c2"></canvas>
+              <div class="row">
+                <div class="col-sm-12">
+                  <button class="btn btn-warning" type="button" id="btn-scrapbook-clear"><span class="glyphicon glyphicon-trash"></span></button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    {% include "templates/footer.html" %}
+    <div id="chart2" class="tab-pane">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12">
+            <div id="my-app2"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-9">
+            <div class="c1">
+              <canvas id="canvas2" class="c1"></canvas>
+            </div>
+            <div class="c1">
+              <canvas id="canvas2x" class="c1"></canvas>
+            </div>
+            <div class="c3">
+              <canvas id="canvas2c" class="c3"></canvas>
+            </div>
+            <div class="c2">
+              <canvas id="canvas2b" class="c2"></canvas>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-12">
+                  <label class="checkbox-inline">
+                      <input type="checkbox" id="scrapbook" value="scrapbook">Scrapbook</input>
+                    </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <input type="color" value="#ff5c00" id="color"></input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <label>Line size</label>
+                  <br/>
+                  <label class="radio-inline">
+                      <input type="radio" name="rg-line" value="1">Small</input>
+                    </label>
+                  <label class="radio-inline">
+                      <input type="radio" name="rg-line" value="2" checked="checked">Normal</input>
+                    </label>
+                  <label class="radio-inline">
+                      <input type="radio" name="rg-line" value="3">Large</input>
+                    </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <button class="btn btn-success" type="button" id="btn-scrapbook-line"><span class="glyphicon glyphicon-pencil"></span></button>
+                  <button class="btn btn-success" type="button" id="btn-scrapbook-text"><span class="glyphicon glyphicon-font"></span></button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <textarea rows="5" cols="20" id="comment"></textarea>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <button class="btn btn-warning" type="button" id="btn-scrapbook-clear"><span class="glyphicon glyphicon-trash"></span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="chart3" class="tab-pane">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12">
+            <div id="my-app3"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="c1">
+              <canvas id="canvas3" class="c1"></canvas>
+            </div>
+            <div class="c1">
+              <canvas id="canvas3x" class="c1"></canvas>
+            </div>
+            <!--
+            <div class="c3">
+              <canvas id="canvas3c" class="c3"></canvas>
+            </div>
+            <div class="c2">
+              <canvas id="canvas3b" class="c2"></canvas>
+            </div>
+            -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include "templates/footer.html" %}
 </body>
+
 </html>
