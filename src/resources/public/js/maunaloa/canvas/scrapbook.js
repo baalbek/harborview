@@ -13,12 +13,26 @@ MAUNALOA.scrapbook = {
   clickY: null,
   p0: null,
   ctx: null,
-  init: function() {
+  id_rgLine: null,
+  obj_comment: null,
+  obj_color: null,
+  create: function(param) {
+    var SCRAPBOOK = function() {}
+    SCRAPBOOK.prototype = MAUNALOA.scrapbook;
+    SCRAPBOOK.constructor.prototype = SCRAPBOOK;
+    var result = new SCRAPBOOK();
+    result.init(param);
+    return result;
+  },
+  init: function(param) {
     this.mode = this.MODE_NONE;
-    var scrapbook = document.getElementById("scrapbook");
+    this.obj_color = document.getElementById(param.id_color);
+    this.obj_comment = document.getElementById(param.id_comment);
+    this.id_rgLine = param.id_rgLine;
+    var scrapbook = document.getElementById(param.id_checkbox);
     if (scrapbook !== null) {
 
-      var c_scrap = document.getElementById(MAUNALOA.repos.DAY_LINES_OVERLAY_2);
+      var c_scrap = document.getElementById(param.id_canvas);
       c_scrap.addEventListener('mousedown', this.handleMouseDown(this), false);
       c_scrap.addEventListener('mousemove', this.handleMouseMove(this), false);
       c_scrap.addEventListener('mouseup', this.handleMouseDone(this), false);
@@ -26,8 +40,8 @@ MAUNALOA.scrapbook = {
       this.ctx = c_scrap.getContext("2d");
 
       scrapbook.onchange = function() {
-        var div_1x = document.getElementById("div-1x");
-        var div_1scrap = document.getElementById("div-1scrap");
+        var div_1x = document.getElementById(param.id_div1);
+        var div_1scrap = document.getElementById(param.id_divScrap)
         if (scrapbook.checked === true) {
           div_1scrap.style.zIndex = "10";
           div_1x.style.zIndex = "0";
@@ -37,31 +51,34 @@ MAUNALOA.scrapbook = {
         }
       }
     }
-    var clearBtn = document.getElementById("btn-scrapbook-clear");
+    var clearBtn = document.getElementById(param.id_clear);
     if (clearBtn !== null) {
-      clearBtn.onclick = this.clearCanvas;
+      clearBtn.onclick = this.clearCanvas(this);
     }
-    var textBtn = document.getElementById("btn-scrapbook-text");
+    var textBtn = document.getElementById(param.id_text);
     if (textBtn !== null) {
-      textBtn.onclick = this.placeText;
+      textBtn.onclick = this.placeText(this);
     }
-    var lineBtn = document.getElementById("btn-scrapbook-line");
+    var lineBtn = document.getElementById(param.id_line);
     if (lineBtn !== null) {
-      lineBtn.onclick = this.drawLine;
+      lineBtn.onclick = this.drawLine(this);
     }
   },
-  drawLine: function() {
-    var self = MAUNALOA.scrapbook;
-    self.mode = self.MODE_LINE;
+  drawLine: function(self) {
+    return function() {
+      self.mode = self.MODE_LINE;
+    }
   },
-  placeText: function() {
-    var self = MAUNALOA.scrapbook;
-    self.mode = self.MODE_TEXT;
+  placeText: function(self) {
+    return function() {
+      self.mode = self.MODE_TEXT;
+    }
   },
-  clearCanvas: function() {
-    var self = MAUNALOA.scrapbook;
-    var canvas = self.ctx.canvas;
-    self.ctx.clearRect(0, 0, canvas.width, canvas.height)
+  clearCanvas: function(self) {
+    return function() {
+      var canvas = self.ctx.canvas;
+      self.ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
   },
   addClick: function(x, y) {
     this.clickX.push(x);
@@ -83,7 +100,8 @@ MAUNALOA.scrapbook = {
     context.stroke();
   },
   getLineSize: function() {
-    var rgLine = document.querySelector('input[name="rg-line"]:checked').value;
+    var qry = 'input[name="' + this.id_rgLine + '"]:checked';
+    var rgLine = document.querySelector(qry).value;
     switch (rgLine) {
       case "1":
         return 1;
@@ -98,7 +116,8 @@ MAUNALOA.scrapbook = {
   handleMouseDown: function(self) {
     return function(e) {
       self.lineSize = self.getLineSize();
-      self.lineColor = document.getElementById("color").value;
+      //self.lineColor = document.getElementById(self.id_color).value;
+      self.lineColor = self.obj_color.value; //document.getElementById(self.id_color).value;
       switch (self.mode) {
         case self.MODE_LINE:
           self.p0 = {
@@ -123,7 +142,7 @@ MAUNALOA.scrapbook = {
           self.mode = self.MODE_NONE;
           self.ctx.fillStyle = "#000";
           self.ctx.font = "16px Arial";
-          var comment = document.getElementById("comment").value;
+          var comment = self.obj_comment.value; //document.getElementById(self.id_comment).value;
           self.ctx.fillText(comment, e.offsetX, e.offsetY);
           break;
         default:
