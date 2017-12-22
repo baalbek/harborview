@@ -27,6 +27,18 @@ jQuery(document).ready(function() {
     id_canvas: MAUNALOA.repos.DAY_LINES_OVERLAY_2,
     id_rgLine: "rg-line"
   });
+  var scrapbook2 = MAUNALOA.scrapbook.create({
+    id_checkbox: "scrapbook2",
+    id_div1: "div-2x",
+    id_divScrap: "div-2scrap",
+    id_clear: "btn-scrapbook2-clear",
+    id_text: "btn-scrapbook2-text",
+    id_line: "btn-scrapbook2-line",
+    id_comment: "comment2",
+    id_color: "color2",
+    id_canvas: MAUNALOA.repos.WEEK_LINES_OVERLAY_2,
+    id_rgLine: "rg-line2"
+  });
 
   var node2 = document.getElementById('my-app2');
   var app2 = Elm.Maunaloa.Charts.embed(node2, {
@@ -74,7 +86,6 @@ jQuery(document).ready(function() {
       cfg.cid = MAUNALOA.repos.DAY_VOLUME;
       drawCanvas(cfg);
     }
-    //MAUNALOA.scrapbook.clearCanvas();
     scrapbook1.clearCanvas();
   }
   var drawCanvas2 = function(chartInfo) {
@@ -98,6 +109,7 @@ jQuery(document).ready(function() {
       cfg.cid = MAUNALOA.repos.WEEK_VOLUME;
       drawCanvas(cfg);
     }
+    scrapbook2.clearCanvas();
   }
   var drawCanvas3 = function(chartInfo) {
     var cfg = {
@@ -213,10 +225,10 @@ jQuery(document).ready(function() {
   /*
   app.ports.drawRiscLines.subscribe(drawRiscLines1);
   app2.ports.drawRiscLines.subscribe(drawRiscLines2);
+  */
 
-  var drawSpot1 = function (spot) {
+  var drawSpot1 = function(spot) {
     repos1.addSpot(spot);
   }
   app.ports.drawSpot.subscribe(drawSpot1);
-  */
 });

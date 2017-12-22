@@ -61,6 +61,7 @@ MAUNALOA.repos = {
   DAY_OSC: 'canvas1b',
   WEEK_LINES: 'canvas2',
   WEEK_LINES_OVERLAY: 'canvas2x',
+  WEEK_LINES_OVERLAY_2: 'canvas2-scrap',
   WEEK_VOLUME: 'canvas2c',
   WEEK_OSC: 'canvas2b',
   MONTH_LINES: 'canvas3',
