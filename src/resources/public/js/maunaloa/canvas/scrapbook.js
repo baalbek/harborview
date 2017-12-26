@@ -12,6 +12,7 @@ MAUNALOA.scrapbook = {
   clickX: null,
   clickY: null,
   p0: null,
+  p1: null,
   ctx: null,
   id_rgLine: null,
   obj_comment: null,
@@ -51,6 +52,10 @@ MAUNALOA.scrapbook = {
         }
       }
     }
+    var saveBtn = document.getElementById(param.id_save);
+    if (saveBtn !== null) {
+      saveBtn.onclick = this.saveCanvas(this);
+    }
     var clearBtn = document.getElementById(param.id_clear);
     if (clearBtn !== null) {
       clearBtn.onclick = this.clearCanvas(this);
@@ -69,6 +74,16 @@ MAUNALOA.scrapbook = {
       self.mode = self.MODE_LINE;
     }
   },
+  drawArrowLine: function() {
+    var ctx = this.ctx;
+    ctx.beginPath();
+    ctx.moveTo(70, 70);
+    ctx.quadraticCurveTo(140, 105, 210, 20);
+    ctx.lineTo(190, 25);
+    ctx.moveTo(210, 20);
+    ctx.lineTo(215, 35);
+    ctx.stroke();
+  },
   placeText: function(self) {
     return function() {
       self.mode = self.MODE_TEXT;
@@ -78,6 +93,34 @@ MAUNALOA.scrapbook = {
     return function() {
       var canvas = self.ctx.canvas;
       self.ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+  },
+  saveCanvas: function(self) {
+    return function() {
+      var canvas = self.ctx.canvas; //document.getElementById('canvas');
+
+      canvas.toBlob(function(blob) {
+        var newImg = document.createElement('img');
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "scrap.png";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 0);
+        /*
+        newImg.onload = function() {
+          // no longer need to read the blob so it's revoked
+          URL.revokeObjectURL(url);
+        };
+
+        newImg.src = url;
+        document.body.appendChild(newImg);
+        */
+      });
     }
   },
   addClick: function(x, y) {
@@ -125,6 +168,7 @@ MAUNALOA.scrapbook = {
             y: e.offsetY
           }
           self.mode = self.MODE_LINE_2;
+          //self.ctx.globalCompositeOperation = "xor";
           break;
         case self.MODE_LINE_2:
           var context = self.ctx;
@@ -136,6 +180,9 @@ MAUNALOA.scrapbook = {
           context.moveTo(self.p0.x, self.p0.y);
           context.lineTo(e.offsetX, e.offsetY);
           context.stroke();
+          self.p0 = null;
+          self.p1 = null;
+          //self.ctx.globalCompositeOperation = "source-over";
           self.mode = self.MODE_NONE;
           break;
         case self.MODE_TEXT:
@@ -156,9 +203,24 @@ MAUNALOA.scrapbook = {
   },
   handleMouseMove: function(self) {
     return function(e) {
-      if (self.mode === self.MODE_PAINT) {
-        self.addClick(e.offsetX, e.offsetY);
-        self.redraw();
+      switch (self.mode) {
+        case self.MODE_PAINT:
+          self.addClick(e.offsetX, e.offsetY);
+          self.redraw();
+          break;
+        case self.MODE_LINE_2:
+          if (self.p1 !== null) {
+            var context = self.ctx;
+            context.beginPath();
+            context.moveTo(self.p0.x, self.p0.y);
+            context.lineTo(self.p1.x, self.p1.y);
+            context.stroke();
+          }
+          self.p1 = {
+            x: e.offsetX,
+            y: e.offsetY
+          }
+          break;
       }
     }
   },
