@@ -1,21 +1,24 @@
 body {
   color: #000;
-  background-color: #FFF8DC;
+  background-color: #FFFAF0;
   font-family: Verdana, Arial, serif;
   font-size: 1.3em;
   margin: 0;
   padding: 0;
   padding-top: 50px;
-  /* When using the navbar-top-fixed */ }
+  /* When using the navbar-top-fixed */
+}
 
 a, a:link, a:visited, a:active, a.current {
   margin: 0px;
   text-decoration: none;
   color: #b9becf;
-  font-weight: normal; }
+  font-weight: normal;
+}
 
 img {
-  border: 0px; }
+  border: 0px;
+}
 
 /*
 nav a {
@@ -28,14 +31,18 @@ nav a {
     }
 }
 */
+
 .row {
   /*margin-top: 30px;*/
-  margin-bottom: 10px; }
-.container {
-    width: 90%;
-    padding-left: 0px;
-    padding-right: 0px;
+  margin-bottom: 10px;
 }
+
+.container {
+  width: 90%;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
 .logo {
   background: url("/img/02.png") center no-repeat;
   position: absolute;
@@ -43,7 +50,8 @@ nav a {
   left: 88%;
   width: 163px;
   height: 159px;
-  z-index: 9999; }
+  z-index: 9999;
+}
 
 .top-canvas {
   border: 1px solid red;
@@ -51,11 +59,13 @@ nav a {
   top: 300px;
   left: 200px;
   width: 1310px;
-  height: 600px; }
+  height: 600px;
+}
 
 .navbar-simple .brand {
   padding-top: 15px;
-  padding-bottom: 15px; }
+  padding-bottom: 15px;
+}
 
 .navbar-simple .navbar-inner {
   background: #fff;
@@ -63,10 +73,12 @@ nav a {
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.25);
   -moz-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.25);
   -webkit-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.25);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2); }
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
 
 .navbar-simple .navbar-inner .nav {
-  float: right; }
+  float: right;
+}
 
 .navbar-simple .navbar-inner .nav li a {
   background: none;
@@ -77,17 +89,20 @@ nav a {
   font-size: 13px;
   padding-top: 15px;
   padding-bottom: 15px;
-  font-weight: 600; }
+  font-weight: 600;
+}
 
 .navbar-simple .navbar-inner .nav li a:hover {
   background: none;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
-  color: #bf3604; }
+  color: #bf3604;
+}
 
 .navbar-simple .navbar-inner .nav li.active a {
-  color: #bf3604; }
+  color: #bf3604;
+}
 
 .modalDialog {
   position: fixed;
@@ -99,13 +114,15 @@ nav a {
   background: rgba(100, 0, 0, 0.2);
   z-index: 99999;
   opacity: 0;
-  pointer-events: none; }
+  pointer-events: none;
+}
 
 .modalDialog:target {
   opacity: 1;
-  pointer-events: auto; }
+  pointer-events: auto;
+}
 
-.modalDialog > div {
+.modalDialog>div {
   width: 400px;
   position: relative;
   margin: 10% auto;
@@ -114,7 +131,8 @@ nav a {
   background: #fff;
   background: -moz-linear-gradient(#fff, #999);
   background: -webkit-linear-gradient(#fff, #999);
-  background: -o-linear-gradient(#fff, #999); }
+  background: -o-linear-gradient(#fff, #999);
+}
 
 a.href-button {
   background: #942d16;
@@ -123,41 +141,50 @@ a.href-button {
   font-size: 14px;
   font-family: Helvetica, Arial, Sans-Serif;
   text-decoration: none;
-  vertical-align: middle; }
+  vertical-align: middle;
+}
 
 a.href-button:hover {
   background: #942d16;
-  color: #ccc; }
+  color: #ccc;
+}
 
 a.href-button:active {
-  background: #942d16; }
+  background: #942d16;
+}
 
 a.href-td {
   padding: 5px 5px 5px 5px;
   background: #942d16;
-  color: #fff; }
+  color: #fff;
+}
 
 div.c1, div.c2, div.c3 {
   z-index: 0;
   position: absolute;
-  left: 0px; }
+  left: 0px;
+}
 
 div.c1 {
-  top: 0px; }
+  top: 0px;
+}
 
 div.c2 {
-  top: 650px; }
+  top: 650px;
+}
 
 div.c3 {
-  top: 520px; }
+  top: 520px;
+}
 
 div.top {
-    z-index: 10;
+  z-index: 10;
 }
 
 canvas.c1, canvas.c2, canvas.c3 {
   border-style: solid;
   border-width: 1px;
-  border-color: #000000; }
+  border-color: #000000;
+}
 
 /*# sourceMappingURL=harborview.css.map */

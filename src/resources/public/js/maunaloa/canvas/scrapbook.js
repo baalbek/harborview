@@ -104,7 +104,7 @@ MAUNALOA.scrapbook = {
       newCanvas.width = canvas.width;
       newCanvas.height = canvas.height;
       var newCtx = newCanvas.getContext("2d");
-      newCtx.fillStyle = "white";
+      newCtx.fillStyle = "FloralWhite";
       newCtx.fillRect(0, 0, canvas.width, canvas.height);
       newCtx.drawImage(canvas, 0, 0);
       if (self.id_canvas_0 !== null) {
