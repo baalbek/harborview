@@ -15,6 +15,7 @@ MAUNALOA.scrapbook = {
   p1: null,
   ctx: null,
   id_rgLine: null,
+  id_canvas_0: null,
   obj_comment: null,
   obj_color: null,
   create: function(param) {
@@ -27,6 +28,7 @@ MAUNALOA.scrapbook = {
   },
   init: function(param) {
     this.mode = this.MODE_NONE;
+    this.id_canvas_0 = param.id_canvas_0;
     this.obj_color = document.getElementById(param.id_color);
     this.obj_comment = document.getElementById(param.id_comment);
     this.id_rgLine = param.id_rgLine;
@@ -98,8 +100,18 @@ MAUNALOA.scrapbook = {
   saveCanvas: function(self) {
     return function() {
       var canvas = self.ctx.canvas; //document.getElementById('canvas');
-
-      canvas.toBlob(function(blob) {
+      var newCanvas = document.createElement('canvas');
+      newCanvas.width = canvas.width;
+      newCanvas.height = canvas.height;
+      var newCtx = newCanvas.getContext("2d");
+      newCtx.fillStyle = "white";
+      newCtx.fillRect(0, 0, canvas.width, canvas.height);
+      newCtx.drawImage(canvas, 0, 0);
+      if (self.id_canvas_0 !== null) {
+        var canvas_0 = document.getElementById(self.id_canvas_0);
+        newCtx.drawImage(canvas_0, 0, 0);
+      }
+      newCanvas.toBlob(function(blob) {
         var newImg = document.createElement('img');
         var url = URL.createObjectURL(blob);
         var a = document.createElement("a");
@@ -208,19 +220,21 @@ MAUNALOA.scrapbook = {
           self.addClick(e.offsetX, e.offsetY);
           self.redraw();
           break;
-        case self.MODE_LINE_2:
-          if (self.p1 !== null) {
-            var context = self.ctx;
-            context.beginPath();
-            context.moveTo(self.p0.x, self.p0.y);
-            context.lineTo(self.p1.x, self.p1.y);
-            context.stroke();
-          }
-          self.p1 = {
-            x: e.offsetX,
-            y: e.offsetY
-          }
-          break;
+          /*
+          case self.MODE_LINE_2:
+            if (self.p1 !== null) {
+              var context = self.ctx;
+              context.beginPath();
+              context.moveTo(self.p0.x, self.p0.y);
+              context.lineTo(self.p1.x, self.p1.y);
+              context.stroke();
+            }
+            self.p1 = {
+              x: e.offsetX,
+              y: e.offsetY
+            }
+            break;
+            */
       }
     }
   },
