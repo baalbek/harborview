@@ -6,13 +6,15 @@ MAUNALOA.scrapbook = {
   MODE_LINE: 2,
   MODE_LINE_2: 3,
   MODE_TEXT: 4,
+  MODE_ARROW: 5,
+  MODE_ARROW_2: 6,
   paint: false,
   mode: null,
   textMode: false,
   clickX: null,
   clickY: null,
   p0: null,
-  p1: null,
+  //p1: null,
   ctx: null,
   id_rgLine: null,
   id_canvas_0: null,
@@ -70,14 +72,17 @@ MAUNALOA.scrapbook = {
     if (lineBtn !== null) {
       lineBtn.onclick = this.drawLine(this);
     }
+    var arrowBtn = document.getElementById(param.id_arrow);
+    if (arrowBtn !== null) {
+      arrowBtn.onclick = this.drawArrowLine(this);
+    }
   },
   drawLine: function(self) {
     return function() {
       self.mode = self.MODE_LINE;
     }
   },
-  drawArrowLine: function() {
-    var ctx = this.ctx;
+  drawArrowLine_: function(ctx) {
     ctx.beginPath();
     ctx.moveTo(70, 70);
     ctx.quadraticCurveTo(140, 105, 210, 20);
@@ -85,6 +90,11 @@ MAUNALOA.scrapbook = {
     ctx.moveTo(210, 20);
     ctx.lineTo(215, 35);
     ctx.stroke();
+  },
+  drawArrowLine: function(self) {
+    return function() {
+      self.mode = self.MODE_ARROW;
+    }
   },
   placeText: function(self) {
     return function() {
@@ -172,7 +182,6 @@ MAUNALOA.scrapbook = {
             y: e.offsetY
           }
           self.mode = self.MODE_LINE_2;
-          //self.ctx.globalCompositeOperation = "xor";
           break;
         case self.MODE_LINE_2:
           var context = self.ctx;
@@ -185,8 +194,6 @@ MAUNALOA.scrapbook = {
           context.lineTo(e.offsetX, e.offsetY);
           context.stroke();
           self.p0 = null;
-          self.p1 = null;
-          //self.ctx.globalCompositeOperation = "source-over";
           self.mode = self.MODE_NONE;
           break;
         case self.MODE_TEXT:
@@ -195,6 +202,18 @@ MAUNALOA.scrapbook = {
           self.ctx.font = "16px Arial";
           var comment = self.obj_comment.value; //document.getElementById(self.id_comment).value;
           self.ctx.fillText(comment, e.offsetX, e.offsetY);
+          break;
+        case self.MODE_ARROW:
+          self.p0 = {
+            x: e.offsetX,
+            y: e.offsetY
+          }
+          self.mode = self.MODE_ARROW_2;
+          break;
+        case self.MODE_ARROW_2:
+          self.drawArrowLine_(self.ctx);
+          self.p0 = null;
+          self.mode = self.MODE_NONE;
           break;
         default:
           self.mode = self.MODE_PAINT;
@@ -212,30 +231,17 @@ MAUNALOA.scrapbook = {
           self.addClick(e.offsetX, e.offsetY);
           self.redraw();
           break;
-          /*
-          case self.MODE_LINE_2:
-            if (self.p1 !== null) {
-              var context = self.ctx;
-              context.beginPath();
-              context.moveTo(self.p0.x, self.p0.y);
-              context.lineTo(self.p1.x, self.p1.y);
-              context.stroke();
-            }
-            self.p1 = {
-              x: e.offsetX,
-              y: e.offsetY
-            }
-            break;
-            */
       }
     }
   },
   handleMouseDone: function(self) {
     return function(e) {
-      if (self.mode !== self.MODE_LINE_2) {
-        self.mode = self.MODE_NONE;
-        self.clickX = null;
-        self.clickY = null;
+      switch (self.mode) {
+        case self.MODE_PAINT:
+          self.clickX = null;
+          self.clickY = null;
+          self.mode = self.MODE_NONE;
+          break;
       }
     }
   }
