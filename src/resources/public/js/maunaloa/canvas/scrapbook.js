@@ -123,16 +123,8 @@ MAUNALOA.scrapbook = {
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
         }, 0);
-        /*
-        newImg.onload = function() {
-          // no longer need to read the blob so it's revoked
-          URL.revokeObjectURL(url);
-        };
-
-        newImg.src = url;
-        document.body.appendChild(newImg);
-        */
       });
+      newCanvas.remove();
     }
   },
   addClick: function(x, y) {
