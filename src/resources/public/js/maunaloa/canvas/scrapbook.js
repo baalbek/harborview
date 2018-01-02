@@ -7,7 +7,6 @@ MAUNALOA.scrapbook = {
   MODE_LINE_2: 3,
   MODE_TEXT: 4,
   MODE_ARROW: 5,
-  MODE_ARROW_2: 6,
   paint: false,
   mode: null,
   textMode: false,
@@ -82,14 +81,15 @@ MAUNALOA.scrapbook = {
       self.mode = self.MODE_LINE;
     }
   },
-  drawArrowLine_: function(ctx) {
+  drawArrowLine_: function(ctx,x,y,comment) {
     ctx.beginPath();
-    ctx.moveTo(70, 70);
-    ctx.quadraticCurveTo(140, 105, 210, 20);
-    ctx.lineTo(190, 25);
-    ctx.moveTo(210, 20);
-    ctx.lineTo(215, 35);
+    ctx.moveTo(x-140, y+50);
+    ctx.quadraticCurveTo(x-105, y+120, x, y);
+    ctx.lineTo(x-20, y+5);
+    ctx.moveTo(x, y);
+    ctx.lineTo(x+5, y+15);
     ctx.stroke();
+    ctx.fillText(comment, x-160, y+40);
   },
   drawArrowLine: function(self) {
     return function() {
@@ -204,15 +204,11 @@ MAUNALOA.scrapbook = {
           self.ctx.fillText(comment, e.offsetX, e.offsetY);
           break;
         case self.MODE_ARROW:
-          self.p0 = {
-            x: e.offsetX,
-            y: e.offsetY
-          }
-          self.mode = self.MODE_ARROW_2;
-          break;
-        case self.MODE_ARROW_2:
-          self.drawArrowLine_(self.ctx);
-          self.p0 = null;
+          self.ctx.fillStyle = self.lineColor;
+          self.ctx.strokeStyle = self.lineColor;
+          self.ctx.lineWidth = self.lineSize;
+          self.ctx.font = "16px Arial";
+          self.drawArrowLine_(self.ctx,e.offsetX,e.offsetY,self.obj_comment.value);
           self.mode = self.MODE_NONE;
           break;
         default:
