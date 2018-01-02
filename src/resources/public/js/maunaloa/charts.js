@@ -16,19 +16,20 @@ jQuery(document).ready(function() {
     chartResolution: 1
   });
   var scrapbook1 = MAUNALOA.scrapbook.create({
-    id_checkbox: "scrapbook",
+    id_checkbox: "scrapbook1",
     id_div1: "div-1x",
     id_divScrap: "div-1scrap",
-    id_clear: "btn-scrapbook-clear",
-    id_text: "btn-scrapbook-text",
-    id_line: "btn-scrapbook-line",
-    id_arrow: "btn-scrapbook-arrow",
-    id_save: "btn-scrapbook-save",
-    id_comment: "comment",
-    id_color: "color",
+    id_clear: "btn-scrapbook1-clear",
+    id_text: "btn-scrapbook1-text",
+    id_line: "btn-scrapbook1-line",
+    id_horiz: "btn-scrapbook1-horiz",
+    id_arrow: "btn-scrapbook1-arrow",
+    id_save: "btn-scrapbook1-save",
+    id_comment: "comment1",
+    id_color: "color1",
     id_canvas: MAUNALOA.repos.DAY_LINES_OVERLAY_2,
     id_canvas_0: MAUNALOA.repos.DAY_LINES,
-    id_rgLine: "rg-line"
+    id_rgLine: "rg-line1"
   });
   var scrapbook2 = MAUNALOA.scrapbook.create({
     id_checkbox: "scrapbook2",
@@ -37,6 +38,7 @@ jQuery(document).ready(function() {
     id_clear: "btn-scrapbook2-clear",
     id_text: "btn-scrapbook2-text",
     id_line: "btn-scrapbook2-line",
+    id_horiz: "btn-scrapbook2-horiz",
     id_arrow: "btn-scrapbook2-arrow",
     id_save: "btn-scrapbook2-save",
     id_comment: "comment2",

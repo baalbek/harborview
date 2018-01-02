@@ -7,6 +7,8 @@ MAUNALOA.scrapbook = {
   MODE_LINE_2: 3,
   MODE_TEXT: 4,
   MODE_ARROW: 5,
+  MODE_HORIZ: 6,
+  MODE_HORIZ_2: 7,
   paint: false,
   mode: null,
   textMode: false,
@@ -75,25 +77,34 @@ MAUNALOA.scrapbook = {
     if (arrowBtn !== null) {
       arrowBtn.onclick = this.drawArrowLine(this);
     }
+    var horizBtn = document.getElementById(param.id_horiz);
+    if (horizBtn !== null) {
+      horizBtn.onclick = this.drawHorizLine(this);
+    }
   },
   drawLine: function(self) {
     return function() {
       self.mode = self.MODE_LINE;
     }
   },
-  drawArrowLine_: function(ctx,x,y,comment) {
+  drawArrowLine_: function(ctx, x, y, comment) {
     ctx.beginPath();
-    ctx.moveTo(x-140, y+50);
-    ctx.quadraticCurveTo(x-105, y+120, x, y);
-    ctx.lineTo(x-20, y+5);
+    ctx.moveTo(x - 140, y + 50);
+    ctx.quadraticCurveTo(x - 105, y + 120, x, y);
+    ctx.lineTo(x - 20, y + 5);
     ctx.moveTo(x, y);
-    ctx.lineTo(x+5, y+15);
+    ctx.lineTo(x + 5, y + 15);
     ctx.stroke();
-    ctx.fillText(comment, x-160, y+40);
+    ctx.fillText(comment, x - 160, y + 40);
   },
   drawArrowLine: function(self) {
     return function() {
       self.mode = self.MODE_ARROW;
+    }
+  },
+  drawHorizLine: function(self) {
+    return function() {
+      self.mode = self.MODE_HORIZ;
     }
   },
   placeText: function(self) {
@@ -208,7 +219,27 @@ MAUNALOA.scrapbook = {
           self.ctx.strokeStyle = self.lineColor;
           self.ctx.lineWidth = self.lineSize;
           self.ctx.font = "16px Arial";
-          self.drawArrowLine_(self.ctx,e.offsetX,e.offsetY,self.obj_comment.value);
+          self.drawArrowLine_(self.ctx, e.offsetX, e.offsetY, self.obj_comment.value);
+          self.mode = self.MODE_NONE;
+          break;
+        case self.MODE_HORIZ:
+          self.p0 = {
+            x: e.offsetX,
+            y: e.offsetY
+          }
+          self.mode = self.MODE_HORIZ_2;
+          break;
+        case self.MODE_HORIZ_2:
+          var context = self.ctx;
+          var canvas = self.ctx.canvas;
+          context.strokeStyle = self.lineColor;
+          context.lineJoin = "round";
+          context.lineWidth = self.lineSize;
+          context.beginPath();
+          context.moveTo(self.p0.x, self.p0.y);
+          context.lineTo(e.offsetX, self.p0.y);
+          context.stroke();
+          self.p0 = null;
           self.mode = self.MODE_NONE;
           break;
         default:
