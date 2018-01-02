@@ -30,8 +30,14 @@
     <div class="row">
       <div class="col-sm-12">
         <button class="btn btn-success" type="button" id="btn-scrapbook{{n}}-line"><span class="glyphicon glyphicon-pencil"></span></button>
-        <button class="btn btn-success" type="button" id="btn-scrapbook{{n}}-arrow"><span class="glyphicon glyphicon-leaf"></span></button>
         <button class="btn btn-success" type="button" id="btn-scrapbook{{n}}-horiz"><span class="glyphicon glyphicon-minus"></span></button>
+        <select class="form-control" id="arrow{{n}}-orient">
+          <option>NW</option>
+          <option>NE</option>
+          <option>SE</option>
+          <option selected="selected">SW</option>
+        </select>
+        <button class="btn btn-success" type="button" id="btn-scrapbook{{n}}-arrow"><span class="glyphicon glyphicon-leaf"></span></button>
         <button class="btn btn-success" type="button" id="btn-scrapbook{{n}}-text"><span class="glyphicon glyphicon-font"></span></button>
       </div>
     </div>

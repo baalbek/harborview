@@ -34,6 +34,7 @@ MAUNALOA.scrapbook = {
     this.id_canvas_0 = param.id_canvas_0;
     this.obj_color = document.getElementById(param.id_color);
     this.obj_comment = document.getElementById(param.id_comment);
+    this.obj_arrow_orient = document.getElementById(param.id_arrow_orient);
     this.id_rgLine = param.id_rgLine;
     var scrapbook = document.getElementById(param.id_checkbox);
     if (scrapbook !== null) {
@@ -87,7 +88,8 @@ MAUNALOA.scrapbook = {
       self.mode = self.MODE_LINE;
     }
   },
-  drawArrowLine_: function(ctx, x, y, comment) {
+  drawArrowLine_: function(ctx, x, y, comment, orientation) {
+    console.log(orientation);
     ctx.beginPath();
     ctx.moveTo(x - 140, y + 50);
     ctx.quadraticCurveTo(x - 105, y + 120, x, y);
@@ -219,7 +221,7 @@ MAUNALOA.scrapbook = {
           self.ctx.strokeStyle = self.lineColor;
           self.ctx.lineWidth = self.lineSize;
           self.ctx.font = "16px Arial";
-          self.drawArrowLine_(self.ctx, e.offsetX, e.offsetY, self.obj_comment.value);
+          self.drawArrowLine_(self.ctx, e.offsetX, e.offsetY, self.obj_comment.value, self.obj_arrow_orient.value);
           self.mode = self.MODE_NONE;
           break;
         case self.MODE_HORIZ:
