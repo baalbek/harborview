@@ -89,15 +89,54 @@ MAUNALOA.scrapbook = {
     }
   },
   drawArrowLine_: function(ctx, x, y, comment, orientation) {
-    console.log(orientation);
+    var x1 = x - 140;
+    var y1 = y + 50;
+    var x2 = x - 105;
+    var y2 = y + 120;
+    var x3 = x - 20;
+    var y3 = y + 5;
+    var x4 = x + 5;
+    var y4 = y + 15;
+    var x5 = x - 160;
+    var y5 = y + 40;
+    switch (orientation) {
+      case "NW":
+        break;
+      case "NE":
+        var tx = 2 * x;
+        var ty = 2 * y;
+        x1 = tx - x1;
+        y1 = ty - y1;
+        x2 = tx - x2;
+        y2 = ty - y2;
+        x3 = tx - x3;
+        y3 = ty - y3;
+        x4 = tx - x4;
+        y4 = ty - y4;
+        x5 = tx - x5 - 100;
+        y5 = ty - y5 + 10;
+        break;
+      case "SE":
+        break;
+      case "SW":
+        break;
+    }
     ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.quadraticCurveTo(x2, y2, x, y);
+    ctx.lineTo(x3, y3);
+    ctx.moveTo(x, y);
+    ctx.lineTo(x4, y4);
+    /*
     ctx.moveTo(x - 140, y + 50);
     ctx.quadraticCurveTo(x - 105, y + 120, x, y);
     ctx.lineTo(x - 20, y + 5);
     ctx.moveTo(x, y);
     ctx.lineTo(x + 5, y + 15);
+    */
     ctx.stroke();
-    ctx.fillText(comment, x - 160, y + 40);
+    //ctx.fillText(comment, x - 160, y + 40);
+    ctx.fillText(comment, x5, y5);
   },
   drawArrowLine: function(self) {
     return function() {
