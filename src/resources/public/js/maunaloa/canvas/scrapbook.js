@@ -101,6 +101,12 @@ MAUNALOA.scrapbook = {
     var y5 = y + 40;
     switch (orientation) {
       case "NW":
+        var ty = 2 * y;
+        y1 = ty - y1;
+        y2 = ty - y2;
+        y3 = ty - y3;
+        y4 = ty - y4;
+        y5 = ty - y5 + 10;
         break;
       case "NE":
         var tx = 2 * x;
@@ -117,8 +123,12 @@ MAUNALOA.scrapbook = {
         y5 = ty - y5 + 10;
         break;
       case "SE":
-        break;
-      case "SW":
+        var tx = 2 * x;
+        x1 = tx - x1;
+        x2 = tx - x2;
+        x3 = tx - x3;
+        x4 = tx - x4;
+        x5 = tx - x5 - 100;
         break;
     }
     ctx.beginPath();
@@ -127,15 +137,7 @@ MAUNALOA.scrapbook = {
     ctx.lineTo(x3, y3);
     ctx.moveTo(x, y);
     ctx.lineTo(x4, y4);
-    /*
-    ctx.moveTo(x - 140, y + 50);
-    ctx.quadraticCurveTo(x - 105, y + 120, x, y);
-    ctx.lineTo(x - 20, y + 5);
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + 5, y + 15);
-    */
     ctx.stroke();
-    //ctx.fillText(comment, x - 160, y + 40);
     ctx.fillText(comment, x5, y5);
   },
   drawArrowLine: function(self) {
