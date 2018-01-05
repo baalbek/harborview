@@ -63,6 +63,8 @@ type alias PurchaseWithSales =
     , optionType : String
     , ticker : String
     , purchaseDate : String
+    , exp : String
+    , days : Int 
     , price : Float
     , bid : Float
     , spot : Float
@@ -249,6 +251,8 @@ tableHeader =
             , H.th [] [ H.text "Option Type" ]
             , H.th [] [ H.text "Ticker" ]
             , H.th [] [ H.text "Purchase Date" ]
+            , H.th [] [ H.text "Expiry" ]
+            , H.th [] [ H.text "Days" ]
             , H.th [] [ H.text "Purchase Price" ]
             , H.th [] [ H.text "Bid" ]
             , H.th [] [ H.text "Purchase vol." ]
@@ -258,6 +262,7 @@ tableHeader =
             , H.th [] [ H.text "Cur. Ask" ]
             , H.th [] [ H.text "Cur. Bid" ]
             , H.th [] [ H.text "Cur. Iv" ]
+            , H.th [] [ H.text "Profit" ]
             , H.th [] [ H.text "Diff Bid" ]
             , H.th [] [ H.text "Diff Iv Pct" ]
             ]
@@ -279,8 +284,11 @@ view model =
                     let
                         toRow x =
                             let
+                                profit =
+                                    M.toDecimal (x.curBid - x.price) 100.0
+
                                 diffBid =
-                                    M.toDecimal (x.curBid - x.bid) 10.0
+                                    M.toDecimal (x.curBid - x.bid) 100.0
 
                                 diffIv =
                                     M.toDecimal (100.0 * ((x.curIv / x.iv) - 1.0)) 100.0
@@ -294,6 +302,8 @@ view model =
                                 , H.td [] [ H.text x.optionType ]
                                 , H.td [] [ H.text x.ticker ]
                                 , H.td [] [ H.text x.purchaseDate ]
+                                , H.td [] [ H.text x.exp ]
+                                , H.td [] [ H.text (toString x.days)]
                                 , H.td [] [ H.text (toString x.price) ]
                                 , H.td [] [ H.text (toString x.bid) ]
                                 , H.td [] [ H.text (toString x.purchaseVolume) ]
@@ -303,6 +313,7 @@ view model =
                                 , H.td [] [ H.text (toString x.curAsk) ]
                                 , H.td [] [ H.text (toString x.curBid) ]
                                 , H.td [] [ H.text (toString x.curIv) ]
+                                , H.td [] [ H.text (toString profit) ]
                                 , H.td [] [ H.text (toString diffBid) ]
                                 , H.td [] [ H.text (toString diffIv) ]
                                 ]
@@ -405,6 +416,8 @@ fetchPurchases ticker isRealTime =
                     |> JP.required "ot" Json.string
                     |> JP.required "ticker" Json.string
                     |> JP.required "dx" Json.string
+                    |> JP.required "exp" Json.string
+                    |> JP.required "days" Json.int
                     |> JP.required "price" Json.float
                     |> JP.required "bid" Json.float
                     |> JP.required "spot" Json.float

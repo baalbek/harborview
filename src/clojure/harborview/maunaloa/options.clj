@@ -238,6 +238,8 @@
      :ot ot
      :ticker ticker
      :dx (CU/ld->str d0)
+     :exp (CU/ld->str d1)
+     :days days
      :price price
      :bid bid
      :spot spot
