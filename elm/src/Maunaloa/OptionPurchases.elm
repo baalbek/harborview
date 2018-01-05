@@ -96,6 +96,7 @@ type Msg
     | SalePriceChange String
     | SaleVolumeChange String
     | AlertOk
+    | ResetCache
 
 
 type alias Model =
@@ -167,11 +168,12 @@ update msg model =
                 checked =
                     not model.isRealTimePurchase
             in
-            ( { model | isRealTimePurchase = checked }, fetchPurchases model.selectedTicker checked )
+            ( { model | isRealTimePurchase = checked }, 
+                fetchPurchases model.selectedTicker checked False)
 
         --( { model | isRealTimePurchase = checked }, Cmd.none )
         FetchPurchases s ->
-            ( { model | selectedTicker = s }, fetchPurchases s model.isRealTimePurchase )
+            ( { model | selectedTicker = s }, fetchPurchases s model.isRealTimePurchase False)
 
         PurchasesFetched (Ok s) ->
             ( { model | purchases = Just s }, Cmd.none )
@@ -235,6 +237,8 @@ update msg model =
         SaleVolumeChange s ->
             ( { model | saleVolume = s }, Cmd.none )
 
+        ResetCache ->
+            ( model,  fetchPurchases model.selectedTicker model.isRealTimePurchase True )
 
 
 -- endregion
@@ -340,10 +344,11 @@ view model =
     in
     H.div [ A.class "container" ]
         [ H.div [ A.class "row" ]
-            [ -- button_ "Fetch Purchases" (FetchPurchases model.selectedTicker)
+          [
               M.checkbox "Real-time purchase" "col-sm-2 checkbox" True ToggleRealTimePurchase
             , H.div [ A.class "col-sm-3" ]
                 [ CMB.makeSelect "Tickers: " FetchPurchases model.tickers model.selectedTicker ]
+            , BTN.button "col-sm-2" "Reset Cache" ResetCache
             ]
         , purchaseTable
         , DLG.modalDialog dlgHeader
@@ -393,8 +398,8 @@ fetchTickers =
         Http.get url CMB.comboBoxItemListDecoder
 
 
-fetchPurchases : String -> Bool -> Cmd Msg
-fetchPurchases ticker isRealTime =
+fetchPurchases : String -> Bool -> Bool -> Cmd Msg
+fetchPurchases ticker isRealTime resetCache =
     if ticker == "-1" then
         Cmd.none
     else
@@ -407,8 +412,15 @@ fetchPurchases ticker isRealTime =
                     False ->
                         "11"
 
+            resetCacheJson = 
+                case resetCache of
+                    True ->
+                        "true"
+                    False ->
+                        "false"
+
             url =
-                mainUrl ++ "/fetchpurchases?oid=" ++ ticker ++ "&ptype=" ++ purchaseType
+                mainUrl ++ "/fetchpurchases?oid=" ++ ticker ++ "&ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
 
             purchaseDecoder =
                 JP.decode PurchaseWithSales
