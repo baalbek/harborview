@@ -313,10 +313,10 @@
   (GET "/tickers" request (tickers))
   ;(GET "/fetchpurchases" [oid ptype optype]
   ;  (fetchpurchases oid ptyp 1 optype))
-  (GET "/fetchpurchases" [oid ptype]
-    (fetchpurchases oid ptype))
-  (GET "/resetfetchpurchases" [oid ptype]
-    (binding [CU/*reset-cache* true]
+  (GET "/fetchpurchases" [oid ptype resetcache]
+    (if (= resetcache "true")
+      (binding [CU/*reset-cache* true]
+        (fetchpurchases oid ptype))
       (fetchpurchases oid ptype)))
   (POST "/sellpurchase" request
     (let [jr (U/json-req-parse request)
