@@ -131,19 +131,6 @@ jQuery(document).ready(function() {
       isMain: true
     }
     drawCanvas(cfg);
-    /*
-    cfg.isMain = false;
-    if (chartInfo.chart2 != null) {
-      cfg.ch = chartInfo.chart2;
-      cfg.cid = MAUNALOA.repos.WEEK_OSC;
-      drawCanvas(cfg);
-    }
-    if (chartInfo.chart3 != null) {
-      cfg.ch = chartInfo.chart3;
-      cfg.cid = MAUNALOA.repos.WEEK_VOLUME;
-      drawCanvas(cfg);
-    }
-    //*/
   }
   app.ports.drawCanvas.subscribe(drawCanvas1);
   app2.ports.drawCanvas.subscribe(drawCanvas2);
@@ -207,6 +194,11 @@ jQuery(document).ready(function() {
     }
   }
 
+  <!------------- Level line ---------------->
+  var levelLineBtn = document.getElementById("btn-levelline-1");
+  levelLineBtn.onclick = function() {
+    repos1.addLevelLine(100, true);
+  };
   <!------------- drawRiscLines ---------------->
 
   var drawRiscLines1 = function(riscLinesInfo) {

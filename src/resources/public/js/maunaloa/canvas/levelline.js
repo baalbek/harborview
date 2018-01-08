@@ -4,7 +4,7 @@ MAUNALOA.levelLine = {
   color: "black",
   lineWidth: 1,
   draggable: true,
-  draw: function(repos) {
+  draw: function() {
     var y = this.y1;
     var ctx = this.parent.ctx;
 
@@ -261,15 +261,14 @@ MAUNALOA.repos = {
     this.spot = spot;
     this.draw();
   },
-  addLevelLine: function(lineId, levelValue, doDraw) {
+  addLevelLine: function(levelPix, doDraw) {
+    var levelValue = this.vruler.pixToValue(levelPix);
     var myDoDraw = doDraw || true;
     var result = MAUNALOA.levelLine.create(this,
       levelValue,
       20,
       this.canvas.width,
-      this.vruler.valueToPix(levelValue), {
-        id: lineId
-      });
+      levelPix, {});
     this.lines.push(result);
     if (myDoDraw) {
       this.draw();
