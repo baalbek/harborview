@@ -37,6 +37,7 @@ type alias Flags =
 
 type alias Spot =
     { dx : Time
+    , tm : String
     , o : Float -- open
     , h : Float -- high
     , l : Float -- low
@@ -466,6 +467,7 @@ fetchSpot selectedTicker resetCache =
         spotDecoder =
             JP.decode Spot
                 |> JP.required "dx" M.stringToTimeDecoder
+                |> JP.required "tm" Json.string
                 |> JP.required "o" Json.float
                 |> JP.required "h" Json.float
                 |> JP.required "l" Json.float

@@ -231,6 +231,9 @@ MAUNALOA.repos = {
     if (this.spot !== null) {
       var lineChart = MAUNALOA.lineChart(this.hruler, this.vruler, this.ctx);
       lineChart.drawCandlestick(this.spot);
+      this.ctx.font = "16px Arial";
+      this.ctx.fillStyle = "crimson";
+      this.ctx.fillText("Spot: " + this.spot.tm, 1000, 50);
     }
     // draw markers if a line is being dragged
     if (this.nearest) {

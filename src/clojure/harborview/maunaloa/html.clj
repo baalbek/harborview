@@ -287,7 +287,11 @@
   (GET "/charts" request (init-charts))
   (GET "/optiontickers" request (init-options))
   (GET "/optionpurchases" request (init-purchases))
-  (GET "/spot" [ticker] (spot ticker))
+  (GET "/spot" [ticker rc]
+    (if (= rc "true")
+      (binding [CU/*reset-cache* true]
+        (spot ticker))
+      (spot ticker)))
   (GET "/puts" [ticker] (puts ticker))
   (GET "/calls" [ticker] (calls ticker))
   (GET "/resetcalls" [ticker]
