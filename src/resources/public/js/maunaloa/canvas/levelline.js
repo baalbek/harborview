@@ -7,13 +7,14 @@ MAUNALOA.levelLine = {
   draw: function() {
     var y = this.y1;
     var ctx = this.parent.ctx;
-
     ctx.lineWidth = this.lineWidth;
     ctx.beginPath();
     ctx.moveTo(this.x1, y);
     ctx.lineTo(this.x2, y);
     ctx.strokeStyle = this.color;
     ctx.stroke();
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "crimson";
     ctx.fillText(this.legend(), this.x1, y - 10);
   },
   move: function(dx, dy) {
@@ -266,7 +267,7 @@ MAUNALOA.repos = {
     var myDoDraw = doDraw || true;
     var result = MAUNALOA.levelLine.create(this,
       levelValue,
-      20,
+      300,
       this.canvas.width,
       levelPix, {});
     this.lines.push(result);

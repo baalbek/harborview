@@ -171,9 +171,18 @@ MAUNALOA.scrapbook = {
       newCtx.fillStyle = "FloralWhite";
       newCtx.fillRect(0, 0, canvas.width, canvas.height);
       newCtx.drawImage(canvas, 0, 0);
+      /*
       if (self.id_canvas_0 !== null) {
         var canvas_0 = document.getElementById(self.id_canvas_0);
         newCtx.drawImage(canvas_0, 0, 0);
+      }
+      */
+      var c0s = self.id_canvas_0;
+      if (c0s !== null) {
+        for (var i=0; i<c0s.length; ++i) {
+            var canvas_0 = document.getElementById(c0s[i]);
+            newCtx.drawImage(canvas_0, 0, 0);
+        }
       }
       newCanvas.toBlob(function(blob) {
         var newImg = document.createElement('img');

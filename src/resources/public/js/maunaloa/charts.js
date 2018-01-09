@@ -29,7 +29,8 @@ jQuery(document).ready(function() {
     id_comment: "comment1",
     id_color: "color1",
     id_canvas: MAUNALOA.repos.DAY_LINES_OVERLAY_2,
-    id_canvas_0: MAUNALOA.repos.DAY_LINES,
+    id_canvas_0: [MAUNALOA.repos.DAY_LINES,
+                  MAUNALOA.repos.DAY_LINES_OVERLAY],
     id_rgLine: "rg-line1"
   });
   var scrapbook2 = MAUNALOA.scrapbook.create({
@@ -46,7 +47,8 @@ jQuery(document).ready(function() {
     id_comment: "comment2",
     id_color: "color2",
     id_canvas: MAUNALOA.repos.WEEK_LINES_OVERLAY_2,
-    id_canvas_0: MAUNALOA.repos.WEEK_LINES,
+    id_canvas_0: [MAUNALOA.repos.WEEK_LINES,
+                  MAUNALOA.repos.WEEK_LINES_OVERLAY],
     id_rgLine: "rg-line2"
   });
 
