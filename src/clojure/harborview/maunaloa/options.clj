@@ -106,12 +106,12 @@
         (println (str "Could not save: " out ", " (.getMessage e)))))
     out))
 
-(comment parse-html [ticker]
+(defn-memb parse-html [ticker]
   (let [^EtradeRepository e (S/get-bean "etrade")
         page (save-page ticker)]
     (.parseHtmlFor e ticker page)))
 
-(defn-memb parse-html [ticker]
+(comment parse-html [ticker]
   (let [^EtradeRepository e (S/get-bean "etrade")]
     (.parseHtmlFor e ticker nil)))
 
