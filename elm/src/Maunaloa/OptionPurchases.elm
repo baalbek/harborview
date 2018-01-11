@@ -64,7 +64,7 @@ type alias PurchaseWithSales =
     , ticker : String
     , purchaseDate : String
     , exp : String
-    , days : Int 
+    , days : Int
     , price : Float
     , bid : Float
     , spot : Float
@@ -88,7 +88,7 @@ type Msg
     = TickersFetched (Result Http.Error CMB.SelectItems)
     | ToggleRealTimePurchase
     | FetchPurchases String
-    | FetchPurchasesAll 
+    | FetchPurchasesAll
     | PurchasesAllFetched (Result Http.Error CMB.SelectItems)
     | PurchasesFetched (Result Http.Error OptionPurchases)
     | SellClick PurchaseWithSales
@@ -138,7 +138,7 @@ swap lx oid saleVol =
                 modifiedPurchases =
                     List.map swapFn lxx.purchases
             in
-            Just { lxx | purchases = modifiedPurchases }
+                Just { lxx | purchases = modifiedPurchases }
 
 
 errorAlert : Http.Error -> Cmd Msg
@@ -164,14 +164,15 @@ update msg model =
                 errStr =
                     "TickersFetched Error: " ++ M.httpErr2str s
             in
-            ( { model | dlgAlert = DLG.DialogVisibleAlert "TickersFetched ERROR!" errStr DLG.Error }, Cmd.none )
+                ( { model | dlgAlert = DLG.DialogVisibleAlert "TickersFetched ERROR!" errStr DLG.Error }, Cmd.none )
 
         ToggleRealTimePurchase ->
             let
                 checked =
                     not model.isRealTimePurchase
+
                 curCmd =
-                    if model.selectedTicker == "-1" then 
+                    if model.selectedTicker == "-1" then
                         Cmd.none
                     else
                         fetchPurchases (Just model.selectedTicker) checked False
@@ -181,13 +182,13 @@ update msg model =
         --( { model | isRealTimePurchase = checked }, Cmd.none )
         FetchPurchases s ->
             let
-                curCmd = 
-                    if s == "1" then 
+                curCmd =
+                    if s == "1" then
                         Cmd.none
-                    else 
+                    else
                         fetchPurchases (Just s) model.isRealTimePurchase False
             in
-                ( { model | selectedTicker = s }, curCmd)
+                ( { model | selectedTicker = s }, curCmd )
 
         PurchasesFetched (Ok s) ->
             ( { model | purchases = Just s }, Cmd.none )
@@ -200,10 +201,10 @@ update msg model =
                 ( { model | dlgAlert = DLG.DialogVisibleAlert "PurchasesFetched ERROR!" errStr DLG.Error }, Cmd.none )
 
         FetchPurchasesAll ->
-            (model,Cmd.none)
+            ( model, Cmd.none )
 
         PurchasesAllFetched (Ok s) ->
-            (model,Cmd.none)
+            ( model, Cmd.none )
 
         PurchasesAllFetched (Err s) ->
             let
@@ -235,15 +236,15 @@ update msg model =
                         salePri =
                             M.unpackEither model.salePrice String.toFloat -1
                     in
-                    ( { model
-                        | dlgSell = DLG.DialogHidden
-                        , purchases = swap model.purchases curPur.oid saleVol
+                        ( { model
+                            | dlgSell = DLG.DialogHidden
+                            , purchases = swap model.purchases curPur.oid saleVol
 
-                        -- , purchases = swap model.purchases curPur.oid (curPur.volumeSold + saleVol)
-                      }
-                      -- , Cmd.none
-                    , sellPurchase curPur.oid saleVol salePri
-                    )
+                            -- , purchases = swap model.purchases curPur.oid (curPur.volumeSold + saleVol)
+                          }
+                          -- , Cmd.none
+                        , sellPurchase curPur.oid saleVol salePri
+                        )
 
         SellDlgCancel ->
             ( { model | dlgSell = DLG.DialogHidden }, Cmd.none )
@@ -256,7 +257,7 @@ update msg model =
                 errStr =
                     "SaleOk Error: " ++ M.httpErr2str s
             in
-            ( { model | dlgAlert = DLG.DialogVisibleAlert "Purchase Sale ERROR!" errStr DLG.Error }, Cmd.none )
+                ( { model | dlgAlert = DLG.DialogVisibleAlert "Purchase Sale ERROR!" errStr DLG.Error }, Cmd.none )
 
         SalePriceChange s ->
             ( { model | salePrice = s }, Cmd.none )
@@ -265,10 +266,12 @@ update msg model =
             ( { model | saleVolume = s }, Cmd.none )
 
         ResetCache ->
-            ( model,  fetchPurchases (Just model.selectedTicker) model.isRealTimePurchase True )
+            ( model, fetchPurchases (Just model.selectedTicker) model.isRealTimePurchase True )
 
         ResetCacheAll ->
-            ( model,  Cmd.none )
+            ( model, Cmd.none )
+
+
 
 -- endregion
 -- region VIEW
@@ -329,39 +332,39 @@ view model =
                                 oidStr =
                                     toString x.oid
                             in
-                            H.tr []
-                                [ H.button [ A.class "btn btn-success", E.onClick (SellClick x) ] [ H.text ("Sell " ++ oidStr) ]
-                                , H.td [] [ H.text oidStr ]
-                                , H.td [] [ H.text x.optionType ]
-                                , H.td [] [ H.text x.ticker ]
-                                , H.td [] [ H.text x.purchaseDate ]
-                                , H.td [] [ H.text x.exp ]
-                                , H.td [] [ H.text (toString x.days)]
-                                , H.td [] [ H.text (toString x.price) ]
-                                , H.td [] [ H.text (toString x.bid) ]
-                                , H.td [] [ H.text (toString x.purchaseVolume) ]
-                                , H.td [] [ H.text (toString x.volumeSold) ]
-                                , H.td [] [ H.text (toString x.spot) ]
-                                , H.td [] [ H.text (toString x.iv) ]
-                                , H.td [] [ H.text (toString x.curAsk) ]
-                                , H.td [] [ H.text (toString x.curBid) ]
-                                , H.td [] [ H.text (toString x.curIv) ]
-                                , H.td [] [ H.text (toString profit) ]
-                                , H.td [] [ H.text (toString diffBid) ]
-                                , H.td [] [ H.text (toString diffIv) ]
-                                ]
+                                H.tr []
+                                    [ H.button [ A.class "btn btn-success", E.onClick (SellClick x) ] [ H.text ("Sell " ++ oidStr) ]
+                                    , H.td [] [ H.text oidStr ]
+                                    , H.td [] [ H.text x.optionType ]
+                                    , H.td [] [ H.text x.ticker ]
+                                    , H.td [] [ H.text x.purchaseDate ]
+                                    , H.td [] [ H.text x.exp ]
+                                    , H.td [] [ H.text (toString x.days) ]
+                                    , H.td [] [ H.text (toString x.price) ]
+                                    , H.td [] [ H.text (toString x.bid) ]
+                                    , H.td [] [ H.text (toString x.purchaseVolume) ]
+                                    , H.td [] [ H.text (toString x.volumeSold) ]
+                                    , H.td [] [ H.text (toString x.spot) ]
+                                    , H.td [] [ H.text (toString x.iv) ]
+                                    , H.td [] [ H.text (toString x.curAsk) ]
+                                    , H.td [] [ H.text (toString x.curBid) ]
+                                    , H.td [] [ H.text (toString x.curIv) ]
+                                    , H.td [] [ H.text (toString profit) ]
+                                    , H.td [] [ H.text (toString diffBid) ]
+                                    , H.td [] [ H.text (toString diffIv) ]
+                                    ]
 
                         rows =
                             List.map toRow s.purchases
                     in
-                    H.div [ A.class "row" ]
-                        [ H.text ("Date: " ++ s.curDx ++ ", Current spot: " ++ toString s.curSpot)
-                        , H.table [ A.class "table table-hoover" ]
-                            [ tableHeader
-                            , H.tbody []
-                                rows
+                        H.div [ A.class "row" ]
+                            [ H.text ("Date: " ++ s.curDx ++ ", Current spot: " ++ toString s.curSpot)
+                            , H.table [ A.class "table table-hoover" ]
+                                [ tableHeader
+                                , H.tbody []
+                                    rows
+                                ]
                             ]
-                        ]
 
         dlgHeader =
             case model.selectedPurchase of
@@ -371,27 +374,26 @@ view model =
                 Just sp ->
                     "Option Sale: " ++ sp.ticker
     in
-    H.div [ A.class "container" ]
-        [ H.div [ A.class "row" ]
-          [
-              M.checkbox "Real-time purchase" "col-sm-2 checkbox" True ToggleRealTimePurchase
-            , H.div [ A.class "col-sm-3" ]
-                [ CMB.makeSelect "Tickers: " FetchPurchases model.tickers model.selectedTicker ]
-            , BTN.button "col-sm-2" "Reset Cache" ResetCache
-            , BTN.button "col-sm-2" "Fetch all purchases" FetchPurchasesAll
+        H.div [ A.class "container" ]
+            [ H.div [ A.class "row" ]
+                [ M.checkbox "Real-time purchase" "col-sm-2 checkbox" True ToggleRealTimePurchase
+                , H.div [ A.class "col-sm-3" ]
+                    [ CMB.makeSelect "Tickers: " FetchPurchases model.tickers model.selectedTicker ]
+                , BTN.button "col-sm-2" "Reset Cache" ResetCache
+                , BTN.button "col-sm-2" "Fetch all purchases" FetchPurchasesAll
+                ]
+            , purchaseTable
+            , DLG.modalDialog dlgHeader
+                model.dlgSell
+                SellDlgOk
+                SellDlgCancel
+                [ M.makeLabel "Sale Price:"
+                , M.makeInput SalePriceChange model.salePrice
+                , M.makeLabel "Sale Volume:"
+                , M.makeInput SaleVolumeChange model.saleVolume
+                ]
+            , DLG.alert model.dlgAlert AlertOk
             ]
-        , purchaseTable
-        , DLG.modalDialog dlgHeader
-            model.dlgSell
-            SellDlgOk
-            SellDlgCancel
-            [ M.makeLabel "Sale Price:"
-            , M.makeInput SalePriceChange model.salePrice
-            , M.makeLabel "Sale Volume:"
-            , M.makeInput SaleVolumeChange model.saleVolume
-            ]
-        , DLG.alert model.dlgAlert AlertOk
-        ]
 
 
 
@@ -414,8 +416,8 @@ sellPurchase oid volume price =
         jbody =
             M.asHttpBody params
     in
-    Http.send SaleOk <|
-        Http.post url jbody Json.string
+        Http.send SaleOk <|
+            Http.post url jbody Json.string
 
 
 fetchTickers : Cmd Msg
@@ -424,58 +426,61 @@ fetchTickers =
         url =
             mainUrl ++ "/tickers"
     in
-    Http.send TickersFetched <|
-        Http.get url CMB.comboBoxItemListDecoder
+        Http.send TickersFetched <|
+            Http.get url CMB.comboBoxItemListDecoder
 
 
 fetchPurchases : Maybe String -> Bool -> Bool -> Cmd Msg
 fetchPurchases ticker isRealTime resetCache =
-        let
-            purchaseType =
-                case isRealTime of
-                    True ->
-                        "3"
+    let
+        purchaseType =
+            case isRealTime of
+                True ->
+                    "3"
 
-                    False ->
-                        "11"
+                False ->
+                    "11"
 
-            resetCacheJson = 
-                case resetCache of
-                    True ->
-                        "true"
-                    False ->
-                        "false"
+        resetCacheJson =
+            case resetCache of
+                True ->
+                    "true"
 
-            url =
-                case ticker of
-                    Just tickerx -> mainUrl ++ "/fetchpurchases?oid=" ++ tickerx ++ "&ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
-                    
-                    Nothing -> mainUrl ++ "/fetchpurchases?oid=-1&ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
+                False ->
+                    "false"
 
-            purchaseDecoder =
-                JP.decode PurchaseWithSales
-                    |> JP.required "oid" Json.int
-                    |> JP.required "ot" Json.string
-                    |> JP.required "ticker" Json.string
-                    |> JP.required "dx" Json.string
-                    |> JP.required "exp" Json.string
-                    |> JP.required "days" Json.int
-                    |> JP.required "price" Json.float
-                    |> JP.required "bid" Json.float
-                    |> JP.required "spot" Json.float
-                    |> JP.required "pvol" Json.int
-                    |> JP.required "svol" Json.int
-                    |> JP.required "iv" Json.float
-                    |> JP.required "cur-ask" Json.float
-                    |> JP.required "cur-bid" Json.float
-                    |> JP.required "cur-iv" Json.float
+        url =
+            case ticker of
+                Just tickerx ->
+                    mainUrl ++ "/fetchpurchases?oid=" ++ tickerx ++ "&ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
 
-            myDecoder =
-                JP.decode OptionPurchases
-                    |> JP.required "cur-spot" Json.float
-                    |> JP.required "cur-dx" Json.string
-                    |> JP.required "purchases" (Json.list purchaseDecoder)
-        in
+                Nothing ->
+                    mainUrl ++ "/fetchpurchases?ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
+
+        purchaseDecoder =
+            JP.decode PurchaseWithSales
+                |> JP.required "oid" Json.int
+                |> JP.required "ot" Json.string
+                |> JP.required "ticker" Json.string
+                |> JP.required "dx" Json.string
+                |> JP.required "exp" Json.string
+                |> JP.required "days" Json.int
+                |> JP.required "price" Json.float
+                |> JP.required "bid" Json.float
+                |> JP.required "spot" Json.float
+                |> JP.required "pvol" Json.int
+                |> JP.required "svol" Json.int
+                |> JP.required "iv" Json.float
+                |> JP.required "cur-ask" Json.float
+                |> JP.required "cur-bid" Json.float
+                |> JP.required "cur-iv" Json.float
+
+        myDecoder =
+            JP.decode OptionPurchases
+                |> JP.required "cur-spot" Json.float
+                |> JP.required "cur-dx" Json.string
+                |> JP.required "purchases" (Json.list purchaseDecoder)
+    in
         Http.send PurchasesFetched <|
             Http.get url myDecoder
 
