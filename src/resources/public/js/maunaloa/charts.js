@@ -30,7 +30,8 @@ jQuery(document).ready(function() {
     id_color: "color1",
     id_canvas: MAUNALOA.repos.DAY_LINES_OVERLAY_2,
     id_canvas_0: [MAUNALOA.repos.DAY_LINES,
-                  MAUNALOA.repos.DAY_LINES_OVERLAY],
+      MAUNALOA.repos.DAY_LINES_OVERLAY
+    ],
     id_rgLine: "rg-line1"
   });
   var scrapbook2 = MAUNALOA.scrapbook.create({
@@ -48,7 +49,8 @@ jQuery(document).ready(function() {
     id_color: "color2",
     id_canvas: MAUNALOA.repos.WEEK_LINES_OVERLAY_2,
     id_canvas_0: [MAUNALOA.repos.WEEK_LINES,
-                  MAUNALOA.repos.WEEK_LINES_OVERLAY],
+      MAUNALOA.repos.WEEK_LINES_OVERLAY
+    ],
     id_rgLine: "rg-line2"
   });
 
@@ -197,9 +199,13 @@ jQuery(document).ready(function() {
   }
 
   <!------------- Level line ---------------->
-  var levelLineBtn = document.getElementById("btn-levelline-1");
-  levelLineBtn.onclick = function() {
+  var levelLineBtn1 = document.getElementById("btn-levelline-1");
+  levelLineBtn1.onclick = function() {
     repos1.addLevelLine(100, true);
+  };
+  var levelLineBtn2 = document.getElementById("btn-levelline-2");
+  levelLineBtn2.onclick = function() {
+    repos2.addLevelLine(100, true);
   };
   <!------------- drawRiscLines ---------------->
 
