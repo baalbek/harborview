@@ -88,6 +88,8 @@ type Msg
     = TickersFetched (Result Http.Error CMB.SelectItems)
     | ToggleRealTimePurchase
     | FetchPurchases String
+    | FetchPurchasesAll 
+    | PurchasesAllFetched (Result Http.Error CMB.SelectItems)
     | PurchasesFetched (Result Http.Error OptionPurchases)
     | SellClick PurchaseWithSales
     | SellDlgOk
@@ -97,6 +99,7 @@ type Msg
     | SaleVolumeChange String
     | AlertOk
     | ResetCache
+    | ResetCacheAll
 
 
 type alias Model =
@@ -167,13 +170,24 @@ update msg model =
             let
                 checked =
                     not model.isRealTimePurchase
+                curCmd =
+                    if model.selectedTicker == "-1" then 
+                        Cmd.none
+                    else
+                        fetchPurchases (Just model.selectedTicker) checked False
             in
-            ( { model | isRealTimePurchase = checked }, 
-                fetchPurchases model.selectedTicker checked False)
+                ( { model | isRealTimePurchase = checked }, curCmd )
 
         --( { model | isRealTimePurchase = checked }, Cmd.none )
         FetchPurchases s ->
-            ( { model | selectedTicker = s }, fetchPurchases s model.isRealTimePurchase False)
+            let
+                curCmd = 
+                    if s == "1" then 
+                        Cmd.none
+                    else 
+                        fetchPurchases (Just s) model.isRealTimePurchase False
+            in
+                ( { model | selectedTicker = s }, curCmd)
 
         PurchasesFetched (Ok s) ->
             ( { model | purchases = Just s }, Cmd.none )
@@ -183,7 +197,20 @@ update msg model =
                 errStr =
                     "PurchasesFetched Error: " ++ M.httpErr2str s
             in
-            ( { model | dlgAlert = DLG.DialogVisibleAlert "PurchasesFetched ERROR!" errStr DLG.Error }, Cmd.none )
+                ( { model | dlgAlert = DLG.DialogVisibleAlert "PurchasesFetched ERROR!" errStr DLG.Error }, Cmd.none )
+
+        FetchPurchasesAll ->
+            (model,Cmd.none)
+
+        PurchasesAllFetched (Ok s) ->
+            (model,Cmd.none)
+
+        PurchasesAllFetched (Err s) ->
+            let
+                errStr =
+                    "PurchasesAllFetched Error: " ++ M.httpErr2str s
+            in
+                ( { model | dlgAlert = DLG.DialogVisibleAlert "PurchasesFetched ERROR!" errStr DLG.Error }, Cmd.none )
 
         SellClick p ->
             ( { model
@@ -238,8 +265,10 @@ update msg model =
             ( { model | saleVolume = s }, Cmd.none )
 
         ResetCache ->
-            ( model,  fetchPurchases model.selectedTicker model.isRealTimePurchase True )
+            ( model,  fetchPurchases (Just model.selectedTicker) model.isRealTimePurchase True )
 
+        ResetCacheAll ->
+            ( model,  Cmd.none )
 
 -- endregion
 -- region VIEW
@@ -349,6 +378,7 @@ view model =
             , H.div [ A.class "col-sm-3" ]
                 [ CMB.makeSelect "Tickers: " FetchPurchases model.tickers model.selectedTicker ]
             , BTN.button "col-sm-2" "Reset Cache" ResetCache
+            , BTN.button "col-sm-2" "Fetch all purchases" FetchPurchasesAll
             ]
         , purchaseTable
         , DLG.modalDialog dlgHeader
@@ -398,11 +428,8 @@ fetchTickers =
         Http.get url CMB.comboBoxItemListDecoder
 
 
-fetchPurchases : String -> Bool -> Bool -> Cmd Msg
+fetchPurchases : Maybe String -> Bool -> Bool -> Cmd Msg
 fetchPurchases ticker isRealTime resetCache =
-    if ticker == "-1" then
-        Cmd.none
-    else
         let
             purchaseType =
                 case isRealTime of
@@ -420,7 +447,10 @@ fetchPurchases ticker isRealTime resetCache =
                         "false"
 
             url =
-                mainUrl ++ "/fetchpurchases?oid=" ++ ticker ++ "&ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
+                case ticker of
+                    Just tickerx -> mainUrl ++ "/fetchpurchases?oid=" ++ tickerx ++ "&ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
+                    
+                    Nothing -> mainUrl ++ "/fetchpurchases?oid=-1&ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
 
             purchaseDecoder =
                 JP.decode PurchaseWithSales
