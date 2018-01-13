@@ -175,7 +175,7 @@ update msg model =
                     if model.selectedTicker == "-1" then
                         Cmd.none
                     else
-                        fetchPurchases (Just model.selectedTicker) checked False
+                        fetchPurchases model.selectedTicker checked False
             in
                 ( { model | isRealTimePurchase = checked }, curCmd )
 
@@ -186,7 +186,7 @@ update msg model =
                     if s == "1" then
                         Cmd.none
                     else
-                        fetchPurchases (Just s) model.isRealTimePurchase False
+                        fetchPurchases s model.isRealTimePurchase False
             in
                 ( { model | selectedTicker = s }, curCmd )
 
@@ -266,7 +266,7 @@ update msg model =
             ( { model | saleVolume = s }, Cmd.none )
 
         ResetCache ->
-            ( model, fetchPurchases (Just model.selectedTicker) model.isRealTimePurchase True )
+            ( model, fetchPurchases model.selectedTicker model.isRealTimePurchase True )
 
         ResetCacheAll ->
             ( model, Cmd.none )
@@ -430,7 +430,7 @@ fetchTickers =
             Http.get url CMB.comboBoxItemListDecoder
 
 
-fetchPurchases : Maybe String -> Bool -> Bool -> Cmd Msg
+fetchPurchases : String -> Bool -> Bool -> Cmd Msg
 fetchPurchases ticker isRealTime resetCache =
     let
         purchaseType =
@@ -450,12 +450,7 @@ fetchPurchases ticker isRealTime resetCache =
                     "false"
 
         url =
-            case ticker of
-                Just tickerx ->
-                    mainUrl ++ "/fetchpurchases?oid=" ++ tickerx ++ "&ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
-
-                Nothing ->
-                    mainUrl ++ "/fetchpurchases?ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
+            mainUrl ++ "/fetchpurchases?oid=" ++ ticker ++ "&ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
 
         purchaseDecoder =
             JP.decode PurchaseWithSales
