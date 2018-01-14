@@ -60,6 +60,9 @@ init =
 
 type alias PurchaseWithSales =
     { oid : Int
+    , stock : String
+    , spot : Float
+    , dx : String
     , optionType : String
     , ticker : String
     , purchaseDate : String
@@ -78,9 +81,7 @@ type alias PurchaseWithSales =
 
 
 type alias OptionPurchases =
-    { curSpot : Float
-    , curDx : String
-    , purchases : List PurchaseWithSales
+    { purchases : List PurchaseWithSales
     }
 
 
@@ -358,8 +359,8 @@ view model =
                             List.map toRow s.purchases
                     in
                         H.div [ A.class "row" ]
-                            [ H.text ("Date: " ++ s.curDx ++ ", Current spot: " ++ toString s.curSpot)
-                            , H.table [ A.class "table table-hoover" ]
+                            [ -- H.text ("Date: " ++ s.curDx ++ ", Current spot: " ++ toString s.curSpot)
+                              H.table [ A.class "table table-hoover" ]
                                 [ tableHeader
                                 , H.tbody []
                                     rows
@@ -455,6 +456,9 @@ fetchPurchases ticker isRealTime resetCache =
         purchaseDecoder =
             JP.decode PurchaseWithSales
                 |> JP.required "oid" Json.int
+                |> JP.required "stock" Json.string
+                |> JP.required "spot" Json.float
+                |> JP.required "dx" Json.string
                 |> JP.required "ot" Json.string
                 |> JP.required "ticker" Json.string
                 |> JP.required "dx" Json.string
@@ -469,15 +473,9 @@ fetchPurchases ticker isRealTime resetCache =
                 |> JP.required "cur-ask" Json.float
                 |> JP.required "cur-bid" Json.float
                 |> JP.required "cur-iv" Json.float
-
-        myDecoder =
-            JP.decode OptionPurchases
-                |> JP.required "cur-spot" Json.float
-                |> JP.required "cur-dx" Json.string
-                |> JP.required "purchases" (Json.list purchaseDecoder)
     in
         Http.send PurchasesFetched <|
-            Http.get url myDecoder
+            Http.get url (Json.list purchaseDecoder)
 
 
 
