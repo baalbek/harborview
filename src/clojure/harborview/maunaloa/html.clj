@@ -275,12 +275,12 @@
 
 (def opx1 (:opx1 DBX/opx))
 
-(defn fetchpurchases [oid ptype]
-  (let [purchases (opx1 (U/rs oid) (U/rs ptype) 1)
+(defn fetchpurchases [ptype]
+  (let [purchases (opx1 (U/rs ptype) 1)
         cur-stock (.get (OPX/stock (tick-str oid)))]
-    (U/json-response {:purchases (map OPX/purchasesales->json purchases)
-                      :cur-dx (CU/ld->str (.getLocalDx cur-stock))
-                      :cur-spot (.getCls cur-stock)})))
+    (U/json-response (map OPX/purchasesales->json purchases))))
+                      ;:cur-dx (CU/ld->str (.getLocalDx cur-stock))
+                      ;:cur-spot (.getCls cur-stock)})))
 
 (defroutes my-routes
   (GET "/to_r" [oid] (to_R (U/rs oid)))
@@ -317,11 +317,11 @@
   (GET "/tickers" request (tickers))
   ;(GET "/fetchpurchases" [oid ptype optype]
   ;  (fetchpurchases oid ptyp 1 optype))
-  (GET "/fetchpurchases" [oid ptype resetcache]
+  (GET "/fetchpurchases" [ptype resetcache]
     (if (= resetcache "true")
       (binding [CU/*reset-cache* true]
-        (fetchpurchases oid ptype))
-      (fetchpurchases oid ptype)))
+        (fetchpurchases ptype))
+      (fetchpurchases ptype)))
   (POST "/sellpurchase" request
     (let [jr (U/json-req-parse request)
           result (DBX/sell-purchase (jr "oid") (jr "price") (jr "vol"))]

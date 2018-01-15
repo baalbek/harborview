@@ -32,8 +32,7 @@ main =
 
 initModel : Model
 initModel =
-    { tickers = Nothing
-    , selectedTicker = "-1"
+    { 
     , purchases = Nothing
     , isRealTimePurchase = True
     , dlgSell = DLG.DialogHidden
@@ -80,17 +79,14 @@ type alias PurchaseWithSales =
     }
 
 
-type alias OptionPurchases =
-    { purchases : List PurchaseWithSales
-    }
+type alias OptionPurchases = List PurchaseWithSales
+    
 
 
 type Msg
-    = TickersFetched (Result Http.Error CMB.SelectItems)
-    | ToggleRealTimePurchase
-    | FetchPurchases String
-    | FetchPurchasesAll
-    | PurchasesAllFetched (Result Http.Error CMB.SelectItems)
+    = 
+      ToggleRealTimePurchase
+    | FetchPurchases 
     | PurchasesFetched (Result Http.Error OptionPurchases)
     | SellClick PurchaseWithSales
     | SellDlgOk
@@ -100,12 +96,10 @@ type Msg
     | SaleVolumeChange String
     | AlertOk
     | ResetCache
-    | ResetCacheAll
 
 
 type alias Model =
-    { tickers : Maybe CMB.SelectItems
-    , selectedTicker : String
+    { 
     , purchases : Maybe OptionPurchases
     , isRealTimePurchase : Bool
     , selectedPurchase : Maybe PurchaseWithSales
@@ -136,10 +130,11 @@ swap lx oid saleVol =
                     else
                         x
 
-                modifiedPurchases =
-                    List.map swapFn lxx.purchases
+                -- modifiedPurchases =
+                --    List.map swapFn lxx
             in
-                Just { lxx | purchases = modifiedPurchases }
+                Just (List.map swapFn lxx)
+                -- Just { lxx | purchases = modifiedPurchases }
 
 
 errorAlert : Http.Error -> Cmd Msg
@@ -153,19 +148,6 @@ update msg model =
         AlertOk ->
             ( { model | dlgAlert = DLG.DialogHidden }, Cmd.none )
 
-        TickersFetched (Ok s) ->
-            ( { model
-                | tickers = Just s
-              }
-            , Cmd.none
-            )
-
-        TickersFetched (Err s) ->
-            let
-                errStr =
-                    "TickersFetched Error: " ++ M.httpErr2str s
-            in
-                ( { model | dlgAlert = DLG.DialogVisibleAlert "TickersFetched ERROR!" errStr DLG.Error }, Cmd.none )
 
         ToggleRealTimePurchase ->
             let
@@ -198,19 +180,6 @@ update msg model =
             let
                 errStr =
                     "PurchasesFetched Error: " ++ M.httpErr2str s
-            in
-                ( { model | dlgAlert = DLG.DialogVisibleAlert "PurchasesFetched ERROR!" errStr DLG.Error }, Cmd.none )
-
-        FetchPurchasesAll ->
-            ( model, Cmd.none )
-
-        PurchasesAllFetched (Ok s) ->
-            ( model, Cmd.none )
-
-        PurchasesAllFetched (Err s) ->
-            let
-                errStr =
-                    "PurchasesAllFetched Error: " ++ M.httpErr2str s
             in
                 ( { model | dlgAlert = DLG.DialogVisibleAlert "PurchasesFetched ERROR!" errStr DLG.Error }, Cmd.none )
 
@@ -267,10 +236,8 @@ update msg model =
             ( { model | saleVolume = s }, Cmd.none )
 
         ResetCache ->
-            ( model, fetchPurchases model.selectedTicker model.isRealTimePurchase True )
+            ( model, fetchPurchases model.isRealTimePurchase True )
 
-        ResetCacheAll ->
-            ( model, Cmd.none )
 
 
 
@@ -285,6 +252,7 @@ tableHeader =
             []
             [ H.th [] [ H.text "Sell" ]
             , H.th [] [ H.text "Oid" ]
+            , H.th [] [ H.text "Stock" ]
             , H.th [] [ H.text "Option Type" ]
             , H.th [] [ H.text "Ticker" ]
             , H.th [] [ H.text "Purchase Date" ]
@@ -317,7 +285,7 @@ view model =
                         , H.tbody [] []
                         ]
 
-                Just s ->
+                Just purchases ->
                     let
                         toRow x =
                             let
@@ -336,6 +304,7 @@ view model =
                                 H.tr []
                                     [ H.button [ A.class "btn btn-success", E.onClick (SellClick x) ] [ H.text ("Sell " ++ oidStr) ]
                                     , H.td [] [ H.text oidStr ]
+                                    , H.td [] [ H.text x.stock ]
                                     , H.td [] [ H.text x.optionType ]
                                     , H.td [] [ H.text x.ticker ]
                                     , H.td [] [ H.text x.purchaseDate ]
@@ -356,7 +325,7 @@ view model =
                                     ]
 
                         rows =
-                            List.map toRow s.purchases
+                            List.map toRow purchases
                     in
                         H.div [ A.class "row" ]
                             [ -- H.text ("Date: " ++ s.curDx ++ ", Current spot: " ++ toString s.curSpot)
@@ -431,8 +400,8 @@ fetchTickers =
             Http.get url CMB.comboBoxItemListDecoder
 
 
-fetchPurchases : String -> Bool -> Bool -> Cmd Msg
-fetchPurchases ticker isRealTime resetCache =
+fetchPurchases : Bool -> Bool -> Cmd Msg
+fetchPurchases isRealTime resetCache =
     let
         purchaseType =
             case isRealTime of
@@ -451,7 +420,7 @@ fetchPurchases ticker isRealTime resetCache =
                     "false"
 
         url =
-            mainUrl ++ "/fetchpurchases?oid=" ++ ticker ++ "&ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
+            mainUrl ++ "/fetchpurchases?ptype=" ++ purchaseType ++ "&resetcache=" ++ resetCacheJson
 
         purchaseDecoder =
             JP.decode PurchaseWithSales
