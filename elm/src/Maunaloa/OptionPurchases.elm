@@ -32,8 +32,7 @@ main =
 
 initModel : Model
 initModel =
-    { 
-    , purchases = Nothing
+    { purchases = Nothing
     , isRealTimePurchase = True
     , dlgSell = DLG.DialogHidden
     , dlgAlert = DLG.DialogHidden
@@ -45,7 +44,7 @@ initModel =
 
 init : ( Model, Cmd Msg )
 init =
-    ( initModel, fetchTickers )
+    ( initModel, Cmd.none )
 
 
 
@@ -60,7 +59,6 @@ init =
 type alias PurchaseWithSales =
     { oid : Int
     , stock : String
-    , spot : Float
     , dx : String
     , optionType : String
     , ticker : String
@@ -79,14 +77,13 @@ type alias PurchaseWithSales =
     }
 
 
-type alias OptionPurchases = List PurchaseWithSales
-    
+type alias OptionPurchases =
+    List PurchaseWithSales
 
 
 type Msg
-    = 
-      ToggleRealTimePurchase
-    | FetchPurchases 
+    = ToggleRealTimePurchase
+    | FetchPurchases
     | PurchasesFetched (Result Http.Error OptionPurchases)
     | SellClick PurchaseWithSales
     | SellDlgOk
@@ -99,8 +96,7 @@ type Msg
 
 
 type alias Model =
-    { 
-    , purchases : Maybe OptionPurchases
+    { purchases : Maybe OptionPurchases
     , isRealTimePurchase : Bool
     , selectedPurchase : Maybe PurchaseWithSales
     , dlgSell : DLG.DialogState
@@ -134,7 +130,10 @@ swap lx oid saleVol =
                 --    List.map swapFn lxx
             in
                 Just (List.map swapFn lxx)
-                -- Just { lxx | purchases = modifiedPurchases }
+
+
+
+-- Just { lxx | purchases = modifiedPurchases }
 
 
 errorAlert : Http.Error -> Cmd Msg
@@ -148,30 +147,30 @@ update msg model =
         AlertOk ->
             ( { model | dlgAlert = DLG.DialogHidden }, Cmd.none )
 
-
         ToggleRealTimePurchase ->
             let
                 checked =
                     not model.isRealTimePurchase
 
                 curCmd =
-                    if model.selectedTicker == "-1" then
-                        Cmd.none
-                    else
-                        fetchPurchases model.selectedTicker checked False
+                    Cmd.none
+
+                {-
+                   if model.selectedTicker == "-1" then
+                       Cmd.none
+                   else
+                       fetchPurchases model.selectedTicker checked False
+                -}
             in
                 ( { model | isRealTimePurchase = checked }, curCmd )
 
         --( { model | isRealTimePurchase = checked }, Cmd.none )
-        FetchPurchases s ->
+        FetchPurchases ->
             let
                 curCmd =
-                    if s == "1" then
-                        Cmd.none
-                    else
-                        fetchPurchases s model.isRealTimePurchase False
+                    fetchPurchases model.isRealTimePurchase False
             in
-                ( { model | selectedTicker = s }, curCmd )
+                ( model, curCmd )
 
         PurchasesFetched (Ok s) ->
             ( { model | purchases = Just s }, Cmd.none )
@@ -237,7 +236,6 @@ update msg model =
 
         ResetCache ->
             ( model, fetchPurchases model.isRealTimePurchase True )
-
 
 
 
@@ -347,10 +345,8 @@ view model =
         H.div [ A.class "container" ]
             [ H.div [ A.class "row" ]
                 [ M.checkbox "Real-time purchase" "col-sm-2 checkbox" True ToggleRealTimePurchase
-                , H.div [ A.class "col-sm-3" ]
-                    [ CMB.makeSelect "Tickers: " FetchPurchases model.tickers model.selectedTicker ]
                 , BTN.button "col-sm-2" "Reset Cache" ResetCache
-                , BTN.button "col-sm-2" "Fetch all purchases" FetchPurchasesAll
+                , BTN.button "col-sm-2" "Fetch all purchases" FetchPurchases
                 ]
             , purchaseTable
             , DLG.modalDialog dlgHeader
@@ -390,16 +386,6 @@ sellPurchase oid volume price =
             Http.post url jbody Json.string
 
 
-fetchTickers : Cmd Msg
-fetchTickers =
-    let
-        url =
-            mainUrl ++ "/tickers"
-    in
-        Http.send TickersFetched <|
-            Http.get url CMB.comboBoxItemListDecoder
-
-
 fetchPurchases : Bool -> Bool -> Cmd Msg
 fetchPurchases isRealTime resetCache =
     let
@@ -426,7 +412,6 @@ fetchPurchases isRealTime resetCache =
             JP.decode PurchaseWithSales
                 |> JP.required "oid" Json.int
                 |> JP.required "stock" Json.string
-                |> JP.required "spot" Json.float
                 |> JP.required "dx" Json.string
                 |> JP.required "ot" Json.string
                 |> JP.required "ticker" Json.string

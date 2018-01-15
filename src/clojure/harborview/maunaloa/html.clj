@@ -276,8 +276,7 @@
 (def opx1 (:opx1 DBX/opx))
 
 (defn fetchpurchases [ptype]
-  (let [purchases (opx1 (U/rs ptype) 1)
-        cur-stock (.get (OPX/stock (tick-str oid)))]
+  (let [purchases (opx1 (U/rs ptype) 1)]
     (U/json-response (map OPX/purchasesales->json purchases))))
                       ;:cur-dx (CU/ld->str (.getLocalDx cur-stock))
                       ;:cur-spot (.getCls cur-stock)})))
