@@ -235,7 +235,8 @@
                  (Optional/empty)
                  (.getIvBuy cur-opt))]
     {:oid oid
-     :stock stock-ticker 
+     :stock stock-ticker
+     :dx d0
      :ot ot
      :ticker ticker
      :dx (CU/ld->str d0)
