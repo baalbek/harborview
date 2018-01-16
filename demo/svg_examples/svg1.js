@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function(event) {
   var addLine = function() {
+    var curMarker = null;
+    var p0 = null;
     var l = document.createElementNS("http://www.w3.org/2000/svg", "line");
     l.setAttribute("x1", "20");
     l.setAttribute("y1", "20");
@@ -12,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
       var curcle = document.getElementById("curcle");
 
-      var p0 = getNearestEndPoint(l, e);
+      p0 = getNearestEndPoint(l, e);
 
       if (curcle === null) {
         var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -23,8 +25,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
         c.setAttribute("fill", "transparent");
         c.setAttribute("cx", p0.cx);
         c.setAttribute("cy", p0.cy);
+        c.setAttribute("class", "draggable");
         c.addEventListener("mousedown", function(ce) {
-          console.log(ce);
+          curMarker = ce.target;
+        });
+        c.addEventListener("mouseup", function(ce) {
+          curMarker = null;
         });
         svg.appendChild(c);
       } else {
@@ -36,6 +42,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
       l.setAttribute("stroke", "red");
     }, false);
     var svg = document.getElementById("svg1");
+    svg.addEventListener("mousemove", function(e) {
+      if (curMarker !== null) {
+        curcle.setAttribute("cx", e.offsetX);
+        curcle.setAttribute("cy", e.offsetY);
+        if (p0.lend === 1) {
+          l.setAttribute("x1", e.offsetX);
+          l.setAttribute("y1", e.offsetY);
+        } else {
+          l.setAttribute("x2", e.offsetX);
+          l.setAttribute("y2", e.offsetY);
+        }
+      }
+    });
     svg.appendChild(l);
     drawCanvasLine();
   };
@@ -62,16 +81,19 @@ var getNearestEndPoint = function(line, mouseEvent) {
   if (dist1 < dist2) {
     return {
       cx: x1,
-      cy: y1
+      cy: y1,
+      lend: 1
     };
   } else {
     return {
       cx: x2,
-      cy: y2
+      cy: y2,
+      lend: 2
     };
   }
 
 }
+
 var drawCanvasLine = function() {
   var canvas = document.getElementById('canvas1');
   var ctx = canvas.getContext("2d");

@@ -15,6 +15,10 @@ svg.c2 {
   left: 200px;
 }
 
+.draggable {
+  cursor: move;
+}
+
 /*
 canvas.c1 {
   border-style: solid;
