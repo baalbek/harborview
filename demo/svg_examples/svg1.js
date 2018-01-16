@@ -1,52 +1,31 @@
 document.addEventListener("DOMContentLoaded", function(event) {
   var addLine = function() {
     var curMarker = null;
-    var p0 = null;
+    var curMarkerDown = function(e) {
+      curMarker = e.target;
+      console.log(curMarker.id);
+    }
+    var curMarkerUp = function() {
+      console.log(curMarker.id);
+      curMarker = null;
+    }
     var l = document.createElementNS("http://www.w3.org/2000/svg", "line");
     l.setAttribute("x1", "20");
     l.setAttribute("y1", "20");
     l.setAttribute("x2", "100");
     l.setAttribute("y2", "100");
     l.setAttribute("stroke", "red");
-    l.setAttribute("stroke-width", 10);
-    l.addEventListener("mouseover", function(e) {
-      l.setAttribute("stroke", "blue");
+    l.setAttribute("stroke-width", 2);
+    var c1 = draggableMarker("1", l.getAttribute("x1"), l.getAttribute("y1"), curMarkerDown, curMarkerUp);
+    var c2 = draggableMarker("2", l.getAttribute("x2"), l.getAttribute("y2"), curMarkerDown, curMarkerUp);
 
-      var curcle = document.getElementById("curcle");
-
-      p0 = getNearestEndPoint(l, e);
-
-      if (curcle === null) {
-        var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        c.setAttribute("id", "curcle");
-        c.setAttribute("r", "10");
-        c.setAttribute("stroke", "green");
-        c.setAttribute("stroke-width", "1");
-        c.setAttribute("fill", "transparent");
-        c.setAttribute("cx", p0.cx);
-        c.setAttribute("cy", p0.cy);
-        c.setAttribute("class", "draggable");
-        c.addEventListener("mousedown", function(ce) {
-          curMarker = ce.target;
-        });
-        c.addEventListener("mouseup", function(ce) {
-          curMarker = null;
-        });
-        svg.appendChild(c);
-      } else {
-        curcle.setAttribute("cx", p0.cx);
-        curcle.setAttribute("cy", p0.cy);
-      }
-    }, false);
-    l.addEventListener("mouseout", function(e) {
-      l.setAttribute("stroke", "red");
-    }, false);
     var svg = document.getElementById("svg1");
     svg.addEventListener("mousemove", function(e) {
       if (curMarker !== null) {
-        curcle.setAttribute("cx", e.offsetX);
-        curcle.setAttribute("cy", e.offsetY);
-        if (p0.lend === 1) {
+        curMarker.setAttribute("cx", e.offsetX);
+        curMarker.setAttribute("cy", e.offsetY);
+        console.log(curMarker.id);
+        if (curMarker.id === "1") {
           l.setAttribute("x1", e.offsetX);
           l.setAttribute("y1", e.offsetY);
         } else {
@@ -56,6 +35,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
       }
     });
     svg.appendChild(l);
+    svg.appendChild(c1);
+    svg.appendChild(c2);
     drawCanvasLine();
   };
   var btn = document.getElementById('newline');
@@ -64,6 +45,22 @@ document.addEventListener("DOMContentLoaded", function(event) {
   drawCanvasRect();
 
 });
+
+var draggableMarker = function(id, cx, cy, fnDown, fnUp) {
+  var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  //c.setAttribute("id", "");
+  c.id = id;
+  c.setAttribute("r", "5");
+  c.setAttribute("stroke", "green");
+  c.setAttribute("stroke-width", "1");
+  c.setAttribute("fill", "transparent");
+  c.setAttribute("cx", cx);
+  c.setAttribute("cy", cy);
+  c.setAttribute("class", "draggable");
+  c.addEventListener("mousedown", fnDown);
+  c.addEventListener("mouseup", fnUp);
+  return c;
+}
 
 var getNearestEndPoint = function(line, mouseEvent) {
   var x1 = line.getAttribute("x1");
