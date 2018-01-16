@@ -8,7 +8,10 @@ div.c1 {
 svg.c2 {
   z-index: 0;
   position: absolute;
+  /*
   top: 320px;
+  */
+  top: 20px;
   left: 200px;
 }
 
