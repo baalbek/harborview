@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Option Purchases</title>
-    <meta charset="UTF-8">
-    {% include "templates/head.html" %}
-    <script src="/js/elm/maunaloa/elm-optionpurchases.js"></script>
+  <title>Option Purchases</title>
+  <meta charset="UTF-8"> {% include "templates/head.html" %}
+  </meta>
+  <script src="/js/elm/maunaloa/elm-optionpurchases.js"></script>
 </head>
+
 <body>
-    <div class="logo"></div>
-    <div id="my-app"></div>
-    <script type="text/javascript">
-        var node = document.getElementById('my-app');
-        var app = Elm.Maunaloa.OptionPurchases.embed(node);
-    </script>
-    {% include "templates/footer.html" %}
+  <div class="logo"></div>
+  <div id="my-app"></div>
+  <script type="text/javascript">
+    var node = document.getElementById('my-app');
+    var app = Elm.Maunaloa.OptionPurchases.embed(node);
+  </script>
+  {% include "templates/footer.html" %}
 </body>
+
 </html>

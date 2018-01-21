@@ -1,78 +1,81 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>-</title>
-    <meta charset="UTF-8">
-    {% include "templates/head.html" %}
-    <script src="/js/opxpurchase.js"></script>
+  <title>-</title>
+  <meta charset="UTF-8"> {% include "templates/head.html" %}
+  </meta>
+  <script src="/js/opxpurchase.js"></script>
 </head>
+
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Oid</th>
-                            <th>Name</th>
-                            <th>Strike</th>
-                            <th>Exp. date</th>
-                            <th>Series</th>
-                            <th>Type</th>
-                            <th>Days</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for x in derivatives %}
-                        <tr class="rows">
-                            <td>{{x.oid}}</td>
-                            <td><a href="#dlg1" class="shownewopxpurchase href-td" data-ticker="{{x.ticker}}" data-oid="{{x.oid}}">{{x.ticker}}</a></td>
-                            <td>{{x.x}}</td>
-                            <td>{{x.exp}}</td>
-                            <td>{{x.series}}</td>
-                            <td>{{x.optype}}</td>
-                            <td>{{x.days}}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Oid</th>
+              <th>Name</th>
+              <th>Strike</th>
+              <th>Exp. date</th>
+              <th>Series</th>
+              <th>Type</th>
+              <th>Days</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for x in derivatives %}
+            <tr class="rows">
+              <td>{{x.oid}}</td>
+              <td><a href="#dlg1" class="shownewopxpurchase href-td" data-ticker="{{x.ticker}}" data-oid="{{x.oid}}">{{x.ticker}}</a></td>
+              <td>{{x.x}}</td>
+              <td>{{x.exp}}</td>
+              <td>{{x.series}}</td>
+              <td>{{x.optype}}</td>
+              <td>{{x.days}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
-    <!-- New Option Purchase Dialog box -->
-    <div id="dlg1" class="modalDialog">
-        <div>
-            <label id="dlg1-header" style="display: block;">New Option</label>
-            <form role="form">
-                <div class="form-group">
-                    <label for="dlg1-purchasetype" style="display:block;">Purchase Type:</label>
-                    <select class="form-control" id="dlg1-purchasetype">
+  </div>
+  <!-- New Option Purchase Dialog box -->
+  <div id="dlg1" class="modalDialog">
+    <div>
+      <label id="dlg1-header" style="display: block;">New Option</label>
+      <form role="form">
+        <div class="form-group">
+          <label for="dlg1-purchasetype" style="display:block;">Purchase Type:</label>
+          <select class="form-control" id="dlg1-purchasetype">
                         <option value="3">Real Money</option>
                         <option value="4">Test Trade</option>
                         <option value="11" selected="true">Paper Trade</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="dlg1-price">Price:</label>
-                    <input type="number" class="form-control" id="dlg1-price" value="0.0">
-                </div>
-                <div class="form-group">
-                    <label for="dlg1-buy">Buy:</label>
-                    <input type="number" class="form-control" id="dlg1-buy" value="0.0">
-                </div>
-                <div class="form-group">
-                    <label for="dlg1-volume">Volume:</label>
-                    <input type="number" class="form-control" id="dlg1-volume" step="5" value="10">
-                </div>
-                <div class="form-group">
-                    <label for="dlg1-spot">Spot:</label>
-                    <input type="number" class="form-control" id="dlg1-spot" value="0.0">
-                </div>
-                <button type="button" class="btn btn-default" id="dlg1-ok">OK</button>
-                <a href="#close" id="dlg1-cancel">Cancel</a>
-            </form>
         </div>
+        <div class="form-group">
+          <label for="dlg1-price">Price:</label>
+          <input type="number" class="form-control" id="dlg1-price" value="0.0">
+        </div>
+        <div class="form-group">
+          <label for="dlg1-buy">Buy:</label>
+          <input type="number" class="form-control" id="dlg1-buy" value="0.0">
+        </div>
+        <div class="form-group">
+          <label for="dlg1-volume">Volume:</label>
+          <input type="number" class="form-control" id="dlg1-volume" step="5" value="10">
+        </div>
+        <div class="form-group">
+          <label for="dlg1-spot">Spot:</label>
+          <input type="number" class="form-control" id="dlg1-spot" value="0.0">
+        </div>
+        <button type="button" class="btn btn-default" id="dlg1-ok">OK</button>
+        <a href="#close" id="dlg1-cancel">Cancel</a>
+      </form>
     </div>
-    {% include "templates/footer.html" %}
+  </div>
+  {% include "templates/footer.html" %}
 </body>
+
 </html>

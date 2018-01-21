@@ -1,43 +1,45 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Visual Studio Web Example</title>
-    <meta charset="UTF-8">
-    {% include "templates/head.html" %}
-    <script src="/js/elm/maunaloa/elm-options.js"></script>
-</head>
-<body>
-    <div class="logo"></div>
-    <ul class="nav nav-tabs">
-      <li class="active"><a data-toggle="tab" href="#calls">Calls</a></li>
-      <li><a data-toggle="tab" href="#puts">Puts</a></li>
-    </ul>
 
-    <div class="container">
-      <div class="tab-content">
-        <div id="calls" class="tab-pane active">
-          <div class="container">
-            <div id="my-app"></div>
-          </div>
+<head>
+  <title>Visual Studio Web Example</title>
+  <meta charset="UTF-8"> {% include "templates/head.html" %}
+  </meta>
+  <script src="/js/elm/maunaloa/elm-options.js"></script>
+</head>
+
+<body>
+  <div class="logo"></div>
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#calls">Calls</a></li>
+    <li><a data-toggle="tab" href="#puts">Puts</a></li>
+  </ul>
+
+  <div class="container">
+    <div class="tab-content">
+      <div id="calls" class="tab-pane active">
+        <div class="container">
+          <div id="my-app"></div>
         </div>
-        <div id="puts" class="tab-pane">
-          <div class="container">
-            <div id="my-app2"></div>
-          </div>
+      </div>
+      <div id="puts" class="tab-pane">
+        <div class="container">
+          <div id="my-app2"></div>
         </div>
       </div>
     </div>
-    <script type="text/javascript">
-        var node1 = document.getElementById('my-app');
-        var app1 = Elm.Maunaloa.Options.embed(node1, {
-            isCalls : true
-        });
-        var node2 = document.getElementById('my-app2');
-        var app2 = Elm.Maunaloa.Options.embed(node2, {
-            isCalls : false
-        });
-
-    </script>
-    {% include "templates/footer.html" %}
+  </div>
+  <script type="text/javascript">
+    var node1 = document.getElementById('my-app');
+    var app1 = Elm.Maunaloa.Options.embed(node1, {
+      isCalls: true
+    });
+    var node2 = document.getElementById('my-app2');
+    var app2 = Elm.Maunaloa.Options.embed(node2, {
+      isCalls: false
+    });
+  </script>
+  {% include "templates/footer.html" %}
 </body>
+
 </html>

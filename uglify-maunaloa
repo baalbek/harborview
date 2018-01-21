@@ -6,10 +6,10 @@ JS="$HOME/src/resources/public/js/maunaloa"
 
 # ELM="$HOME/elm/src"
 
-FILES="/js/charts.js /js/canvas/rulers.js /js/canvas/linechart.js /js/canvas/levelline.js"
+FILES="/js/charts.js /js/canvas/rulers.js /js/canvas/linechart.js /js/canvas/levelline.js /js/canvas/scrapbook.js"
 
 # docker run -it --rm -v $JS:/js --name uglify rcs/node uglifyjs "$@"
 
-docker run -it --rm -v $JS:/js --name uglify rcs/node uglifyjs -o /js/maunaloa.min.js $FILES
+docker run -it --rm -v $JS:/js --name uglify rcs/uglify-es uglifyjs $FILES -o /js/maunaloa.min.js --compress
 
 exit 0

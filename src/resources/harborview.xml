@@ -4,16 +4,16 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <!--
     <bean id="downloader" class="netfondsrepos.downloader.MockDownloader">
-        <property name="storePath" value="/home/rcs/opt/java/netfondsjanitor/feed/2017/12/12" />
+        <property name="storePath" value="/home/rcs/opt/java/netfondsjanitor/feed/2018/1/18" />
         <property name="applyCounter" value="false" />
     </bean>
-        -->
 
+    <!--
     <bean id="downloader" class="netfondsrepos.downloader.DefaultDownloader">
         <property name="javaScriptEnabled" value="false"/>
     </bean>
+        -->
 
     <bean id="calculator" class="vega.financial.calculator.BlackScholes">
     </bean>
