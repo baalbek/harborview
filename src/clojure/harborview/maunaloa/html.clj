@@ -317,7 +317,7 @@
   ;(GET "/fetchpurchases" [oid ptype optype]
   ;  (fetchpurchases oid ptyp 1 optype))
   (GET "/fetchpurchases" [ptype resetcache]
-    (if (= resetcache "true")
+    (if (= resetcache "1")
       (binding [CU/*reset-cache* true]
         (fetchpurchases ptype))
       (fetchpurchases ptype)))
@@ -336,6 +336,18 @@
           rt (jr "rt")
           result (DBX/buy-option soid ticker ask bid vol spot rt)]
       (U/json-response result)))
-  (GET "/ticker" [oid] (ticker-chart (U/rs oid)))
-  (GET "/tickerweek" [oid] (ticker-chart-week (U/rs oid)))
-  (GET "/tickermonth" [oid] (ticker-chart-month (U/rs oid))))
+  (GET "/ticker" [oid rc]
+    (if (= rc "1")
+      (binding [CU/*reset-cache* true]
+        (ticker-chart (U/rs oid)))
+      (ticker-chart (U/rs oid))))
+  (GET "/tickerweek" [oid rc]
+    (if (= rc "1")
+      (binding [CU/*reset-cache* true]
+        (ticker-chart-week (U/rs oid)))
+      (ticker-chart-week (U/rs oid))))
+  (GET "/tickermonth" [oid rc]
+    (if (= rc "1")
+      (binding [CU/*reset-cache* true]
+        (ticker-chart-month (U/rs oid)))
+      (ticker-chart-month (U/rs oid)))))

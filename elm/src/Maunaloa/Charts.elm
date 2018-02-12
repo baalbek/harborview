@@ -452,10 +452,10 @@ resetCacheJson : Bool -> String
 resetCacheJson resetCache =
     case resetCache of
         True ->
-            "&rc=true"
+            "&rc=1"
 
         False ->
-            "&rc=false"
+            "&rc=0"
 
 
 fetchSpot : String -> Bool -> Cmd Msg
@@ -546,13 +546,13 @@ fetchCharts ticker chartResolution resetCache =
         url =
             case chartResolution of
                 1 ->
-                    mainUrl ++ "/ticker?oid=" ++ ticker
+                    mainUrl ++ "/ticker?oid=" ++ ticker ++ (resetCacheJson resetCache)
 
                 2 ->
-                    mainUrl ++ "/tickerweek?oid=" ++ ticker
+                    mainUrl ++ "/tickerweek?oid=" ++ ticker ++ (resetCacheJson resetCache)
 
                 _ ->
-                    mainUrl ++ "/tickermonth?oid=" ++ ticker
+                    mainUrl ++ "/tickermonth?oid=" ++ ticker ++ (resetCacheJson resetCache)
     in
         Http.send ChartsFetched <| Http.get url myDecoder
 
