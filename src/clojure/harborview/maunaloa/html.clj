@@ -287,7 +287,7 @@
   (GET "/optiontickers" request (init-options))
   (GET "/optionpurchases" request (init-purchases))
   (GET "/spot" [ticker rc]
-    (if (= rc "true")
+    (if (= rc "1")
       (binding [CU/*reset-cache* true]
         (spot ticker))
       (spot ticker)))
